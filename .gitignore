@@ -5,6 +5,7 @@
 *.class
 *.jar
 pom.properties
+target/
 
 *.pydevproject
 .metadata
