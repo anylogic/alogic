@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sources>
-	<source module="com.logicbus.redis.context.impl.Inner">
-		<rcp id = "default" host="192.168.150.101" port="6379"/>
-	</source>
-</sources>
