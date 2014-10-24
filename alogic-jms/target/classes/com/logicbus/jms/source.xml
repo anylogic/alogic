@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jms-source>
+	<source module="com.logicbus.jms.impl.Inner">
+		<context id="Default">
+			<fields>
+				<field id="brokerURI" value="tcp://localhost:61616"/>
+				<field id="username" value=""/>
+				<field id="password" value=""/>
+			</fields>
+			<destination id="Default">
+				<fields>
+					<field id="name" value="myQueue"/>
+					<field id="type" value="queue"/>
+				</fields>
+			</destination>
+		</context>
+	</source>
+	<source 
+		module="com.logicbus.jms.impl.Provided" 
+		provider="com.logicbus.jms.impl.Xml"
+		xrc.master="java:///com/logicbus/jms/jms.xml#com.logicbus.jms.JmsSource"
+		xrc.secondary="java:///com/logicbus/jms/jms.xml#com.logicbus.jms.JmsSource"
+	/>
+</jms-source>

@@ -1,0 +1,66 @@
+<?xml version = '1.0'?>
+<dotters>
+<dotter Id = "cplusplus">
+	<pattern Class="code-keyword" Expr="__int64 auto bool break case catch char cerr cin class const continue cout default delete do double else enum explicit extern float for friend goto if inline int long namespace new operator private protected public register return short signed sizeof static struct switch template this throw try typedef union unsigned virtual void volatile while __asm __fastcall __based __cdecl __pascal __inline __multiple_inheritance __single_inheritance __virtual_inheritance" Type="Keywords"/>
+	<pattern Class="code-comment-singleline" Expr="//.*$" Flags="MULTILINE"/>
+	<pattern Class="code-comment" Expr="/\*[\s\S]*?\*/" Flags="MULTILINE"/>
+	<pattern Class="code-string-doublequoted" Expr="&quot;(?:\.|(\\\&quot;)|[^\&quot;&quot;\n])*&quot;"/>
+	<pattern Class="code-string-singlequoted" Expr="&apos;(?:\.|(\\\&apos;)|[^\&apos;&apos;\n])*&apos;"/>
+	<pattern Class="code-number" Expr="\b([\d]+(\.[\d]+)?|0x[a-f0-9]+)\b"/>
+	<pattern Class="code-preprocessor" Expr="^ *#.*$" Flags="MULTILINE"/>
+	<pattern Class="code-delimeter" Expr="\p{Punct}"/>
+</dotter>
+<dotter Id = "csharp">
+	<pattern Class="code-keyword" Expr="abstract as base bool break byte case catch char checked class const continue decimal default delegate do double else enum event explicit extern false finally fixed float for foreach get goto if implicit in int interface internal is lock long namespace new null object operator out override params private protected public readonly ref return sbyte sealed set short sizeof stackalloc static string struct switch this throw true try typeof uint ulong unchecked unsafe ushort using virtual void while" Type="Keywords"/>
+	<pattern Class="code-comment-singleline" Expr="//.*$" Flags="MULTILINE"/>
+	<pattern Class="code-comment" Expr="/\*[\s\S]*?\*/" Flags="MULTILINE"/>
+	<pattern Class="code-string-doublequoted" Expr="&quot;(?:\.|(\\\&quot;)|[^\&quot;&quot;\n])*&quot;"/>
+	<pattern Class="code-string-singlequoted" Expr="&apos;(?:\.|(\\\&apos;)|[^\&apos;&apos;\n])*&apos;"/>
+	<pattern Class="code-number" Expr="\b([\d]+(\.[\d]+)?|0x[a-f0-9]+)\b"/>
+	<pattern Class="code-preprocessor" Expr="^ *#.*" Flags="MULTILINE"/>
+	<pattern Class="code-delimeter" Expr="\p{Punct}"/>
+</dotter>
+<dotter Id = "java">
+	<pattern Class="code-keyword" Expr="abstract assert boolean break byte case catch char class const continue default do double else enum extends false final finally float for goto if implements import instanceof int interface long native new null package private protected public return short static strictfp super switch synchronized this throw throws true transient try void volatile while" Type="Keywords"/>
+	<pattern Class="code-comment-singleline" Expr="//.*$" Flags="MULTILINE"/>
+	<pattern Class="code-comment" Expr="/\*[\s\S]*?\*/" Flags="MULTILINE"/>
+	<pattern Class="code-string-doublequoted" Expr="&quot;(?:\.|(\\\&quot;)|[^\&quot;&quot;\n])*&quot;"/>
+	<pattern Class="code-string-singlequoted" Expr="&apos;(?:\.|(\\\&apos;)|[^\&apos;&apos;\n])*&apos;"/>
+	<pattern Class="code-number" Expr="\b([\d]+(\.[\d]+)?|0x[a-f0-9]+)\b"/>
+	<pattern Class="code-delimeter" Expr="\p{Punct}"/>
+</dotter>
+<dotter Id = "javascript">
+	<pattern Class="code-keyword" Expr="abstract boolean break byte case catch char class const continue debugger default delete do double else enum export extends false final finally float for function goto if implements import in instanceof int interface long native new null package private protected public return short static super switch synchronized this throw throws transient true try typeof var void volatile while with" Type="Keywords"/>
+	<pattern Class="code-comment-singleline" Expr="//.*$" Flags="MULTILINE"/>
+	<pattern Class="code-comment" Expr="/\*[\s\S]*?\*/" Flags="MULTILINE"/>
+	<pattern Class="code-string-doublequoted" Expr="&quot;(?:\.|(\\\&quot;)|[^\&quot;&quot;\n])*&quot;"/>
+	<pattern Class="code-string-singlequoted" Expr="&apos;(?:\.|(\\\&apos;)|[^\&apos;&apos;\n])*&apos;"/>
+	<pattern Class="code-number" Expr="\b([\d]+(\.[\d]+)?|0x[a-f0-9]+)\b"/>
+	<pattern Class="code-preprocessor" Expr="^ *#.*" Flags="MULTILINE"/>
+	<pattern Class="code-delimeter" Expr="\p{Punct}"/>
+</dotter>
+<dotter Id="shell">
+	<pattern Class="code-comment" Expr="#(.*)$" Flags="MULTILINE"/>
+	<pattern Class="code-string-doublequoted" Expr="&quot;(?:\.|(\\\&quot;)|[^\&quot;&quot;\n])*&quot;"/>
+	<pattern Class="code-string-singlequoted" Expr="&apos;(?:\.|(\\\&apos;)|[^\&apos;&apos;\n])*&apos;"/>
+	<pattern Class="code-number" Expr="\b([\d]+(\.[\d]+)?|0x[a-f0-9]+)\b"/>
+	<pattern Class="code-delimeter" Expr="\p{Punct}"/>
+</dotter>
+<dotter Id = "sql">
+	<pattern Class="code-keyword" Expr="absolute action add after alter as asc at authorization begin bigint binary bit by cascade char character check checkpoint close collate column commit committed connect connection constraint contains continue create cube current current_date current_time cursor database date deallocate dec decimal declare default delete desc distinct double drop dynamic else end end-exec escape except exec execute false fetch first float for force foreign forward free from full function global goto grant group grouping having hour ignore index inner insensitive insert instead int integer intersect into is isolation key last level load local max min minute modify move name national nchar next no numeric of off on only open option order out output partial password precision prepare primary prior privileges procedure public read real references relative repeatable restrict return returns revoke rollback rollup rows rule schema scroll second section select sequence serializable set size smallint static statistics table temp temporary then time timestamp to top transaction translation trigger true truncate uncommitted union unique update values varchar varying view when where with work" Type="Keywords" Flags="CASE_INSENSITIVE"/>
+	<pattern Class="code-comment" Expr="--(.*)$" Flags="MULTILINE"/>
+	<pattern Class="code-string-doublequoted" Expr="&quot;(?:\.|(\\\&quot;)|[^\&quot;&quot;\n])*&quot;"/>
+	<pattern Class="code-string-singlequoted" Expr="&apos;(?:\.|(\\\&apos;)|[^\&apos;&apos;\n])*&apos;"/>
+	<pattern Class="code-number" Expr="\b([\d]+(\.[\d]+)?|0x[a-f0-9]+)\b"/>
+	<pattern Class="code-function" Expr="abs avg case cast coalesce convert count current_timestamp current_user day isnull left lower month nullif replace right session_user space substring sum system_user upper user year" Type="Keywords" Flags="CASE_INSENSITIVE"/>
+	<pattern Class="code-operator" Expr="all and any between cross in join like not null or outer some" Type="Keywords" Flags="CASE_INSENSITIVE"/>
+	<pattern Class="code-delimeter" Expr="\p{Punct}"/>
+</dotter>
+<dotter Id = "xml">
+	<pattern Class="code-keyword" Expr="xml version encoding id value class type name text label" Type="Keywords" Flags="CASE_INSENSITIVE"/>
+	<pattern Class="code-string-doublequoted" Expr="&quot;(?:\.|(\\\&quot;)|[^\&quot;&quot;\n])*&quot;"/>
+	<pattern Class="code-string-singlequoted" Expr="&apos;(?:\.|(\\\&apos;)|[^\&apos;&apos;\n])*&apos;"/>
+	<pattern Class="code-number" Expr="\b([\d]+(\.[\d]+)?|0x[a-f0-9]+)\b"/>
+	<pattern Class="code-delimeter" Expr="\p{Punct}"/>
+</dotter>
+</dotters>

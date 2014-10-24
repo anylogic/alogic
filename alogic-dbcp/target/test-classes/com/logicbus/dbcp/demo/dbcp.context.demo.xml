@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ds>
+	<ds module="com.logicbus.dbcp.impl.InnerContext">
+		<dbcp
+	    	id = "Default"
+	    	driver = "org.mariadb.jdbc.Driver"
+	    	url = "jdbc:mariadb://localhost:3306/harry"
+	    	username = "root"
+	    	password = "root"
+	    	maxActive = "30"
+	    	maxIdle = "5"
+	    	maxWait = "10000"
+		>
+			<ross>
+				<ros id = "replicate01" weight = "1" priority = "1"/>
+				<ros id = "replicate02" weight = "1" priority = "1"/>		
+			</ross>
+		</dbcp>
+		<dbcp
+	    	id = "replicate01"
+	    	driver = "org.mariadb.jdbc.Driver"
+	    	url = "jdbc:mariadb://localhost:3306/harry"
+	    	username = "root"
+	    	password = "root"
+	    	maxActive = "30"
+	    	maxIdle = "5"
+	    	maxWait = "10000"
+		/>	
+		<dbcp
+	    	id = "replicate02"
+	    	driver = "org.mariadb.jdbc.Driver"
+	    	url = "jdbc:mariadb://localhost:3306/harry"
+	    	username = "root"
+	    	password = "root"
+	    	maxActive = "30"
+	    	maxIdle = "5"
+	    	maxWait = "10000"
+		/>				
+	</ds>
+</ds>

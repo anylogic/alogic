@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contexts>
+	<context id="Default">
+		<fields>
+			<field id="brokerURI" value="tcp://localhost:61616"/>
+			<field id="username" value=""/>
+			<field id="password" value=""/>
+		</fields>
+		<destination id="Default">
+			<fields>
+				<field id="name" value="myQueue"/>
+				<field id="type" value="queue"/>
+			</fields>
+		</destination>
+	</context>
+</contexts>

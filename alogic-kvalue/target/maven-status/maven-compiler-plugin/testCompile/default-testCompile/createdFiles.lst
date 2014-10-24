@@ -1,0 +1,7 @@
+com\logicbus\kvalue\junit\IntegerRowTest.class
+com\logicbus\kvalue\junit\StringRowTest.class
+com\logicbus\redis\junit\AllTests.class
+com\logicbus\redis\junit\KeyToolTest.class
+com\logicbus\kvalue\junit\BitRowTest.class
+com\logicbus\kvalue\junit\KeyToolTest.class
+com\logicbus\kvalue\junit\AllTests.class

@@ -1,0 +1,42 @@
+{
+  "duration": "0", 
+  "host": "192.168.131.134:8090", 
+  "reason": "It is successful", 
+  "code": "core.ok", 
+  "arm": {
+    "id": "demo", 
+    "arls": [
+      {
+        "ip": "192.168.150.1", 
+        "port": "8082", 
+        "cores": 4, 
+        "labels": [
+          "default"
+        ], 
+        "weight": 1, 
+        "priority": 1
+      }, 
+      {
+        "ip": "192.168.150.1", 
+        "port": "8083", 
+        "cores": 4, 
+        "labels": [
+          "default"
+        ], 
+        "weight": 1, 
+        "priority": 1
+      }, 
+      {
+        "ip": "192.168.150.1", 
+        "port": "8081", 
+        "cores": 4, 
+        "labels": [
+          "default"
+        ], 
+        "weight": 1, 
+        "priority": 1
+      }
+    ]
+  }, 
+  "serial": "1413940129679+avi0TO"
+}

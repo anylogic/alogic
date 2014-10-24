@@ -1,0 +1,218 @@
+package com.logicbus.dbcp.sql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.anysoft.util.BaseException;
+
+/**
+ * 查询语句操作类
+ * 
+ * @author duanyy
+ * @since 1.2.5
+ * 
+ */
+public class Select extends DBOperation {
+
+	public Select(Connection conn) {
+		super(conn);
+	}
+
+	protected PreparedStatement stmt = null;
+	protected ResultSet rs = null;
+	
+	/**
+	 * 执行SQL语句
+	 * @param sql SQL语句
+	 * @param params 参数列表
+	 * @return
+	 * @throws SQLException
+	 */
+	public Select execute(String sql,Object... params) throws BaseException{
+		close();
+		
+		try {
+			stmt = conn.prepareStatement(sql);
+			
+			if (params != null){
+				for (int i = 0 ; i < params.length ; i ++){
+					stmt.setObject(i + 1, params[i]);
+				}
+			}
+			
+			rs = stmt.executeQuery();
+			return this;
+		}
+		catch (SQLException ex){
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * 获取查询结果（单返回值）
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public Object single()throws BaseException{
+		try {
+			if (rs != null && rs.next()){
+				return rs.getObject(1);
+			}
+			return null;
+		}
+		catch (SQLException ex){
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+		}		
+	}
+
+	/**
+	 * 获取查询结果(单行返回值)
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	@SuppressWarnings({ "rawtypes"})
+	public Map singleRow()throws BaseException{
+		return singleRow(null);
+	}	
+
+	/**
+	 * 获取查询结果(单行返回值)
+	 * 
+	 * @param result
+	 * @return
+	 * @throws SQLException
+	 * @since 1.2.0
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Map singleRow(Map result)throws BaseException{
+		try {
+			if (rs != null && rs.next()){
+				if (result == null)
+				result = new HashMap();
+				
+				ResultSetMetaData metadata = rs.getMetaData();
+				int columnCount = metadata.getColumnCount();
+				for (int i = 0 ; i < columnCount ; i++){
+					Object value = rs.getObject(i+1);
+					if (value == null)continue;
+					//1.2.0 支持列的别名
+					String name = metadata.getColumnLabel(i+1);
+					if (name == null){
+						name = metadata.getColumnName(i+1);
+					}
+					result.put(name.toLowerCase(), value);
+				}
+				
+				return result;
+			}
+			return null;
+		}
+		catch (SQLException ex){
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+		}
+	}		
+	
+	/**
+	 * 获取查询结果
+	 * 
+	 * <p>查询结果通过监听器获取
+	 * 
+	 * @param rowListener 行监听器
+	 * @throws SQLException
+	 */
+	public void result(RowListener rowListener)throws BaseException{
+		if (rs == null || rowListener == null){
+			return ;
+		}
+		try{
+			ResultSetMetaData metadata = rs.getMetaData();
+			int columnCount = metadata.getColumnCount();
+			while (rs.next()){
+				Object cookies = rowListener.rowStart(columnCount);
+				
+				for (int i = 0 ; i < columnCount ; i++){
+					//1.2.0 支持列的别名
+					String name = metadata.getColumnLabel(i+1);
+					if (name == null){
+						name = metadata.getColumnName(i+1);
+					}					
+					rowListener.columnFound(
+							cookies,
+							i, 
+							name.toLowerCase(), 
+							rs.getObject(i+1)
+							);
+				}
+				
+				rowListener.rowEnd(cookies);
+			}
+		}
+		catch (SQLException ex){
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+		}
+	}
+
+	/**
+	 * 获取查询结果
+	 * 
+	 * <p>查询结果通过列表返回，可直接作为JSON数据
+	 * @return
+	 * @throws SQLException
+	 */
+	@SuppressWarnings("rawtypes")
+	public List result()throws BaseException{
+		InnerRowListner data = new InnerRowListner();
+		result(data);
+		return data.getResult();
+	}
+	
+	
+	public void close() throws BaseException {
+		close(stmt,rs);
+	}	
+
+	/**
+	 * 内置的行数据监听器
+	 * 
+	 * @author duanyy
+	 *
+	 */
+	public static class InnerRowListner implements RowListener{
+		@SuppressWarnings("rawtypes")
+		protected ArrayList result = new ArrayList();
+		@SuppressWarnings("rawtypes")
+		public List getResult(){
+			return result;
+		}
+		@SuppressWarnings("rawtypes")
+		
+		public Object rowStart(int column) {
+			return new HashMap(5);
+		}
+
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		
+		public void columnFound(Object cookies,int columnIndex, String name, Object value) {
+			if (value != null){
+				Map<String, Object> map = (Map)cookies;
+				map.put(name, value);
+			}
+		}
+
+		@SuppressWarnings("unchecked")
+		
+		public void rowEnd(Object cookies) {
+			result.add(cookies);
+		}
+		
+	}
+}

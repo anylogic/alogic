@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kvdb>
+	<source>
+		<schema id="redis" module="com.logicbus.redis.kvalue.RedisSchema">
+			<redis.source module="com.logicbus.redis.context.impl.Inner">
+				<rcp id = "redis0" host="192.168.150.101" port="6379" defaultDB="0" maxIdle="2" maxActive="10"/>
+				<rcp id = "redis1" host="192.168.150.101" port="6379" defaultDB="1" maxIdle="2" maxActive="10"/>
+				<rcp id = "redis2" host="192.168.150.101" port="6379" defaultDB="2" maxIdle="2" maxActive="10"/>
+				<rcp id = "redis3" host="192.168.150.101" port="6379" defaultDB="3" maxIdle="2" maxActive="10"/>
+				<rcp id = "redis4" host="192.168.150.101" port="6379" defaultDB="4" maxIdle="3" maxActive="10"/>
+			</redis.source>
+			<redis.tables>
+				<table name="str_test" possessive="true" dataType="String">
+					<partitioner module="com.logicbus.kvalue.common.GroupHash" vnodesCnt="1000">
+						<groups>
+							<group point="0" case="0"/>
+							<group point="200" case="1"/>
+							<group point="400" case="2"/>
+							<group point="600" case="3"/>
+							<group point="800" case="4"/>
+						</groups>
+						<partition src="redis0"/>
+						<partitions>
+							<partition case="0" src="redis0"/>
+							<partition case="1" src="redis1"/>
+							<partition case="2" src="redis2"/>
+							<partition case="3" src="redis3"/>
+							<partition case="4" src="redis4"/>
+						</partitions>
+					</partitioner>										 
+				</table>
+				<table name="int_test" possessive="true" dataType="Integer">
+					<partitioner module="com.logicbus.kvalue.common.SimpleHash" nodesCnt="5">
+						<partition src="redis0"/>
+						<partitions>
+							<partition case="0" src="redis0"/>
+							<partition case="1" src="redis1"/>
+							<partition case="2" src="redis2"/>
+							<partition case="3" src="redis3"/>
+							<partition case="4" src="redis4"/>
+						</partitions>
+					</partitioner>									 
+				</table>		
+				<table name="bit_test" possessive="true" dataType="Bit">
+					<partitioner module="com.logicbus.kvalue.common.ConsistentHash" vnodesPerNode="128">
+						<partition src="redis0"/>
+						<partitions>
+							<partition case="0" src="redis0"/>
+							<partition case="1" src="redis1"/>
+							<partition case="2" src="redis2"/>
+							<partition case="3" src="redis3"/>
+							<partition case="4" src="redis4"/>
+						</partitions>
+					</partitioner>										 
+				</table>						
+			</redis.tables>
+		</schema>
+	</source>
+</kvdb>

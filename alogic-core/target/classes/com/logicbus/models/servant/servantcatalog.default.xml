@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogs>
+	<catalog module="com.logicbus.models.servant.impl.XMLResourceServantCatalog" 
+		xrc="/com/logicbus/service/servant.core.xml"
+		class="com.logicbus.models.servant.impl.XMLResourceServantCatalog"
+		name="inner"/>
+	<!-- 
+	<catalog module="com.logicbus.models.servant.impl.XMLDocumentServantCatalog" 
+		xrc.master="${master.home}/servant.xml"
+		name="outter"/>
+	 -->
+	 <!-- 
+	<catalog module="com.logicbus.models.servant.impl.FileSystemServantCatalog" 
+		home="${local.home}/servants"/>
+	  -->	
+</catalogs>

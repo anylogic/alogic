@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog name="root">
+	<catalog name="examples">
+		<service 
+			id = "Helloworld" 
+			name="Helloworld" 
+			note="Helloworld" 
+			visible="protected" 
+			module="com.logicbus.examples.Helloworld"
+		/>
+		<service 
+			id = "Helloworld2" 
+			name="Helloworld2" 
+			note="Helloworld2" 
+			visible="protected" 
+			module="com.logicbus.examples.Helloworld2"
+		>
+			<properties>
+				<parameter id = "welcome" value = "welcome to anylogicbus"/>
+			</properties>
+		</service>
+		<service 
+			id = "Helloworld3" 
+			name="Helloworld3" 
+			note="Helloworld3" 
+			visible="protected" 
+			module="com.logicbus.examples.Helloworld3"
+		/>
+		<service 
+			id = "Helloworld4" 
+			name="Helloworld4" 
+			note="Helloworld4" 
+			visible="protected" 
+			module="com.logicbus.examples.Helloworld3"
+		>
+			<arguments>
+				<argu id="welcome" defaultValue="welcome to anylogicbus again." isOption="true" getter="Default"/>
+			</arguments>
+		</service>		
+		<service 
+			id = "Helloworld5" 
+			name="Helloworld5" 
+			note="Helloworld5" 
+			visible="protected" 
+			module="com.logicbus.examples.Helloworld3"
+		>
+			<arguments>
+				<argu id="welcome" defaultValue="welcome to anylogicbus again." isOption="true" getter="com.logicbus.examples.AppendHello"/>
+			</arguments>
+		</service>			
+	</catalog>
+</catalog>

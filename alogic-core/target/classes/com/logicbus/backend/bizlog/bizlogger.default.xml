@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logger module="com.logicbus.backend.bizlog.DefaultBizLogger" report.enable="true" report.cycle="3600000">
+</logger>

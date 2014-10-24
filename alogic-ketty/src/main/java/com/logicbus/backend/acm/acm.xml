@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<acms>
+	<model id="Default" pwd="Default" maxThread="10" maxTimesPerMin="100000" priority="0">
+		<acls>
+			<acl ip="*" service="*" />
+		</acls>
+	</model>
+</acms>

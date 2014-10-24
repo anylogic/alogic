@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<context>
+		<call id = "aHttpCall" module="com.logicbus.remote.impl.http.HttpCall">
+			<dests>
+				<dest uri="http://192.168.131.134:8090/services/anypaas/ARMQuery"/>
+			</dests>
+			<request>
+				<query>
+					<json selector="Constants" selector-id="json" selector-value="true"/>	
+					<timestamp selector="Now" selector-id="t"/>
+					<json selector="SingleField" selector-id="app" selector-field="app" selector-default="demo"/>	
+				</query>
+				<data>
+					
+				</data>
+			</request>
+			<response>
+				<data>
+					<field id="armId" path="$.arm.id"></field>
+					<field id="arls" path="$.arm.arls"></field>
+					<field id="ports" path="$.arm.arls[*].port"></field>
+				</data>
+			</response>
+		</call>
+		<call id = "aSimulator" module="com.logicbus.remote.impl.simulate.Simulator">
+			<dests>
+				<dest uri="java:///com/logicbus/remote/demo/data/data1.json"/>
+				<dest uri="java:///com/logicbus/remote/demo/data/data2.json"/>
+				<dest uri="java:///com/logicbus/remote/demo/data/data3.json"/>
+			</dests>
+			<response>
+				<data>
+					<field id="armId" path="$.arm.id"></field>
+					<field id="arls" path="$.arm.arls"></field>
+					<field id="ports" path="$.arm.arls[*].port"></field>
+				</data>
+			</response>
+		</call>		
+	</context>
+</source>
