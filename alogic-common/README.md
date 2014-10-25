@@ -138,4 +138,7 @@ A framework which help you download your web library and load web context.
 
 - 1.6.0 [20141023 duanyy]
 	+ 转换为Maven工程(1.6.0.0)，并纳入alogic-common工程(1.6.0.0)
+	+ webloader:增加WebAppMain,替代WebAppContextListener,可加载附加的ServletContextListener和Servlet(1.6.0.1)
+	
+	
 	

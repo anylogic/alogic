@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webapp-addons>
+	<context-param param-name="app.class" param-value="com.anypaas.webapp.FrontEnd"/>
+
+	<listener listener-class="com.anysoft.webloader.NullWebContextListener"/>
+	
+	<servlet display-name="Proxy" servlet-name="Proxy" servlet-class="com.anysoft.webloader.ServletAgent">
+		<init-param param-name="handler" param-value="com.logicbus.backend.server.http.MessageRouterServletHandler"/>
+		<init-param param-name="normalizer" param-value="com.logicbus.backend.ProxyNormalizer"/>
+		<servlet-mapping url-pattern="/proxy/*"/>
+	</servlet>
+</webapp-addons>
