@@ -1,6 +1,5 @@
 package com.logicbus.dbcp.impl;
 
-import com.anysoft.context.Context;
 import com.anysoft.context.XMLResource;
 import com.logicbus.dbcp.core.ConnectionPool;
 
@@ -12,7 +11,7 @@ import com.logicbus.dbcp.core.ConnectionPool;
  *
  * @since 1.2.9
  */
-public class XRC extends XMLResource<Context<ConnectionPool>> {
+public class XRC extends XMLResource<ConnectionPool> {
 
 	
 	public String getObjectName() {
