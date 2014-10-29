@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <source>
 	<context>
-		<call id = "aHttpCall" module="com.logicbus.remote.impl.http.HttpCall">
+		<call id = "aHttpCall" module="com.logicbus.remote.impl.simulate.Simulator">
 			<dests>
-				<dest uri="http://192.168.131.134:8090/services/anypaas/ARMQuery"/>
+				<dest uri="java:///com/logicbus/remote/demo/data/data1.json"/>
+				<dest uri="java:///com/logicbus/remote/demo/data/data2.json"/>
 			</dests>
 			<request>
 				<query>

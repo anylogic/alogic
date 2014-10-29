@@ -1,6 +1,5 @@
 package com.logicbus.remote.context;
 
-import com.anysoft.context.Context;
 import com.anysoft.context.XMLResource;
 import com.logicbus.remote.impl.http.HttpCall;
 import com.logicbus.remote.core.Call;
@@ -12,7 +11,7 @@ import com.logicbus.remote.core.Call;
  *
  * @since 1.2.9
  */
-public class XRC extends XMLResource<Context<Call>> {
+public class XRC extends XMLResource<Call> {
 
 	
 	public String getObjectName() {

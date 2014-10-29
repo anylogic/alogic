@@ -1,6 +1,5 @@
 package com.logicbus.remote.context;
 
-import com.anysoft.context.Context;
 import com.anysoft.context.Inner;
 import com.logicbus.remote.core.Call;
 import com.logicbus.remote.impl.http.HttpCall;
@@ -12,7 +11,7 @@ import com.logicbus.remote.impl.http.HttpCall;
  *
  * @since 1.2.9
  */
-public class InnerContext extends Inner<Context<Call>> {
+public class InnerContext extends Inner<Call> {
 
 	
 	public String getObjectName() {
