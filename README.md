@@ -25,3 +25,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 ### 版本
  - 1.3.0 [20141023 duanyy]
  	 + 初次发布，由anyLogicBus、anyFormula和anyWebLoader合并而来
+ 	 + 子目录alogic-ketty改名为alogic-addons(1.3.0.1)
