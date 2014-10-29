@@ -15,7 +15,7 @@
   	<module>alogic-core</module>
   	<module>alogic-jms</module>
   	<module>alogic-dbcp</module>
-  	<module>alogic-ketty</module>
+  	<module>alogic-addons</module>
   	<module>alogic-remote</module>
   	<module>alogic-together</module>
   	<module>alogic-example</module>
