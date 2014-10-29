@@ -59,6 +59,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.2.8 [20140917 duanyy] <br>
  * - Handler:handle和flush方法增加timestamp参数，以便时间同步
+ * 
+ * @version 1.3.0.1 [20141029 duanyy] <br>
+ * - 当所访问的服务不存在时，以一个统一的服务名(/core/Null)来进行日志记录
  */
 public class MessageRouter {
 	
@@ -159,7 +162,7 @@ public class MessageRouter {
 		BizLogItem item = new BizLogItem();
 		
 		item.sn = ctx.getGlobalSerial();
-		item.id = id.toString();
+		item.id = (sd != null)?id.toString():"/core/Null";
 		item.clientIP = ctx.getClientIp();
 		//当无法取到sessionId时，直接取ip(当服务找不到时)
 		item.client = sessionId != null && sessionId.length() > 0 ? sessionId : item.clientIP;
