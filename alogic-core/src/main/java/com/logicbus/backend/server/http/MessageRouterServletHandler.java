@@ -44,6 +44,10 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.2.7.2 [20140910 duanyy] <br>
  * - Normalizer降级为Servlet级别对象
+ * 
+ * @version 1.3.0.1 [20141031 duanyy] <br>
+ * - 解决问题：框架截获了post方式的body数据，导致post过来的form数据无法获取
+ * 
  */
 public class MessageRouterServletHandler implements ServletHandler {
 	/**
@@ -76,12 +80,18 @@ public class MessageRouterServletHandler implements ServletHandler {
 	 */
 	protected static String defaultAllowOrigin = "*";
 	
+	/**
+	 * 通过post方式传递参数所对应的contentType
+	 */
+	protected String formContentType = "application/x-www-form-urlencoded";
 	
 	public void init(ServletConfig servletConfig) throws ServletException {
 		Settings settings = Settings.get();
 		encoding = settings.GetValue("http.encoding", encoding);
 		defaultAllowOrigin = settings.GetValue("http.alloworigin",
 				defaultAllowOrigin);
+		formContentType = settings.GetValue("http.formContentType",
+				formContentType);
 		ac = (AccessController) settings.get("accessController");
 
 		String normalizerClass = servletConfig.getInitParameter("normalizer");
@@ -133,7 +143,7 @@ public class MessageRouterServletHandler implements ServletHandler {
 			{
 				try{
 					String _contentType = request.getContentType();
-					if (_contentType != null && _contentType.length() > 0){
+					if (_contentType != null && ! _contentType.startsWith(formContentType)){
 						doc = loadFromInputStream(doc,request.getInputStream());
 					}
 				}catch (Exception ex){
