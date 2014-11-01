@@ -50,6 +50,9 @@ import com.logicbus.backend.timer.TimerManager;
  * 
  * @version 1.2.8.1 [20140919 duanyy] <br>
  * - MetricsHandler:getInstance拆分为getClientInstance和getServerInstance
+ * 
+ * @version 1.3.0.2 [20141031 duanyy] <br>
+ * - 增加全局配置文件，变量名为settings.global.master和settings.global.secondary
  */
 public class LogicBusApp implements WebApp {
 	/**
@@ -180,11 +183,20 @@ public class LogicBusApp implements WebApp {
 		}
 		settings.registerObject("ResourceFactory", resourceFactory);
 		
-		//先装入扩展的配置文件
+		//装入全局配置文件
+		String globalProfile = settings.GetValue("settings.global.master", "");
+		String globalSecondaryProfile = settings.GetValue("settings.global.secondary","");
+		if (globalProfile != null && globalProfile.length() > 0){
+			logger.info("Load global xml settings");
+			logger.info("Url = " + globalProfile);
+			settings.addSettings(globalProfile, globalSecondaryProfile, resourceFactory);
+			logger.info("Load global xml settings..OK!");
+		}
+		
+		//装入扩展的配置文件
 		String extProfile = settings.GetValue("settings.ext.master", "");
 		String extSecondaryProfile = settings.GetValue("settings.ext.secondary", "");
-		if (extProfile != null && extProfile.length() > 0 
-				&& extSecondaryProfile != null && extSecondaryProfile.length() > 0){
+		if (extProfile != null && extProfile.length() > 0){
 			logger.info("Load ext xml settings");
 			logger.info("Url = " + extProfile);
 			settings.addSettings(extProfile,extSecondaryProfile,resourceFactory);
