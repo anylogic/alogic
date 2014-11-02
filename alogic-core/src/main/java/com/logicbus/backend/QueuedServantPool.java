@@ -44,6 +44,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.2.9.2 [20141017 duanyy]
  *  - 修改ServantStat模型
  *  
+ * @version 1.3.0.3 [20141102 duanyy]
+ *  - 修正bug:服务统计的统计口径问题
+ *  
  */
 public class QueuedServantPool extends QueuedPool<Servant> implements ServantPool{
 	/**
@@ -168,7 +171,7 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 	public void visited(long duration,String code){
 		lockStat.lock();
 		try{
-			m_stat.count(duration,code.equals("core.ok"));
+			m_stat.count(duration,!code.equals("core.ok"));
 		}finally{
 			lockStat.unlock();
 		}
