@@ -14,9 +14,15 @@ import com.anysoft.util.BaseException;
  * @author duanyy
  * @since 1.2.5
  * 
+ * @version 1.3.0.2 [20141106 duanyy] <br>
+ * - List,Map等类采用泛型 <br>
  */
 public class Update extends DBOperation {
 
+	/**
+	 * 通过一个Connection构造
+	 * @param _conn a valid connection
+	 */
 	public Update(Connection _conn) {
 		super(_conn);
 	}
@@ -40,7 +46,6 @@ public class Update extends DBOperation {
 			
 			if (params != null){
 				for (int i = 0 ; i < params.length ; i ++){
-					System.out.println();
 					stmt.setObject(i + 1, params[i]);
 				}
 			}

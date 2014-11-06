@@ -27,13 +27,17 @@ import com.logicbus.dbcp.util.ConnectionPoolStat;
  * 
  * @since 1.2.9
  * 
- * @version 1.2.9.1 [20141017 duanyy]
- * - ConnectionPool有更新
- * - 实现Reportable接口
- * - ConnectionPoolStat模型更新
+ * @version 1.2.9.1 [20141017 duanyy] <br>
+ * - ConnectionPool有更新 <br>
+ * - 实现Reportable接口 <br>
+ * - ConnectionPoolStat模型更新 <br>
  * 
- * @version 1.2.9.3 [20141022 duanyy]
- * - 增加对读写分离的支持
+ * @version 1.2.9.3 [20141022 duanyy] <br>
+ * - 增加对读写分离的支持 <br>
+ * 
+ * @version 1.3.0.2 [20141106 duanyy] <br>
+ * - 读写分离功能存在bug，暂时取消
+ * 
  */
 abstract public class AbstractConnectionPool extends QueuedPool2<Connection> implements ConnectionPool{
 	protected Counter stat = null;
@@ -59,6 +63,8 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 			
 			loadBalance = f.newInstance(lbModule, props);
 		}
+		
+		super.create(props);
 	}
 	
 	protected Counter createCounter(Properties p){
@@ -86,7 +92,7 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 			// stat
 			if (stat != null){
 				Element _stat = doc.createElement("stat");
-				super.report(_stat);
+				stat.report(_stat);
 				xml.appendChild(_stat);
 			}
 		}
@@ -104,7 +110,7 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 			
 			if (stat != null){
 				Map<String,Object> _stat = new HashMap<String,Object>();
-				super.report(_stat);
+				stat.report(_stat);
 				json.put("stat", _stat);
 			}
 		}
@@ -119,7 +125,7 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 	public Connection getConnection(int timeout, boolean enableRWS) {
 		Connection conn = null;
 		if (enableRWS){
-			conn = selectReadSource(timeout);
+			//conn = selectReadSource(timeout);
 		}
 		
 		if (conn == null){

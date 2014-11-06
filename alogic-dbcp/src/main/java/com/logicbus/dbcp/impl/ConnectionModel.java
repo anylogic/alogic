@@ -27,6 +27,9 @@ import com.anysoft.util.XmlTools;
  * @author duanyy
  * @since 1.2.9
  * 
+ * @version 1.3.0.2 [20141106 duanyy] <br>
+ * - 从XML的id属性中获取name <br>
+ * 
  */
 public class ConnectionModel implements Cacheable{
 	/**
@@ -152,7 +155,7 @@ public class ConnectionModel implements Cacheable{
 	public List<ReadOnlySource> getReadOnlySources(){return readonlys;}
 	
 	public void report(Element e){
-		e.setAttribute("name", name);
+		e.setAttribute("id", name);
 		e.setAttribute("driver", driver);
 		e.setAttribute("url", url);
 		e.setAttribute("username", username);
@@ -179,7 +182,7 @@ public class ConnectionModel implements Cacheable{
 	}
 	
 	public void report(Map<String,Object> json){
-		JsonTools.setString(json, "name",name);
+		JsonTools.setString(json, "id",name);
 		JsonTools.setString(json, "driver",driver);
 		JsonTools.setString(json, "url",url);
 		JsonTools.setString(json, "username", username);
@@ -213,7 +216,7 @@ public class ConnectionModel implements Cacheable{
 	public void fromXML(Element e) {
 		XmlElementProperties props = new XmlElementProperties(e,null);
 		
-		name = PropertiesConstants.getString(props,"name", "");
+		name = PropertiesConstants.getString(props,"id", "");
 		driver = PropertiesConstants.getString(props, "driver", "");
 		url = PropertiesConstants.getString(props, "url", "");
 		username = PropertiesConstants.getString(props, "username","");
@@ -249,7 +252,7 @@ public class ConnectionModel implements Cacheable{
 
 	
 	public void fromJson(Map<String,Object> json) {
-		name = JsonTools.getString(json, "name", "");
+		name = JsonTools.getString(json, "id", "");
 		driver = JsonTools.getString(json, "driver", "");
 		url = JsonTools.getString(json, "url", "");
 		username = JsonTools.getString(json, "username", "");

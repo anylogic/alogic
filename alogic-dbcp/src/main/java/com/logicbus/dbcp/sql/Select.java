@@ -18,6 +18,8 @@ import com.anysoft.util.BaseException;
  * @author duanyy
  * @since 1.2.5
  * 
+ * @version 1.3.0.2 [20141106 duanyy] <br>
+ * - List,Map等类采用泛型 <br>
  */
 public class Select extends DBOperation {
 
@@ -79,8 +81,7 @@ public class Select extends DBOperation {
 	 * @return
 	 * @throws SQLException
 	 */
-	@SuppressWarnings({ "rawtypes"})
-	public Map singleRow()throws BaseException{
+	public Map<String,Object> singleRow()throws BaseException{
 		return singleRow(null);
 	}	
 
@@ -92,12 +93,11 @@ public class Select extends DBOperation {
 	 * @throws SQLException
 	 * @since 1.2.0
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public Map singleRow(Map result)throws BaseException{
+	public Map<String,Object> singleRow(Map<String,Object> result)throws BaseException{
 		try {
 			if (rs != null && rs.next()){
 				if (result == null)
-				result = new HashMap();
+				result = new HashMap<String,Object>();
 				
 				ResultSetMetaData metadata = rs.getMetaData();
 				int columnCount = metadata.getColumnCount();
@@ -168,8 +168,7 @@ public class Select extends DBOperation {
 	 * @return
 	 * @throws SQLException
 	 */
-	@SuppressWarnings("rawtypes")
-	public List result()throws BaseException{
+	public List<Object> result()throws BaseException{
 		InnerRowListner data = new InnerRowListner();
 		result(data);
 		return data.getResult();
@@ -187,28 +186,23 @@ public class Select extends DBOperation {
 	 *
 	 */
 	public static class InnerRowListner implements RowListener{
-		@SuppressWarnings("rawtypes")
-		protected ArrayList result = new ArrayList();
-		@SuppressWarnings("rawtypes")
-		public List getResult(){
+		protected ArrayList<Object> result = new ArrayList<Object>();
+
+		public List<Object> getResult(){
 			return result;
 		}
-		@SuppressWarnings("rawtypes")
-		
-		public Object rowStart(int column) {
-			return new HashMap(5);
-		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public Object rowStart(int column) {
+			return new HashMap<String,Object>(5);
+		}
 		
 		public void columnFound(Object cookies,int columnIndex, String name, Object value) {
 			if (value != null){
+				@SuppressWarnings({ "unchecked", "rawtypes" })
 				Map<String, Object> map = (Map)cookies;
 				map.put(name, value);
 			}
 		}
-
-		@SuppressWarnings("unchecked")
 		
 		public void rowEnd(Object cookies) {
 			result.add(cookies);
