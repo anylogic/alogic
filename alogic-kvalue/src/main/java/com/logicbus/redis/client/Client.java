@@ -5,13 +5,15 @@ import java.lang.reflect.Constructor;
 import com.anysoft.pool.CloseAware;
 import com.anysoft.pool.PooledCloseable;
 import com.logicbus.redis.util.RedisException;
-import com.logicbus.redis.util.SafeEncoder;
 
 
 /**
  * Redis客户端
  * @author duanyy
  *
+ * @version 1.0.0.1 [20141106 duanyy] <br>
+ * - 修正设置index或password之后死循环的bug. <br>
+ * 
  */
 public class Client extends Connection implements PooledCloseable<Client>{
 	
@@ -117,39 +119,6 @@ public class Client extends Connection implements PooledCloseable<Client>{
 	public void unregister(CloseAware<Client> listener) {
 		closeAware = null;
 	}		
-	
-	private static final byte [] CMD_AUTH = SafeEncoder.encode("AUTH");
-	
-	/**
-	 * to authenticate to the server
-	 * @param pwd password
-	 */
-	protected void auth(final String pwd){
-		sendCommand(CMD_AUTH,pwd).getStatusCodeReply();
-	}
-	
-	private static final byte [] CMD_QUIT = SafeEncoder.encode("QUIT");
-	
-	/**
-	 * to ask the server to close the connection
-	 */
-	protected void quit(){
-		try{
-			sendCommand(CMD_QUIT).getStatusCodeReply();
-		}catch (Throwable t){
-			
-		}
-	}
-	
-	private static final byte [] CMD_SELECT = SafeEncoder.encode("SELECT");
-	
-	/**
-	 * to change the selected database for the current connection
-	 * @param dbIndex
-	 */
-	public void select(int dbIndex){
-		sendCommand(CMD_SELECT, SafeEncoder.encode(dbIndex)).getStatusCodeReply();
-	}
 	
 	/**
 	 * to create a toolkit using clazz

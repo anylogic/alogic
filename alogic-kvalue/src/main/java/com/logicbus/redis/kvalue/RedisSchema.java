@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.anysoft.context.Holder.TheFactory;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
@@ -24,7 +25,9 @@ import com.logicbus.redis.context.RedisSource;
  * 基于Redis的KVDB Schema
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.0.0.1 [20141106 duanyy] <br>
+ * - 将Context实现改为通用的配置环境实现. <br>
  */
 public class RedisSchema implements Schema {
 	/**
@@ -54,7 +57,8 @@ public class RedisSchema implements Schema {
 		Element sourceElement = XmlTools.getFirstElementByTagName(_e, "redis.source");
 		if (sourceElement != null){
 			try {
-				source = RedisSource.newInstance(sourceElement, p);
+				TheFactory<RedisContext> factory = new TheFactory<RedisContext>();
+				source = factory.newInstance(sourceElement, p);
 			}catch (Exception ex){
 				logger.error("Can not create RedisSource instance,check your xml");
 			}

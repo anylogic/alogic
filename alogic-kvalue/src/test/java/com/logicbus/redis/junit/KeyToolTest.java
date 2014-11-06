@@ -92,7 +92,7 @@ public class KeyToolTest {
 
 	@Test
 	public void testKeys() {
-		Client client = new Client(redisHost, redisPort);
+		Client client = new Client(redisHost, redisPort,1);
 		try {
 			StringTool tool = (StringTool) client.getToolKit(StringTool.class);
 			tool.mset("one","1","two","2","three","3","four","4");

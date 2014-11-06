@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kvdb>
-	<source>
+	<context>
 		<schema id="redis" module="com.logicbus.redis.kvalue.RedisSchema">
-			<redis.source module="com.logicbus.redis.context.impl.Inner">
-				<rcp id = "redis0" host="192.168.150.101" port="6379" defaultDB="0" maxIdle="2" maxActive="10"/>
-				<rcp id = "redis1" host="192.168.150.101" port="6379" defaultDB="1" maxIdle="2" maxActive="10"/>
-				<rcp id = "redis2" host="192.168.150.101" port="6379" defaultDB="2" maxIdle="2" maxActive="10"/>
-				<rcp id = "redis3" host="192.168.150.101" port="6379" defaultDB="3" maxIdle="2" maxActive="10"/>
-				<rcp id = "redis4" host="192.168.150.101" port="6379" defaultDB="4" maxIdle="3" maxActive="10"/>
+			<redis.source module="com.logicbus.redis.context.InnerContext">
+				<rcp id = "redis0" host="192.168.150.101" port="6379" defaultDB="1" maxIdle="2" maxActive="10"/>
+				<rcp id = "redis1" host="192.168.150.101" port="6379" defaultDB="2" maxIdle="2" maxActive="10"/>
+				<rcp id = "redis2" host="192.168.150.101" port="6379" defaultDB="3" maxIdle="2" maxActive="10"/>
+				<rcp id = "redis3" host="192.168.150.101" port="6379" defaultDB="4" maxIdle="2" maxActive="10"/>
+				<rcp id = "redis4" host="192.168.150.101" port="6379" defaultDB="5" maxIdle="3" maxActive="10"/>
 			</redis.source>
 			<redis.tables>
 				<table name="str_test" possessive="true" dataType="String">
@@ -55,5 +55,5 @@
 				</table>						
 			</redis.tables>
 		</schema>
-	</source>
+	</context>
 </kvdb>

@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
+import com.anysoft.util.Settings;
 import com.logicbus.kvalue.context.KValueSource;
 import com.logicbus.kvalue.core.Schema;
 import com.logicbus.kvalue.core.StringRow;
@@ -15,11 +16,11 @@ public class KeyToolTest {
 
 	@Test
 	public void testDelete() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");
@@ -41,11 +42,11 @@ public class KeyToolTest {
 
 	@Test
 	public void testExists() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");
@@ -68,11 +69,11 @@ public class KeyToolTest {
 
 	@Test
 	public void testType() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");
@@ -90,11 +91,11 @@ public class KeyToolTest {
 
 	@Test
 	public void testTtlLongTimeUnit() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");
@@ -115,11 +116,11 @@ public class KeyToolTest {
 
 	@Test
 	public void testTtlAt() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");
@@ -140,11 +141,11 @@ public class KeyToolTest {
 
 	@Test
 	public void testTtl() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");
@@ -166,11 +167,11 @@ public class KeyToolTest {
 
 	@Test
 	public void testPersist() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");

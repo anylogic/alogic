@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.anysoft.util.Settings;
 import com.logicbus.kvalue.context.KValueSource;
 import com.logicbus.kvalue.core.BitRow;
 import com.logicbus.kvalue.core.Schema;
@@ -13,11 +14,11 @@ public class BitRowTest {
 
 	@Test
 	public void test() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("bit_test");

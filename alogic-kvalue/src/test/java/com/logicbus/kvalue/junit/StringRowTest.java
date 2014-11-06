@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.anysoft.util.Settings;
 import com.logicbus.kvalue.context.KValueSource;
 import com.logicbus.kvalue.core.Schema;
 import com.logicbus.kvalue.core.StringRow;
@@ -13,11 +14,11 @@ public class StringRowTest {
 
 	@Test
 	public void testSetString() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");
@@ -62,11 +63,11 @@ public class StringRowTest {
 
 	@Test
 	public void testGet() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");
@@ -90,11 +91,11 @@ public class StringRowTest {
 
 	@Test
 	public void testSetRange() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");
@@ -118,11 +119,11 @@ public class StringRowTest {
 
 	@Test
 	public void testAppend() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");
@@ -142,11 +143,11 @@ public class StringRowTest {
 
 	@Test
 	public void testStrlen() {
-		KValueSource kvdbSource = KValueSource.get();
-		
-		Schema schema = null;
 		try {
-			schema = kvdbSource.getSchema("redis");
+			Settings settings = Settings.get();
+			settings.SetValue("kvalue.master", "java:///com/logicbus/kvalue/context/kvalue.xml");
+			
+			Schema schema = KValueSource.getSchema("redis");
 			assertFalse(schema == null);
 			
 			Table table = schema.getTable("str_test");

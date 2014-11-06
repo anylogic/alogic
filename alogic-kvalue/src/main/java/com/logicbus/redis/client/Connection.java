@@ -17,6 +17,8 @@ import com.logicbus.redis.util.SafeEncoder;
  * 到Redis服务端的连接
  * 
  * @author duanyy
+ * @version 1.0.0.1 [20141106 duanyy] <br>
+ * - 修正设置index或password之后死循环的bug. <br>
  * 
  */
 public class Connection implements AutoCloseable {
@@ -213,6 +215,42 @@ public class Connection implements AutoCloseable {
 	
 	public void close() throws Exception {
 		disconnect();
+	}
+	
+	private static final byte [] CMD_AUTH = SafeEncoder.encode("AUTH");
+	
+	/**
+	 * to authenticate to the server
+	 * @param pwd password
+	 */
+	protected void auth(final String pwd){
+		Protocol.sendCommand(outputStream, CMD_AUTH, SafeEncoder.encode(pwd));
+		getStatusCodeReply();
+	}
+	
+	private static final byte [] CMD_QUIT = SafeEncoder.encode("QUIT");
+	
+	/**
+	 * to ask the server to close the connection
+	 */
+	protected void quit(){
+		try{
+			Protocol.sendCommand(outputStream, CMD_QUIT);
+			getStatusCodeReply();
+		}catch (Throwable t){
+			
+		}
+	}
+	
+	private static final byte [] CMD_SELECT = SafeEncoder.encode("SELECT");
+	
+	/**
+	 * to change the selected database for the current connection
+	 * @param dbIndex
+	 */
+	public void select(int dbIndex){
+		Protocol.sendCommand(outputStream, CMD_SELECT, SafeEncoder.encode(dbIndex));
+		getStatusCodeReply();
 	}
 	
 	protected String getStatusCodeReply() {
