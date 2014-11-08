@@ -14,3 +14,4 @@ alogic-addons是alogic附加的定制包，对alogic-core各项功能进行了�
  - 1.3.0 [20141023 duanyy]
  	 + 初次发布，由anyLogicBus、anyFormula和anyWebLoader合并而来
  	 + 采用alogic-remote组件来实现metrics对外输出插件(1.3.0.1)
+ 	 + Services:增加KValueReport服务(1.3.0.2)

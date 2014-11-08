@@ -262,6 +262,20 @@
 			</properties>		
 		</service>		
 		<service 
+			id="KValueReport" 
+			name="KValueReport" 
+			note="KValue使用报告"
+			visible="public"
+			log = "none" 
+			module="com.logicbus.service.KValueReport"
+		>
+			<properties>
+				<parameter id="jsonDefault" value="true"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>		
+		</service>			
+		<service 
 			id="SettingsQuery" 
 			name="SettingsQuery" 
 			note="查询节点的环境变量"
