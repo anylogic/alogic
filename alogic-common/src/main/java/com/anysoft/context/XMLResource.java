@@ -114,6 +114,10 @@ abstract public class XMLResource<object extends Reportable> implements Context<
 			xml.setAttribute("xrc.master", configFile);
 			xml.setAttribute("xrc.secondary", secondaryConfigFile);
 			xml.setAttribute("objCnt", String.valueOf(holder != null ? holder.getObjectCnt():0));
+			
+			if (holder != null && holder.getObjectCnt() > 0){
+				holder.report(xml);
+			}
 		}
 	}
 	
@@ -127,6 +131,10 @@ abstract public class XMLResource<object extends Reportable> implements Context<
 			json.put("xrc.master", configFile);
 			json.put("xrc.secondary", secondaryConfigFile);
 			json.put("objCnt", String.valueOf(holder != null ? holder.getObjectCnt():0));
+			
+			if (holder != null && holder.getObjectCnt() > 0){
+				holder.report(json);
+			}
 		}
 	}
 }

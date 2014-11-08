@@ -202,13 +202,9 @@ abstract public class Source<object extends Reportable> implements Context<objec
 				Enumeration<String> _keys = caches.keys();
 				
 				while (_keys.hasMoreElements()){
-					String key = _keys.nextElement();
-					object obj = caches.get(key);
-					
+					String key = _keys.nextElement();					
 					Element _cache = doc.createElement("cache");
-					
-					obj.report(_cache);
-					
+					_cache.setAttribute("id", key);
 					_caches.appendChild(_cache);
 				}
 				
@@ -245,12 +241,9 @@ abstract public class Source<object extends Reportable> implements Context<objec
 				Enumeration<String> _keys = caches.keys();
 				while (_keys.hasMoreElements()){
 					String key = _keys.nextElement();
-					object obj = caches.get(key);
-					
+				
 					Map<String,Object> _cache = new HashMap<String,Object>();
-					
-					obj.report(_cache);
-					
+					_cache.put("id", key);
 					_caches.add(_cache);
 				}
 				

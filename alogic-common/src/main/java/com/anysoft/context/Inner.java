@@ -18,8 +18,11 @@ import com.anysoft.util.Watcher;
  * 
  * @since 1.5.0
  * 
- * @version 1.5.2 [20141017 duanyy]
- * - 实现Reportable接口
+ * @version 1.5.2 [20141017 duanyy] <br>
+ * - 实现Reportable接口 <br>
+ * 
+ * @version 1.6.0.2 [20141108 duanyy] <br>
+ * - 优化Reportable实现，输出所持有的对象信息 <br>
  */
 abstract public class Inner<object extends Reportable> implements Context<object> {
 	
@@ -66,6 +69,10 @@ abstract public class Inner<object extends Reportable> implements Context<object
 			xml.setAttribute("objName", getObjectName());
 			
 			xml.setAttribute("objCnt", String.valueOf(holder != null ? holder.getObjectCnt():0));
+			
+			if (holder != null && holder.getObjectCnt() > 0){
+				holder.report(xml);
+			}
 		}
 	}
 	
@@ -77,6 +84,10 @@ abstract public class Inner<object extends Reportable> implements Context<object
 			json.put("objName", getObjectName());
 			
 			json.put("objCnt", String.valueOf(holder != null ? holder.getObjectCnt():0));
+			
+			if (holder != null && holder.getObjectCnt() > 0){
+				holder.report(json);
+			}
 		}
 	}
 }
