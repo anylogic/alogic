@@ -1,10 +1,15 @@
 package com.logicbus.redis.kvalue;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -28,6 +33,10 @@ import com.logicbus.redis.context.RedisSource;
  * 
  * @version 1.0.0.1 [20141106 duanyy] <br>
  * - 将Context实现改为通用的配置环境实现. <br>
+ * 
+ * @version 1.0.0.2 [20141108 duanyy] <br>
+ * - 补充Reportable实现. <br>
+ * 
  */
 public class RedisSchema implements Schema {
 	/**
@@ -35,21 +44,53 @@ public class RedisSchema implements Schema {
 	 */
 	protected final static Logger logger = LogManager.getLogger(RedisSchema.class);
 	
+	/**
+	 * the id of the schema
+	 */
 	protected String id;
-	
+			
+	/**
+	 * 内置的RedisContext
+	 */
 	protected RedisContext source = null;
+	
+	/**
+	 * 全局的RedisContext
+	 */
 	protected RedisContext globalSource = null;
 	
+	/**
+	 * Schema所包含的table列表
+	 */
 	protected Hashtable<String,RedisTable> tables = new Hashtable<String,RedisTable>();
 	
-	
+	/**
+	 * 关闭Schema
+	 * 
+	 * <br>
+	 * 主要关闭自身内置的RedisContext
+	 */
 	public void close() throws Exception {
 		IOTools.close(source);
 	}
 	
+	/**
+	 * 获取所拥有的RedisContext
+	 * 
+	 * @return 如果没有内置的Context,则返回全局的Redis Source
+	 */
 	public RedisContext getRedisSource(){return source != null ? source : globalSource;}
 
-	
+	/**
+	 * 装入配置
+	 * 
+	 * <br>
+	 * Schema的配置信息全部定义在XML节点中。
+	 * 
+	 * @param _e XML节点
+	 * @param _properties 环境变量集
+	 * 
+	 */
 	public void configure(Element _e, Properties _properties)
 			throws BaseException {
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
@@ -93,27 +134,92 @@ public class RedisSchema implements Schema {
 		create(p);
 	}
 
-	
+	/**
+	 * 报告到XML
+	 * 
+	 * @param xml XML节点
+	 */
 	public void report(Element xml) {
-
+		if (xml != null){
+			xml.setAttribute("id", id);
+			xml.setAttribute("module",getClass().getName());
+			
+			Document doc = xml.getOwnerDocument();
+			if (source != null){
+				Element _redisSource = doc.createElement("redis.source");				
+				source.report(_redisSource);
+				xml.appendChild(_redisSource);
+			}
+			
+			if (tables != null && tables.size() > 0){
+				Element _redisTables = doc.createElement("redis.tables");
+				
+				Enumeration<RedisTable> iterator = tables.elements();
+				
+				while (iterator.hasMoreElements()){
+					RedisTable table = iterator.nextElement();
+					Element _table = doc.createElement("table");
+					table.report(_table);
+					_redisTables.appendChild(_table);
+				}
+				
+				xml.appendChild(_redisTables);
+			}
+		}
 	}
 
-	
+	/**
+	 * 报告到JSON
+	 * 
+	 * @param json JSON节点
+	 */
 	public void report(Map<String, Object> json) {
-
+		if (json != null){
+			json.put("id", id);
+			json.put("module",getClass().getName());
+			
+			if (source != null){
+				Map<String,Object> _redisSource = new HashMap<String,Object>();
+				source.report(_redisSource);
+				json.put("redis.source", _redisSource);
+			}
+			
+			if (tables != null && tables.size() > 0){
+				List<Object> _redisTables = new ArrayList<Object>();
+				
+				Enumeration<RedisTable> iterator = tables.elements();
+				while (iterator.hasMoreElements()){
+					RedisTable table = iterator.nextElement();
+					
+					Map<String,Object> _table = new HashMap<String,Object>();
+					table.report(_table);
+					_redisTables.add(_table);
+				}
+				json.put("redis.tables", _redisTables);
+			}
+		}
 	}
 
-	
+	/**
+	 * to get id
+	 */
 	public String getId() {
 		return id;
 	}
 
-	
+	/**
+	 * 通过变量集创建实例
+	 */
 	public void create(Properties props) throws BaseException {
 		id = PropertiesConstants.getString(props, "id", "", true);
 	}
 
-	
+	/**
+	 * 获取指定的Table
+	 * 
+	 * @param name table名
+	 * @return Table实例 ，如果没有table没有定义，返回为空
+	 */
 	public Table getTable(String name) {
 		return tables.get(name);
 	}
