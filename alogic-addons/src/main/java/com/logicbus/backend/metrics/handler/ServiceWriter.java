@@ -24,6 +24,9 @@ import com.logicbus.remote.client.Parameter;
  * 
  * @author duanyy
  * @since 1.2.8
+ * 
+ * @version 1.3.0.3 [20141111 duanyy] <br>
+ * - 从server.ip变量中获取本机IP <br>
  */
 public class ServiceWriter extends SummaryWriter {
 
@@ -57,7 +60,7 @@ public class ServiceWriter extends SummaryWriter {
 		
 			if (host == null){
 				Settings settings = Settings.get();
-				host = settings.GetValue("host", "${server.host}:${server.port}");
+				host = settings.GetValue("host", "${server.ip}:${server.port}");
 			}
 			for (Fragment item:values){
 				Map<String,Object> map = new HashMap<String,Object>(5);

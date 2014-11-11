@@ -28,6 +28,8 @@ import com.logicbus.remote.core.Parameters;
  * 
  * @author duanyy
  *
+ * @version 1.3.0.3 [20141111 duanyy] <br>
+ * - 从server.ip变量中获取本机IP <br>
  */
 public class RemoteWriter extends SummaryWriter {
 
@@ -44,7 +46,7 @@ public class RemoteWriter extends SummaryWriter {
 				
 					Settings settings = Settings.get();
 					if (host == null){
-						host = settings.GetValue("host", "${server.host}:${server.port}");
+						host = settings.GetValue("host", "${server.ip}:${server.port}");
 					}
 					if (app == null){
 						app = settings.GetValue("app", "${server.app}");
