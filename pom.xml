@@ -20,6 +20,18 @@
   	<module>alogic-example</module>
   	<module>alogic-kvalue</module>
   </modules>
+   <distributionManagement>  
+  <repository>  
+    <id>releases</id>  
+    <name>Internal Releases</name>  
+    <url>http://10.128.96.9:8080/content/repositories/releases</url>  
+  </repository>  
+  <snapshotRepository>  
+    <id>snapshots</id>  
+    <name>Internal Snapshots</name>  
+    <url>http://10.128.96.9:8080/content/repositories/snapshots</url>  
+  </snapshotRepository>  
+</distributionManagement>  
   <groupId>com.github.alogic</groupId>
   <build>
   	<plugins>

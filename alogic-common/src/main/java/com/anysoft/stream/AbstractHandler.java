@@ -24,11 +24,14 @@ import com.anysoft.util.XmlElementProperties;
  * @author duanyy
  * @since 1.4.0
  * 
- * @version 1.4.3 [20140903 duanyy]
- * - 增加pause,resume实现
+ * @version 1.4.3 [20140903 duanyy] <br>
+ * - 增加pause,resume实现  <br>
  * 
- * @version 1.4.4 [20140917 duanyy]
- * - Handler:handle和flush方法增加timestamp参数，以便进行时间同步
+ * @version 1.4.4 [20140917 duanyy] <br>
+ * - Handler:handle和flush方法增加timestamp参数，以便进行时间同步 <br>
+ * 
+ * @version 1.6.0.3 [20141114 duanyy] <br>
+ * - 修正队列可能为空的异常 <br>
  */
 abstract public class AbstractHandler<data extends Flowable> implements Handler<data> {
 	/**
@@ -353,8 +356,10 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 				if (currentQueueLength > maxQueueLength){
 					//如果缓冲区满了，同步处理
 					data item = queue.poll();
-					handler.onHandle(item,timestamp);
-					currentQueueLength --;
+					if (item != null){
+						handler.onHandle(item,timestamp);
+						currentQueueLength --;
+					}
 				}
 			}
 		}
