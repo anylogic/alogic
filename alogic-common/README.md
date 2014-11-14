@@ -141,5 +141,6 @@ A framework which help you download your web library and load web context.
 	+ webloader:增加WebAppMain,替代WebAppContextListener,可加载附加的ServletContextListener和Servlet(1.6.0.1)
 	+ Context:改进Reportable实现(1.6.0.2)
 	+ AbstractHandler:修正队列可能为空的异常(1.6.0.3)
+	+ CommandLine:如果参数值为空，设置为true(1.6.0.4)
 	
 	

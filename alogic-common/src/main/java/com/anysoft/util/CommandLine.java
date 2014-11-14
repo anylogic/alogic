@@ -9,6 +9,8 @@ package com.anysoft.util;
  * ~~~~~~~~~~~~~~~~~~~~~
  * @author duanyy
  *
+ * @version 1.6.0.4 [20141114 duanyy] <br>
+ * - 如果参数值为空，设置为true <br>
  */
 public class CommandLine extends DefaultProperties {
 	
@@ -43,7 +45,15 @@ public class CommandLine extends DefaultProperties {
 			if (__index >= 0){
 		         String __name = __cmd.substring(0,__index);
 		         String __value = __cmd.substring(__index + 1,__cmd.length());
-		         SetValue(__name,__value);
+		         if (__name != null && __name.length() > 0){
+		        	 if (__value != null && __value.length() > 0){
+		        		 SetValue(__name, __value);
+		        	 }else{
+		        		 SetValue(__name, "true");
+		        	 }
+		         }
+			}else{
+				SetValue(__cmd, "true");
 			}
 		}
 	}
