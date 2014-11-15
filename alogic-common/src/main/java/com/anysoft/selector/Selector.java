@@ -23,6 +23,9 @@ import com.anysoft.util.XmlElementProperties;
  * @author duanyy
  * @since 1.5.2
  * 
+ * @version 1.6.0.5 [20141115 duanyy] <br>
+ * - 增加方法{@link #newInstanceWithDefault(Element, Properties, String)} <br>
+ * 
  */
 abstract public class Selector implements XMLConfigurable {
 	
@@ -38,7 +41,7 @@ abstract public class Selector implements XMLConfigurable {
 
 	/**
 	 * to get the id
-	 * @return
+	 * @return the id
 	 */
 	public String getId() {
 		return id;
@@ -51,7 +54,7 @@ abstract public class Selector implements XMLConfigurable {
 
 	/**
 	 * to get the default value
-	 * @return 
+	 * @return the default value
 	 */
 	public String getDefaultValue() {
 		return defaultValue;
@@ -64,7 +67,7 @@ abstract public class Selector implements XMLConfigurable {
 
 	/**
 	 * 是否OK
-	 * @return
+	 * @return 是否OK
 	 */
 	public boolean isOk() {
 		return id.length() > 0;
@@ -117,8 +120,8 @@ abstract public class Selector implements XMLConfigurable {
 
 	/**
 	 * 从{@link com.anysoft.formula.DataProvider DataProvider}中获取字段值
-	 * @param _dataProvider
-	 * @return
+	 * @param _dataProvider 变量提供者
+	 * @return 计算之后的value
 	 */
 	public String select(DataProvider _dataProvider) {
 		long before = System.nanoTime();
@@ -148,7 +151,7 @@ abstract public class Selector implements XMLConfigurable {
 	/**
 	 * Select事件处理
 	 * @param _dataProvider
-	 * @return
+	 * @return 计算之后的value
 	 */
 	public abstract String onSelect(DataProvider _dataProvider);
 	
@@ -161,7 +164,7 @@ abstract public class Selector implements XMLConfigurable {
 	 * 创建实例
 	 * @param e 配置XML节点
 	 * @param p 环境变量
-	 * @return
+	 * @return Selector实例
 	 */
 	public static Selector newInstance(Element e,Properties p){
 		return theFactory.newInstance(e, p,"selector");
@@ -169,10 +172,27 @@ abstract public class Selector implements XMLConfigurable {
 	
 	/**
 	 * 创建实例
+	 * 
+	 * <p>
+	 * 通过XML配置节点和环境变量创建实例。当XML文档中的selector属性没有指定的时候，使用缺省的类dftClass来创建。
+	 * 
+	 * @param e XML配置节点
+	 * @param p 环境变量
+	 * @param dftClass 缺省的类名
+	 * @return Selector实例
+	 * 
+	 * @since 1.6.0.5
+	 */
+	public static Selector newInstanceWithDefault(Element e,Properties p,String dftClass){
+		return theFactory.newInstance(e, p, "selector", dftClass);
+	}
+	
+	/**
+	 * 创建实例
 	 * @param e 
 	 * @param p
 	 * @param preferredClass 指定的类名
-	 * @return
+	 * @return Selector实例
 	 * 
 	 * @since 1.2.8.1
 	 */
@@ -186,7 +206,6 @@ abstract public class Selector implements XMLConfigurable {
 	 * 工厂类
 	 * 
 	 * @author duanyy
-	 * @version 3.0.0
 	 * 
 	 */
 	public static class TheFactory extends Factory<Selector>{

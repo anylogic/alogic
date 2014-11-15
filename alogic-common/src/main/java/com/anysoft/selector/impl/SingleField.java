@@ -15,12 +15,14 @@ import com.anysoft.selector.Selector;
  * @author duanyy
  * @since 1.5.2
  * 
+ * @version 1.6.0.5 [20141114 duanyy] <br>
+ * - 如果没有定义selector-field属性，则取selector-id属性.<br>
  */
 public class SingleField extends Selector {
 
 	
 	public void onConfigure(Element _e, Properties _p) throws BaseException {
-		fieldName = PropertiesConstants.getString(_p, "selector-field", "",true);
+		fieldName = PropertiesConstants.getString(_p, "selector-field", id,true);
 	}
 
 	

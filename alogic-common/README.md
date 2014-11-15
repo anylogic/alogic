@@ -142,5 +142,7 @@ A framework which help you download your web library and load web context.
 	+ Context:改进Reportable实现(1.6.0.2)
 	+ AbstractHandler:修正队列可能为空的异常(1.6.0.3)
 	+ CommandLine:如果参数值为空，设置为true(1.6.0.4)
+	+ SingleField:如果没有定义selector-field属性，则取selector-id属性(1.6.0.5)
+	+ Selector:增加方法newInstanceWithDefault(Element, Properties, String)(1.6.0.5)
 	
 	
