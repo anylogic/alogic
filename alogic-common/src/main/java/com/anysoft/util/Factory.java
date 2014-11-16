@@ -48,7 +48,6 @@ public class Factory<object> {
 	 * @param _properties 所需的变量集
 	 * @return 对象实例
 	 * @throws BaseException 
-	 * @see {@link #newInstance(Element, Properties, String)}
 	 */
 	public object newInstance(Element _xml,Properties _properties) throws BaseException{
 		return newInstance(_xml,_properties,"module");
@@ -88,7 +87,7 @@ public class Factory<object> {
 	 * @param _properties 所需的变量集
 	 * @param moduleAttr 表示module属性的属性名称
 	 * @param dftClass 缺省的类
-	 * @return
+	 * @return object
 	 * @throws BaseException
 	 * 
 	 * @since 1.3.5

@@ -22,7 +22,6 @@ public class JavaResourceLoader implements ResourceLoader {
 	 * @param _context 上下文
 	 * @return 输入流实例
 	 * @throws BaseException 当URL中不包含路径时抛出
-	 * @see #load(String, Object)
 	 */		
 	
 	public InputStream load(URLocation _url, Object _context)

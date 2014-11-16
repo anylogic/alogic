@@ -15,15 +15,13 @@ import org.w3c.dom.Element;
 public interface Reportable {
 	/**
 	 * 报告输出到XML
-	 * @param xml
-	 * @return 
+	 * @param xml XML节点
 	 */
 	public void report(Element xml);
 	
 	/**
 	 * 报告输出到JSON
-	 * @param json
-	 * @return 
+	 * @param json JSON节点
 	 */
 	public void report(Map<String,Object> json);
 }

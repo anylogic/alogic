@@ -20,7 +20,6 @@ public class HttpResourceLoader implements ResourceLoader {
 	 * @param _context 上下文
 	 * @return 输入流实例
 	 * @throws BaseException 当Http连接出现错误时抛出
-	 * @see #load(String, Object)
 	 */	
 	
 	public InputStream load(URLocation _url, Object _context)

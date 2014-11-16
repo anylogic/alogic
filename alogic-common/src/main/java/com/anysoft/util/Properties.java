@@ -50,7 +50,6 @@ abstract public class Properties {
 	
 	/**
 	 * 构造函数
-	 * @param _domain 变量域
 	 */	
 	public Properties(){
 		this("Default",null);

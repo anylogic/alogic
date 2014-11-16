@@ -15,19 +15,19 @@ import com.anysoft.util.WatcherHub;
  * @since 1.0.6
  * @param <data> 缓存对象类
  * 
- * @version 1.0.7 [20140409 duanyy]
- * + 增加{@link com.anysoft.cache.CacheManager#_get(String)
- * + 增加{@link com.anysoft.cache.CacheManager#_add(String, Cacheable)
+ * @version 1.0.7 [20140409 duanyy] <br>
+ * + 增加{@link com.anysoft.cache.CacheManager#_get(String)} <br>
+ * + 增加{@link com.anysoft.cache.CacheManager#_add(String, Cacheable)} <br>
  * 
- * @version 1.3.0 [20140727 duanyy]
- * - Cachable修正类名为Cacheable
- * - 监听器列表采用ChangeAwareHub进行实现
+ * @version 1.3.0 [20140727 duanyy] <br>
+ * - Cachable修正类名为Cacheable <br>
+ * - 监听器列表采用ChangeAwareHub进行实现 <br>
  * 
- * @version 1.3.2 [20140814 duanyy]
- * - 优化get方法的共享锁机制
+ * @version 1.3.2 [20140814 duanyy] <br>
+ * - 优化get方法的共享锁机制 <br>
  * 
- * @version 1.5.2 [20141017 duanyy]
- * - 淘汰ChangeAware机制，采用更为通用的Watcher
+ * @version 1.5.2 [20141017 duanyy] <br>
+ * - 淘汰ChangeAware机制，采用更为通用的Watcher <br>
  * 
  */
 public class CacheManager<data extends Cacheable> extends Manager<data> 
@@ -109,7 +109,7 @@ implements Provider<data>,Watcher<data> {
 	 * <br>
 	 * 提供一个快速接口给子类使用.
 	 * @param id ID
-	 * @return
+	 * @return data
 	 * @since 1.0.7
 	 */
 	protected data _get(String id){
@@ -123,7 +123,6 @@ implements Provider<data>,Watcher<data> {
 	 * 提供一个快速接口给子类使用.
 	 * @param id id
 	 * @param obj 数据对象
-	 * @return
 	 * @since 1.0.7
 	 */
 	protected void _add(String id,data obj){

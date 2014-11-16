@@ -14,7 +14,7 @@ public interface Dimensions extends XmlSerializer,JsonSerializer {
 	
 	/**
 	 * 获取维度的个数
-	 * @return
+	 * @return count of dimensions
 	 */
 	public int count();
 	
@@ -22,14 +22,14 @@ public interface Dimensions extends XmlSerializer,JsonSerializer {
 	 * 从左边增加一个或多个维度
 	 * 
 	 * @param dims
-	 * @return
+	 * @return Dimensions
 	 */
 	public Dimensions lpush(String...dims);
 	
 	/**
 	 * 从右边增加一个或多个维度
 	 * @param dims
-	 * @return
+	 * @return Dimensions
 	 */
 	public Dimensions rpush(String...dims);
 	
@@ -37,20 +37,20 @@ public interface Dimensions extends XmlSerializer,JsonSerializer {
 	 * 获取子维度集
 	 * @param start
 	 * @param count
-	 * @return
-	 */
+	 * @return Dimensions
+	 */ 
 	public Dimensions sub(int start,int count);
 	
 	/**
 	 * 获取所有的维度
-	 * @return
+	 * @return all dimensions in strings
 	 */
 	public String [] get();
 	
 	/**
 	 * 获取指定位置的维度
 	 * @param idx
-	 * @return
+	 * @return dimension
 	 */
 	public String get(int idx);
 	
@@ -58,7 +58,7 @@ public interface Dimensions extends XmlSerializer,JsonSerializer {
 	 * 获取一个到多个维度
 	 * @param start
 	 * @param count
-	 * @return
+	 * @return dimesions
 	 */
 	public String[] get(int start,int count);
 }

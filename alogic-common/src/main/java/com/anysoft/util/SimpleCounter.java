@@ -158,7 +158,7 @@ public class SimpleCounter implements Counter {
 		/**
 		 * 访问
 		 * @param _duration 时长
-		 * @param code 结果原因
+		 * @param error 是否错误
 		 */
 		public void visited(long _duration,boolean error){
 			//计算平均值
@@ -187,7 +187,7 @@ public class SimpleCounter implements Counter {
 		/**
 		 * 首次访问
 		 * @param _duration 时长
-		 * @param code 结果原因
+		 * @param error 是否错误
 		 */
 		public void first(long _duration,boolean error){
 			//计算平均值

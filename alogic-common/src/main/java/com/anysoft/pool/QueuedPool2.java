@@ -229,7 +229,7 @@ abstract public class QueuedPool2<pooled extends AutoCloseable> implements Pool<
 
 	/**
 	 * 创建缓冲池对象
-	 * @return
+	 * @return pooled
 	 * @throws BaseException
 	 */
 	abstract protected pooled createObject()throws BaseException;

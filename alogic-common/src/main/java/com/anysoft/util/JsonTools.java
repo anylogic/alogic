@@ -113,7 +113,7 @@ public class JsonTools {
 	 * @param json
 	 * @param name
 	 * @param dftValue
-	 * @return
+	 * @return double value
 	 * 
 	 * @since 1.4.1
 	 */

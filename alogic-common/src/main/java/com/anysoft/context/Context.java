@@ -23,7 +23,7 @@ public interface Context<object extends Reportable> extends XMLConfigurable, Aut
 	 * 通过ID获取对象
 	 * 
 	 * @param id
-	 * @return
+	 * @return object
 	 */
 	 
 	public object get(String id);

@@ -11,8 +11,7 @@ import com.anysoft.formula.DataProvider;
 public interface Flowable extends DataProvider {
 	/**
 	 * 获取数据对象的统计维度
-	 * @param _data
-	 * @return
+	 * @return dimensions
 	 */	
 	public String getStatsDimesion();
 }

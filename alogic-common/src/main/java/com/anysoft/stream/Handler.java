@@ -12,11 +12,11 @@ import com.anysoft.util.XMLConfigurable;
  * 
  * @since 1.4.0
  * 
- * @version 1.4.3 [20140903 duanyy]
- * - 增加pause,resume接口
+ * @version 1.4.3 [20140903 duanyy] <br>
+ * - 增加pause,resume接口 <br>
  * 
- * @version 1.4.4 [20140917 duanyy]
- * - handle和flush方法增加timestamp参数，以便进行时间同步
+ * @version 1.4.4 [20140917 duanyy] <br>
+ * - handle和flush方法增加timestamp参数，以便进行时间同步 <br>
  * 
  */
 public interface Handler<data extends Flowable> extends XMLConfigurable,AutoCloseable,Reportable{
@@ -36,7 +36,7 @@ public interface Handler<data extends Flowable> extends XMLConfigurable,AutoClos
 	
 	/**
 	 * 获取Handler的类型
-	 * @return
+	 * @return type
 	 */
 	public String getHandlerType();
 	
@@ -56,7 +56,7 @@ public interface Handler<data extends Flowable> extends XMLConfigurable,AutoClos
 	
 	/**
 	 * 获取ID
-	 * @return
+	 * @return id
 	 */
 	public String getId();
 }

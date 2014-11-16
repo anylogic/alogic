@@ -13,7 +13,7 @@ public interface MetricsReportable {
 	
 	/**
 	 * 报告指标数据到collector
-	 * @param frag
+	 * @param collector collector
 	 */
 	public void report(MetricsCollector collector);
 }

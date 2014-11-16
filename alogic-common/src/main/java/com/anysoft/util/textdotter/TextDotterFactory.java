@@ -88,7 +88,7 @@ public class TextDotterFactory {
 	/**
 	 * 从父工厂创建实例
 	 * @param id
-	 * @return
+	 * @return TextDotter
 	 */
 	private TextDotter newIntanceFromParent(String id){
 		if (parent != null){

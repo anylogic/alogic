@@ -14,7 +14,7 @@ public interface Coder {
 	 * 编码
 	 * @param data 原始数据
 	 * @param key 加密密钥
-	 * @return
+	 * @return 编码后的数据
 	 */
 	public String encode(String data,String key);
 	
@@ -22,13 +22,13 @@ public interface Coder {
 	 * 解码
 	 * @param data 编码数据
 	 * @param key 解密密钥
-	 * @return
+	 * @return 解码后的数据
 	 */
 	public String decode(String data,String key);
 	
 	/**
 	 * 生成key
-	 * @return
+	 * @return key
 	 */
 	public String createKey();
 }

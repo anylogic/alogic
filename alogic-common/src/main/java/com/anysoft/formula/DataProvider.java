@@ -16,7 +16,7 @@ package com.anysoft.formula;
  * 如果有n行记录，计算的次数将是(A+B)*n。<br>
  * 
  * 进一步分析发现，对于所有行的计算，A是不变的，因此就有了上下文的设计。
- * 计算框架调用一次{@link #getContext(String)}获取上下文，再多次调用{@link #getValue(String, Object)},
+ * 计算框架调用一次{@link #getContext(String)}获取上下文，再多次调用{@link #getValue(String, Object,String)},
  * 这样提升了效率，总的计算次数是A + B*n。<br>
  * 
  * @author duanyy
@@ -30,7 +30,7 @@ public interface DataProvider {
 	 * 获取指定变量的值
 	 * 
 	 * @param varName 变量名
-	 * @param context 上下文 {@link #getContext(String) getContext}
+	 * @param context 上下文
 	 * @param defaultValue 缺省值
 	 * @return 变量值
 	 */

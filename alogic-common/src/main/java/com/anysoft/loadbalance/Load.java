@@ -8,25 +8,25 @@ import com.anysoft.util.Reportable;
  * @author duanyy
  * 
  * @since 1.2.0
- * @version 1.5.3 [20141020 duanyy]
- * - 改造loadbalance模型
+ * @version 1.5.3 [20141020 duanyy] <br>
+ * - 改造loadbalance模型 <br>
  */
 public interface Load extends Reportable{
 	/**
 	 * 获取负载的标示ID
-	 * @return
+	 * @return id
 	 */
 	public String getId();
 	
 	/**
 	 * 获取本负载的权重
-	 * @return
+	 * @return weight
 	 */
 	public int getWeight();
 	
 	/**
 	 * 获取本负载的优先级
-	 * @return
+	 * @return priority
 	 */
 	public int getPriority();
 	
@@ -36,7 +36,7 @@ public interface Load extends Reportable{
 	 * <p>create为true时，如果不存在，则创建一个；为false时，如果不存在则返回为空
 	 * 
 	 * @param create 是否创建
-	 * @return
+	 * @return LoadCounter
 	 */
 	public LoadCounter getCounter(boolean create);
 	
@@ -50,7 +50,7 @@ public interface Load extends Reportable{
 	
 	/**
 	 * 是否有效
-	 * @return
+	 * @return if is valid
 	 */
 	public boolean isValid();
 }

@@ -22,7 +22,7 @@ public class ExprValue implements Comparable<ExprValue>{
 
 	/**
 	 * to get data type of the value
-	 * @return
+	 * @return data type of the value
 	 */
 	public DataType getDataType(){return dataType;}
 	
@@ -182,7 +182,7 @@ public class ExprValue implements Comparable<ExprValue>{
 	/**
 	 * add
 	 * @param other anonther <code>ExprValue</code>
-	 * @return 
+	 * @return  ExprValue
 	 * @throws FormulaException en excption when data type is mismatched
 	 */
 	public ExprValue add(ExprValue other){
@@ -216,7 +216,7 @@ public class ExprValue implements Comparable<ExprValue>{
 	/**
 	 * sub
 	 * @param other another <code>ExprValue</code>
-	 * @return
+	 * @return ExprValue
 	 * @throws FormulaException
 	 */
 	public ExprValue sub(ExprValue other){
@@ -247,7 +247,7 @@ public class ExprValue implements Comparable<ExprValue>{
 	/**
 	 * mul
 	 * @param other anther <code>ExprValue</code>
-	 * @return
+	 * @return ExprValue
 	 * @throws FormulaException
 	 */
 	public ExprValue mul(ExprValue other){
@@ -278,7 +278,7 @@ public class ExprValue implements Comparable<ExprValue>{
 	/**
 	 * div
 	 * @param other anther <code>ExprValue</code>
-	 * @return
+	 * @return ExprValue
 	 * @throws FormulaException
 	 */	
 	public ExprValue div(ExprValue other){
@@ -315,7 +315,7 @@ public class ExprValue implements Comparable<ExprValue>{
 	/**
 	 * mod
 	 * @param other anther <code>ExprValue</code>
-	 * @return
+	 * @return ExprValue
 	 * @throws FormulaException
 	 */	
 	public ExprValue mod(ExprValue other){

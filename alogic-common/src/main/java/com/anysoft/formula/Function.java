@@ -91,7 +91,7 @@ abstract public class Function extends Expression{
 	/**
 	 * to check argument before added
 	 * @param arg the argument to be checked
-	 * @throw FormulaException an exception when error occurs
+	 * @throws FormulaException an exception when error occurs
 	 */
 	abstract public void checkArgument(Expression arg) throws FormulaException;
 	

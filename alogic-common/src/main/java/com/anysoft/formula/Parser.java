@@ -8,17 +8,17 @@ package com.anysoft.formula;
  * - 支持加,减,乘,除,模等算术操作符<br>
  * - 支持大于,小于,等于等逻辑操作符<br>
  * - 支持下列内置函数<br>
- *   + choice:{@link Function#Choice}<br>
- *   + nvl:{@link Function#Nvl}<br>
- *   + to_date:{@link Function#Char2Date}<br>
- *   + to_char:{@link Function#Date2Char}<br>
- *   + to_string:{@link Function#ToString}<br>
- *   + to_long:{@link Function#ToLong}<br>
- *   + to_double:{@link Function#ToDouble}<br>
- *   + substr:{@link Function#SubStr}<br>
- *   + instr:{@link Function#InStr}<br>
- *   + strlen:{@link Function#StrLen}<br>
- *   + match:{@link Function#Match}<br>
+ *   + choice:{@link Function.Choice}<br>
+ *   + nvl:{@link Function.Nvl}<br>
+ *   + to_date:{@link Function.Char2Date}<br>
+ *   + to_char:{@link Function.Date2Char}<br>
+ *   + to_string:{@link Function.ToString}<br>
+ *   + to_long:{@link Function.ToLong}<br>
+ *   + to_double:{@link Function.ToDouble}<br>
+ *   + substr:{@link Function.SubStr}<br>
+ *   + instr:{@link Function.InStr}<br>
+ *   + strlen:{@link Function.StrLen}<br>
+ *   + match:{@link Function.Match}<br>
  * - 通过{@link FunctionHelper}机制支持自定义函数插件<br>
  * - 通过{@link DataProvider}机制支持自定义变量<br>
  * 

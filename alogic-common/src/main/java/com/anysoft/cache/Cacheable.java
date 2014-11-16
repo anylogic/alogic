@@ -24,7 +24,7 @@ public interface Cacheable extends XmlSerializer,JsonSerializer{
 	
 	/**
 	 * 是否已经过期
-	 * @return 
+	 * @return true if expired, or not return false
 	 */
 	public boolean isExpired();	
 }

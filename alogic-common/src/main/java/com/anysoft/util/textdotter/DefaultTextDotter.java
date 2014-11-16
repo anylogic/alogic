@@ -13,7 +13,7 @@ public class DefaultTextDotter implements TextDotter {
 	private Vector<TextDotterItem> items = new Vector<TextDotterItem>();
 	/**
 	 * 构造函数
-	 * @param id ID
+	 * @param _id ID
 	 */
 	public DefaultTextDotter(String _id){
 		id = _id;
@@ -76,7 +76,7 @@ public class DefaultTextDotter implements TextDotter {
 	
 	/**
 	 * 解析标记
-	 * @param flags 标记
+	 * @param _flags 标记
 	 * @return int标记
 	 */
 	public static int parseFlags(String _flags){

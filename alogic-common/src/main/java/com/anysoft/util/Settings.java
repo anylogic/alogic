@@ -34,15 +34,15 @@ import com.anysoft.util.resource.ResourceFactory;
  * <li>维护一个全局性的对象列表
  * 
  * @author duanyy
- * @since 1.3.1 [20140808 duanyy]
- * - 增加静态方法:{@link Settings#getClassLoader()}
- * - 增加静态方法:{@link Settings#getResourceFactory()}
+ * @since 1.3.1 [20140808 duanyy] <br>
+ * - 增加静态方法:{@link Settings#getClassLoader()} <br>
+ * - 增加静态方法:{@link Settings#getResourceFactory()} <br>
  * 
- * @since 1.3.2 [20140814 duanyy]
- * - 优化get函数的共享锁机制
+ * @since 1.3.2 [20140814 duanyy] <br>
+ * - 优化get函数的共享锁机制 <br>
  * 
- * @version 1.5.2 [20141017 duanyy]
- * - 实现Reportable接口
+ * @version 1.5.2 [20141017 duanyy] <br>
+ * - 实现Reportable接口 <br>
  * 
  */
 public class Settings extends DefaultProperties implements XmlSerializer,Reportable{
@@ -89,7 +89,7 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 	
 	/**
 	 * 获取当前可用的ClassLoader
-	 * @return
+	 * @return ClassLoader
 	 */
 	public static ClassLoader getClassLoader(){
 		ClassLoader cl = null;
@@ -101,7 +101,7 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 	
 	/**
 	 * 获取可用的ResourceFactory
-	 * @return
+	 * @return ResourceFactory
 	 */
 	public static ResourceFactory getResourceFactory(){
 		ResourceFactory rf = null;
@@ -306,8 +306,8 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 	
 	/**
 	 * 获取对象列表中指定id的对象
-	 * @param name
-	 * @return
+	 * @param id
+	 * @return Object
 	 */
 	public Object get(String id){
 		return objects.get(id);

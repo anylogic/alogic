@@ -20,7 +20,7 @@ public interface Provider<data extends Cacheable> {
 	/**
 	 * 装入缓存对象
 	 * @param id 对象id
-	 * @return
+	 * @return data
 	 * @deprecated
 	 */
 	public data load(String id);
@@ -29,7 +29,7 @@ public interface Provider<data extends Cacheable> {
 	 * 装入对象
 	 * @param id 对象ID
 	 * @param cacheAllowed 允许装入缓存的对象
-	 * @return
+	 * @return data
 	 */
 	public data load(String id,boolean cacheAllowed);
 	

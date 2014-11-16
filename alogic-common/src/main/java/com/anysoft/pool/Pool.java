@@ -35,7 +35,7 @@ public interface Pool<pooled extends AutoCloseable> extends Reportable{
 	/**
 	 * 从缓冲池中借出缓冲对象
 	 * @param priority 优先级
-	 * @return
+	 * @return pooled
 	 * @throws BaseException
 	 */
 	public pooled borrowObject(int priority,int timeout) throws BaseException;

@@ -15,7 +15,7 @@ import com.anysoft.util.URLocation;
 public interface ResourceLoader {
 	/**
 	 * 装入资源
-	 * @param _path 资源路径
+	 * @param _url 资源路径
 	 * @param _context 上下文
 	 * @return 输入数据流
 	 * @throws BaseException

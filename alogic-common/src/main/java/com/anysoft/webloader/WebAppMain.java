@@ -136,7 +136,7 @@ public class WebAppMain extends WebAppContextListener {
 	 * 如果无法创建成功，返回空。
 	 * 
 	 * @param settings
-	 * @return
+	 * @return WebXMLLoader实例
 	 */
 	protected WebXMLLoader createXMLLoader(Properties settings){
 		String _loader = settings.GetValue("webcontext.xmlloader",DefaultWebXMLLoader.class.getName());

@@ -46,7 +46,7 @@ abstract public class AbstractLoadBalance<load extends Load> implements LoadBala
 	 * @param key
 	 * @param props
 	 * @param loads
-	 * @return
+	 * @return load
 	 */
 	protected abstract load onSelect(String key, Properties props, List<load> loads);
 

@@ -26,6 +26,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @since 1.6.0.0
  *
+ * @version 1.6.0.6 [20141116 duanyy] <br>
+ * - 修正日志输出级别 <br>
+ * 
  */
 public class DefaultWebXMLLoader implements WebXMLLoader {
 	/**
@@ -78,7 +81,7 @@ public class DefaultWebXMLLoader implements WebXMLLoader {
 
 	/**
 	 * 将指定节点的内容作为filter装入
-	 * @parameter settings
+	 * @param settings
 	 * @param n
 	 * @param sc
 	 */
@@ -146,7 +149,7 @@ public class DefaultWebXMLLoader implements WebXMLLoader {
 						}
 					}
 				}
-				logger.error("Succeeded in adding servlet:" + filterName + "/" + filterClazz);
+				logger.info("Succeeded in adding servlet:" + filterName + "/" + filterClazz);
 			}catch (Exception ex){
 				logger.error("Failed to add servlet:" + filterName + "/" + filterClazz);
 			}
@@ -209,7 +212,7 @@ public class DefaultWebXMLLoader implements WebXMLLoader {
 
 	/**
 	 * 将指定节点的内容作为servlet装入
-	 * @parameter settings
+	 * @param settings
 	 * @param n
 	 * @param sc
 	 */

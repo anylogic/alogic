@@ -144,5 +144,7 @@ A framework which help you download your web library and load web context.
 	+ CommandLine:如果参数值为空，设置为true(1.6.0.4)
 	+ SingleField:如果没有定义selector-field属性，则取selector-id属性(1.6.0.5)
 	+ Selector:增加方法newInstanceWithDefault(Element, Properties, String)(1.6.0.5)
+	+ DefaultWebXMLLoader:修正日志输出级别(1.6.0.6)
+	+ 修正部分javadoc警告(1.6.0.6)
 	
 	

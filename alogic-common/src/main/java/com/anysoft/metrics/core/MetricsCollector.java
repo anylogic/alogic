@@ -12,7 +12,6 @@ public interface MetricsCollector {
 	/**
 	 * 指标叠加
 	 * 
-	 * @param id
 	 * @param fragment
 	 */
 	public void metricsIncr(Fragment fragment);

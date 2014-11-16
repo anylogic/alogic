@@ -37,7 +37,7 @@ public class BaseException extends RuntimeException {
 	
 	/**
 	 * 获取异常代码
-	 * @return
+	 * @return code
 	 */
 	public String getCode(){return code;}
 }

@@ -22,88 +22,88 @@ public interface Measures extends XmlSerializer,JsonSerializer{
 	
 	/**
 	 * 获取量度的叠加方法
-	 * @return
+	 * @return Method
 	 */
 	public Method method();
 	
 	/**
 	 * 设置量度的叠加方法
 	 * @param method
-	 * @return
+	 * @return Measures
 	 */
 	public Measures method(Method method);
 	
 	/**
 	 * 量度的叠加
 	 * @param other
-	 * @return
+	 * @return Measures
 	 */
 	public Measures incr(Measures other);
 	
 	/**
 	 * 从左边增加一个或多个量度
 	 * @param values
-	 * @return
+	 * @return Measures
 	 */
 	public Measures lpush(Object [] values);
 	
 	/**
 	 * 从右边增加一个或多个量度
 	 * @param values
-	 * @return
+	 * @return Measures
 	 */
 	public Measures rpush(Object [] values);
 	
 	/**
-	 * 获取量度的个数
-	 * @return
+	 * 获取量度的个数 
+	 * @return Measures
 	 */
 	public int count();
 	
 	/**
 	 * 获取指定量度的类型
 	 * @param idx
-	 * @return
+	 * @return type 
 	 */
 	public char type(int idx);
 	
 	/**
 	 * 获取所有量度的类型
-	 * @return
+	 * @return types
 	 */
 	public char [] types();
 	
 	/**
 	 * 获取所有量度值
-	 * @return
+	 * @return strings
 	 */
 	public String [] values();
 	
 	/**
 	 * 获取指定维度的量度值
 	 * @param idx
-	 * @return
+	 * @return Object
 	 */
 	public Object get(int idx);
 	
 	/**
 	 * 获取指定的量度
 	 * @param idx
-	 * @return
+	 * @return Long value
 	 */
 	public Long asLong(int idx);
 	
 	/**
 	 * 获取指定的量度
 	 * @param idx
-	 * @return
+	 * @return Double value
 	 */
 	public Double asDouble(int idx);
 	
 	/**
 	 * 获取指定的量度
 	 * @param idx
-	 * @return
+	 * @return String value
 	 */
 	public String asString(int idx);
 }

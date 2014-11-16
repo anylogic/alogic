@@ -32,8 +32,8 @@ import com.anysoft.util.XmlTools;
  * 
  * @since 1.5.0
  * 
- * @version 1.5.2 [20141017 duanyy]
- * - 实现Reportable接口
+ * @version 1.5.2 [20141017 duanyy] <br>
+ * - 实现Reportable接口 <br>
  */
 abstract public class Source<object extends Reportable> implements Context<object>,Watcher<object> {
 	
@@ -92,7 +92,7 @@ abstract public class Source<object extends Reportable> implements Context<objec
 	 * @param e XML配置根节点
 	 * @param p 环境变量集
 	 * @param attrName XML属性名
-	 * @return
+	 * @return Context<object>
 	 */
 	abstract public Context<object> newInstance(Element e, Properties p, String attrName);
 	

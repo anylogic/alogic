@@ -15,12 +15,12 @@ package com.anysoft.util;
 public interface Pair<Key, Value>{
 	/**
 	 *  获取Key
-	 * @return
+	 * @return Key
 	 */
 	public Key key();
 	/**
 	 * 获取Value
-	 * @return
+	 * @return Key
 	 */
 	public Value value();
 	
