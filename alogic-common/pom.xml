@@ -3,11 +3,9 @@
   <parent>
     <groupId>com.github.alogic</groupId>
     <artifactId>alogic</artifactId>
-    <version>1.3.0</version>
+    <version>1.6.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.github.alogic</groupId>
   <artifactId>alogic-common</artifactId>
-  <version>1.6.0</version>
   <name>alogic-common</name>
   <dependencies>
   	<dependency>

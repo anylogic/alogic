@@ -146,5 +146,7 @@ A framework which help you download your web library and load web context.
 	+ Selector:增加方法newInstanceWithDefault(Element, Properties, String)(1.6.0.5)
 	+ DefaultWebXMLLoader:修正日志输出级别(1.6.0.6)
 	+ 修正部分javadoc警告(1.6.0.6)
-	
+
+- 1.6.1 [20141117 duanyy]
+	+ 和父项目统一版本
 	

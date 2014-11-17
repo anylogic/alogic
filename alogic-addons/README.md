@@ -16,3 +16,6 @@ alogic-addons是alogic附加的定制包，对alogic-core各项功能进行了�
  	 + 采用alogic-remote组件来实现metrics对外输出插件(1.3.0.1)
  	 + Services:增加KValueReport服务(1.3.0.2)
  	 + MetricsHandler:RemoteWriter和ServieWriter从server.ip变量中获取本机IP(1.3.0.3)
+ 	 
+ - 1.6.1 [20141117 duanyy]
+	 + 和父项目统一版本 	 

@@ -14,3 +14,6 @@ alogic的核心框架
  - 1.4.0 [20141117 duanyy]
  	 + 改造Context和MessageDoc模型
  	 + 修正部分javadoc警告
+ 	 
+ - 1.6.1 [20141117 duanyy]
+	 + 和父项目统一版本

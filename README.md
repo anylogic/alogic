@@ -27,3 +27,6 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + 初次发布，由anyLogicBus、anyFormula和anyWebLoader合并而来
  	 + 子目录alogic-ketty改名为alogic-addons(1.3.0.1)
 	 + 将maven工程的groupId改为com.github.alogic(1.3.0.2)
+	 
+ - 1.6.1 [20141117 duanyy]
+ 	 + 创建SNAPSHOT版本，自此之后，所有的子项目统一版本。

@@ -3,22 +3,20 @@
   <parent>
     <groupId>com.github.alogic</groupId>
     <artifactId>alogic</artifactId>
-    <version>1.3.0</version>
+    <version>1.6.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.github.alogic</groupId>
   <artifactId>alogic-together</artifactId>
   <name>alogic-together</name>
-  <version>1.3.0</version>
   <dependencies>
   	<dependency>
   		<groupId>com.github.alogic</groupId>
   		<artifactId>alogic-core</artifactId>
-  		<version>1.3.0</version>
+  		<version>${project.version}</version>
   	</dependency>
   	<dependency>
   		<groupId>com.github.alogic</groupId>
   		<artifactId>alogic-dbcp</artifactId>
-  		<version>1.3.0</version>
+  		<version>${project.version}</version>
   	</dependency>
   </dependencies>
 </project>
