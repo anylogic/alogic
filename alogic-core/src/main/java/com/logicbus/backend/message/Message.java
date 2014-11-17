@@ -1,8 +1,7 @@
 package com.logicbus.backend.message;
 
+import java.io.InputStream;
 import java.io.OutputStream;
-
-import javax.servlet.http.HttpServletResponse;
 
 import com.logicbus.backend.Context;
 
@@ -12,54 +11,47 @@ import com.logicbus.backend.Context;
  * @author duanyy
  * @version 1.0.4 [20140410 duanyy] <br>
  * - 增加encoding成员
- * - {@link com.logicbus.backend.message.Message#output(OutputStream, HttpServletResponse) out}函数
- * 增加response参数，以便Message直接操作.
  * 
  * @version 1.0.5 [20140412 duanyy] <br>
  * - 修改消息传递模型。<br>
+ * 
+ * @version 1.4.0 [20141117 duanyy] <br>
+ * - 改造为接口 <br>
  */
-abstract public class Message {
-
-	/**
-	 * 文档
-	 */
-	protected MessageDoc msgDoc = null;
-	
-	protected Message(MessageDoc _doc){
-		msgDoc = _doc;
-	}
-	
+public interface Message {
 	/**
 	 * 输出消息到输出流
+	 * 
 	 * @param out 输出流
-	 * @param ctx 上下文
+	 * @param doc 消息文档
 	 */
-	abstract public void output(OutputStream out,Context ctx);
+	public void write(OutputStream out,Context doc);
 
 	/**
-	 * content-type
-	 */
-	protected String contentType = "text/xml;charset=utf-8";
-	
-	/**
-	 * 设置content-type
-	 * @param type content-type
-	 */
-	public void setContentType(String type){contentType = type;}
-	
-	/**
-	 * 获取content-type
+	 * 从输入流中读入消息
 	 * 
-	 * @return content-type
+	 * @param in 输入流
+	 * @param doc 消息文档
 	 */
-	public String getContentType(){return contentType;}
+	public void read(InputStream in,Context doc);
 	
 	/**
-	 * 是否发生致命错误
-	 * @return 
+	 * 是否从输入流中输入
+	 * @param doc 消息文档 
+	 * @return 是否Read
 	 */
-	public boolean hasFatalError(){
-		String returnCode = msgDoc.getReturnCode();
-		return !returnCode.equals("core.ok");
-	}
+	public boolean doRead(Context doc);
+	
+	/**
+	 * 是否输出
+	 * @param doc
+	 * @return 是否Write
+	 */
+	public boolean doWrite(Context doc);
+	
+	/**
+	 * 获取输出的ContentType
+	 * @return ContentType
+	 */
+	public String getContentType(Context doc);
 }

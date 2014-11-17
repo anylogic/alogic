@@ -76,7 +76,7 @@ public interface BizLogger extends Handler<BizLogItem>{
 		/**
 		 * 根据环境变量中的配置来创建BizLogger
 		 * @param props
-		 * @return
+		 * @return BizLogger实例
 		 */
 		public static BizLogger getLogger(Properties props){
 			String master = props.GetValue("bizlog.master", 
@@ -107,7 +107,7 @@ public interface BizLogger extends Handler<BizLogItem>{
 		 * 从XML文档中创建BizLogger
 		 * @param _e
 		 * @param _p
-		 * @return
+		 * @return BizLogger实例
 		 */
 		public static BizLogger getLogger(Element _e,Properties _p) {
 			return instance.newInstance(_e, _p,"module", Default.class.getName());

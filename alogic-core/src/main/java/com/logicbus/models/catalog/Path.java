@@ -32,7 +32,7 @@ public class Path {
 	
 	/**
 	 * to get the id
-	 * @return
+	 * @return the id
 	 */
 	public String getId(){return id;}
 	
@@ -74,7 +74,7 @@ public class Path {
 	 * - 保证不以/结尾
 	 * 
 	 * @param _path
-	 * @return
+	 * @return 规范化路径
 	 */
 	public static String normalize(String _path) {
 		StringBuffer buf = new StringBuffer();
@@ -101,7 +101,7 @@ public class Path {
 	 * 例如：将完整路径/demo/logicbus/Helloworld拆分未/demo/logicbus和Helloworld
 	 * 
 	 * @param id 完整服务ID
-	 * @return
+	 * @return package和id
 	 */
 	static protected String [] splitPath(String id){
 		String [] result = new String[2];
@@ -124,7 +124,7 @@ public class Path {
 	}	
 	/**
 	 * 获取路径
-	 * @return
+	 * @return 路径
 	 */
 	public String getPath(){
 		return pkg + "/" + id;
@@ -138,7 +138,7 @@ public class Path {
 	/**
 	 * 在当前路径下,再增加一个层级
 	 * @param id 新层级的id
-	 * @return
+	 * @return 新路径
 	 */
 	public Path append(String id){
 		return new Path(getPath() + "/" + id);
@@ -150,7 +150,7 @@ public class Path {
 	
 	/**
 	 * 是否是根路径
-	 * @return
+	 * @return 是否是根路径
 	 */
 	public boolean isRoot(){
 		return id.length() <= 0;
