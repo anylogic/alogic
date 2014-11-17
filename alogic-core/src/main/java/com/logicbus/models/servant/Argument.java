@@ -25,53 +25,50 @@ import com.logicbus.backend.message.MessageDoc;
  * - 增加copyFrom方法
  * 
  * @version 1.2.5.4 [20140801 duanyy]<br>
- * - Argument变更为interface <br>
- * 
- * @version 1.4.0 [20141117 duanyy] <br>
- * - 抛弃MessageDoc <br>
+ * - Argument变更为interface
  */
 public interface Argument extends XmlSerializer,JsonSerializer{
 	
 	/**
 	 * 获取Id
-	 * @return Id
+	 * @return
 	 */
 	public String getId();
 	
 	/**
 	 * 获取缺省值
-	 * @return 缺省值
+	 * @return
 	 */
 	public String getDefaultValue();
 	
 	/**
 	 * 是否可选
-	 * @return 是否可选
+	 * @return
 	 */
 	public boolean isOption();
 	
 	/**
 	 * 是否需要缓存
-	 * @return 是否需要缓存
+	 * @return 
 	 * 
 	 * @since 1.0.8
 	 */
 	public boolean isCached();
 	/**
 	 * 获取getter
-	 * @return getter类名
+	 * @return
 	 */
 	public String getGetter();
 	
 	/**
 	 * 获取gettter的参数
-	 * @return 参数
+	 * @return
 	 */
 	public String getGetterParameters();
 
 	/**
 	 * 获取getter的参数列表
-	 * @return 参数列表
+	 * @return
 	 */
 	public Properties getParameter();
 		
@@ -80,18 +77,8 @@ public interface Argument extends XmlSerializer,JsonSerializer{
 	 * @param msg 服务接口文档
 	 * @param ctx 上下文
 	 * @return 参数值
-	 * 
-	 * @deprecated from 1.4.0
 	 */
 	public String getValue(MessageDoc msg,Context ctx)throws ServantException;
-	
-	/**
-	 * 读取参数值
-	 * @param ctx 上下文
-	 * @return 参数值
-	 * @throws ServantException
-	 */
-	public String getValue(Context ctx) throws ServantException;
 	
 	/**
 	 * 获取参数值
@@ -100,8 +87,6 @@ public interface Argument extends XmlSerializer,JsonSerializer{
 	 * @return 参数值
 	 * 
 	 * @since 1.0.8
-	 * 
-	 * @deprecated from 1.4.0
 	 */
 	public String getValue(Message msg,Context ctx)throws ServantException;
 	

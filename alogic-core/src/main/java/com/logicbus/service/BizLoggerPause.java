@@ -12,6 +12,7 @@ import com.logicbus.backend.Context;
 import com.logicbus.backend.ServantException;
 import com.logicbus.backend.bizlog.BizLogger;
 import com.logicbus.backend.message.JsonMessage;
+import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
 
@@ -21,9 +22,6 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  *
  * @since 1.2.7.2
- * 
- * @version 1.4.0 [20141117 duanyy] <br>
- * - 将MessageDoc和Context进行合并整合 <br>
  */
 public class BizLoggerPause extends AbstractServant {
 
@@ -38,8 +36,8 @@ public class BizLoggerPause extends AbstractServant {
 	}
 
 	
-	protected int onXml(Context ctx) throws Exception {
-		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
+	protected int onXml(MessageDoc msgDoc, Context ctx) throws Exception {
+		XMLMessage msg = (XMLMessage) msgDoc.asMessage(XMLMessage.class);
 		
 		Settings settings = Settings.get();
 		
@@ -59,8 +57,8 @@ public class BizLoggerPause extends AbstractServant {
 	}
 
 	
-	protected int onJson(Context ctx) throws Exception {
-		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
+	protected int onJson(MessageDoc msgDoc, Context ctx) throws Exception {
+		JsonMessage msg = (JsonMessage)msgDoc.asMessage(JsonMessage.class);
 		
 		Settings settings = Settings.get();
 		

@@ -129,6 +129,7 @@ public class QueuedServantFactory implements ServantFactory {
 	 * @param _id 服务Id
 	 * @return 服务资源池
 	 * @throws ServantException
+	 * @see {@link #getServantPool(String)}
 	 */
 	public ServantPool getPool(Path _id) throws ServantException{
 		Object found = m_pools.get(_id.getPath());

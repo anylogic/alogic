@@ -187,7 +187,7 @@ public class ServantManager {
 	 * 
 	 * @param _className 类名
 	 * @param _props 环境变量
-	 * @return 服务目录实例
+	 * @return
 	 */
 	protected ServantCatalog createCatalogInstance(String _className,Properties _props){
 		try {
@@ -212,7 +212,7 @@ public class ServantManager {
 	
 	/**
 	 * 获取唯一实例
-	 * @return 唯一实例
+	 * @return
 	 */
 	synchronized static public ServantManager get(){
 		if (instance != null){

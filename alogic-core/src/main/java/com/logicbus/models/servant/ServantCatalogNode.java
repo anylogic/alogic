@@ -12,14 +12,14 @@ public interface ServantCatalogNode extends CatalogNode {
 	
 	/**
 	 * 获取当前节点下所有服务信息
-	 * @return 所有服务信息
+	 * @return 
 	 */
 	public ServiceDescription [] getServices();
 	
 	/**
 	 * 按服务ID查找服务信息
 	 * @param id
-	 * @return 服务信息
+	 * @return
 	 */
 	public ServiceDescription findService(String id);
 }

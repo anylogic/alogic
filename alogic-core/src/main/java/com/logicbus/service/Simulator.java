@@ -11,6 +11,8 @@ import com.anysoft.util.PropertiesConstants;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.Servant;
 import com.logicbus.backend.ServantException;
+import com.logicbus.backend.message.Message;
+import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
 
@@ -24,17 +26,14 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  * 
  * @since 1.1.0
- * 
- * @version 1.4.0 [20141117 duanyy] <br>
- * - 将MessageDoc和Context进行合并整合 <br>
  */
 public class Simulator extends Servant {
 
 	
-	public int actionProcess(Context ctx) throws Exception {
-		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
+	public int actionProcess(MessageDoc msgDoc, Context ctx) throws Exception {
+		XMLMessage msg = (XMLMessage) msgDoc.asMessage(XMLMessage.class);
 		
-		int _avg = getArgument("avg",avg,ctx);
+		int _avg = getArgument("avg",avg,msg,ctx);
 		Random r = new Random();
 		
 		int duration = (int)((r.nextGaussian()/4 + 1) * _avg);
@@ -60,9 +59,15 @@ public class Simulator extends Servant {
 	
 	/**
 	 * 获取Int型的参数
+	 * @param id 参数ID
+	 * @param defaultValue 缺省值
+	 * @param msg 消息
+	 * @param ctx 上下文
+	 * @return
+	 * @throws ServantException
 	 */	
-	protected int getArgument(String id,int defaultValue,Context ctx) throws ServantException{
-		String value = getArgument(id,"",ctx);
+	protected int getArgument(String id,int defaultValue,Message msg,Context ctx) throws ServantException{
+		String value = getArgument(id,"",msg,ctx);
 		if (value == null || value.length() <= 0){
 			return defaultValue;
 		}

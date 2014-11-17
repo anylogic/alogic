@@ -1,7 +1,8 @@
 package com.logicbus.backend.message;
 
-import java.sql.Connection;
-import com.anysoft.util.DefaultProperties;
+import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import com.logicbus.backend.Context;
 import com.logicbus.backend.ServantException;
 
 /**
@@ -9,53 +10,12 @@ import com.logicbus.backend.ServantException;
  * @author duanyy
  * 
  * @version 1.0.4 [20140410 duanyy] <br>
- * - 增加对RawMessage的支持<br>
+ * - 增加对RawMessage的支持，见{@link com.logicbus.backend.message.MessageDoc#asRaw() asRaw} <br>
  * 
  * @version 1.0.5 [20140412 duanyy] <br>
  * - 修改消息传递模型。<br>
- * 
- * @version 1.4.0 [20141117 duanyy] <br>
- * - 将MessageDoc和Context进行合并整合 <br>
  */
-abstract public class MessageDoc extends DefaultProperties{
-
-	/**
-	 * 文档编码
-	 */
-	protected String encoding = "utf-8";
-	
-	/**
-	 * 获取文档编码
-	 * @return 编码
-	 */
-	public String getEncoding(){return encoding;}
-	
-	/**
-	 * 构造上下文
-	 * 
-	 * @param _encoding
-	 */
-	protected MessageDoc(String _encoding){
-		encoding = _encoding;
-	}
-		
-	/**
-	 * a db connection
-	 */
-	private Connection m_conn;
-	
-	/**
-	 * to get the db connection
-	 * @return db connection
-	 */
-	public Connection getConnection(){return m_conn;}
-	
-	/**
-	 * to set the db connection
-	 * @param conn connection
-	 */
-	public void setConnection(Connection conn){m_conn = conn;}
-		
+public class MessageDoc {	
 	/**
 	 * 结果代码
 	 */
@@ -112,7 +72,7 @@ abstract public class MessageDoc extends DefaultProperties{
 	
 	/**
 	 * 获取原因
-	 * @return 原因
+	 * @return
 	 */
 	public String getReason(){return reason;}
 	
@@ -127,10 +87,37 @@ abstract public class MessageDoc extends DefaultProperties{
 	 * 
 	 * @param _code 结果代码
 	 * @param _reason 原因
+	 * @param _duration 调用时间
 	 */	
 	public void setReturn(String _code,String _reason){
 		returnCode = _code;
 		reason = _reason;
+	}
+	
+	/**
+	 * 消息文本
+	 */
+	protected StringBuffer doc;
+	/**
+	 * 文档编码
+	 */
+	protected String encoding = "utf-8";
+	
+	/**
+	 * 获取文档编码
+	 * @return 编码
+	 */
+	public String getEncoding(){return encoding;}
+	
+	/**
+	 * constructor
+	 * 
+	 * @param _inDoc 消息文本
+	 * @param _encoding 编码
+	 */
+	public MessageDoc(StringBuffer _inDoc,String _encoding){
+		doc = _inDoc;
+		encoding = _encoding;
 	}
 	
 	/**
@@ -140,16 +127,16 @@ abstract public class MessageDoc extends DefaultProperties{
 	
 	/**
 	 * 作为消息处理
-	 * 
-	 * @param clazz Message实现类
-	 * @throws ServantException 当创建Message实例发生异常的时候，抛出异常代码为:core.instance_create_error
+	 * @param clazz
+	 * @return
 	 */
-	public <message extends Message> Message asMessage(Class<message> clazz) throws ServantException{
+	public Message asMessage(Class<? extends Message> clazz) throws ServantException {
 		if (msg != null)
 			return msg;
 		try {
-			msg = (Message)clazz.newInstance();
-			onMessageCreated(msg);
+			Constructor<? extends Message> constructor = 
+					clazz.getConstructor(new Class<?>[]{MessageDoc.class,StringBuffer.class});
+			msg = (Message)constructor.newInstance(new Object[]{this,doc});
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServantException("core.instance_create_error",
@@ -159,48 +146,41 @@ abstract public class MessageDoc extends DefaultProperties{
 	}
 	
 	/**
-	 * MessageCreated事件处理
-	 * @param msg 消息
+	 * 获取文档的content-type
+	 * @return content-type
 	 */
-	protected void onMessageCreated(Message msg) {
-		
+	public String getContentType(){
+		if (msg != null){
+			return msg.getContentType();
+		}
+		return "text/xml;charset=utf-8";
 	}
-
-	/**
-	 * 完成服务，写出结果
-	 */
-	abstract public void finish();
 	
 	/**
-	 * to get the client ip
-	 * @return client ip
+	 * 输出文档到输出流
+	 * @param out
+	 * @param response 
 	 */
-	abstract public String getClientIp();
+	public void output(OutputStream out, Context ctx){
+		if (msg != null){
+			msg.output(out,ctx);
+		}
+	}
 	
 	/**
-	 * 获取主机信息
-	 * @return 主机信息
+	 * 是否存在致命错误
+	 * @return
 	 */
-	abstract public String getHost();
+	public boolean hasFatalError(){
+		return msg == null ? true : msg.hasFatalError();
+	}
 	
 	/**
-	 * 获取请求路径
-	 * @return request路径
+	 * to string
 	 */
-	abstract public String getRequestURI();
-	
-	/**
-	 * 获取全局序列号
-	 * @return 全局序列号
-	 * 
-	 * @since 1.0.7
-	 */
-	abstract public String getGlobalSerial();
-	
-	abstract public String getReqestContentType();
-	
-	abstract public String getRequestHeader(String id);
-	
-	abstract public void setResponseHeader(String id,String value);
-
+	public String toString(){
+		if (msg == null)
+			return doc.toString();
+		return msg.toString();
+	}
 }

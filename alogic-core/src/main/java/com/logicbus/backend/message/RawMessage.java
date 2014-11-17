@@ -1,8 +1,8 @@
 package com.logicbus.backend.message;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.anysoft.util.IOTools;
 import com.logicbus.backend.Context;
 
 /**
@@ -13,14 +13,31 @@ import com.logicbus.backend.Context;
  * @since 1.0.4
  * @version 1.0.5 [20140412 duanyy] <br>
  * - 修改消息传递模型。<br>
- * @version 1.4.0 [20141117 duanyy] <br>
- * - Message被改造为接口 <br>
+ * 
  */
-public class RawMessage implements Message {
+public class RawMessage extends Message {
 	/**
 	 * 消息文本
 	 */
-	protected StringBuffer buf = new StringBuffer();
+	protected StringBuffer buf = null;
+	
+	public RawMessage(MessageDoc _doc,StringBuffer _buf) {
+		super(_doc);
+		buf = _buf;
+		setContentType("text/plain;charset=" + msgDoc.getEncoding());
+	}
+
+	
+	public void output(OutputStream out,Context ctx) {
+		String encoding = msgDoc.getEncoding();
+		try {
+			out.write(buf.toString().getBytes(encoding));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}finally {
+			IOTools.closeStream(out);
+		}
+	}
 	
 	/**
 	 * 获取消息文本
@@ -37,37 +54,4 @@ public class RawMessage implements Message {
 		return buf.toString();
 	}
 
-
-	public void write(OutputStream out, Context doc) {
-		Context.writeToOutpuStream(out, buf.toString(), doc.getEncoding());
-	}
-
-
-	public void read(InputStream in, Context doc) {
-		String data = Context.readFromInputStream(in, doc.getEncoding());
-		buf.append(data);
-		
-		contentType = "text/plain;charset=" + doc.getEncoding();
-	}
-
-
-	public boolean doRead(Context doc) {
-		return true;
-	}
-
-
-	public boolean doWrite(Context doc) {
-		return true;
-	}
-
-
-	public String getContentType(Context doc) {
-		return "text/plain;charset=" + doc.getEncoding();
-	}
-
-	protected String contentType = "text/plain";
-	
-	public void setContentType(String _contentType){
-		contentType = _contentType;
-	}
 }

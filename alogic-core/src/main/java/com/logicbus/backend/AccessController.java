@@ -17,7 +17,7 @@ import com.logicbus.models.servant.ServiceDescription;
  * 3. 在完成服务之后，会调用访问控制器的{@link #accessEnd(String,Path, ServiceDescription, Context)}. <br>
  * 
  * <p>
- * 访问控制器在{@link #accessStart(String, Path,ServiceDescription, Context)}中通过返回值和框架约定权限控制方式，如果返回值小于0，则表明
+ * 访问控制器在{@link #accessStart(String, ServiceDescription, Context)}中通过返回值和框架约定权限控制方式，如果返回值小于0，则表明
  * 本次无权访问；如果返回值大于1，则表明本次访问为高优先级访问；其他则表明本次访问为低优先级访问。<br>
  * 
  * @author duanyy

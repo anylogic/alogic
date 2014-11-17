@@ -15,24 +15,22 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  * @since 1.2.3
  * 
- * @version 1.2.5 [20140722 duanyy] <br>
- * - Servant的destroy方法改为close <br>
+ * @version 1.2.5 [20140722 duanyy]
+ * - Servant的destroy方法改为close
  * 
- * @version 1.2.8 [20140914 duanyy] <br>
- * - 增加指标收集体系 <br>
+ * @version 1.2.8 [20140914 duanyy]
+ * - 增加指标收集体系
  * 
- * @version 1.4.0 [20141117 duanyy] <br>
- * - Servant体系抛弃MessageDoc <br>
  */
 abstract public class AbstractServant extends Servant implements MetricsCollector {
 	
 	
-	public int actionProcess(Context ctx) throws Exception {
-		String json = getArgument("json",jsonDefault,ctx);
+	public int actionProcess(MessageDoc msg, Context ctx) throws Exception {
+		String json = getArgument("json",jsonDefault,msg,ctx);
 		if (json != null && json.equals("true")){
-			return onJson(ctx);
+			return onJson(msg,ctx);
 		}else{
-			return onXml(ctx);
+			return onXml(msg,ctx);
 		}
 	}
 
@@ -63,55 +61,10 @@ abstract public class AbstractServant extends Servant implements MetricsCollecto
 
 	abstract protected void onCreate(ServiceDescription sd) throws ServantException;
 
-	/**
-	 * 以XML协议进行服务处理
-	 * 
-	 * @param msgDoc 消息文档
-	 * @param ctx 上下文
-	 * @return 结果
-	 * @throws Exception
-	 * @deprecated from 1.4.0
-	 */
-	protected int onXml(MessageDoc msgDoc, Context ctx) throws Exception{
-		return 0;
-	}
-	
-	/**
-	 * 以XML协议进行服务处理
-	 * @param ctx 上下文
-	 * @return 结果
-	 * @throws Exception
-	 * 
-	 * @since 1.4.0
-	 */
-	protected int onXml(Context ctx) throws Exception{
-		return onXml(ctx,ctx);
-	}
+	abstract protected int onXml(MessageDoc msgDoc, Context ctx) throws Exception;
 
-	/**
-	 * 以JSON协议进行服务处理
-	 * 
-	 * @param msgDoc 消息文档
-	 * @param ctx 上下文
-	 * @return 结果
-	 * @throws Exception
-	 * 
-	 * @deprecated from 1.4.0
-	 */
-	protected int onJson(MessageDoc msgDoc, Context ctx) throws Exception{
-		return 0;
-	}
+	abstract protected int onJson(MessageDoc msgDoc, Context ctx) throws Exception;
 	
-	/**
-	 * 以JSON协议进行服务处理
-	 * @param ctx 上下文
-	 * @return 结果
-	 * @throws Exception
-	 * @since 1.4.0
-	 */
-	protected int onJson(Context ctx) throws Exception{
-		return onJson(ctx,ctx);
-	}
 	
 	public void metricsIncr(Fragment fragment){
 		if (metricsHandler != null){

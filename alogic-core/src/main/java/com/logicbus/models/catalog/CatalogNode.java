@@ -11,25 +11,25 @@ public interface CatalogNode extends XmlSerializer{
 	
 	/**
 	 * 获取名称
-	 * @return 名称
+	 * @return
 	 */
 	public String getName();
 	
 	/**
 	 * 获取实现模块
-	 * @return 实现模块
+	 * @return
 	 */
 	public String getModule();
 	
 	/**
 	 * 获取路径
-	 * @return 路径
+	 * @return
 	 */
 	public Path getPath();
 	
 	/**
 	 * 获取附加数据
-	 * @return 附加数据
+	 * @return
 	 */
 	public Object getData();
 }

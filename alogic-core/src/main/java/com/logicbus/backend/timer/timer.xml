@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="GB2312"?>
+<timers logListener="com.logicbus.backend.timer.DefaultLogListener">
+	<!--
+		每分钟定期跑GC
+	-->
+	<!--
+	<timer name="定期释放内存" matcher="Crontab" crontab="* * * * *" task="com.logicbus.backend.timer.GC"/>
+	-->
+</timers>

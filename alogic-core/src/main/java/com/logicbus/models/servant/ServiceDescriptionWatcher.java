@@ -14,7 +14,7 @@ public interface ServiceDescriptionWatcher {
 	/**
 	 * 当服务描述有变动的时候触发
 	 * @param id id
-	 * @param desc 新的描述信息
+	 * @param newDesc 新的描述信息
 	 */
 	public void changed(Path id,ServiceDescription desc);
 	

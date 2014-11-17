@@ -2,6 +2,7 @@ package com.logicbus.service;
 
 import com.logicbus.backend.Context;
 import com.logicbus.backend.Servant;
+import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.RawMessage;
 
 /**
@@ -26,13 +27,12 @@ import com.logicbus.backend.message.RawMessage;
  * }
  * 
  * @author duanyy
- * @version 1.4.0 [20141117 duanyy] <br>
- * - 将MessageDoc和Context进行合并整合 <br>
+ *
  */
 public class HelloJSON extends Servant {
 	
-	public int actionProcess(Context ctx) throws Exception {
-		RawMessage msg = (RawMessage)ctx.asMessage(RawMessage.class);
+	public int actionProcess(MessageDoc msgDoc, Context ctx) throws Exception {
+		RawMessage msg = (RawMessage)msgDoc.asMessage(RawMessage.class);
 		StringBuffer buf = msg.getBuffer();
 		buf.setLength(0);
 		buf.append("{\"say\":\"hello world!\"}");

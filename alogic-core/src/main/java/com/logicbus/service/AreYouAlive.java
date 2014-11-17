@@ -5,6 +5,7 @@ import org.w3c.dom.Element;
 
 import com.logicbus.backend.Context;
 import com.logicbus.backend.Servant;
+import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.XMLMessage;
 
 /**
@@ -24,14 +25,13 @@ import com.logicbus.backend.message.XMLMessage;
  * }
  * 
  * @author duanyy
- * @version 1.4.0 [20141117 duanyy] <br>
- * - 将MessageDoc和Context进行合并整合 <br>
+ *
  */
 public class AreYouAlive extends Servant {
 	
 	
-	public int actionProcess(Context ctx) throws Exception{
-		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
+	public int actionProcess(MessageDoc msgDoc, Context ctx) throws Exception{
+		XMLMessage msg = (XMLMessage)msgDoc.asMessage(XMLMessage.class);
 		Element root = msg.getRoot();
 		Document doc = root.getOwnerDocument();
 		root.appendChild(doc.createTextNode("Ok,i am alive."));

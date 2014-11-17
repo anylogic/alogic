@@ -15,8 +15,7 @@ import com.logicbus.models.servant.Getter;
  * 
  * @author duanyy
  * @since 1.2.0
- * @version 1.4.0 [20141117 duanyy] <br>
- * - 抛弃MessageDoc <br>
+ * 
  */
 public class Constants implements Getter{
 	protected String constants;
@@ -32,10 +31,6 @@ public class Constants implements Getter{
 	
 	public String getValue(Argument argu, Message msg, Context ctx)
 			throws ServantException {
-		return constants;
-	}
-
-	public String getValue(Argument argu, Context ctx) throws ServantException {
 		return constants;
 	}
 }

@@ -30,9 +30,6 @@ import org.apache.log4j.LogManager;
  * 
  * @version 1.2.5 [20140722 duanyy]<br>
  * - Pooled接口取消了desctory方法，增加了close方法
- * 
- * @version 1.4.0 [20141117 duanyy] <br>
- * - 将MessageDoc和Context进行合并整合 <br>
  */
 abstract public class Servant implements Pooled{
 	/**
@@ -88,7 +85,8 @@ abstract public class Servant implements Pooled{
 	 * 初始化服务者
 	 * 
 	 * <br>
-	 * 根据服务描述初始化服务者.
+	 * 根据服务描述初始化服务者,在{@link com.logicbus.backend.ServantPool ServantPool}类
+	 * {@link com.logicbus.backend.ServantPool#CreateServant(ServiceDescription) CreateServant}时调用。
 	 * 
 	 * @param sd service description
 	 * @throws ServantException 
@@ -147,8 +145,6 @@ abstract public class Servant implements Pooled{
 	 * @return 参数值
 	 * 
 	 * @since 1.0.3
-	 * 
-	 * @deprecated from 1.4.0
 	 */
 	public String getArgument(String id,String defaultValue,MessageDoc msgDoc, Context ctx) throws ServantException{
 		Argument argu = m_desc.getArgument(id);
@@ -163,30 +159,6 @@ abstract public class Servant implements Pooled{
 		}
 		return value;
 	}
-	
-	/**
-	 * 读取参数
-	 * @param id 参数ID
-	 * @param dftValue 缺省值 
-	 * @param ctx 上下文
-	 * @return 参数值
-	 * @throws ServantException
-	 * 
-	 * @since 1.4.0
-	 */
-	public String getArgument(String id,String dftValue,Context ctx)throws ServantException{
-		Argument argu = m_desc.getArgument(id);
-		if (argu == null){
-			//没有定义参数
-			return ctx.GetValue(id, dftValue);
-		}
-		
-		String value = argu.getValue(ctx);
-		if (value == null || value.length() <= 0){
-			return dftValue;
-		}
-		return value;
-	}
 
 	/**
 	 * 从Message和上下文中读取参数
@@ -197,8 +169,6 @@ abstract public class Servant implements Pooled{
 	 * @return 参数值
 	 * 
 	 * @since 1.0.8
-	 * 
-	 * @deprecated from 1.4.0
 	 */
 	public String getArgument(String id,String defaultValue,Message msg, Context ctx) throws ServantException{
 		Argument argu = m_desc.getArgument(id);
@@ -222,7 +192,6 @@ abstract public class Servant implements Pooled{
 	 * @return 参数值
 	 * 
 	 * @since 1.0.3
-	 * @deprecated from 1.4.0
 	 */
 	public String getArgument(String id,MessageDoc msgDoc, Context ctx) throws ServantException{
 		Argument argu = m_desc.getArgument(id);
@@ -241,29 +210,6 @@ abstract public class Servant implements Pooled{
 	}	
 
 	/**
-	 * 读取参数
-	 * @param id 参数ID
-	 * @param ctx 上下文
-	 * @return 参数值
-	 * @throws ServantException
-	 */
-	public String getArgument(String id,Context ctx) throws ServantException{
-		Argument argu = m_desc.getArgument(id);
-		String value = null;
-		if (argu == null){
-			//没有定义参数
-			value = ctx.GetValue(id, "");
-		}else{
-			value = argu.getValue(ctx);
-		}		
-		if (value == null || value.length() <= 0){
-			throw new ServantException("client.args_not_found",
-					"Can not find parameter:" + id);
-		}
-		return value;
-	}
-	
-	/**
 	 * 从Message和上下文中读取参数
 	 * @param id 参数ID
 	 * @param msg Message
@@ -271,8 +217,6 @@ abstract public class Servant implements Pooled{
 	 * @return 参数值
 	 * 
 	 * @since 1.0.8
-	 * 
-	 * @deprecated from 1.4.0
 	 */
 	public String getArgument(String id,Message msg, Context ctx) throws ServantException{
 		Argument argu = m_desc.getArgument(id);
@@ -292,7 +236,7 @@ abstract public class Servant implements Pooled{
 	
 	/**
 	 * 获取参数列表
-	 * @return 参数列表
+	 * @return
 	 * 
 	 * @since 1.0.5
 	 */
@@ -302,25 +246,10 @@ abstract public class Servant implements Pooled{
 	 * 服务处理过程
 	 * @param msg 消息文档
 	 * @param ctx 上下文
-	 * @return 处理结果
+	 * @return 
 	 * @throws Exception
-	 * @deprecated from 1.4.0
 	 */
-	public int actionProcess(MessageDoc msg,Context ctx) throws Exception{
-		return -1;
-	}
-	
-	/**
-	 * 服务处理过程
-	 * @param ctx 上下文
-	 * @return 处理结果
-	 * @throws Exception
-	 * 
-	 * @since 1.4.0
-	 */
-	public int actionProcess(Context ctx) throws Exception{
-		return actionProcess(ctx,ctx);
-	}
+	abstract public int actionProcess(MessageDoc msg,Context ctx) throws Exception;
 	
 	/**
 	 * 服务处理即将开始
@@ -329,20 +258,8 @@ abstract public class Servant implements Pooled{
 	 * @param doc 消息文档
 	 * @param ctx 上下文
 	 * @see #actionProcess(MessageDoc, Context)
-	 * 
-	 * @deprecated from 1.4.0
 	 */
 	public void actionBefore(MessageDoc doc,Context ctx){
-		//logger.debug("Begin:" + m_desc.getName());
-	}
-	
-	/**
-	 * 服务处理即将开始
-	 * @param ctx 上下文
-	 * 
-	 * @since 1.4.0
-	 */
-	public void actionBefore(Context ctx){
 		//logger.debug("Begin:" + m_desc.getName());
 	}
 	
@@ -350,9 +267,7 @@ abstract public class Servant implements Pooled{
 	 * 服务有效性测试
 	 * @param msg 消息文档
 	 * @param ctx 上下文
-	 * @return 处理结果
-	 * 
-	 * @deprecated from 1.4.0
+	 * @return 
 	 */
 	public int actionTesting(MessageDoc msg,Context ctx){
 		//logger.debug("Testing the service,I am ok!!!");	
@@ -367,25 +282,10 @@ abstract public class Servant implements Pooled{
 	 * @param doc 消息文档
 	 * @param ctx 上下文
 	 * @see #actionProcess(MessageDoc, Context)
-	 * 
-	 * @deprecated from 1.4.0
 	 */
 	public void actionAfter(MessageDoc doc,Context ctx){
 		doc.setReturn("core.ok","It is successful");
 		doc.setEndTime(System.currentTimeMillis());
-		//logger.debug("Successful:" + m_desc.getName());
-		//logger.debug("Duration(ms):" + (doc.getDuration()));
-	}
-	
-	/**
-	 * 服务处理已经结束
-	 * @param ctx 上下文
-	 * 
-	 * @since 1.4.0
-	 */
-	public void actionAfter(Context ctx){
-		ctx.setReturn("core.ok","It is successful");
-		ctx.setEndTime(System.currentTimeMillis());
 		//logger.debug("Successful:" + m_desc.getName());
 		//logger.debug("Duration(ms):" + (doc.getDuration()));
 	}
@@ -399,7 +299,6 @@ abstract public class Servant implements Pooled{
 	 * @param ctx 上下文
 	 * @see #actionProcess(MessageDoc, Context)
 	 * @param ex 
-	 * @deprecated from 1.4.0
 	 */
 	public void actionException(MessageDoc doc,Context ctx, ServantException ex){
 		doc.setReturn(ex.getCode(), ex.getMessage());
@@ -407,18 +306,5 @@ abstract public class Servant implements Pooled{
 		doc.setEndTime(System.currentTimeMillis());
 		//logger.debug("Failed:" + m_desc.getName());
 		//logger.debug("Duration(ms):" + (doc.getDuration()));		
-	}
-	
-	/**
-	 * 服务处理发生异常
-	 * @param ctx 上下文
-	 * @param ex 异常
-	 * @since 1.4.0
-	 */
-	public void actionException(Context ctx,ServantException ex){
-		ctx.setReturn(ex.getCode(), ex.getMessage());
-		ctx.setEndTime(System.currentTimeMillis());
-		//logger.debug("Failed:" + m_desc.getName());
-		//logger.debug("Duration(ms):" + (doc.getDuration()));	
 	}
 }

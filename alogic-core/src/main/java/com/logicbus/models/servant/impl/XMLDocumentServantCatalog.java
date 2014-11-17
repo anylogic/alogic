@@ -237,7 +237,7 @@ public class XMLDocumentServantCatalog implements ServantCatalog {
 	 * 通过路径找到目录节点
 	 * @param _root 根节点
 	 * @param _path 路径
-	 * @return 目录节点
+	 * @return
 	 */
 	static private Element findCatalogByPath(Element _root,String _path){
 		String current;
