@@ -47,7 +47,7 @@ public interface ServiceDescription extends XmlSerializer,JsonSerializer,Reporta
 	
 	/**
 	 * 获取日志类型
-	 * @return
+	 * @return 日志类型
 	 */
 	public LogType getLogType();
 	
@@ -77,31 +77,31 @@ public interface ServiceDescription extends XmlSerializer,JsonSerializer,Reporta
 	
 	/**
 	 * 获得服务路径
-	 * @return
+	 * @return 服务路径
 	 */
 	public String getPath();
 	
 	/**
 	 * 获得服务实现代码
-	 * @return
+	 * @return 服务实现代码
 	 */
 	public String getModule();
 
 	/**
 	 * 获取参数变量集
-	 * @return
+	 * @return 参数变量集
 	 */
 	public Properties getProperties();
 	
 	/**
-	 * 获取服务以来库文件列表
-	 * @return 
+	 * 获取服务依赖库文件列表
+	 * @return 文件列表
 	 */
 	public String [] getModules();
 	
 	/**
 	 * 获取服务调用参数列表
-	 * @return
+	 * @return 调用参数列表
 	 * @since 1.0.3
 	 */
 	public Argument [] getArgumentList();
@@ -109,7 +109,7 @@ public interface ServiceDescription extends XmlSerializer,JsonSerializer,Reporta
 	/**
 	 * 获取指定ID的参数
 	 * @param id 参数Id
-	 * @return 
+	 * @return 指定ID的参数
 	 */
 	public Argument getArgument(String id);	
 }

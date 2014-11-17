@@ -11,7 +11,6 @@ import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.AccessController;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.ServantException;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.models.servant.ServiceDescription;
@@ -21,7 +20,7 @@ import com.logicbus.models.servant.ServiceDescription;
  * 访问控制信息查询
  * 
  * <br>
- * 查询当前访问控制器的信息，具体信息视访问控制器的实现而定，见{@link com.logicbus.backend.AccessController#toXML(Element) AccessController.toXML(Element)}.<br>
+ * 查询当前访问控制器的信息，具体信息视访问控制器的实现而定.<br>
  * 
  * 实现了一个内部核心服务，定义在/com/logicbus/service/servant.xml中，具体配置如下:<br>
  * 
@@ -39,8 +38,11 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  *
  *
- * @version 1.2.8.2 [20141015 duanyy]
- * - 支持双协议:JSON和XML
+ * @version 1.2.8.2 [20141015 duanyy] <br>
+ * - 支持双协议:JSON和XML <br>
+ * 
+ * @version 1.4.0 [20141117 duanyy] <br>
+ * - 将MessageDoc和Context进行合并整合 <br>
  */
 public class AclQuery extends AbstractServant {
 	
@@ -54,8 +56,8 @@ public class AclQuery extends AbstractServant {
 	}
 
 	
-	protected int onXml(MessageDoc msgDoc, Context ctx) throws Exception {
-		XMLMessage msg = (XMLMessage)msgDoc.asMessage(XMLMessage.class);
+	protected int onXml(Context ctx) throws Exception {
+		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
 		
 		Document doc = msg.getDocument();
 		Element root = msg.getRoot();
@@ -74,8 +76,8 @@ public class AclQuery extends AbstractServant {
 	}
 
 	
-	protected int onJson(MessageDoc msgDoc, Context ctx) throws Exception {
-		JsonMessage msg = (JsonMessage)msgDoc.asMessage(JsonMessage.class);
+	protected int onJson(Context ctx) throws Exception {
+		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		Map<String,Object> root = msg.getRoot();
 		

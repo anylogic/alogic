@@ -1,27 +1,18 @@
 package com.logicbus.backend.server.http;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-
-import com.anysoft.util.IOTools;
 import com.anysoft.util.Settings;
 import com.anysoft.webloader.ServletHandler;
 import com.logicbus.backend.AccessController;
-import com.logicbus.backend.Context;
 import com.logicbus.backend.DefaultNormalizer;
 import com.logicbus.backend.Normalizer;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.server.MessageRouter;
 import com.logicbus.models.catalog.Path;
 
@@ -48,6 +39,8 @@ import com.logicbus.models.catalog.Path;
  * @version 1.3.0.1 [20141031 duanyy] <br>
  * - 解决问题：框架截获了post方式的body数据，导致post过来的form数据无法获取
  * 
+ * @version 1.4.0 [20141117 duanyy] <br>
+ * - 将MessageDoc和Context进行合并整合 <br>
  */
 public class MessageRouterServletHandler implements ServletHandler {
 	/**
@@ -80,18 +73,11 @@ public class MessageRouterServletHandler implements ServletHandler {
 	 */
 	protected static String defaultAllowOrigin = "*";
 	
-	/**
-	 * 通过post方式传递参数所对应的contentType
-	 */
-	protected String formContentType = "application/x-www-form-urlencoded";
-	
 	public void init(ServletConfig servletConfig) throws ServletException {
 		Settings settings = Settings.get();
 		encoding = settings.GetValue("http.encoding", encoding);
 		defaultAllowOrigin = settings.GetValue("http.alloworigin",
 				defaultAllowOrigin);
-		formContentType = settings.GetValue("http.formContentType",
-				formContentType);
 		ac = (AccessController) settings.get("accessController");
 
 		String normalizerClass = servletConfig.getInitParameter("normalizer");
@@ -133,93 +119,26 @@ public class MessageRouterServletHandler implements ServletHandler {
 		String origin = request.getHeader("Origin");
 		response.setHeader("Access-Control-Allow-Origin", origin == null || origin.length() <= 0 ? defaultAllowOrigin : origin);
 		
-		StringBuffer doc = new StringBuffer();
-		MessageDoc msgDoc = null;
-		Context ctx = null;
+		HttpContext ctx = new HttpContext(request,response,encoding);
 		try{
-			//从request输入流中读入XML文档
-			
-			if (method.equals("post"))
-			{
-				try{
-					String _contentType = request.getContentType();
-					if (_contentType != null && ! _contentType.startsWith(formContentType)){
-						doc = loadFromInputStream(doc,request.getInputStream());
-					}
-				}catch (Exception ex){
-					// 没有输入XML文档
-				}
-			}
-			String serial = request.getHeader("GlobalSerial");
-			
-			msgDoc = new MessageDoc(doc,encoding);
-			ctx = new HttpContext(request,serial);	
-			
 			//规范化ID
 			Path id = normalizer.normalize(ctx, request);
-			
-			{
-				if (logger.getEffectiveLevel().equals(Level.DEBUG)){
-					logger.debug("Invoking service:" + id);
-					logger.debug("Input:");					
-					logger.debug(msgDoc.toString());
-				}
-			}
-			
-			MessageRouter.action(id,msgDoc,ctx,ac);
-			
-			{
-				if (logger.getEffectiveLevel().equals(Level.DEBUG)){
-					logger.debug("Output:");
-					logger.debug(msgDoc.toString());
-				}
-			}
-
+			MessageRouter.action(id,ctx,ac);
 		}catch (Exception ex){
 			ex.printStackTrace();
-			if (msgDoc != null){
-				msgDoc.setReturn("core.fatalerror",ex.getMessage());
+			if (ctx != null){
+				ctx.setReturn("core.fatalerror",ex.getMessage());
 				logger.error("core.fatalerror:" + ex.getMessage());
 			}
 		}	
 		finally {
-			if (msgDoc != null){
-				response.setContentType(msgDoc.getContentType());
-				response.setCharacterEncoding(encoding);
-				if (msgDoc.hasFatalError()){
-					response.sendError(404, msgDoc.getReturnCode() + "(" + msgDoc.getReason() + ")");
-				}else{
-					msgDoc.output(response.getOutputStream(),ctx);
-				}
+			if (ctx != null){
+				ctx.finish();
 			}
 		}
 	}
-	
-	/**
-	 * 从InputStream中装入文本
-	 * @param buf 文本对象
-	 * @param in InputStream
-	 * @return
-	 */
-	private StringBuffer loadFromInputStream(StringBuffer buf,InputStream in){
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-		String line = null;
-		try {
-            while ((line = reader.readLine()) != null) {
-            	buf.append(line);
-            	buf.append("\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-        	IOTools.closeStream(in,reader);
-        }
-		return buf;
-	}
-	
-	
+
 	public void destroy() {
-		// TODO Auto-generated method stub
 
 	}
 

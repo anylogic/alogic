@@ -8,7 +8,7 @@
   <artifactId>alogic-core</artifactId>
   <name>alogic-core</name>
   <groupId>com.github.alogic</groupId>
-  <version>1.3.0</version>
+  <version>1.4.0</version>
   <dependencies>
   	<dependency>
   		<groupId>com.github.alogic</groupId>

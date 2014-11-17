@@ -18,7 +18,6 @@ import com.logicbus.backend.ServantPool;
 import com.logicbus.backend.ServantWorkerThread;
 import com.logicbus.backend.bizlog.BizLogItem;
 import com.logicbus.backend.bizlog.BizLogger;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.models.catalog.Path;
 import com.logicbus.models.servant.ServiceDescription;
 
@@ -62,6 +61,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.3.0.1 [20141029 duanyy] <br>
  * - 当所访问的服务不存在时，以一个统一的服务名(/core/Null)来进行日志记录
+ * 
+ * @version 1.4.0 [20141117 duanyy] <br>
+ * - Servant体系抛弃MessageDoc <br>
  */
 public class MessageRouter {
 	
@@ -73,13 +75,12 @@ public class MessageRouter {
 	/**
 	 * 服务调用
 	 * @param id 服务id
-	 * @param mDoc 消息文档
 	 * @param ctx 上下文
 	 * @param ac 访问控制器
-	 * @return 
+	 * @return 调用结果
 	 */
-	static public int action(Path id,MessageDoc mDoc,Context ctx,AccessController ac){
-		mDoc.setStartTime(System.currentTimeMillis());
+	static public int action(Path id,Context ctx,AccessController ac){
+		ctx.setStartTime(System.currentTimeMillis());
 		
 		ServantPool pool = null;
 		Servant servant = null;		
@@ -100,7 +101,7 @@ public class MessageRouter {
 				priority = ac.accessStart(sessionId,id, pool.getDescription(), ctx);
 				if (priority < 0){
 					logger.info("Unauthorized Access:" + ctx.getClientIp() + ",url:" + ctx.getRequestURI());
-					mDoc.setReturn("client.permission_denied","Permission denied！service id: "+ id);
+					ctx.setReturn("client.permission_denied","Permission denied！service id: "+ id);
 					return 0;
 				}
 			}
@@ -108,29 +109,29 @@ public class MessageRouter {
 			servant = pool.borrowObject(priority);
 			if (servant == null){
 				logger.warn("Can not get a servant from pool in the limited time,check servant.queueTimeout variable.");
-				mDoc.setReturn("core.time_out", "Can not get a servant from pool in the limited time,check servant.queueTimeout variable.");
+				ctx.setReturn("core.time_out", "Can not get a servant from pool in the limited time,check servant.queueTimeout variable.");
 			}else{
 				if (!threadMode){
 					//在非线程模式下,不支持服务超时
-					execute(servant,mDoc,ctx);
+					execute(servant,ctx);
 				}else{
 					CountDownLatch latch = new CountDownLatch(1);
-					ServantWorkerThread thread = new ServantWorkerThread(servant,mDoc,ctx,latch);
+					ServantWorkerThread thread = new ServantWorkerThread(servant,ctx,latch);
 					thread.start();
 					if (!latch.await(servant.getTimeOutValue(), TimeUnit.MILLISECONDS)){
-						mDoc.setReturn("core.time_out","Time out or interrupted.");
+						ctx.setReturn("core.time_out","Time out or interrupted.");
 					}
 					thread = null;
 				}
 			}
 		}catch (ServantException ex){
-			mDoc.setReturn(ex.getCode(), ex.getMessage());
+			ctx.setReturn(ex.getCode(), ex.getMessage());
 			logger.error(ex.getCode() + ":" + ex.getMessage());
 		}catch (Exception ex){
-			mDoc.setReturn("core.fatalerror",ex.getMessage());
+			ctx.setReturn("core.fatalerror",ex.getMessage());
 			logger.error("core.fatalerror:" + ex.getMessage(),ex);
 		}catch (Throwable t){
-			mDoc.setReturn("core.fatalerror",t.getMessage());
+			ctx.setReturn("core.fatalerror",t.getMessage());
 			logger.error("core.fatalerror:" + t.getMessage(),t);			
 		}
 		finally {
@@ -138,21 +139,21 @@ public class MessageRouter {
 				if (servant != null){
 					pool.returnObject(servant);		
 				}				
-				pool.visited(mDoc.getDuration(),mDoc.getReturnCode());
+				pool.visited(ctx.getDuration(),ctx.getReturnCode());
 				if (ac != null){
 					ac.accessEnd(sessionId,id, pool.getDescription(), ctx);
 				}				
 			}			
-			mDoc.setEndTime(System.currentTimeMillis());
+			ctx.setEndTime(System.currentTimeMillis());
 			if (bizLogger != null){				
 				//需要记录日志
-				log(id,sessionId,pool == null ? null : pool.getDescription(),mDoc,ctx);
+				log(id,sessionId,pool == null ? null : pool.getDescription(),ctx);
 			}
 		}
 		return 0;
 	}	
 	
-	protected static int log(Path id,String sessionId,ServiceDescription sd,MessageDoc mDoc,Context ctx){
+	protected static int log(Path id,String sessionId,ServiceDescription sd,Context ctx){
 		ServiceDescription.LogType logType = 
 				(sd != null) ? sd.getLogType():ServiceDescription.LogType.brief;
 		
@@ -167,22 +168,22 @@ public class MessageRouter {
 		//当无法取到sessionId时，直接取ip(当服务找不到时)
 		item.client = sessionId != null && sessionId.length() > 0 ? sessionId : item.clientIP;
 		//item.host = ctx.getHost();
-		item.result = mDoc.getReturnCode();
-		item.reason = mDoc.getReason();
-		item.startTime = mDoc.getStartTime();
-		item.duration = mDoc.getDuration();
+		item.result = ctx.getReturnCode();
+		item.reason = ctx.getReason();
+		item.startTime = ctx.getStartTime();
+		item.duration = ctx.getDuration();
 		item.url = ctx.getRequestURI();
-		item.content = logType == ServiceDescription.LogType.detail ? mDoc.toString() : null;
+		item.content = logType == ServiceDescription.LogType.detail ? ctx.toString() : null;
 		
 		bizLogger.handle(item,System.currentTimeMillis());
 				
 		return 0;
 	}
 	
-	protected static int execute(Servant servant,MessageDoc mDoc,Context ctx) throws Exception {
-		servant.actionBefore(mDoc, ctx);
-		servant.actionProcess(mDoc, ctx);
-		servant.actionAfter(mDoc, ctx);
+	protected static int execute(Servant servant,Context ctx) throws Exception {
+		servant.actionBefore( ctx);
+		servant.actionProcess( ctx);
+		servant.actionAfter( ctx);
 		return 0;
 	}
 	

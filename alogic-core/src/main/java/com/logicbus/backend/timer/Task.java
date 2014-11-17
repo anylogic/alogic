@@ -23,7 +23,6 @@ abstract public class Task {
 	 * @param _context 上下文
 	 * @param _config 配置信息
 	 * @param _listener 监听器
-	 * @return 是否执行成功
 	 */
 	final public void start(Object _context,Properties _config,TaskListener _listener){
 		try {

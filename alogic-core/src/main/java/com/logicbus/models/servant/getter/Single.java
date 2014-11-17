@@ -15,6 +15,9 @@ import com.logicbus.models.servant.Getter;
  * 
  * @author duanyy
  * @since 1.2.0
+ * 
+ * @version 1.4.0 [20141117 duanyy] <br>
+ * - 抛弃MessageDoc <br>
  */
 public class Single implements Getter{
 	protected String field = null;
@@ -41,6 +44,21 @@ public class Single implements Getter{
 	
 	public String getValue(Argument argu, Message msg, Context ctx)
 			throws ServantException {
+		String id = field == null || field.length() <= 0 ? argu.getId() : field;
+		String value;
+		if (argu.isOption()){
+			value = ctx.GetValue(id, argu.getDefaultValue());
+		}else{
+			value = ctx.GetValue(id, "");
+			if (value == null || value.length() <= 0){
+				throw new ServantException("client.args_not_found",
+						"Can not find parameter:" + id);
+			}
+		}
+		return value;
+	}
+
+	public String getValue(Argument argu, Context ctx) throws ServantException {
 		String id = field == null || field.length() <= 0 ? argu.getId() : field;
 		String value;
 		if (argu.isOption()){

@@ -77,7 +77,7 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 	
 	/**
 	 * 获取服务统计
-	 * @return
+	 * @return 服务统计
 	 */
 	public Counter getStat(){return m_stat;}
 	
@@ -95,7 +95,7 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 	}
 	/**
 	 * 判断资源池是否运行状态
-	 * @return 
+	 * @return 资源池是否运行状态
 	 */
 	public boolean isRunning(){
 		return status.equals("running");

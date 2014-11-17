@@ -26,6 +26,9 @@ import com.logicbus.backend.message.MessageDoc;
  * 
  * @version 1.2.8 [20140912 duanyy]
  * - JsonSerializer中Map参数化
+ * 
+ * @version 1.4.0 [20141117 duanyy] <br>
+ * - 抛弃MessageDoc <br>
  */
 public class DefaultArgument implements Argument{
 	/**
@@ -35,7 +38,7 @@ public class DefaultArgument implements Argument{
 	
 	/**
 	 * 获取Id
-	 * @return
+	 * @return Id
 	 */
 	public String getId(){return id;}
 	
@@ -46,7 +49,7 @@ public class DefaultArgument implements Argument{
 	
 	/**
 	 * 获取缺省值
-	 * @return
+	 * @return 缺省值
 	 */
 	public String getDefaultValue(){return defaultValue;}
 	
@@ -57,7 +60,7 @@ public class DefaultArgument implements Argument{
 	
 	/**
 	 * 是否可选
-	 * @return
+	 * @return 是否可选
 	 */
 	public boolean isOption(){return isOption;}
 	
@@ -70,7 +73,7 @@ public class DefaultArgument implements Argument{
 	
 	/**
 	 * 是否需要缓存
-	 * @return 
+	 * @return 是否需要缓存
 	 * 
 	 * @since 1.0.8
 	 */
@@ -83,7 +86,7 @@ public class DefaultArgument implements Argument{
 	
 	/**
 	 * 获取getter
-	 * @return
+	 * @return getter的类名
 	 */
 	public String getGetter(){return getter;}
 	
@@ -94,7 +97,7 @@ public class DefaultArgument implements Argument{
 	
 	/**
 	 * 获取gettter的参数
-	 * @return
+	 * @return gettter的参数
 	 */
 	public String getGetterParameters(){return getterParameters;}
 	
@@ -105,7 +108,7 @@ public class DefaultArgument implements Argument{
 	
 	/**
 	 * 获取getter的参数列表
-	 * @return
+	 * @return 参数列表
 	 */
 	public Properties getParameter(){
 		if (parameters != null){
@@ -126,9 +129,27 @@ public class DefaultArgument implements Argument{
 	
 	/**
 	 * 获取参数值
+	 * @param ctx 上下文
+	 * 
+	 * @since 1.4.0
+	 */
+	public String getValue(Context ctx) throws ServantException {
+		if (theGetter == null){
+			Settings settings = Settings.get();
+			ClassLoader cl = (ClassLoader)settings.get("classLoader");
+			TheFactory factory = new TheFactory(cl);
+			theGetter = factory.newInstance(getter,getParameter());
+		}
+		return theGetter.getValue(this, ctx);
+	}
+	
+	/**
+	 * 获取参数值
 	 * @param msg 服务接口文档
 	 * @param ctx 上下文
 	 * @return 参数值
+	 * 
+	 * @deprecated from 1.4.0
 	 */
 	public String getValue(MessageDoc msg,Context ctx)throws ServantException{
 		if (theGetter == null){
@@ -147,6 +168,8 @@ public class DefaultArgument implements Argument{
 	 * @return 参数值
 	 * 
 	 * @since 1.0.8
+	 * 
+	 * @deprecated from 1.4.0
 	 */
 	public String getValue(Message msg,Context ctx)throws ServantException{
 		if (theGetter == null){
@@ -240,5 +263,4 @@ public class DefaultArgument implements Argument{
 			return _module;
 		}		
 	}
-
 }

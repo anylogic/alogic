@@ -13,7 +13,6 @@ import com.logicbus.backend.ServantException;
 import com.logicbus.backend.ServantFactory;
 import com.logicbus.backend.ServantPool;
 import com.logicbus.backend.message.JsonMessage;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.catalog.Path;
 import com.logicbus.models.servant.ServantManager;
@@ -57,8 +56,10 @@ import com.logicbus.models.servant.ServiceDescription;
  * - ServantPool和ServantFactory插件化 
  * 
  * @version 1.2.8.2 [20141014 duanyy]<br>
- * - 支持双协议:XML,JSON
+ * - 支持双协议:XML,JSON <br>
  * 
+ * @version 1.4.0 [20141117 duanyy] <br>
+ * - 将MessageDoc和Context进行合并整合 <br>
  */
 public class ServiceReload extends AbstractServant {
 	
@@ -72,8 +73,8 @@ public class ServiceReload extends AbstractServant {
 	}
 
 	
-	protected int onXml(MessageDoc msgDoc, Context ctx) throws Exception {
-		XMLMessage msg = (XMLMessage)msgDoc.asMessage(XMLMessage.class);
+	protected int onXml(Context ctx) throws Exception {
+		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
 		String id = ctx.GetValue("service", "");
 		if (id == null || id.length() <= 0) {
 			throw new ServantException("client.args_not_found",
@@ -104,10 +105,10 @@ public class ServiceReload extends AbstractServant {
 	}
 
 	
-	protected int onJson(MessageDoc msgDoc, Context ctx) throws Exception {
-		JsonMessage msg = (JsonMessage)msgDoc.asMessage(JsonMessage.class);	
+	protected int onJson(Context ctx) throws Exception {
+		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);	
 		
-		String id = getArgument("service", msgDoc, ctx);		
+		String id = getArgument("service", ctx);		
 		Path path = new Path(id);
 		ServantManager sm = ServantManager.get();
 		ServiceDescription sd = sm.get(path);

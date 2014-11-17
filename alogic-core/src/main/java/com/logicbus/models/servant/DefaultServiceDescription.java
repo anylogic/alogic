@@ -65,7 +65,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	/**
 	 * 获取日志类型
-	 * @return
+	 * @return 日志类型
 	 */
 	public LogType getLogType(){return logType;}
 	
@@ -144,7 +144,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	/**
 	 * 获得服务路径
-	 * @return
+	 * @return 服务路径
 	 */
 	public String getPath(){return m_path;}
 	
@@ -155,8 +155,8 @@ public class DefaultServiceDescription implements ServiceDescription{
 	public void setPath(String path){m_path = path;}
 	
 	/**
-	 * 获得服务实现代码
-	 * @return
+	 * 获得服务实现模块
+	 * @return 实现模块的类名
 	 */
 	public String getModule(){return m_module;}
 	
@@ -168,7 +168,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	/**
 	 * 获取参数变量集
-	 * @return
+	 * @return 参数变量集
 	 */
 	public Properties getProperties(){return m_properties;}
 	
@@ -178,8 +178,8 @@ public class DefaultServiceDescription implements ServiceDescription{
 	protected Vector<String> modulesMaster = null;
 	
 	/**
-	 * 获取服务以来库文件列表
-	 * @return 
+	 * 获取服务依赖库文件列表
+	 * @return 库文件列表
 	 */
 	public String [] getModules(){return modulesMaster == null ? 
 			null : modulesMaster.toArray(new String[0]);}
@@ -193,7 +193,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	/**
 	 * 获取服务调用参数列表
-	 * @return
+	 * @return 参数列表
 	 * @since 1.0.3
 	 */
 	public Argument [] getArgumentList(){
@@ -206,7 +206,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	/**
 	 * 获取指定ID的参数
 	 * @param id 参数Id
-	 * @return 
+	 * @return 指定ID的参数
 	 */
 	public Argument getArgument(String id){
 		if (argumentList == null)
