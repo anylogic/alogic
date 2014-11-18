@@ -3,6 +3,10 @@ package com.logicbus.backend.message;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
+import com.anysoft.util.IOTools;
 import com.logicbus.backend.Context;
 
 /**
@@ -15,8 +19,11 @@ import com.logicbus.backend.Context;
  * - 修改消息传递模型。<br>
  * @version 1.4.0 [20141117 duanyy] <br>
  * - Message被改造为接口 <br>
+ * - MessageDoc暴露InputStream和OutputStream <br>
+ * 
  */
 public class RawMessage implements Message {
+	protected static final Logger logger = LogManager.getLogger(RawMessage.class);	
 	/**
 	 * 消息文本
 	 */
@@ -37,37 +44,37 @@ public class RawMessage implements Message {
 		return buf.toString();
 	}
 
-
-	public void write(OutputStream out, Context doc) {
-		Context.writeToOutpuStream(out, buf.toString(), doc.getEncoding());
+	public void init(MessageDoc ctx) {
+		InputStream in = null;
+		try {
+			in = ctx.getInputStream();
+			String data = Context.readFromInputStream(in, ctx.getEncoding());
+			buf.append(data);
+			contentType = "text/plain;charset=" + ctx.getEncoding();
+		}catch (Exception ex){
+			logger.error("Error when reading data from inputstream",ex);
+		}finally{
+			IOTools.close(in);
+		}
 	}
 
-
-	public void read(InputStream in, Context doc) {
-		String data = Context.readFromInputStream(in, doc.getEncoding());
-		buf.append(data);
-		
-		contentType = "text/plain;charset=" + doc.getEncoding();
+	public void finish(MessageDoc ctx) {
+		OutputStream out = null;
+		try {
+			ctx.setResponseContentType(contentType);
+			out = ctx.getOutputStream();
+			Context.writeToOutpuStream(out, buf.toString(), ctx.getEncoding());
+		}catch (Exception ex){
+			logger.error("Error when writing data to outputstream",ex);
+		}finally{
+			IOTools.close(out);
+		}
 	}
-
-
-	public boolean doRead(Context doc) {
-		return true;
-	}
-
-
-	public boolean doWrite(Context doc) {
-		return true;
-	}
-
-
-	public String getContentType(Context doc) {
-		return "text/plain;charset=" + doc.getEncoding();
-	}
-
+	
 	protected String contentType = "text/plain";
 	
 	public void setContentType(String _contentType){
 		contentType = _contentType;
 	}
+
 }

@@ -1,11 +1,5 @@
 package com.logicbus.backend.message;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import com.logicbus.backend.Context;
-
-
 /**
  * 消息
  * @author duanyy
@@ -17,41 +11,20 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 改造为接口 <br>
+ * 
+ * @version 1.6.1.1 [20141118 duanyy] <br>
+ * - 简化Message接口
  */
 public interface Message {
 	/**
-	 * 输出消息到输出流
-	 * 
-	 * @param out 输出流
-	 * @param doc 消息文档
+	 * 初始化
+	 * @param ctx 上下文
 	 */
-	public void write(OutputStream out,Context doc);
-
-	/**
-	 * 从输入流中读入消息
-	 * 
-	 * @param in 输入流
-	 * @param doc 消息文档
-	 */
-	public void read(InputStream in,Context doc);
+	public void init(MessageDoc ctx);
 	
 	/**
-	 * 是否从输入流中输入
-	 * @param doc 消息文档 
-	 * @return 是否Read
+	 * 完成
+	 * @param ctx 上下文身上
 	 */
-	public boolean doRead(Context doc);
-	
-	/**
-	 * 是否输出
-	 * @param doc
-	 * @return 是否Write
-	 */
-	public boolean doWrite(Context doc);
-	
-	/**
-	 * 获取输出的ContentType
-	 * @return ContentType
-	 */
-	public String getContentType(Context doc);
+	public void finish(MessageDoc ctx);
 }

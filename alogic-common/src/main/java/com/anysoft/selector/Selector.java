@@ -26,6 +26,8 @@ import com.anysoft.util.XmlElementProperties;
  * @version 1.6.0.5 [20141115 duanyy] <br>
  * - 增加方法{@link #newInstanceWithDefault(Element, Properties, String)} <br>
  * 
+ * @version 1.6.1.1 [20141118 duanyy] <br>
+ * - 修改缺省值为空字符串 <br>
  */
 abstract public class Selector implements XMLConfigurable {
 	
@@ -50,7 +52,7 @@ abstract public class Selector implements XMLConfigurable {
 	/**
 	 * default value
 	 */
-	private String defaultValue = "0";
+	private String defaultValue = "";
 
 	/**
 	 * to get the default value

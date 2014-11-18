@@ -10,7 +10,6 @@ import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.dbcp.context.DbcpSource;
 import com.logicbus.dbcp.core.ConnectionPool;
@@ -43,7 +42,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  * 
  * @since 1.2.9.1
- * 
+ * @version 1.6.1.1 [20141118 duanyy]
+ * - 抛弃MessageDoc <br>
  */
 public class DataSourceQuery extends AbstractServant {
 
@@ -55,13 +55,13 @@ public class DataSourceQuery extends AbstractServant {
 	}
 
 	
-	protected int onXml(MessageDoc msgDoc, Context ctx) throws Exception {
-		XMLMessage msg = (XMLMessage) msgDoc.asMessage(XMLMessage.class);		
+	protected int onXml(Context ctx) throws Exception {
+		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);		
 		
 		Element root = msg.getRoot();		
 		Document doc = msg.getDocument();	
 		
-		String id = getArgument("id","all", msgDoc, ctx);	
+		String id = getArgument("id","all", ctx);	
 		if (id == null || id.length() <= 0 || id.equals("all")){
 			Element source = doc.createElement("source");
 			
@@ -83,11 +83,11 @@ public class DataSourceQuery extends AbstractServant {
 	}
 
 	
-	protected int onJson(MessageDoc msgDoc, Context ctx) throws Exception {
-		JsonMessage msg = (JsonMessage) msgDoc.asMessage(JsonMessage.class);
+	protected int onJson(Context ctx) throws Exception {
+		JsonMessage msg = (JsonMessage) ctx.asMessage(JsonMessage.class);
 		Map<String,Object> root = msg.getRoot();
 
-		String id = getArgument("id","all", msgDoc, ctx);
+		String id = getArgument("id","all", ctx);
 		
 		if (id == null || id.length() <= 0 || id.equals("all")){
 			Map<String,Object> source = new HashMap<String,Object>();

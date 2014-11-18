@@ -1,6 +1,10 @@
 package com.logicbus.backend.message;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
+
 import com.anysoft.util.DefaultProperties;
 import com.logicbus.backend.ServantException;
 
@@ -16,6 +20,11 @@ import com.logicbus.backend.ServantException;
  * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 将MessageDoc和Context进行合并整合 <br>
+ * 
+ * @version 1.6.1.1 [20141117 duanyy] <br>
+ * - 增加方法{@link #getMethod()} <br>
+ * - 暴露InputStream和OutputStream <br>
+ * 
  */
 abstract public class MessageDoc extends DefaultProperties{
 
@@ -149,21 +158,13 @@ abstract public class MessageDoc extends DefaultProperties{
 			return msg;
 		try {
 			msg = (Message)clazz.newInstance();
-			onMessageCreated(msg);
+			msg.init(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServantException("core.instance_create_error",
 					"Can not create instance of " + clazz.getName() + ":" + e.getMessage());
 		}
 		return msg;
-	}
-	
-	/**
-	 * MessageCreated事件处理
-	 * @param msg 消息
-	 */
-	protected void onMessageCreated(Message msg) {
-		
 	}
 
 	/**
@@ -190,6 +191,15 @@ abstract public class MessageDoc extends DefaultProperties{
 	abstract public String getRequestURI();
 	
 	/**
+	 * 获取请求的方法
+	 * 
+	 * @return 请求的方法,POST,GET等
+	 * 
+	 * @since 1.6.1.1
+	 */
+	abstract public String getMethod();
+	
+	/**
 	 * 获取全局序列号
 	 * @return 全局序列号
 	 * 
@@ -197,10 +207,44 @@ abstract public class MessageDoc extends DefaultProperties{
 	 */
 	abstract public String getGlobalSerial();
 	
+	/**
+	 * 获取请求的Content-Type
+	 * 
+	 * @return Content-Type
+	 */
 	abstract public String getReqestContentType();
 	
+	/**
+	 * 获取请求头信息
+	 * @param id 信息ID
+	 * @return 信息值
+	 */
 	abstract public String getRequestHeader(String id);
 	
+	/**
+	 * 设置响应头的信息
+	 * @param id 信息
+	 * @param value 信息值
+	 */
 	abstract public void setResponseHeader(String id,String value);
 
+	/**
+	 * 设置响应的Content-Type
+	 * @param contentType
+	 */
+	abstract public void setResponseContentType(String contentType);
+	
+	/**
+	 * 获取InputStream
+	 * @return InputStream
+	 * @since 1.6.1.1
+	 */
+	abstract public InputStream getInputStream() throws IOException;
+	
+	/**
+	 * 获取OutputStram
+	 * @return OutputStram
+	 * @since 1.6.1.1
+	 */
+	abstract public OutputStream getOutputStream() throws IOException;
 }

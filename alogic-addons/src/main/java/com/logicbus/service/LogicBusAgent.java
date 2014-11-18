@@ -17,7 +17,6 @@ import com.logicbus.backend.Context;
 import com.logicbus.backend.Servant;
 import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.dbcp.core.ConnectionPool;
 import com.logicbus.dbcp.context.DbcpSource;
@@ -34,27 +33,30 @@ import com.logicbus.together.Logiclet;
  * @since 1.1.0
  * 
  * @version 1.2.1 [20140613 duanyy]
- * - 增加对JSON的支持
- * - 增加执行Watcher
+ * - 增加对JSON的支持 <br>
+ * - 增加执行Watcher <br>
  * 
  * @version 1.2.9 [20141016 duanyy]
- * - 重写了dbcp
+ * - 重写了dbcp <br>
+ * 
+ * @version 1.6.1.1 [20141118 duanyy]
+ * - 抛弃MessageDoc <br>
  */
 public class LogicBusAgent extends Servant {
 	
-	public int actionProcess(MessageDoc msgDoc, Context ctx) throws Exception {
-		String json = getArgument("json","false",msgDoc,ctx);
+	public int actionProcess(Context ctx) throws Exception {
+		String json = getArgument("json","false",ctx);
 		if (json != null && json.equals("true")){
-			return actionProcessJson(msgDoc,ctx);
+			return actionProcessJson(ctx);
 		}else{
-			return actionProcessXml(msgDoc,ctx);
+			return actionProcessXml(ctx);
 		}
 	}
 
-	private int actionProcessXml(MessageDoc msgDoc, Context ctx)throws Exception {
-		XMLMessage msg = (XMLMessage) msgDoc.asMessage(XMLMessage.class);
+	private int actionProcessXml( Context ctx)throws Exception {
+		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 		
-		String reload = getArgument("reload","false",msgDoc,ctx);
+		String reload = getArgument("reload","false",ctx);
 		
 		if (reload.equals("true")){
 			reloadProtocol();
@@ -111,10 +113,10 @@ public class LogicBusAgent extends Servant {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private int actionProcessJson(MessageDoc msgDoc, Context ctx) throws Exception{
-		JsonMessage msg = (JsonMessage) msgDoc.asMessage(JsonMessage.class);
+	private int actionProcessJson(Context ctx) throws Exception{
+		JsonMessage msg = (JsonMessage) ctx.asMessage(JsonMessage.class);
 		
-		String reload = getArgument("reload","false",msgDoc,ctx);
+		String reload = getArgument("reload","false",ctx);
 		
 		if (reload.equals("true")){
 			reloadProtocol();

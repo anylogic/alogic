@@ -1,6 +1,8 @@
 package com.logicbus.backend.server.http;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import com.anysoft.util.Settings;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.message.Message;
 
 /**
  * Http请求的上下文
@@ -23,6 +24,9 @@ import com.logicbus.backend.message.Message;
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 将MessageDoc和Context进行合并整合 <br>
  * 
+ * @version 1.6.1.1 [20141117 duanyy] <br>
+ * - 增加{@link #getMethod()}实现 <br>
+ * - 暴露InputStream和OutputStream <br>
  */
 
 public class HttpContext extends Context {
@@ -136,16 +140,25 @@ public class HttpContext extends Context {
 		return request.getContentType();
 	}
 	
-	protected void onMessageCreated(Message msg) {
-		if (msg.doRead(this)){
-			try {
-				msg.read(request.getInputStream(), this);
-			} catch (IOException e) {
-				setReturn("core.fatalerror","Can not read from inputstream.");
-				logger.error("Can not read from inputstream.",e);
-			}
-		}
+	@Override
+	public String getMethod() {
+		return request.getMethod();
 	}
+	
+	@Override
+	public void setResponseContentType(String contentType) {
+		response.setContentType(contentType);
+	}
+
+	@Override
+	public InputStream getInputStream() throws IOException{
+		return request.getInputStream();
+	}
+
+	@Override
+	public OutputStream getOutputStream() throws IOException{
+		return response.getOutputStream();
+	}	
 	
 	@Override
 	public void finish() {
@@ -153,11 +166,8 @@ public class HttpContext extends Context {
 			if (msg == null){
 				response.sendError(404, "No message is found,check servant implemention.");
 			}else{
-				if (msg.doWrite(this)){
-					response.setCharacterEncoding(encoding);
-					response.setContentType(msg.getContentType(this));
-					msg.write(response.getOutputStream(), this);
-				}
+				response.setCharacterEncoding(encoding);
+				msg.finish(this);
 			}
 		}catch (Exception ex){
 			try {
@@ -173,4 +183,6 @@ public class HttpContext extends Context {
 		Settings settings = Settings.get();
 		ForwardedHeader = settings.GetValue("http.forwardedheader", ForwardedHeader);
 	}
+
+
 }

@@ -10,12 +10,18 @@ import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
 import com.logicbus.remote.context.CallSource;
 import com.logicbus.remote.core.Call;
 
+/**
+ * 远程调用Report
+ * 
+ * @author duanyy
+ * @version 1.6.1.1 [20141118 duanyy]
+ * - 抛弃MessageDoc <br>
+ */
 public class RemoteCallReport extends AbstractServant {
 
 	
@@ -27,13 +33,13 @@ public class RemoteCallReport extends AbstractServant {
 	}
 
 	
-	protected int onXml(MessageDoc msgDoc, Context ctx) throws Exception {
-		XMLMessage msg = (XMLMessage)msgDoc.asMessage(XMLMessage.class);
+	protected int onXml(Context ctx) throws Exception {
+		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
 		
 		Document doc = msg.getDocument();
 		Element root = msg.getRoot();
 		
-		String id = getArgument("id","all", msgDoc, ctx);	
+		String id = getArgument("id","all",  ctx);	
 		if (id == null || id.length() <= 0 || id.equals("all")){
 			Element _source = doc.createElement("source");
 			
@@ -55,11 +61,11 @@ public class RemoteCallReport extends AbstractServant {
 	}
 
 	
-	protected int onJson(MessageDoc msgDoc, Context ctx) throws Exception {
-		JsonMessage msg = (JsonMessage) msgDoc.asMessage(JsonMessage.class);
+	protected int onJson(Context ctx) throws Exception {
+		JsonMessage msg = (JsonMessage) ctx.asMessage(JsonMessage.class);
 		Map<String,Object> root = msg.getRoot();
 
-		String id = getArgument("id","all", msgDoc, ctx);	
+		String id = getArgument("id","all", ctx);	
 		
 		if (id == null || id.length() <= 0 || id.equals("all")){
 			Map<String,Object> _source = new HashMap<String,Object>();

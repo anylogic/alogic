@@ -1,16 +1,15 @@
 package com.logicbus.service;
 
+
+import java.net.HttpURLConnection;
+import java.net.URL;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.Servant;
 import com.logicbus.backend.ServantException;
-import com.logicbus.backend.message.MessageDoc;
-import com.logicbus.backend.message.RawMessage;
+import com.logicbus.backend.message.ByteMessage;
 import com.logicbus.models.servant.ServiceDescription;
-import com.logicbus.remote.client.HttpClient;
-import com.logicbus.remote.client.Request;
-import com.logicbus.remote.client.Response;
 
 /**
  * 代理服务
@@ -18,14 +17,18 @@ import com.logicbus.remote.client.Response;
  * 提供代理服务功能，和ProxyNormalizer配合使用。
  * 
  * @author duanyy
- * @version 1.2.7.2
  * 
+ * @since 1.2.7.2
+ * 
+ * @version 1.6.1.1 <br>
+ * - 透传前端请求的Method、ContentType、HTTPBody等信息 <br>
+ * - 抛弃MessageDoc <br>
  */
 public class Proxy extends Servant {
 
 	
-	public int actionProcess(MessageDoc msgDoc, Context ctx) throws Exception {
-		RawMessage msg = (RawMessage) msgDoc.asMessage(RawMessage.class);
+	public int actionProcess(Context ctx) throws Exception {
+		ByteMessage msg = (ByteMessage) ctx.asMessage(ByteMessage.class);
 		
 		if (!enable){
 			throw new ServantException("core.servicedisable","the proxy service is disable now.");
@@ -42,22 +45,63 @@ public class Proxy extends Servant {
 			throw new ServantException("client.noservice","Can not get service from url.");
 		}
 		
-		String url = scheme + "://" + host + proxyPath + service;
-		
-		String query = ctx.GetValue("query", "");
-		if (query != null && query.length() > 0){
-			url = url + "?" + query;
-		}
 		try {
-			buf.resetMessage(msg,ctx.getGlobalSerial());
-			client.invoke(url,null,buf,buf);
-			msg.setContentType(buf.getContentType());
+			String _url = scheme + "://" + host + proxyPath + service;
+			//组装URL
+			{
+				String query = ctx.GetValue("query", "");
+				if (query != null && query.length() > 0){
+					_url = _url + "?" + query;
+				}
+			}
+			
+			URL url = new URL(_url);
+			String method = ctx.getMethod();
+			
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod(method);
+			//设置request header
+			{
+				if (forwarded){
+					conn.addRequestProperty("forwardedHeader", ctx.getClientIp());
+				}
+				String contentType = ctx.getReqestContentType();
+				if (contentType != null && contentType.length() > 0){
+					conn.addRequestProperty("Content-Type", contentType);
+				}
+				String globalSerial = ctx.getGlobalSerial();
+				if (globalSerial != null && globalSerial.length() > 0){
+					conn.addRequestProperty("GlobalSerial", globalSerial);
+				}
+			}
+			
+			byte[] toWrite = msg.getInput();
+			if (toWrite.length > 0){
+				conn.setDoOutput(true);
+				ByteMessage.writeBytes(conn.getOutputStream(), toWrite);
+			}
+			conn.setDoInput(true);
+			
+			int ret = conn.getResponseCode();
+			if (ret!= HttpURLConnection.HTTP_OK){
+				throw new ServantException("client.invoke_error", 
+						"Error occurs when invoking service :"
+						+ conn.getResponseMessage());
+			}
+			
+			byte[] toRead = ByteMessage.readBytes(conn.getInputStream());
+			
+			String resonseContentType = conn.getContentType();
+			if (resonseContentType != null && resonseContentType.length() > 0){
+				msg.setContentType(resonseContentType);
+			}
+			msg.setOutput(toRead);
 		}catch (Exception ex){
 			throw ex;
 		}
 		return 0;
 	}
-
+	
 	public void create(ServiceDescription sd) throws ServantException{
 		super.create(sd);
 		Properties p = sd.getProperties();
@@ -74,66 +118,11 @@ public class Proxy extends Servant {
 		scheme = PropertiesConstants.getString(p, "proxy.scheme", scheme);
 		
 		enable = PropertiesConstants.getBoolean(p, "proxy.enable", enable);
-		
-		client = new HttpClient(p);
-		buf = new Data();
 	}
 	
 	protected String forwardedHeader = "X-Forwarded-For";
 	protected boolean forwarded = false;
 	protected String proxyPath = "/services/";
 	protected String scheme = "http";
-	protected Data buf = null;
-	protected HttpClient client = null;
 	protected boolean enable = true;
-	
-	public static class Data implements Request,Response{
-		protected RawMessage rawMessage = null;
-	
-		protected String contentType;
-
-		protected String globalSerial = null;
-		
-		public String getContentType(){return contentType;}
-		
-		public void resetMessage(RawMessage msg,String serial){
-			rawMessage = msg;
-			globalSerial = serial;
-		}
-		
-		
-		public StringBuffer getBuffer() {
-			return rawMessage.getBuffer();
-		}
-
-		
-		public String[] getResponseAttributeNames() {
-			return null;
-		}
-
-		
-		public String[] getRequestAttributeNames() {
-			return new String[]{"GlobalSerial"};
-		}
-		
-		
-		public void setResponseAttribute(String name, String value) { 
-			if (name.equals("Content-Type")){
-				contentType = value;
-			}
-		}
-		
-		
-		public String getRequestAttribute(String name, String defaultValue) {
-			if (name.equals("GlobalSerial")){
-				return globalSerial;
-			}
-			return defaultValue;
-		}
-
-		
-		public void prepareBuffer(boolean flag) {
-
-		}		
-	}	
 }

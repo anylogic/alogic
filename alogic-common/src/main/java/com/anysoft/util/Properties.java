@@ -2,15 +2,19 @@ package com.anysoft.util;
 
 import java.util.*;
 
+import com.anysoft.formula.DataProvider;
+
 /**
  * 变量集
  * @author duanyy
  * 
- * @version 1.2.3 [20140725 duanyy]
- * - 增加loadFromString
+ * @version 1.2.3 [20140725 duanyy] <br>
+ * - 增加loadFromString <br>
  * 
+ * @version 1.6.1.1 [20141118 duanyy] <br>
+ * - 实现DataProvider接口 <br>
  */
-abstract public class Properties {
+abstract public class Properties implements DataProvider{
 	/**
 	 * 变量域
 	 */
@@ -254,4 +258,14 @@ abstract public class Properties {
 	 * 清楚变量
 	 */
 	abstract public void Clear();
+	
+	public String getValue(String varName, Object context, String defaultValue) {
+		return GetValue(varName, defaultValue);
+	}
+
+	public Object getContext(String varName) {
+		return cookies;
+	}	
+	
+	protected static Object cookies = new Object();
 }

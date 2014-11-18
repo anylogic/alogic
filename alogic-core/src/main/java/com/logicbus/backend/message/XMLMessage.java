@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,64 +28,63 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - Message被改造为接口 <br>
+ * 
+ * @version 1.6.1.1 [20141118 duanyy] <br>
+ * - 修正没有读入的情况下,root为空的bug <br>
+ * - MessageDoc暴露InputStream和OutputStream <br>
  */
 public class XMLMessage implements Message {
+	protected static final Logger logger = LogManager.getLogger(XMLMessage.class);		
 	protected Document xmlDoc = null;
 	protected Element root = null;
 
 	public Document getDocument(){return xmlDoc;}
 	public Element getRoot(){return root;}
-		
-	public void write(OutputStream out, Context doc) {
-		root.setAttribute("code",doc.getReturnCode());
-		root.setAttribute("reason", doc.getReason());
-		root.setAttribute("duration", String.valueOf(doc.getDuration()));
-		root.setAttribute("host", doc.getHost());
-		root.setAttribute("serial", doc.getGlobalSerial());
-		
-		try {
-			XmlTools.saveToOutputStream(xmlDoc, out);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}finally {
-			IOTools.closeStream(out);
-		}
-	}
-	
-	public void read(InputStream in, Context doc) {
-		try {
-			String data = Context.readFromInputStream(in, doc.getEncoding());
-			if (data != null && data.length() > 0){
-				xmlDoc = XmlTools.loadFromContent(data);
+
+	public void init(MessageDoc ctx) {
+		//当客户端通过form来post的时候，Message不去读取输入流。
+		String _contentType = ctx.getReqestContentType();
+		if (_contentType == null || !_contentType.startsWith(formContentType)){		
+			InputStream in = null;
+			try {
+				in = ctx.getInputStream();
+				String data = Context.readFromInputStream(in, ctx.getEncoding());
+				if (data != null && data.length() > 0){
+					xmlDoc = XmlTools.loadFromContent(data);
+				}
+			}catch(Exception ex){
+				logger.error("Error when reading data from inputstream",ex);
+			}finally{
+				IOTools.close(in);
 			}
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}finally{
-			IOTools.close(in);
 		}
-		
 		if (xmlDoc == null){
 			try {
 				xmlDoc = XmlTools.newDocument("root");
 			} catch (ParserConfigurationException e) {
-				e.printStackTrace();
+				
 			}
-		}		
+		}
+		
 		root = xmlDoc.getDocumentElement();
 	}
-	
-	public boolean doRead(Context doc) {
-		//当客户端通过form来post的时候，Message不去读取输入流。
-		String contentType = doc.getReqestContentType();
-		return !(contentType!=null&&contentType.startsWith(formContentType));
-	}
-	
-	public boolean doWrite(Context doc) {
-		return true;
-	}
-	
-	public String getContentType(Context doc) {
-		return "text/xml;charset=" + doc.getEncoding();
+	public void finish(MessageDoc ctx) {
+		root.setAttribute("code",ctx.getReturnCode());
+		root.setAttribute("reason", ctx.getReason());
+		root.setAttribute("duration", String.valueOf(ctx.getDuration()));
+		root.setAttribute("host", ctx.getHost());
+		root.setAttribute("serial", ctx.getGlobalSerial());
+		
+		OutputStream out = null;
+		try {
+			ctx.setResponseContentType("text/xml;charset=" + ctx.getEncoding());
+			out = ctx.getOutputStream();
+			XmlTools.saveToOutputStream(xmlDoc, out);
+		} catch (Exception ex) {
+			logger.error("Error when writing data to outputstream",ex);
+		}finally {
+			IOTools.closeStream(out);
+		}
 	}
 	
 	public String toString(){
@@ -98,5 +99,6 @@ public class XMLMessage implements Message {
 	static {
 		formContentType = Settings.get().GetValue("http.alloworigin",
 				"application/x-www-form-urlencoded");
-	}	
+	}
+	
 }
