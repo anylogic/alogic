@@ -16,6 +16,9 @@ import com.logicbus.backend.Context;
  * @author duanyy
  * 
  * @since 1.6.1.1
+ * 
+ * @version 1.6.1.2 [20141118 duanyy] <br>
+ * - 支持MessageDoc的Raw数据功能 <br>
  */
 public class ByteMessage implements Message {
 	/**
@@ -47,14 +50,17 @@ public class ByteMessage implements Message {
 	}
 	
 	public void init(MessageDoc ctx) {
-		InputStream in = null;
-		try {
-			in = ctx.getInputStream();
-			input = readBytes(in);
-		}catch (Exception ex){
-			logger.error("Error when reading data from inputstream",ex);
-		}finally{
-			IOTools.close(in);
+		input = ctx.getRequestRaw();
+		if (input == null){
+			InputStream in = null;
+			try {
+				in = ctx.getInputStream();
+				input = readBytes(in);
+			}catch (Exception ex){
+				logger.error("Error when reading data from inputstream",ex);
+			}finally{
+				IOTools.close(in);
+			}
 		}
 	}
 

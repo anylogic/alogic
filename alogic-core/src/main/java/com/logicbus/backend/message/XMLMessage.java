@@ -10,7 +10,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Settings;
 import com.anysoft.util.XmlTools;
@@ -32,6 +31,9 @@ import com.logicbus.backend.Context;
  * @version 1.6.1.1 [20141118 duanyy] <br>
  * - 修正没有读入的情况下,root为空的bug <br>
  * - MessageDoc暴露InputStream和OutputStream <br>
+ * 
+ * @version 1.6.1.2 [20141118 duanyy] <br>
+ * - 支持MessageDoc的Raw数据功能 <br>
  */
 public class XMLMessage implements Message {
 	protected static final Logger logger = LogManager.getLogger(XMLMessage.class);		
@@ -42,20 +44,39 @@ public class XMLMessage implements Message {
 	public Element getRoot(){return root;}
 
 	public void init(MessageDoc ctx) {
-		//当客户端通过form来post的时候，Message不去读取输入流。
-		String _contentType = ctx.getReqestContentType();
-		if (_contentType == null || !_contentType.startsWith(formContentType)){		
-			InputStream in = null;
-			try {
-				in = ctx.getInputStream();
-				String data = Context.readFromInputStream(in, ctx.getEncoding());
-				if (data != null && data.length() > 0){
-					xmlDoc = XmlTools.loadFromContent(data);
+		String data = null;
+		{
+			byte [] inputData = ctx.getRequestRaw();
+			if (inputData != null){
+				try {
+					data = new String(inputData,ctx.getEncoding());
+				}catch (Exception ex){
+					
 				}
-			}catch(Exception ex){
-				logger.error("Error when reading data from inputstream",ex);
-			}finally{
-				IOTools.close(in);
+			}
+		}
+		
+		if (data == null){
+			//当客户端通过form来post的时候，Message不去读取输入流。
+			String _contentType = ctx.getReqestContentType();
+			if (_contentType == null || !_contentType.startsWith(formContentType)){		
+				InputStream in = null;
+				try {
+					in = ctx.getInputStream();
+					data = Context.readFromInputStream(in, ctx.getEncoding());
+				}catch(Exception ex){
+					logger.error("Error when reading data from inputstream",ex);
+				}finally{
+					IOTools.close(in);
+				}
+			}
+		}
+		
+		if (data != null && data.length() > 0){
+			try {
+				xmlDoc = XmlTools.loadFromContent(data);
+			} catch (Exception ex) {
+				logger.error("Error when parsing data from xml",ex);
 			}
 		}
 		if (xmlDoc == null){

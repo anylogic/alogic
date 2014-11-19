@@ -20,7 +20,8 @@ import com.logicbus.backend.Context;
  * @version 1.4.0 [20141117 duanyy] <br>
  * - Message被改造为接口 <br>
  * - MessageDoc暴露InputStream和OutputStream <br>
- * 
+ * @version 1.6.1.2 [20141118 duanyy] <br>
+ * - 支持MessageDoc的Raw数据功能 <br>
  */
 public class RawMessage implements Message {
 	protected static final Logger logger = LogManager.getLogger(RawMessage.class);	
@@ -45,17 +46,34 @@ public class RawMessage implements Message {
 	}
 
 	public void init(MessageDoc ctx) {
-		InputStream in = null;
-		try {
-			in = ctx.getInputStream();
-			String data = Context.readFromInputStream(in, ctx.getEncoding());
-			buf.append(data);
-			contentType = "text/plain;charset=" + ctx.getEncoding();
-		}catch (Exception ex){
-			logger.error("Error when reading data from inputstream",ex);
-		}finally{
-			IOTools.close(in);
+		String data = null;
+		{
+			byte [] inputData = ctx.getRequestRaw();
+			if (inputData != null){
+				try {
+					data = new String(inputData,ctx.getEncoding());
+				}catch (Exception ex){
+					
+				}
+			}
 		}
+		if (data == null){
+			InputStream in = null;
+			try {
+				in = ctx.getInputStream();
+				data = Context.readFromInputStream(in, ctx.getEncoding());
+			}catch (Exception ex){
+				logger.error("Error when reading data from inputstream",ex);
+			}finally{
+				IOTools.close(in);
+			}
+		}
+		
+		if (data != null){
+			buf.append(data);
+		}
+		
+		contentType = "text/plain;charset=" + ctx.getEncoding();
 	}
 
 	public void finish(MessageDoc ctx) {

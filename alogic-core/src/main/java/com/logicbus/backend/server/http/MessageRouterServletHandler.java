@@ -41,6 +41,9 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 将MessageDoc和Context进行合并整合 <br>
+ * 
+ * @version 1.6.1.2 [20141118 duanyy] <br>
+ * - 支持HttpContext的数据截取,通过Servlet的变量intercept.mode来控制 <br>
  */
 public class MessageRouterServletHandler implements ServletHandler {
 	/**
@@ -52,6 +55,11 @@ public class MessageRouterServletHandler implements ServletHandler {
 	 * 路径标准化
 	 */
 	protected Normalizer normalizer = null;
+	
+	/**
+	 * 是否开启拦截模式
+	 */
+	protected boolean interceptMode = false;
 	
 	/**
 	 * a logger of log4j
@@ -95,6 +103,13 @@ public class MessageRouterServletHandler implements ServletHandler {
 			logger.error("Failed to initialize Normalizer.Using default:"
 					+ DefaultNormalizer.class.getName());
 		}
+		{
+			String _interceptMode = servletConfig.getInitParameter("intercept.mode");
+			
+			if (_interceptMode != null && _interceptMode.equals("true")){
+				interceptMode = true;
+			}
+		}
 	}
 
 	
@@ -119,7 +134,7 @@ public class MessageRouterServletHandler implements ServletHandler {
 		String origin = request.getHeader("Origin");
 		response.setHeader("Access-Control-Allow-Origin", origin == null || origin.length() <= 0 ? defaultAllowOrigin : origin);
 		
-		HttpContext ctx = new HttpContext(request,response,encoding);
+		HttpContext ctx = new HttpContext(request,response,encoding,interceptMode);
 		try{
 			//规范化ID
 			Path id = normalizer.normalize(ctx, request);

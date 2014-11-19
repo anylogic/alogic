@@ -25,6 +25,8 @@ import com.logicbus.backend.ServantException;
  * - 增加方法{@link #getMethod()} <br>
  * - 暴露InputStream和OutputStream <br>
  * 
+ * @version 1.6.1.2 [20141118 duanyy] <br>
+ * - 增加方法{@link #getRequestRaw()} <br>
  */
 abstract public class MessageDoc extends DefaultProperties{
 
@@ -247,4 +249,14 @@ abstract public class MessageDoc extends DefaultProperties{
 	 * @since 1.6.1.1
 	 */
 	abstract public OutputStream getOutputStream() throws IOException;
+	
+	/**
+	 * 获取请求的输入数据
+	 * 
+	 * <p>
+	 * 如果有必要，MessageDoc将提前截取请求数据，以byte数组的形式放在RequestRaw中。
+	 * 
+	 * @return byte[]形式的输入数据
+	 */
+	abstract public byte [] getRequestRaw();
 }

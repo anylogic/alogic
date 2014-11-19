@@ -1,5 +1,6 @@
 package com.logicbus.backend.server.http;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.anysoft.util.IOTools;
 import com.anysoft.util.Settings;
 import com.logicbus.backend.Context;
 
@@ -27,6 +29,10 @@ import com.logicbus.backend.Context;
  * @version 1.6.1.1 [20141117 duanyy] <br>
  * - 增加{@link #getMethod()}实现 <br>
  * - 暴露InputStream和OutputStream <br>
+ * 
+ * @version 1.6.1.2 [20141118 duanyy] <br>
+ * - 增加截取数据的功能 <br>
+ * 
  */
 
 public class HttpContext extends Context {
@@ -60,11 +66,36 @@ public class HttpContext extends Context {
 	/**
 	 * constructor
 	 * @param _request HttpServletRequest
+	 * @param _response HttpServletResponse
+	 * @param _encoding the encoding
 	 */
 	public HttpContext(HttpServletRequest _request,HttpServletResponse _response,String _encoding){
 		super(_encoding);
 		request = _request;
 		response = _response;
+	}
+	
+	/**
+	 * constructor
+	 * @param _request HttpServletRequest
+	 * @param _response HttpServletResponse
+	 * @param _encoding the encoding
+	 * @param toIntercept whether or not to intercept data from input stream 
+	 */
+	public HttpContext(HttpServletRequest _request,HttpServletResponse _response,String _encoding,boolean toIntercept){
+		this(_request,_response,_encoding);
+		
+		if (toIntercept){
+			InputStream in = null;
+			try {
+				in = request.getInputStream();
+				requestRaw = readBytes(in);
+			}catch (Exception ex){
+				logger.error("Error when reading data from inputstream",ex);
+			}finally{
+				IOTools.close(in);
+			}
+		}
 	}
 	
 	@Override
@@ -160,6 +191,16 @@ public class HttpContext extends Context {
 		return response.getOutputStream();
 	}	
 	
+	/**
+	 * requestRow,存放提前截取的输入数据
+	 */
+	private byte [] requestRaw = null;
+	
+	@Override
+	public byte[] getRequestRaw() {
+		return requestRaw;
+	}
+	
 	@Override
 	public void finish() {
 		try {
@@ -183,6 +224,25 @@ public class HttpContext extends Context {
 		Settings settings = Settings.get();
 		ForwardedHeader = settings.GetValue("http.forwardedheader", ForwardedHeader);
 	}
-
-
+	
+	/**
+	 * 从输入流中读取字节
+	 * @param in 输入流
+	 * @return 字节数组
+	 * @throws IOException
+	 */
+	public static byte [] readBytes(InputStream in) throws IOException{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		
+		byte[] buf =new byte[1024];  
+        
+        int size=0;  
+          
+        while((size=in.read(buf))!=-1)  
+        {  
+            bos.write(buf,0,size);  
+        }  
+		
+		return bos.toByteArray();
+	}
 }

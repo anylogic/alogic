@@ -28,28 +28,47 @@ import com.logicbus.backend.message.Message;
  * @version 1.6.1.1 [20141118 duanyy] <br>
  * - 修正没有读入的情况下,root为空的bug <br>
  * - MessageDoc暴露InputStream和OutputStream <br>
+ * 
+ * @version 1.6.1.2 [20141118 duanyy] <br>
+ * - 支持MessageDoc的Raw数据功能 <br>
  */
 public class JsonMessage implements Message {
 	protected static final Logger logger = LogManager.getLogger(JsonMessage.class);
 	
 	@SuppressWarnings("unchecked")
 	public void init(MessageDoc ctx) {
-		//当客户端通过form来post的时候，Message不去读取输入流。
-		String _contentType = ctx.getReqestContentType();
-		if (_contentType == null || !_contentType.startsWith(formContentType)){
-			InputStream in = null;
-			try {
-				in = ctx.getInputStream();
-				String data = Context.readFromInputStream(in, ctx.getEncoding());
-				if (data != null && data.length() > 0){
-					JsonProvider provider = JsonProviderFactory.createProvider();
-					Object rootObj = provider.parse(data);
-					if (rootObj instanceof Map){
-						root = (Map<String,Object>)rootObj;
-					}
+		String data = null;
+		
+		{
+			byte [] inputData = ctx.getRequestRaw();
+			if (inputData != null){
+				try {
+					data = new String(inputData,ctx.getEncoding());
+				}catch (Exception ex){
+					
 				}
-			}catch (Exception ex){
-				logger.error("Error when reading data from inputstream",ex);
+			}
+		}
+		
+		if (data == null){
+			//当客户端通过form来post的时候，Message不去读取输入流。
+			String _contentType = ctx.getReqestContentType();
+			if (_contentType == null || !_contentType.startsWith(formContentType)){
+				InputStream in = null;
+				try {
+					in = ctx.getInputStream();
+					data = Context.readFromInputStream(in, ctx.getEncoding());
+				}catch (Exception ex){
+					logger.error("Error when reading data from inputstream",ex);
+				}
+			}
+		}
+		
+		if (data != null && data.length() > 0){
+			JsonProvider provider = JsonProviderFactory.createProvider();
+			Object rootObj = provider.parse(data);
+			if (rootObj instanceof Map){
+				root = (Map<String,Object>)rootObj;
 			}
 		}
 		if (root == null){

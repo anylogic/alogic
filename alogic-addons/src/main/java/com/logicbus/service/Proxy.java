@@ -23,6 +23,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.6.1.1 <br>
  * - 透传前端请求的Method、ContentType、HTTPBody等信息 <br>
  * - 抛弃MessageDoc <br>
+ * 
+ * @version 1.6.1.2 <br>
+ * - 修正Already connected问题 <br>
  */
 public class Proxy extends Servant {
 
@@ -75,12 +78,15 @@ public class Proxy extends Servant {
 				}
 			}
 			
+			conn.setDoInput(true);
 			byte[] toWrite = msg.getInput();
 			if (toWrite.length > 0){
 				conn.setDoOutput(true);
 				ByteMessage.writeBytes(conn.getOutputStream(), toWrite);
+			}else{
+				conn.setDoOutput(false);
 			}
-			conn.setDoInput(true);
+			
 			
 			int ret = conn.getResponseCode();
 			if (ret!= HttpURLConnection.HTTP_OK){
