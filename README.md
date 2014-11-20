@@ -35,3 +35,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:Properties实现DataProvider(1.6.1.1)
  	 + alogic-core:增加批处理入口框架(1.6.1.1)
  	 + alogic-core:HttpContext增加Form数据拦截功能(1.6.1.2)
+ 	 + alogic-common:批处理入口框架增加对URL配置文件的支持(1.6.1.3)

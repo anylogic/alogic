@@ -28,6 +28,8 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @author duanyy
  *
+ * @version 1.6.1.3 [20141119 duanyy] <br>
+ * - 增加对统一资源的配置文件支持，通过conf.url来指定<br>
  */
 public class Main implements CommandHelper,Process{
 	
@@ -107,22 +109,54 @@ public class Main implements CommandHelper,Process{
 	 */
 	protected void loadConfig(DefaultProperties p){
 		//装入配置文件,从参数conf中读入，缺省为config.xml
-		String filename = PropertiesConstants.getString(p,"conf","config.xml");
-		File _conf = new File(filename);
-		if (_conf.exists() && _conf.isFile()) {
+		String filename = PropertiesConstants.getString(p,"conf","");
+		if (filename != null && filename.length() > 0){
+			File _conf = new File(filename);
+			if (_conf.exists() && _conf.isFile()) {
+				try {
+					Document doc = XmlTools.loadFromFile(_conf);
+					if (doc != null){
+						loadConfigFromElement(p,doc.getDocumentElement());
+					}
+				} catch (Exception e) {
+					logger.error("Can not load xml file,url = " + filename, e);
+				}
+			} else {
+				logger.error("The config file is not a valid file,url = "
+						+ filename);
+			}
+		}else{
+			if (resourceFactory == null) {
+				// 设置全局的ResourceFactory
+				String rf = p.GetValue("resource.factory",
+						"com.anysoft.util.resource.ResourceFactory");
+				try {
+					logger.info("Use resource factory:" + rf);
+					resourceFactory = (ResourceFactory) Class.forName(rf).newInstance();
+				} catch (Exception ex) {
+					logger.error("Can not create instance of :" + rf);
+				}
+				if (resourceFactory == null) {
+					resourceFactory = new ResourceFactory();
+					logger.info("Use default:" + ResourceFactory.class.getName());
+				}
+			}
+			
+			filename = PropertiesConstants.getString(p,"conf.url","java:///config.xml");
+			InputStream in = null;
 			try {
-				Document doc = XmlTools.loadFromFile(_conf);
+				in = resourceFactory.load(filename, null);
+				Document doc = XmlTools.loadFromInputStream(in);
 				if (doc != null){
 					loadConfigFromElement(p,doc.getDocumentElement());
 				}
-			} catch (Exception e) {
-				logger.error("Can not load xml file,url = " + filename, e);
+			}catch (Exception ex){
+				logger.error("The config file is not a valid file,url = "
+						+ filename);
+			}finally{
+				IOTools.close(in);
 			}
-		} else {
-			logger.error("The config file is not a valid file,url = "
-					+ filename);
 		}
-		
 	}	
 
 	protected void loadConfig(DefaultProperties p, String link) {
@@ -222,7 +256,7 @@ public class Main implements CommandHelper,Process{
 				
 				String link = _include.getAttribute("link");
 				if (link != null && link.length() > 0){
-					loadConfig(p,link);
+					loadConfig(p,p.transform(link));
 				}
 			}
 		}
