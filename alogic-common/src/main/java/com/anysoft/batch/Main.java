@@ -30,6 +30,9 @@ import com.anysoft.util.resource.ResourceFactory;
  *
  * @version 1.6.1.3 [20141119 duanyy] <br>
  * - 增加对统一资源的配置文件支持，通过conf.url来指定<br>
+ * 
+ * @version 1.6.1.4 [20141128 duanyy] <br>
+ * - 在装入include文件时，通过loadable变量检测是否装入 <br>
  */
 public class Main implements CommandHelper,Process{
 	
@@ -256,7 +259,17 @@ public class Main implements CommandHelper,Process{
 				
 				String link = _include.getAttribute("link");
 				if (link != null && link.length() > 0){
-					loadConfig(p,p.transform(link));
+					String loadable = _include.getAttribute("loadable");
+					if (loadable != null){
+						String _loadable = p.transform(loadable);
+						if (_loadable.length() > 0){
+							loadConfig(p,p.transform(link));
+						}else{
+							logger.info("Find xml link file,but the loadable is null");
+						}
+					}else{
+						loadConfig(p,p.transform(link));
+					}
 				}
 			}
 		}
