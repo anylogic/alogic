@@ -15,6 +15,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.anysoft.util.CommandLine;
+import com.anysoft.util.Copyright;
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
@@ -349,6 +350,7 @@ public class Main implements CommandHelper,Process{
 	}
 
 	public static void main(String[] args) {
+		Copyright.bless(logger, "\t\t");
 		int result = 0;
 		try {
 			CommandLine cmdLine = new CommandLine(args,new SystemProperties());		
