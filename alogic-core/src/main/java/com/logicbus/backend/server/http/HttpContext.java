@@ -33,6 +33,8 @@ import com.logicbus.backend.Context;
  * @version 1.6.1.2 [20141118 duanyy] <br>
  * - 增加截取数据的功能 <br>
  * 
+ * @version 1.6.2.1 [20141223 duanyy] <br>
+ * - 增加对Comet的支持 <br>
  */
 
 public class HttpContext extends Context {
@@ -208,7 +210,7 @@ public class HttpContext extends Context {
 				response.sendError(404, "No message is found,check servant implemention.");
 			}else{
 				response.setCharacterEncoding(encoding);
-				msg.finish(this);
+				msg.finish(this,!cometMode());
 			}
 		}catch (Exception ex){
 			try {

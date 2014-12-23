@@ -15,13 +15,19 @@ import com.logicbus.backend.Context;
  * @author duanyy
  * 
  * @since 1.0.4
+ * 
  * @version 1.0.5 [20140412 duanyy] <br>
  * - 修改消息传递模型。<br>
+ * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - Message被改造为接口 <br>
  * - MessageDoc暴露InputStream和OutputStream <br>
+ * 
  * @version 1.6.1.2 [20141118 duanyy] <br>
  * - 支持MessageDoc的Raw数据功能 <br>
+ * 
+ * @version 1.6.2.1 [20141223 duanyy] <br>
+ * - 增加对Comet的支持 <br>
  */
 public class RawMessage implements Message {
 	protected static final Logger logger = LogManager.getLogger(RawMessage.class);	
@@ -76,15 +82,17 @@ public class RawMessage implements Message {
 		contentType = "text/plain;charset=" + ctx.getEncoding();
 	}
 
-	public void finish(MessageDoc ctx) {
+	public void finish(MessageDoc ctx,boolean closeStream) {
 		OutputStream out = null;
 		try {
 			ctx.setResponseContentType(contentType);
 			out = ctx.getOutputStream();
 			Context.writeToOutpuStream(out, buf.toString(), ctx.getEncoding());
+			out.flush();
 		}catch (Exception ex){
 			logger.error("Error when writing data to outputstream",ex);
 		}finally{
+			if (closeStream)
 			IOTools.close(out);
 		}
 	}

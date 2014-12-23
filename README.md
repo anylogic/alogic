@@ -38,3 +38,7 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:批处理入口框架增加对URL配置文件的支持(1.6.1.3)
  	 + alogic-common:在装入include文件时，通过loadable变量检测是否装入(1.6.1.4)
  	 + alogic-common:增加CopyRight类(1.6.1.5)
+ 	 
+ - 1.6.2 [20141218 duanyy]
+ 	 + alogic-core:支持Comet技术(Comet需要针对Jetty服务器定制HttpContext插件，不包含在alogic中)(1.6.2.1)
+	 + alogic-example:增加Comet演示服务(1.6.2.1)

@@ -19,6 +19,8 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.1.2 [20141118 duanyy] <br>
  * - 支持MessageDoc的Raw数据功能 <br>
+ * @version 1.6.2.1 [20141223 duanyy] <br>
+ * - 增加对Comet的支持 <br>
  */
 public class ByteMessage implements Message {
 	/**
@@ -64,17 +66,21 @@ public class ByteMessage implements Message {
 		}
 	}
 
-	public void finish(MessageDoc ctx) {
+	public void finish(MessageDoc ctx,boolean closeStream) {
 		OutputStream out = null;
 		try {
 			ctx.setResponseContentType(contentType);
 			out = ctx.getOutputStream();
 			if (output != null)
 				writeBytes(out,output);
+			
+			out.flush();
 		}catch (Exception ex){
 			logger.error("Error when writing data from inputstream",ex);
 		}finally{
-			IOTools.close(out);
+			if (closeStream){
+				IOTools.close(out);
+			}
 		}
 	}
 

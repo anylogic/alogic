@@ -31,6 +31,9 @@ import com.logicbus.backend.message.Message;
  * 
  * @version 1.6.1.2 [20141118 duanyy] <br>
  * - 支持MessageDoc的Raw数据功能 <br>
+ * 
+ * @version 1.6.2.1 [20141223 duanyy] <br>
+ * - 增加对Comet的支持 <br>
  */
 public class JsonMessage implements Message {
 	protected static final Logger logger = LogManager.getLogger(JsonMessage.class);
@@ -60,6 +63,8 @@ public class JsonMessage implements Message {
 					data = Context.readFromInputStream(in, ctx.getEncoding());
 				}catch (Exception ex){
 					logger.error("Error when reading data from inputstream",ex);
+				}finally{
+					IOTools.close(in);
 				}
 			}
 		}
@@ -76,7 +81,7 @@ public class JsonMessage implements Message {
 		}
 	}
 
-	public void finish(MessageDoc ctx) {
+	public void finish(MessageDoc ctx,boolean closeStream) {
 		Map<String,Object> _root = getRoot();
 		JsonTools.setString(_root, "code", ctx.getReturnCode());
 		JsonTools.setString(_root, "reason", ctx.getReason());
@@ -97,10 +102,12 @@ public class JsonMessage implements Message {
 			out = ctx.getOutputStream();
 			ctx.setResponseContentType("application/json;charset=" + ctx.getEncoding());
 			Context.writeToOutpuStream(out, data, ctx.getEncoding());
+			out.flush();
 		}catch (Exception ex){
 			logger.error("Error when writing data to outputstream",ex);
 		}finally{
-			IOTools.close(out);
+			if (closeStream)
+				IOTools.close(out);
 		}
 	}	
 

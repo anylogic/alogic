@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import com.anysoft.formula.DataProvider;
-import com.anysoft.util.IOTools;
 import com.anysoft.util.KeyGen;
 import com.logicbus.backend.message.MessageDoc;
 
@@ -28,6 +27,9 @@ import com.logicbus.backend.message.MessageDoc;
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 将MessageDoc和Context进行合并整合 <br>
  * - 实现了DataProvider
+ * 
+ * @version 1.6.2.1 [20141218 duanyy] <br>
+ * - 增加对Comet技术的支持<br>
  */
 abstract public class Context extends MessageDoc implements DataProvider{
 
@@ -77,8 +79,6 @@ abstract public class Context extends MessageDoc implements DataProvider{
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-        	IOTools.closeStream(_in,reader);
         }
 		return buf.toString();
 	}
@@ -95,8 +95,6 @@ abstract public class Context extends MessageDoc implements DataProvider{
 			_out.write(_doc.getBytes(_encoding));
 		}catch (Exception ex){
 			ex.printStackTrace();
-		}finally {
-			IOTools.closeStream(_out);
 		}
 	}	
 }

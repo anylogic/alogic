@@ -34,6 +34,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.1.2 [20141118 duanyy] <br>
  * - 支持MessageDoc的Raw数据功能 <br>
+ * 
+ * @version 1.6.2.1 [20141223 duanyy] <br>
+ * - 增加对Comet的支持 <br>
  */
 public class XMLMessage implements Message {
 	protected static final Logger logger = LogManager.getLogger(XMLMessage.class);		
@@ -89,7 +92,7 @@ public class XMLMessage implements Message {
 		
 		root = xmlDoc.getDocumentElement();
 	}
-	public void finish(MessageDoc ctx) {
+	public void finish(MessageDoc ctx,boolean closeStream) {
 		root.setAttribute("code",ctx.getReturnCode());
 		root.setAttribute("reason", ctx.getReason());
 		root.setAttribute("duration", String.valueOf(ctx.getDuration()));
@@ -101,10 +104,12 @@ public class XMLMessage implements Message {
 			ctx.setResponseContentType("text/xml;charset=" + ctx.getEncoding());
 			out = ctx.getOutputStream();
 			XmlTools.saveToOutputStream(xmlDoc, out);
+			out.flush();
 		} catch (Exception ex) {
 			logger.error("Error when writing data to outputstream",ex);
 		}finally {
-			IOTools.closeStream(out);
+			if (closeStream)
+				IOTools.closeStream(out);
 		}
 	}
 	

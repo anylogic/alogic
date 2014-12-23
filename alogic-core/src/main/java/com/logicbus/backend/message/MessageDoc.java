@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.sql.Connection;
 
 import com.anysoft.util.DefaultProperties;
+import com.logicbus.backend.Comet;
 import com.logicbus.backend.ServantException;
 
 /**
@@ -21,12 +22,15 @@ import com.logicbus.backend.ServantException;
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 将MessageDoc和Context进行合并整合 <br>
  * 
- * @version 1.6.1.1 [20141117 duanyy] <br>
+ * @version 1.6.1.1 [20141117 duanyy] <br>s
  * - 增加方法{@link #getMethod()} <br>
  * - 暴露InputStream和OutputStream <br>
  * 
  * @version 1.6.1.2 [20141118 duanyy] <br>
  * - 增加方法{@link #getRequestRaw()} <br>
+ * 
+ * @version 1.6.2.1 [20141218 duanyy] <br>
+ * - 增加对Comet技术的支持<br>
  */
 abstract public class MessageDoc extends DefaultProperties{
 
@@ -259,4 +263,21 @@ abstract public class MessageDoc extends DefaultProperties{
 	 * @return byte[]形式的输入数据
 	 */
 	abstract public byte [] getRequestRaw();
+	
+	/**
+	 * whether Comet is supported
+	 * @return true if supported , false or not
+	 * @since 1.6.2.1
+	 */
+	public boolean supportedComet(){
+		return false;
+	}
+	
+	public Comet getComet(){
+		return null;
+	}
+	
+	public boolean cometMode(){
+		return false;
+	}
 }

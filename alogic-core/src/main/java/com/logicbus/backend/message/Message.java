@@ -13,7 +13,10 @@ package com.logicbus.backend.message;
  * - 改造为接口 <br>
  * 
  * @version 1.6.1.1 [20141118 duanyy] <br>
- * - 简化Message接口
+ * - 简化Message接口 <br>
+ * 
+ * @version 1.6.2.1 [20141223 duanyy] <br>
+ * - 增加对Comet的支持 <br>
  */
 public interface Message {
 	/**
@@ -25,6 +28,7 @@ public interface Message {
 	/**
 	 * 完成
 	 * @param ctx 上下文身上
+	 * @param closeStream 是否关闭链接
 	 */
-	public void finish(MessageDoc ctx);
+	public void finish(MessageDoc ctx,boolean closeStream);
 }
