@@ -42,3 +42,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  - 1.6.2 [20141218 duanyy]
  	 + alogic-core:支持Comet技术(Comet需要针对Jetty服务器定制HttpContext插件，不包含在alogic中)(1.6.2.1)
 	 + alogic-example:增加Comet演示服务(1.6.2.1)
+	 + alogic-common:设置缺省ClassLoader为Thread.currentThread().getContextClassLoader()(1.6.2.2)

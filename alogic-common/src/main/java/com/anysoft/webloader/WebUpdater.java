@@ -27,9 +27,11 @@ import com.anysoft.util.resource.ResourceFactory;
 /**
  * Web库文件更新器
  * @author duanyy
- * @version 1.2.1 [20140709 duanyy] 
- * - 修正localLibHome设置不当造成的listFiles返回空指针问题
+ * @version 1.2.1 [20140709 duanyy] <br>
+ * - 修正localLibHome设置不当造成的listFiles返回空指针问题 <br>
  * 
+ * @version 1.6.2.1 [20141231 duanyy] <br>
+ * - 设置缺省ClassLoader为Thread.currentThread().getContextClassLoader()
  */
 public class WebUpdater {
 	/**
@@ -403,7 +405,7 @@ public class WebUpdater {
 			}			
 		}
 		
-		ClassLoader cl = WebUpdater.class.getClassLoader();
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		if (urls.length <= 0){
 			return cl;
 		}
