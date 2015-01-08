@@ -20,6 +20,12 @@ import com.anysoft.util.BaseException;
  * 
  * @version 1.3.0.2 [20141106 duanyy] <br>
  * - List,Map等类采用泛型 <br>
+ * 
+ * @version 1.6.2.3 [20150108 duanyy] <br>
+ * - 增加{@link #singleAsLong(long)} <br>
+ * - 增加{@link #singleAsString(String)} <br>
+ * - 增加{@link #singleRowAsString()} <br>
+ * - 增加{@link #singleRowAsString(Map)} <br>
  */
 public class Select extends DBOperation {
 
@@ -60,7 +66,7 @@ public class Select extends DBOperation {
 	/**
 	 * 获取查询结果（单返回值）
 	 * 
-	 * @return
+	 * @return 结果值
 	 * @throws SQLException
 	 */
 	public Object single()throws BaseException{
@@ -76,6 +82,52 @@ public class Select extends DBOperation {
 	}
 
 	/**
+	 * 以Long形式获取查询结果（单返回值）
+	 * @param dftValue 缺省值
+	 * @return 结果值
+	 * @throws BaseException
+	 * 
+	 * @since 1.6.2.3
+	 */
+	public long singleAsLong(long dftValue)throws BaseException{
+		Object result = single();
+		
+		if (result == null){
+			return dftValue;
+		}
+		
+		if (result instanceof Number){
+			Number value = (Number) result;
+			return value.longValue();
+		}
+		
+		String value = result.toString();
+		try{
+			return Long.parseLong(value);
+		}catch (Exception ex){
+			return dftValue;
+		}
+	}
+	
+	/**
+	 * 以String形式获取查询结果（单返回值）
+	 * @param dftValue 缺省值
+	 * @return 结果值
+	 * @throws BaseException
+	 * 
+	 * @since 1.6.2.3
+	 */
+	public String singleAsString(String dftValue)throws BaseException{
+		Object result = single();
+		
+		if (result == null){
+			return dftValue;
+		}
+		
+		return result.toString();
+	}
+	
+	/**
 	 * 获取查询结果(单行返回值)
 	 * 
 	 * @return
@@ -83,6 +135,17 @@ public class Select extends DBOperation {
 	 */
 	public Map<String,Object> singleRow()throws BaseException{
 		return singleRow(null);
+	}
+	
+	/**
+	 * 获取查询结果(单行返回值)
+	 * 
+	 * @return
+	 * @throws SQLException
+	 * s@since 1.6.2.3
+	 */
+	public Map<String,String> singleRowAsString()throws BaseException{
+		return singleRowAsString(null);
 	}	
 
 	/**
@@ -120,6 +183,41 @@ public class Select extends DBOperation {
 			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
 		}
 	}		
+	
+	/**
+	 * 获取单行结果
+	 * @param result
+	 * @return
+	 * @throws BaseException
+	 * @since 1.6.2.3
+	 */
+	public Map<String,String> singleRowAsString(Map<String,String> result)throws BaseException{
+		try {
+			if (rs != null && rs.next()){
+				if (result == null)
+				result = new HashMap<String,String>();
+				
+				ResultSetMetaData metadata = rs.getMetaData();
+				int columnCount = metadata.getColumnCount();
+				for (int i = 0 ; i < columnCount ; i++){
+					Object value = rs.getObject(i+1);
+					if (value == null)continue;
+					//1.2.0 支持列的别名
+					String name = metadata.getColumnLabel(i+1);
+					if (name == null){
+						name = metadata.getColumnName(i+1);
+					}
+					result.put(name.toLowerCase(), value.toString());
+				}
+				
+				return result;
+			}
+			return null;
+		}
+		catch (SQLException ex){
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+		}
+	}	
 	
 	/**
 	 * 获取查询结果
