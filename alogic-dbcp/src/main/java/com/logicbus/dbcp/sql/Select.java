@@ -5,8 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +24,9 @@ import com.anysoft.util.BaseException;
  * - 增加{@link #singleAsString(String)} <br>
  * - 增加{@link #singleRowAsString()} <br>
  * - 增加{@link #singleRowAsString(Map)} <br>
+ * 
+ * @version 1.6.2.4 [20150112 duanyy] <br>
+ * - 增加RowRenderer支持<br>
  */
 public class Select extends DBOperation {
 
@@ -130,7 +131,7 @@ public class Select extends DBOperation {
 	/**
 	 * 获取查询结果(单行返回值)
 	 * 
-	 * @return
+	 * @return 查询结果
 	 * @throws SQLException
 	 */
 	public Map<String,Object> singleRow()throws BaseException{
@@ -140,7 +141,7 @@ public class Select extends DBOperation {
 	/**
 	 * 获取查询结果(单行返回值)
 	 * 
-	 * @return
+	 * @return 查询结果
 	 * @throws SQLException
 	 * s@since 1.6.2.3
 	 */
@@ -157,60 +158,39 @@ public class Select extends DBOperation {
 	 * @since 1.2.0
 	 */
 	public Map<String,Object> singleRow(Map<String,Object> result)throws BaseException{
-		try {
-			if (rs != null && rs.next()){
-				if (result == null)
-				result = new HashMap<String,Object>();
-				
-				ResultSetMetaData metadata = rs.getMetaData();
-				int columnCount = metadata.getColumnCount();
-				for (int i = 0 ; i < columnCount ; i++){
-					Object value = rs.getObject(i+1);
-					if (value == null)continue;
-					//1.2.0 支持列的别名
-					String name = metadata.getColumnLabel(i+1);
-					if (name == null){
-						name = metadata.getColumnName(i+1);
-					}
-					result.put(name.toLowerCase(), value);
-				}
-				
-				return result;
-			}
-			return null;
-		}
-		catch (SQLException ex){
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
-		}
+		return singleRow(null,result);
 	}		
 	
 	/**
-	 * 获取单行结果
-	 * @param result
-	 * @return
+	 * 获取查询结果(单行返回值)
+	 * @param result 预创建的结果集
+	 * @param renderer 渲染器
+	 * @return 查询结果
 	 * @throws BaseException
-	 * @since 1.6.2.3
+	 * @since 1.6.2.4
 	 */
-	public Map<String,String> singleRowAsString(Map<String,String> result)throws BaseException{
+	public Map<String,Object> singleRow(RowRenderer<Object> renderer,Map<String,Object> result)throws BaseException{
 		try {
 			if (rs != null && rs.next()){
-				if (result == null)
-				result = new HashMap<String,String>();
+				if (renderer == null){
+					renderer = new RowRenderer.Default<Object>();
+				}
 				
 				ResultSetMetaData metadata = rs.getMetaData();
 				int columnCount = metadata.getColumnCount();
-				for (int i = 0 ; i < columnCount ; i++){
-					Object value = rs.getObject(i+1);
-					if (value == null)continue;
-					//1.2.0 支持列的别名
-					String name = metadata.getColumnLabel(i+1);
-					if (name == null){
-						name = metadata.getColumnName(i+1);
-					}
-					result.put(name.toLowerCase(), value.toString());
+				
+				if (result == null){
+					result = renderer.newRow(columnCount);
 				}
 				
-				return result;
+				for (int i = 0 ; i < columnCount ; i++){
+					Object value = rs.getObject(i+1);
+					if (value == null) continue;
+					String id = renderer.getColumnId(metadata, i+1);
+					if (id == null) continue;
+					result.put(id, value);
+				}
+				return renderer.render(result);
 			}
 			return null;
 		}
@@ -220,14 +200,55 @@ public class Select extends DBOperation {
 	}	
 	
 	/**
-	 * 获取查询结果
-	 * 
-	 * <p>查询结果通过监听器获取
-	 * 
-	 * @param rowListener 行监听器
-	 * @throws SQLException
+	 * 获取单行结果
+	 * @param result
+	 * @return 单行结果
+	 * @throws BaseException
+	 * @since 1.6.2.3
 	 */
-	public void result(RowListener rowListener)throws BaseException{
+	public Map<String,String> singleRowAsString(Map<String,String> result)throws BaseException{
+		return singleRowAsString(null,result);
+	}	
+	
+	/**
+	 * 获取单行结果
+	 * @param result 预创建的结果集
+	 * @param renderer 渲染器
+	 * @return 单行结果
+	 * @throws BaseException
+	 */
+	public Map<String,String> singleRowAsString(RowRenderer<String> renderer,Map<String,String> result)throws BaseException{
+		try {
+			if (rs != null && rs.next()){
+				if (renderer == null){
+					renderer = new RowRenderer.Default<String>();
+				}
+
+				ResultSetMetaData metadata = rs.getMetaData();
+				int columnCount = metadata.getColumnCount();
+				
+				if (result == null){
+					result = renderer.newRow(columnCount);
+				}
+				
+				for (int i = 0 ; i < columnCount ; i++){
+					Object value = rs.getObject(i+1);
+					if (value == null)continue;
+					String id = renderer.getColumnId(metadata,i+1);
+					if (id == null) continue;
+					result.put(id, value.toString());
+				}
+				
+				return renderer.render(result);
+			}
+			return null;
+		}
+		catch (SQLException ex){
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+		}
+	}	
+	
+	public void result(RowListener<Object> rowListener)throws BaseException{
 		if (rs == null || rowListener == null){
 			return ;
 		}
@@ -237,18 +258,16 @@ public class Select extends DBOperation {
 			while (rs.next()){
 				Object cookies = rowListener.rowStart(columnCount);
 				
-				for (int i = 0 ; i < columnCount ; i++){
-					//1.2.0 支持列的别名
-					String name = metadata.getColumnLabel(i+1);
-					if (name == null){
-						name = metadata.getColumnName(i+1);
-					}					
-					rowListener.columnFound(
-							cookies,
-							i, 
-							name.toLowerCase(), 
-							rs.getObject(i+1)
-							);
+				for (int i = 0 ; i < columnCount ; i++){			
+					Object value = rs.getObject(i + 1);
+					if (value != null){
+						rowListener.columnFound(
+								cookies,
+								i + 1, 
+								metadata, 
+								value
+								);
+					}
 				}
 				
 				rowListener.rowEnd(cookies);
@@ -262,49 +281,73 @@ public class Select extends DBOperation {
 	/**
 	 * 获取查询结果
 	 * 
-	 * <p>查询结果通过列表返回，可直接作为JSON数据
-	 * @return
+	 * <p>查询结果通过监听器获取
+	 * 
+	 * @param rowListener 行监听器
 	 * @throws SQLException
 	 */
-	public List<Object> result()throws BaseException{
-		InnerRowListner data = new InnerRowListner();
+	public void resultAsString(RowListener<String> rowListener)throws BaseException{
+		if (rs == null || rowListener == null){
+			return ;
+		}
+		try{
+			ResultSetMetaData metadata = rs.getMetaData();
+			int columnCount = metadata.getColumnCount();
+			while (rs.next()){
+				Object cookies = rowListener.rowStart(columnCount);
+				
+				for (int i = 0 ; i < columnCount ; i++){			
+					Object value = rs.getObject(i + 1);
+					if (value != null){
+						rowListener.columnFound(
+								cookies,
+								i + 1, 
+								metadata, 
+								value.toString()
+								);
+					}
+				}
+				
+				rowListener.rowEnd(cookies);
+			}
+		}
+		catch (SQLException ex){
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * 获取查询结果
+	 * 
+	 * <p>查询结果通过列表返回，可直接作为JSON数据
+	 * @return 查询结果
+	 * @throws SQLException
+	 */
+	public List<Map<String,Object>> result()throws BaseException{
+		RowListener.Default<Object> data = new RowListener.Default<Object>();
 		result(data);
 		return data.getResult();
 	}
 	
+	public List<Map<String,Object>> result(RowRenderer<Object> renderer)throws BaseException{
+		RowListener.Default<Object> data = new RowListener.Default<Object>(renderer);
+		result(data);
+		return data.getResult();
+	}
+	
+	public List<Map<String,String>> resultAsString()throws BaseException{
+		RowListener.Default<String> data = new RowListener.Default<String>();
+		resultAsString(data);
+		return data.getResult();
+	}
+	
+	public List<Map<String,String>> resultAsString(RowRenderer<String> renderer)throws BaseException{
+		RowListener.Default<String> data = new RowListener.Default<String>(renderer);
+		resultAsString(data);
+		return data.getResult();
+	}
 	
 	public void close() throws BaseException {
 		close(stmt,rs);
 	}	
-
-	/**
-	 * 内置的行数据监听器
-	 * 
-	 * @author duanyy
-	 *
-	 */
-	public static class InnerRowListner implements RowListener{
-		protected ArrayList<Object> result = new ArrayList<Object>();
-
-		public List<Object> getResult(){
-			return result;
-		}
-
-		public Object rowStart(int column) {
-			return new HashMap<String,Object>(5);
-		}
-		
-		public void columnFound(Object cookies,int columnIndex, String name, Object value) {
-			if (value != null){
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				Map<String, Object> map = (Map)cookies;
-				map.put(name, value);
-			}
-		}
-		
-		public void rowEnd(Object cookies) {
-			result.add(cookies);
-		}
-		
-	}
 }
