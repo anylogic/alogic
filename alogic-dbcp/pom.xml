@@ -12,7 +12,7 @@
   	<dependency>
   		<groupId>com.github.alogic</groupId>
   		<artifactId>alogic-common</artifactId>
-  		<version>1.6.0</version>
+  		<version>${project.version}</version>
   	</dependency>
   </dependencies> 
 </project>
