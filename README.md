@@ -45,3 +45,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-common:设置缺省ClassLoader为Thread.currentThread().getContextClassLoader()(1.6.2.2)
 	 + alogic-dbcp:优化Select的API(1.6.2.3)
 	 + alogic-dbcp:增加RowRenderer支持(1.6.2.4)
+	 + alogic-core:增加CodeImage消息实现，用于验证码图片服务(1.6.2.5)
