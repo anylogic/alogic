@@ -47,3 +47,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-dbcp:增加RowRenderer支持(1.6.2.4)
 	 + alogic-core:增加CodeImage消息实现，用于验证码图片服务(1.6.2.5)
 	 + alogic-core:优化会话管理机制(1.6.2.6)
+	 + alogic:进入1.6.3版本
