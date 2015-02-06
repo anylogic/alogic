@@ -1,7 +1,5 @@
 package com.logicbus.backend;
 
-import javax.servlet.http.HttpSession;
-
 import com.anysoft.util.Factory;
 import com.anysoft.util.Settings;
 
@@ -10,6 +8,9 @@ import com.anysoft.util.Settings;
  * 
  * @author duanyy
  * @since 1.1.3
+ * 
+ * @version 1.6.2.6
+ * - 采用自己的Session替代HttpSession
  */
 abstract public class SessionManager{
 	
@@ -20,14 +21,14 @@ abstract public class SessionManager{
 	 * @param create 当Session不存在的时候,而create为true，则创建一个Session
 	 * @return Session
 	 */
-	abstract public HttpSession getSession(Context ctx,boolean create) throws ServantException;
+	abstract public Session getSession(Context ctx,boolean create) throws ServantException;
 	
 	/**
 	 * 获取当前的Session，如果Session不存在，则创建一个
 	 * @param ctx 上下文
 	 * @return Session
 	 */
-	public HttpSession getSession(Context ctx) throws ServantException{
+	public Session getSession(Context ctx) throws ServantException{
 		return getSession(ctx,true);
 	}
 	

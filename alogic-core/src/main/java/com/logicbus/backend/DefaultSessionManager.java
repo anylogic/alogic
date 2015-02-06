@@ -14,6 +14,8 @@ import com.logicbus.backend.server.http.HttpContext;
  * 
  * @author duanyy
  * @since 1.1.3
+ * @version 1.6.2.6
+ * - 采用自己的Session替代HttpSession
  */
 public class DefaultSessionManager extends SessionManager {
 	
@@ -26,8 +28,7 @@ public class DefaultSessionManager extends SessionManager {
 		
 	}
 	
-	
-	public HttpSession getSession(Context ctx, boolean create) throws ServantException{
+	public Session getSession(Context ctx, boolean create) throws ServantException{
 		if (!(ctx instanceof HttpContext)){
 			throw new ServantException("core.nothttpcontext","The Context is not a HttpContext instance.");
 		}
@@ -35,7 +36,8 @@ public class DefaultSessionManager extends SessionManager {
 		HttpContext httpContext = (HttpContext)ctx;
 		
 		HttpServletRequest request = httpContext.getRequest();
-		return request.getSession(create);
+		HttpSession session = request.getSession(create);
+		return session == null?null:new LocalSession(session);
 	}
 
 }
