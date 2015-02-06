@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.github.alogic</groupId>
     <artifactId>alogic</artifactId>
-    <version>1.6.2</version>
+    <version>1.6.3-SNAPSHOT</version>
   </parent>
   <artifactId>alogic-jms</artifactId>
   <name>alogic-jms</name>
