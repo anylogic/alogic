@@ -9,9 +9,11 @@ import com.anysoft.util.XmlSerializer;
  * @author duanyy
  * @since 1.0.6
  * 
- * @version 1.3.0 [20140727 duanyy]
- * - 修正类名为Cacheable
+ * @version 1.3.0 [20140727 duanyy] <br>
+ * - 修正类名为Cacheable <br>
  * 
+ * @version 1.6.3.2 <br> 
+ * - 增加方法{@link #expire()},对象可在该方法实现中释放资源<br>
  */
 public interface Cacheable extends XmlSerializer,JsonSerializer{
 	
@@ -27,4 +29,9 @@ public interface Cacheable extends XmlSerializer,JsonSerializer{
 	 * @return true if expired, or not return false
 	 */
 	public boolean isExpired();	
+	
+	/**
+	 * 将该对象失效
+	 */
+	public void expire();
 }

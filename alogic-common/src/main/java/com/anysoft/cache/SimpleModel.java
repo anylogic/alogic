@@ -26,11 +26,14 @@ import com.anysoft.util.code.CoderFactory;
  * @author duanyy
  * 
  * @since 1.0.12
- * @version 1.3.0 [20140727 duanyy]
- * - Cachable修正类名为Cacheable 
+ * @version 1.3.0 [20140727 duanyy]<br>
+ * - Cachable修正类名为Cacheable <br>
  * 
- * @version 1.4.4 [20140912 duanyy]
- * - JsonSerializer中Map参数化
+ * @version 1.4.4 [20140912 duanyy]<br>
+ * - JsonSerializer中Map参数化<br>
+ * 
+ * @version 1.6.3.2 [20150213 duanyy] <br>
+ * - 接口{@link com.anysoft.cache.Cacheable Cacheable}增加了{@link com.anysoft.cache.Cacheable#expire() Cacheable.expire}方法 <br>
  */
 public class SimpleModel extends Properties implements Cacheable {
 	protected String id = "";
@@ -192,6 +195,10 @@ public class SimpleModel extends Properties implements Cacheable {
 	
 	public boolean isExpired() {
 		return false;
+	}
+	
+	public void expire(){
+		// do nothing
 	}
 
 	protected static class Field {

@@ -35,6 +35,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.2.9.1 [20141017 duanyy]
  * - 淘汰ChangeAware模型，转为更为通用的Watcher模型
+ * 
+ * @version 1.6.3.2 [20150213 duanyy] <br>
+ * - 接口{@link com.anysoft.cache.Cacheable Cacheable}增加了{@link com.anysoft.cache.Cacheable#expire() Cacheable.expire}方法 <br>
  */
 public class XmlResource implements Cacheable{
 	
@@ -83,6 +86,10 @@ public class XmlResource implements Cacheable{
 	
 	public boolean isExpired() {
 		return false;
+	}
+	
+	public void expire(){
+		
 	}
 	/**
 	 * XML资源管理器

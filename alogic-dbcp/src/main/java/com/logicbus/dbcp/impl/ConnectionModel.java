@@ -29,7 +29,8 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.3.0.2 [20141106 duanyy] <br>
  * - 从XML的id属性中获取name <br>
- * 
+ * @version 1.6.3.2 [20150213 duanyy] <br>
+ * - 接口{@link com.anysoft.cache.Cacheable Cacheable}增加了{@link com.anysoft.cache.Cacheable#expire() Cacheable.expire}方法 <br>
  */
 public class ConnectionModel implements Cacheable{
 	/**
@@ -290,6 +291,10 @@ public class ConnectionModel implements Cacheable{
 		return false;
 	}
 
+	public void expire(){
+		
+	}	
+	
 	/**
 	 * 按照当前的连接属性创建数据库连接
 	 * @return

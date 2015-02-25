@@ -52,3 +52,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  - 1.6.3 [20150206 duanyy]
  	 + 创建1.6.3-SNAPSHOT版本，开始1.6.3版本开发
  	 + alogic-common:cache包仅仅考虑cache的读，淘汰datastore实现(1.6.3.1)
+ 	 + alogic-common:接口Cacheable增加了Cacheable.expire方法(1.6.3.2)

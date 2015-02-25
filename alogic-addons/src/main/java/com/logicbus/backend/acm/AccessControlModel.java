@@ -27,11 +27,15 @@ import com.anysoft.util.XmlTools;
  * @author duanyy
  * @since 1.2.3
  * 
- * @version 1.2.5.3 [20140731 duanyy]
- * -  基础包的Cacheable接口修改
+ * @version 1.2.5.3 [20140731 duanyy] <br>
+ * -  基础包的Cacheable接口修改 <br>
  * 
- * @version 1.2.8 [20140912 duanyy]
- * - JsonSerializer中Map参数化
+ * @version 1.2.8 [20140912 duanyy] <br>
+ * - JsonSerializer中Map参数化 <br>
+ * 
+ * @version 1.6.3.2 [20150213 duanyy] <br>
+ * - 接口{@link com.anysoft.cache.Cacheable Cacheable}增加了{@link com.anysoft.cache.Cacheable#expire() Cacheable.expire}方法 <br>
+ * 
  */
 
 public class AccessControlModel implements Cacheable {
@@ -89,6 +93,9 @@ public class AccessControlModel implements Cacheable {
 		return false;
 	}
 
+	public void expire(){
+		
+	}
 	
 	public void toXML(Element root) {
 		root.setAttribute("id", id);
