@@ -19,6 +19,7 @@
   	<module>alogic-together</module>
   	<module>alogic-example</module>
   	<module>alogic-kvalue</module>
+  	<module>alogic-cache</module>
   </modules>
    <distributionManagement>  
   <repository>  

@@ -33,5 +33,10 @@
   		<artifactId>alogic-kvalue</artifactId>
   		<version>${project.version}</version>
   	</dependency>
+   	<dependency>
+  		<groupId>com.github.alogic</groupId>
+  		<artifactId>alogic-cache</artifactId>
+  		<version>${project.version}</version>
+  	</dependency> 	
   </dependencies>
 </project>

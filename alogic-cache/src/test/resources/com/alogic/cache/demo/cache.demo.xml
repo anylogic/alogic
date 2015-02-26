@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<context>
+		<cache id="state" module="com.alogic.cache.local.LocalCacheStore">
+			<provider module="com.alogic.cache.provider.XmlData">
+				<data>
+					<row id="S0A" name="有效" note="有效状态"/>
+					<row id="S0X" name="无效" note="无效状态"/>
+				</data>
+			</provider>
+		</cache>
+	</context>
+</source>

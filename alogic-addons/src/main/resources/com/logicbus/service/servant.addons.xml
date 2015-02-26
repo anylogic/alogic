@@ -290,6 +290,64 @@
 			</properties>		
 		</service>							
 	</catalog>
+	<catalog name="cache">
+		<service 
+				id="Source" 
+				name="Source" 
+				note="cache的Source报告"
+				visible="public"
+				module="com.alogic.cache.service.CacheSourceReport"
+				log = "none" 
+		>
+			<properties>
+				<parameter id="jsonDefault" value="true"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>
+		</service>
+		<service 
+				id="List" 
+				name="List" 
+				note="列出当前存在的cache列表"
+				visible="public"
+				module="com.alogic.cache.service.CacheList"
+				log = "none" 
+		>
+			<properties>
+				<parameter id="jsonDefault" value="true"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>
+		</service>		
+		<service 
+				id="Query" 
+				name="Query" 
+				note="查询指定cache信息"
+				visible="public"
+				module="com.alogic.cache.service.CacheQuery"
+				log = "none" 
+		>
+			<properties>
+				<parameter id="jsonDefault" value="true"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>
+		</service>		
+		<service 
+				id="Expire" 
+				name="Expire" 
+				note="过期指定的cache或者cache中指定的数据"
+				visible="public"
+				module="com.alogic.cache.service.CacheExpire"
+				log = "none" 
+		>
+			<properties>
+				<parameter id="jsonDefault" value="true"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>
+		</service>			
+	</catalog>
 	<catalog name="demo">
 	        <service 
 				id="Together" 

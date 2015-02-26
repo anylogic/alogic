@@ -14,17 +14,11 @@ import com.anysoft.util.Watcher;
  * @version 1.5.2 [20141017 duanyy]
  * - 淘汰ChangeAware机制，采用更为通用的Watcher
  * 
+ * @version 1.6.3.3 [20150226 duanyy]
+ * - 淘汰load(String)方法
+ * 
  */
 public interface Provider<data extends Cacheable> {
-	
-	/**
-	 * 装入缓存对象
-	 * @param id 对象id
-	 * @return data
-	 * @deprecated
-	 */
-	public data load(String id);
-	
 	/**
 	 * 装入对象
 	 * @param id 对象ID
