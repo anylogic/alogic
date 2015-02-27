@@ -1,7 +1,5 @@
 package com.alogic.cache.provider;
 
-import java.util.Map;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -17,15 +15,14 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  * @since 1.6.3.3
+ * 
+ * @version 1.6.3.3 <br>
+ * - 改为从MultiFieldObjectProvider的虚基类继承 <br>
  */
-public class XmlData implements MultiFieldObjectProvider {
+public class XmlData extends MultiFieldObjectProvider.Abstract {
 	protected Element dataElement = null;
-	
-	public MultiFieldObject load(String id) {
-		return load(id,true);
-	}
-
-	public MultiFieldObject load(String id, boolean cacheAllowed) {
+	@Override
+	protected MultiFieldObject loadObject(String id, boolean cacheAllowed) {
 		if (dataElement == null) return null;
 		
 		Node found = XmlTools.getNodeByPath(dataElement, "row[@id='" + id + "']");
@@ -48,16 +45,9 @@ public class XmlData implements MultiFieldObjectProvider {
 		// nothing to do
 	}
 
-	public void configure(Element _e, Properties _properties)
+	protected void onConfigure(Element _e, Properties _properties)
 			throws BaseException {
 		dataElement = XmlTools.getFirstElementByPath(_e, "data");
 	}
 
-	public void report(Element xml) {
-		// nothing to do
-	}
-
-	public void report(Map<String, Object> json) {
-		// nothing to do
-	}
 }

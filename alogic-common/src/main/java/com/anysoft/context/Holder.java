@@ -40,6 +40,8 @@ import com.anysoft.util.XmlTools;
  * @version 1.6.0.2 [20141108 duanyy] <br>
  * - 增加Reportable实现 <br>
  * 
+ * @version 1.6.3.3 [20150227 duanyy] <br>
+ * - 修正Report为Json时的问题 <br>
  */
 public class Holder<object extends Reportable> implements XMLConfigurable, AutoCloseable,Reportable {
 	
@@ -157,7 +159,7 @@ public class Holder<object extends Reportable> implements XMLConfigurable, AutoC
 				_objs.add(_obj);
 			}
 			
-			json.put("objName",_objs);
+			json.put(objName,_objs);
 		}
 	}
 }

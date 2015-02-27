@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.alogic.cache.core.CacheStore;
+import com.alogic.cache.core.MultiFieldObject;
 import com.anysoft.context.Context;
 import com.anysoft.context.Source;
 import com.anysoft.util.Factory;
@@ -21,6 +22,8 @@ import com.anysoft.util.resource.ResourceFactory;
  * @author duanyy
  * @since 1.6.3.3
  * 
+ * @version 1.6.3.3 <br>
+ * - 增加对象快速存取方法{@link #getObject(String, String, boolean)} <br>
  */
 public class CacheSource extends Source<CacheStore> {
 
@@ -41,6 +44,21 @@ public class CacheSource extends Source<CacheStore> {
 	protected String getContextName(){
 		return "context";
 	}	
+	
+	/**
+	 * 直接通过cacheId和对象id查找对象
+	 * @param cacheId cache id
+	 * @param id 对象id
+	 * @param cacheAllowed 是否接受cache
+	 * @return 对象实例
+	 */
+	public MultiFieldObject getObject(String cacheId,String id,boolean cacheAllowed){
+		CacheStore store = get(cacheId);
+		if (store != null){
+			return store.load(id, cacheAllowed);
+		}
+		return null;
+	}
 	
 	/**
 	 * 工厂类

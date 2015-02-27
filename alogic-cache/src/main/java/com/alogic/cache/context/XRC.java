@@ -1,7 +1,7 @@
 package com.alogic.cache.context;
 
 import com.alogic.cache.core.CacheStore;
-import com.alogic.cache.local.LocalCacheStore;
+import com.alogic.cache.local.SlottedCacheStore;
 import com.anysoft.context.XMLResource;
 
 
@@ -20,7 +20,7 @@ public class XRC extends XMLResource<CacheStore>{
 
 	@Override
 	public String getDefaultClass() {
-		return LocalCacheStore.class.getName();
+		return SlottedCacheStore.class.getName();
 	}
 
 	@Override

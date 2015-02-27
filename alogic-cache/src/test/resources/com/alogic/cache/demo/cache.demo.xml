@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <source>
 	<context>
-		<cache id="state" module="com.alogic.cache.local.LocalCacheStore">
+		<cache id="state" module="com.alogic.cache.local.SlottedCacheStore">
 			<provider module="com.alogic.cache.provider.XmlData">
 				<data>
 					<row id="S0A" name="有效" note="有效状态"/>

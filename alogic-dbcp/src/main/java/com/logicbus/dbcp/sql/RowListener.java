@@ -12,6 +12,8 @@ import java.util.Map;
  * @author duanyy
  * @since 1.2.5
  * 
+ * @version 1.6.3.3 [20150227 duanyy] <br>
+ * - 增加{@link #result()}方法，以便获取结果<br>
  */
 public interface RowListener<T> {
 	/**
@@ -37,6 +39,13 @@ public interface RowListener<T> {
 	public void rowEnd(Object cookies);
 	
 	/**
+	 * 获取结果数据
+	 * @return 结果数据
+	 * @since 1.6.3.3
+	 */
+	public Object result();
+	
+	/**
 	 * 内置的行数据监听器
 	 * 
 	 * @author duanyy
@@ -59,6 +68,13 @@ public interface RowListener<T> {
 		protected ArrayList<Map<String,T>> result = new ArrayList<Map<String,T>>();
 
 		public List<Map<String,T>> getResult(){
+			return result;
+		}
+		
+		/**
+		 * @since 1.6.3.3
+		 */
+		public Object result(){
 			return result;
 		}
 

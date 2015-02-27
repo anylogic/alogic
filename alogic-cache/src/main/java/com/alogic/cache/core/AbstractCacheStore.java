@@ -7,11 +7,13 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Watcher;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
 
@@ -37,6 +39,18 @@ abstract public class AbstractCacheStore implements CacheStore {
 	 * cache的Provider
 	 */
 	protected MultiFieldObjectProvider provider = null;
+	
+	public void addWatcher(Watcher<MultiFieldObject> watcher) {
+		if (provider != null){
+			provider.addWatcher(watcher);
+		}
+	}
+
+	public void removeWatcher(Watcher<MultiFieldObject> watcher) {
+		if (provider != null){
+			provider.addWatcher(watcher);
+		}
+	}
 	
 	public MultiFieldObject load(String id) {
 		return load(id,true);
