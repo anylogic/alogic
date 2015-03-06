@@ -20,6 +20,7 @@
   	<module>alogic-example</module>
   	<module>alogic-kvalue</module>
   	<module>alogic-cache</module>
+  	<module>alogic-doer</module>
   </modules>
    <distributionManagement>  
   <repository>  

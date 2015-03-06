@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<TaskCenter module="com.alogic.doer.local.LocalTaskCenter">
+	<queue id="demo">
+	</queue>
+</TaskCenter>

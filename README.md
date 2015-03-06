@@ -55,3 +55,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:接口Cacheable增加了Cacheable.expire方法(1.6.3.2)
  	 + alogic-cache:新增cache框架及相应的管理服务(1.6.3.3)
  	 + alogic-common:淘汰Provider.load方法(1.6.3.3)
+ 	 + alogic-doer:增加小任务批处理框架(1.6.3.4)
+ 	 + alogic-common:DefaultProperties增加Json及XML的输出功能(1.6.3.4)
