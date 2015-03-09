@@ -32,6 +32,12 @@ public interface TaskDoer extends TaskDispatcher,Runnable{
 	public void stop();
 	
 	/**
+	 * 等待线程执行完毕
+	 * @param timeout 超时等待时间
+	 */
+	public void join(long timeout)throws InterruptedException;
+	
+	/**
 	 * 是否已经中断
 	 * @return true | false
 	 */
@@ -97,6 +103,7 @@ public interface TaskDoer extends TaskDispatcher,Runnable{
 		
 		public void start() {
 			thread = new Thread(this);
+			thread.setDaemon(true);
 			thread.start();
 		}
 
@@ -106,6 +113,10 @@ public interface TaskDoer extends TaskDispatcher,Runnable{
 		
 		public boolean isStopped(){
 			return stopped;
+		}
+		
+		public void join(long timeout) throws InterruptedException{
+			thread.join(timeout);
 		}
 		
 		public void report(Element xml) {

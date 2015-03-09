@@ -15,7 +15,7 @@ public interface TaskDispatcher extends XMLConfigurable, Reportable {
 	/**
 	 * 分发任务
 	 * 
-	 * @parameter task 任务实例
+	 * @param task 任务实例
 	 * 
 	 */
 	public void dispatch(Task task) throws BaseException;

@@ -21,7 +21,6 @@ public class TaskSubmitter{
 	 * 
 	 * @param id 任务的ID
 	 * @param queue 任务队列
-	 * @param template 任务模板
 	 * @param parameters 任务参数
 	 */
 	static public void submit(String id,String queue,Map<String,String> parameters){
@@ -36,7 +35,6 @@ public class TaskSubmitter{
 	 * 
 	 * @param id 任务的ID
 	 * @param queue 任务队列
-	 * @param template 任务模板
 	 * @param parameters 任务参数
 	 */	
 	static public void submit(String id,String queue,DefaultProperties parameters){
