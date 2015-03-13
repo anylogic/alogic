@@ -21,6 +21,7 @@
   	<module>alogic-kvalue</module>
   	<module>alogic-cache</module>
   	<module>alogic-doer</module>
+  	<module>alogic-seq</module>
   </modules>
    <distributionManagement>  
   <repository>  
