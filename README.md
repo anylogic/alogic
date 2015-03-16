@@ -58,3 +58,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-doer:增加小任务批处理框架(1.6.3.4)
  	 + alogic-common:DefaultProperties增加Json及XML的输出功能(1.6.3.4)
  	 + alogic-seq:增加sequeue框架(1.6.3.5)
+ 	 + alogic-seq:修正bug(1.6.3.6)
+ 	 + alogic-doer:客户端增加获取任务报告功能(1.6.3.6)

@@ -59,10 +59,10 @@ public class SequenceSource extends Source<SequenceGenerator>{
 	}	
 	
 	protected static Context<SequenceGenerator> newInstance(Properties p,Context<SequenceGenerator> instance){
-		String configFile = p.GetValue("cache.master", 
+		String configFile = p.GetValue("seq.master", 
 				"java:///com/alogic/sequence/context/seq.xml#com.alogic.sequence.context.SequenceSource");
 
-		String secondaryFile = p.GetValue("cache.secondary", 
+		String secondaryFile = p.GetValue("seq.secondary", 
 				"java:///com/alogic/sequence/context/seq.xml#com.alogic.sequence.context.SequenceSource");
 		
 		ResourceFactory rm = Settings.getResourceFactory();

@@ -59,6 +59,7 @@ public interface SequenceGenerator extends XMLConfigurable,Reportable{
 		
 		protected void setRange(long _start,long _end){
 			start = _start;
+			current = start;
 			end = _end;
 		}
 		
