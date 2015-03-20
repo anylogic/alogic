@@ -32,6 +32,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.2.1 [20141231 duanyy] <br>
  * - 设置缺省ClassLoader为Thread.currentThread().getContextClassLoader()
+ * 
+ * @version 1.6.3.7 [20150319 duanyy] <br>
+ * - 缺省的ClassLoader可以进行配置 <br>
  */
 public class WebUpdater {
 	/**
@@ -57,6 +60,12 @@ public class WebUpdater {
 	 * 检查更新服务备用URL
 	 */
 	protected String secondaryURL = "${secondary.home}/update/lib.xml";
+	
+	/**
+	 * 是否取线程的ClassLoader
+	 * @since 1.6.3.7
+	 */
+	protected boolean threadClassLoader = true;
 	
 	/**
 	 * 库文件信息
@@ -99,6 +108,7 @@ public class WebUpdater {
 		localLibHome = PropertiesConstants.getString(props, "updater.home",localLibHome);
 		masterURL = PropertiesConstants.getString(props, "updater.metadata.master", masterURL);
 		secondaryURL = PropertiesConstants.getString(props, "updater.metadata.secondary", secondaryURL);
+		threadClassLoader = PropertiesConstants.getBoolean(props, "updater.threadClassLoader", threadClassLoader);
 	}
 	
 	/**
@@ -405,7 +415,7 @@ public class WebUpdater {
 			}			
 		}
 		
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		ClassLoader cl = threadClassLoader ? Thread.currentThread().getContextClassLoader() : WebUpdater.class.getClassLoader();
 		if (urls.length <= 0){
 			return cl;
 		}
