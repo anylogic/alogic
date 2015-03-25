@@ -35,6 +35,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.2.1 [20141223 duanyy] <br>
  * - 增加对Comet的支持 <br>
+ * 
+ * @version 1.6.3.10 [20140324 duanyy] <br>
+ * - 增加忽略本次输出的功能 <br>
  */
 
 public class HttpContext extends Context {
@@ -206,11 +209,13 @@ public class HttpContext extends Context {
 	@Override
 	public void finish() {
 		try {
-			if (msg == null){
-				response.sendError(404, "No message is found,check servant implemention.");
-			}else{
-				response.setCharacterEncoding(encoding);
-				msg.finish(this,!cometMode());
+			if (!isIgnore()){
+				if (msg == null){
+					response.sendError(404, "No message is found,check servant implemention.");
+				}else{
+					response.setCharacterEncoding(encoding);
+					msg.finish(this,!cometMode());
+				}
 			}
 		}catch (Exception ex){
 			try {

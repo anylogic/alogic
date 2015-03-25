@@ -63,3 +63,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:缺省的classLoader可以配置(1.6.3.7)
  	 + alogic-common:提升XMLResourceSimpleModelProvider的XML配置文件搜索性能(1.6.3.8)
  	 + alogic-core:修正NothingAccessController无法实例化问题(1.6.3.9)
+ 	 + alogic-core:增加忽略本次服务处理输出的功能(1.6.3.10)

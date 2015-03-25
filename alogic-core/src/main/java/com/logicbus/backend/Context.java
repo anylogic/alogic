@@ -30,6 +30,9 @@ import com.logicbus.backend.message.MessageDoc;
  * 
  * @version 1.6.2.1 [20141218 duanyy] <br>
  * - 增加对Comet技术的支持<br>
+ * 
+ * @version 1.6.3.10 [20140324 duanyy] <br>
+ * - 增加忽略本次输出的功能 <br>
  */
 abstract public class Context extends MessageDoc implements DataProvider{
 
@@ -97,4 +100,17 @@ abstract public class Context extends MessageDoc implements DataProvider{
 			ex.printStackTrace();
 		}
 	}	
+	
+	/**
+	 * 忽略本次输出
+	 */
+	public void ignore(){
+		ignored = true;
+	}
+	
+	protected boolean isIgnore(){
+		return ignored;
+	}
+	
+	protected boolean ignored = false;
 }
