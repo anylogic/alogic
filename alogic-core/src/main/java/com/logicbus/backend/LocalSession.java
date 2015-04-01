@@ -12,7 +12,9 @@ import javax.servlet.http.HttpSession;
  * 本地实现的Session
  * 
  * @author duanyy
- *
+ * @version 1.6.3.10 [20150401 duanyy] <br>
+ * - 修正Session值不存在时的空指针问题。 <br>
+ * 
  */
 public class LocalSession extends Session {
 	private HttpSession httpSession = null;
@@ -179,7 +181,8 @@ public class LocalSession extends Session {
 
 	@Override
 	protected String _GetValue(String _name) {
-		return httpSession.getAttribute(_name).toString();
+		Object value = httpSession.getAttribute(_name);
+		return value == null ? null : value.toString();
 	}
 
 	@Override
