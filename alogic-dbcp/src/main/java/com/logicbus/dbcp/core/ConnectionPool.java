@@ -14,13 +14,16 @@ import com.anysoft.util.Reportable;
  * 
  * @author duanyy
  * 
- * @version 1.2.9 [20141016 duanyy]
- * - 重写dbcp
+ * @version 1.2.9 [20141016 duanyy] <br>
+ * - 重写dbcp <br>
  * 
- * @version 1.2.9 [20141017 duanyy]
- * - 增加{link {@link #getConnection()}
- * - 增加{link {@link #getConnection(boolean)}
- * - 增加{link {@link #getConnection(int)}
+ * @version 1.2.9 [20141017 duanyy] <br>
+ * - 增加{@link #getConnection()} <br>
+ * - 增加{@link #getConnection(boolean)} <br>
+ * - 增加{@link #getConnection(int)} <br>
+ * 
+ * @version 1.6.3.11 [20150402 duanyy] <br>
+ * - 增加{@link #recycle(Connection, boolean)},获取客户的使用反馈,以便连接池的处理 <br>
  * 
  */
 public interface ConnectionPool extends Reportable,MetricsReportable,AutoCloseable{
@@ -61,6 +64,14 @@ public interface ConnectionPool extends Reportable,MetricsReportable,AutoCloseab
 	 * @param conn 数据库连接
 	 */
 	public void recycle(Connection conn);
+	
+	/**
+	 * 归还数据库连接，并告诉框架本次连接是否发生过错误
+	 * 
+	 * @param conn 数据库连接
+	 * @param hasError 如果发生过错误为true，反之为false
+	 */
+	public void recycle(Connection conn,boolean hasError);
 	
 	/**
 	 * 获取连接池名称

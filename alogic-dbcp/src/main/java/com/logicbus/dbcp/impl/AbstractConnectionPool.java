@@ -1,6 +1,7 @@
 package com.logicbus.dbcp.impl;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import com.anysoft.loadbalance.LoadBalance;
 import com.anysoft.loadbalance.LoadBalanceFactory;
 import com.anysoft.metrics.core.MetricsCollector;
 import com.anysoft.pool.QueuedPool2;
+import com.anysoft.util.BaseException;
 import com.anysoft.util.Counter;
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.Properties;
@@ -36,8 +38,11 @@ import com.logicbus.dbcp.util.ConnectionPoolStat;
  * - 增加对读写分离的支持 <br>
  * 
  * @version 1.3.0.2 [20141106 duanyy] <br>
- * - 读写分离功能存在bug，暂时取消
+ * - 读写分离功能存在bug，暂时取消 <br>
  * 
+ * @version 1.6.3.11 [20150402 duanyy] <br>
+ * - 增加{@link #recycle(Connection, boolean)},获取客户的使用反馈,以便连接池的处理 <br>
+ * - 将所管理的Connection改变为ManagedConnection，以便支持读写分离<br>
  */
 abstract public class AbstractConnectionPool extends QueuedPool2<Connection> implements ConnectionPool{
 	protected Counter stat = null;
@@ -125,7 +130,7 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 	public Connection getConnection(int timeout, boolean enableRWS) {
 		Connection conn = null;
 		if (enableRWS){
-			//conn = selectReadSource(timeout);
+			conn = selectReadSource(timeout);
 		}
 		
 		if (conn == null){
@@ -190,11 +195,59 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 	public Connection getConnection() {
 		return getConnection(getMaxWait(),false);
 	}
-	
+
+	protected Connection createObject() throws BaseException {
+		//用ManagedConnection去包装实际的Connection
+		Connection wrapper = null;
+		Connection real = newConnection();
+		if (real != null){
+			wrapper = new ManagedConnection(this,real);
+		}
+		return wrapper;
+	}
 	
 	public void recycle(Connection conn) {
-		if (conn != null)
-			returnObject(conn);
+		//缺省状况下，没有发生错误
+		recycle(conn,false);
+	}
+	
+	public void recycle(Connection conn,boolean hasError){
+		if (conn != null){
+			if (conn instanceof ManagedConnection){
+				//ManagedConnection不能close，否则会死循环
+				ManagedConnection _conn = (ManagedConnection)conn;
+				ConnectionPool _pool = _conn.getPool();
+				if (_pool == this){
+					//是由本pool创建的
+					if (!hasError){
+						//如果没有发生错误，归还到连接池
+						returnObject(conn);
+					}else{
+						//发生了错误，直接关闭
+						try {
+							conn.close();
+						} catch (SQLException e) {
+		
+						}
+					}
+				}else{
+					//不是我创建的，交给相应的pool去回收
+					_pool.recycle(conn, hasError);
+				}
+			}else{
+				if (!hasError){ 
+					//如果没有发生错误，归还到连接池
+					returnObject(conn);
+				}else{
+					//发生了错误，直接关闭
+					try {
+						conn.close();
+					} catch (SQLException e) {
+	
+					}
+				}
+			}
+		}
 	}
 	
 	
@@ -212,4 +265,13 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 	 * @return
 	 */
 	abstract protected int getMaxWait();
+	
+	/**
+	 * 创建新的链接
+	 * 
+	 * @return 数据库链接
+	 * 
+	 * @since 1.6.3.11
+	 */
+	abstract protected Connection newConnection() throws BaseException;
 }

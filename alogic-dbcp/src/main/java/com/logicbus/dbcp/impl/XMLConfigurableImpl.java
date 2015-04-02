@@ -17,9 +17,12 @@ import com.anysoft.util.XmlElementProperties;
  * 可通过XML配置的缓冲池实现
  * 
  * @author duanyy
- * @version 1.2.9.3 [20141122 duanyy]
- * - 增加对读写分离的支持
  * 
+ * @version 1.2.9.3 [20141122 duanyy] <br>
+ * - 增加对读写分离的支持 <br>
+ * 
+ * @version 1.6.3.11 [20150402 duanyy] <br>
+ * - {@link #createObject()}交给父类去实现 <br>
  */
 public class XMLConfigurableImpl extends AbstractConnectionPool implements XMLConfigurable{
 
@@ -75,7 +78,7 @@ public class XMLConfigurableImpl extends AbstractConnectionPool implements XMLCo
 	}
 
 	
-	protected Connection createObject() throws BaseException {
+	protected Connection newConnection() throws BaseException{
 		return model.newConnection();
 	}
 	
@@ -86,5 +89,6 @@ public class XMLConfigurableImpl extends AbstractConnectionPool implements XMLCo
 		return model.getReadOnlySources();
 	}
 
+	
 
 }

@@ -18,7 +18,9 @@ import com.anysoft.util.Properties;
  * @author duanyy
  * 
  * @since 1.2.9.1
- *
+ * 
+ * @version 1.6.3.11 [20150402 duanyy] <br>
+ * - {@link #createObject()}交给父类去实现 <br>
  */
 public class ModelledImpl extends AbstractConnectionPool{
 
@@ -71,17 +73,18 @@ public class ModelledImpl extends AbstractConnectionPool{
 	protected int getMaxWait() {
 		return model.getMaxWait();
 	}
-
-	
-	protected Connection createObject() throws BaseException {
-		return model.newConnection();
-	}
 	
 	protected ConnectionModel model;
 
 	
 	protected List<ReadOnlySource> getReadOnlySources() {
 		return model.getReadOnlySources();
+	}
+
+
+	@Override
+	protected Connection newConnection() throws BaseException{
+		return model.newConnection();
 	}
 
 }

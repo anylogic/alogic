@@ -26,6 +26,9 @@ import com.logicbus.dbcp.util.ConnectionPoolStat;
  * 
  * @version 1.2.9.1 [20141017 duanyy]
  * - ConnectionPoolStat模型更新
+ * 
+ * @version 1.6.3.11 [20150402 duanyy] <br>
+ * - 增加{@link #recycle(Connection, boolean)},获取客户的使用反馈,以便连接池的处理 <br>
  */
 public class JndiConnectionPool implements ConnectionPool {
 	protected static final Logger logger = LogManager.getLogger(JndiConnectionPool.class);
@@ -74,7 +77,10 @@ public class JndiConnectionPool implements ConnectionPool {
 	public void recycle(Connection conn) {
 		SQLTools.close(conn);
 	}
-
+	
+	public void recycle(Connection conn, boolean hasError) {
+		SQLTools.close(conn);
+	}
 	
 	public String getName() {
 		return name;
@@ -128,6 +134,5 @@ public class JndiConnectionPool implements ConnectionPool {
 	
 	public void close() throws Exception {
 	}
-
 
 }
