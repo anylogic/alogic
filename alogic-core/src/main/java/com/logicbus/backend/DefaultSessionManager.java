@@ -16,6 +16,9 @@ import com.logicbus.backend.server.http.HttpContext;
  * @since 1.1.3
  * @version 1.6.2.6
  * - 采用自己的Session替代HttpSession
+ * 
+ * @version 1.6.3.12 [20150403 duanyy] <br>
+ * - 可以从HttpServletRequest中直接创建Session <br>
  */
 public class DefaultSessionManager extends SessionManager {
 	
@@ -36,6 +39,13 @@ public class DefaultSessionManager extends SessionManager {
 		HttpContext httpContext = (HttpContext)ctx;
 		
 		HttpServletRequest request = httpContext.getRequest();
+		HttpSession session = request.getSession(create);
+		return session == null?null:new LocalSession(session);
+	}
+
+	@Override
+	public Session getSession(HttpServletRequest request, boolean create)
+			throws ServantException {
 		HttpSession session = request.getSession(create);
 		return session == null?null:new LocalSession(session);
 	}
