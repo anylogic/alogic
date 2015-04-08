@@ -26,6 +26,9 @@ import com.logicbus.dbcp.core.ConnectionPool;
  * 
  * @author duanyy
  * @since 1.6.3.11
+ * 
+ * @version 1.6.3.13 [20150408 duanyy] <br>
+ * - 重写{@link #isValid(int)}方法 <br>
  */
 public class ManagedConnection implements Connection {
 	/**
@@ -33,10 +36,18 @@ public class ManagedConnection implements Connection {
 	 */
 	protected ConnectionPool pool = null;
 	protected Connection real = null;
+	private long lastVisited = 0;
+	private long timeout = 60 * 60 * 1000L;
 	
 	public ManagedConnection(ConnectionPool thePool,Connection conn){
 		pool = thePool;
 		real = conn;
+	}
+	
+	public ManagedConnection(ConnectionPool thePool,Connection conn,long _timeout){
+		pool = thePool;
+		real = conn;
+		timeout = _timeout;
 	}
 	
 	public ConnectionPool getPool(){
@@ -231,8 +242,16 @@ public class ManagedConnection implements Connection {
 		return real.createSQLXML();
 	}
 
-	public boolean isValid(int timeout) throws SQLException {
-		return real.isValid(timeout);
+	public boolean isValid(int _timeout) throws SQLException {
+		long now = System.currentTimeMillis();
+		
+		if (now - lastVisited > timeout){
+			//已超过时间，进行检查
+			lastVisited = now;
+			return real.isValid(_timeout);
+		}
+		lastVisited = now;
+		return true;
 	}
 
 	public void setClientInfo(String name, String value)

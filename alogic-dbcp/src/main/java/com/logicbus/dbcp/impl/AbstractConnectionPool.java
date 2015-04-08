@@ -43,6 +43,9 @@ import com.logicbus.dbcp.util.ConnectionPoolStat;
  * @version 1.6.3.11 [20150402 duanyy] <br>
  * - 增加{@link #recycle(Connection, boolean)},获取客户的使用反馈,以便连接池的处理 <br>
  * - 将所管理的Connection改变为ManagedConnection，以便支持读写分离<br>
+ * 
+ * @version 1.6.3.13 [20150408 duanyy] <br>
+ * - 增加对Connection的有效性判断 <br>
  */
 abstract public class AbstractConnectionPool extends QueuedPool2<Connection> implements ConnectionPool{
 	protected Counter stat = null;
@@ -137,7 +140,17 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 			long start = System.currentTimeMillis();
 			try {
 				int _timeout = timeout > getMaxWait() ? getMaxWait() : timeout;
-				conn = borrowObject(0,_timeout);			
+				conn = borrowObject(0,_timeout);		
+				
+				try {
+					if (!conn.isValid(1)){
+						//如果该Connection无效，关闭，并直接创建一个
+						conn.close();
+						conn = createObject();
+					}
+				}catch (Exception ex){
+					logger.error("Failed to test the connection",ex);
+				}
 			}finally{
 				if (stat != null){
 					stat.count(System.currentTimeMillis() - start, conn == null);
