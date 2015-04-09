@@ -37,6 +37,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.2.1 [20141223 duanyy] <br>
  * - 增加对Comet的支持 <br>
+ * 
+ * @version 1.6.3.14 [20150409 duanyy] <br>
+ * - 修正formContentType所取的参数名问题，笔误 <br>
  */
 public class XMLMessage implements Message {
 	protected static final Logger logger = LogManager.getLogger(XMLMessage.class);		
@@ -123,7 +126,7 @@ public class XMLMessage implements Message {
 	
 	protected static String formContentType = "application/x-www-form-urlencoded";
 	static {
-		formContentType = Settings.get().GetValue("http.alloworigin",
+		formContentType = Settings.get().GetValue("http.formContentType",
 				"application/x-www-form-urlencoded");
 	}
 	
