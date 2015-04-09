@@ -68,4 +68,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-dbcp:将所管理的Connection改变为ManagedConnection，以便支持读写分离(1.6.3.11)
  	 + alogic-core:直接通过HttpServletRequest获取当前的Session(1.6.3.12)
 	 + alogic-dbcp:增加对Connection的有效性判断(1.6.3.13)
+	 + alogic-core:修正formContentType所取的参数名问题，笔误(1.6.3.14)
  	 
