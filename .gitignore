@@ -6,6 +6,7 @@
 *.jar
 pom.properties
 target/
+_book/
 
 *.pydevproject
 .metadata

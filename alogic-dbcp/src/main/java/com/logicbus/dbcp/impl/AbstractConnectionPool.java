@@ -46,6 +46,9 @@ import com.logicbus.dbcp.util.ConnectionPoolStat;
  * 
  * @version 1.6.3.13 [20150408 duanyy] <br>
  * - 增加对Connection的有效性判断 <br>
+ * 
+ * @version 1.6.3.15 [20150409 duanyy] <br>
+ * - 修正Connection.isValid出异常的问题 <br>
  */
 abstract public class AbstractConnectionPool extends QueuedPool2<Connection> implements ConnectionPool{
 	protected Counter stat = null;
@@ -145,11 +148,13 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 				try {
 					if (!conn.isValid(1)){
 						//如果该Connection无效，关闭，并直接创建一个
+						logger.info("Connection is not valid , to create one");
 						conn.close();
 						conn = createObject();
 					}
 				}catch (Exception ex){
-					logger.error("Failed to test the connection",ex);
+					logger.error("Failed to test the connection,to create one",ex);
+					conn = createObject();
 				}
 			}finally{
 				if (stat != null){
