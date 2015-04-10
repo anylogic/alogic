@@ -71,4 +71,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-dbcp:增加对Connection的有效性判断(1.6.3.13)
 	 + alogic-core:修正formContentType所取的参数名问题，笔误(1.6.3.14)
 	 + alogic-dbcp:修正Connection.isValid出异常的问题(1.6.3.15)
+	 + alogic-core:修正备用bizlog.secondary变量名，笔误(1.6.3.16)
 

@@ -25,9 +25,13 @@ import com.anysoft.util.resource.ResourceFactory;
  * @since 1.2.3
  * 
  * @version 1.2.7 [20140828 duanyy] <br>
- * - 通过com.anysoft.stream来实现
+ * - 通过com.anysoft.stream来实现 <br>
+ * 
  * @version 1.2.8 [20140917 duanyy] <br>
- * - Handler:handle和flush方法增加timestamp参数，以便时间同步
+ * - Handler:handle和flush方法增加timestamp参数，以便时间同步 <br>
+ * 
+ * @version 1.6.3.16 [20150509 duanyy] <br>
+ * - 修正备用bizlog.secondary变量名，笔误<br>
  */
 public interface BizLogger extends Handler<BizLogItem>{	
 	
@@ -81,7 +85,7 @@ public interface BizLogger extends Handler<BizLogItem>{
 		public static BizLogger getLogger(Properties props){
 			String master = props.GetValue("bizlog.master", 
 					"java:///com/logicbus/backend/bizlog/bizlogger.default.xml#com.logicbus.backend.bizlog.BizLogger");
-			String secondary = props.GetValue("bizlog.master", 
+			String secondary = props.GetValue("bizlog.secondary", 
 					"java:///com/logicbus/backend/bizlog/bizlogger.default.xml#com.logicbus.backend.bizlog.BizLogger");
 			
 			ResourceFactory rf = Settings.getResourceFactory();
