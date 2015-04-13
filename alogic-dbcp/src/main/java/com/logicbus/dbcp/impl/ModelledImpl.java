@@ -21,6 +21,9 @@ import com.anysoft.util.Properties;
  * 
  * @version 1.6.3.11 [20150402 duanyy] <br>
  * - {@link #createObject()}交给父类去实现 <br>
+ * 
+ * @version 1.6.3.17 [20150413 duanyy] <br>
+ * - 增加控制属性timeout <br>
  */
 public class ModelledImpl extends AbstractConnectionPool{
 
@@ -85,6 +88,12 @@ public class ModelledImpl extends AbstractConnectionPool{
 	@Override
 	protected Connection newConnection() throws BaseException{
 		return model.newConnection();
+	}
+
+
+	@Override
+	protected long getTimeout() {
+		return model.getTimeout();
 	}
 
 }

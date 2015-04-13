@@ -31,6 +31,9 @@ import com.anysoft.util.XmlTools;
  * - 从XML的id属性中获取name <br>
  * @version 1.6.3.2 [20150213 duanyy] <br>
  * - 接口{@link com.anysoft.cache.Cacheable Cacheable}增加了{@link com.anysoft.cache.Cacheable#expire() Cacheable.expire}方法 <br>
+ * 
+ * @version 1.6.3.17 [20150413 duanyy] <br>
+ * - 增加控制属性timeout <br>
  */
 public class ConnectionModel implements Cacheable{
 	/**
@@ -115,6 +118,13 @@ public class ConnectionModel implements Cacheable{
 	public int getMaxActive(){return maxActive;}
 	
 	/**
+	 * 超时时间(数据库连接)
+	 */
+	protected long timeout = 60 * 60 * 1000;
+	
+	public long getTimeout(){return timeout;}
+	
+	/**
 	 * 空闲连接数
 	 */
 	protected int maxIdle = 1;
@@ -163,6 +173,7 @@ public class ConnectionModel implements Cacheable{
 		e.setAttribute("maxActive", String.valueOf(maxActive));
 		e.setAttribute("maxIdle", String.valueOf(maxIdle));
 		e.setAttribute("maxWait", String.valueOf(maxWait));
+		e.setAttribute("timeout", String.valueOf(timeout));
 		e.setAttribute("callbackId", callbackId);
 		e.setAttribute("callback", callback);
 		
@@ -190,6 +201,7 @@ public class ConnectionModel implements Cacheable{
 		JsonTools.setInt(json, "maxActive", maxActive);
 		JsonTools.setInt(json, "maxIdle", maxIdle);
 		JsonTools.setInt(json, "maxWait", maxWait);
+		JsonTools.setLong(json, "timeout", timeout);
 		JsonTools.setString(json, "callbackId", callbackId);
 		JsonTools.setString(json, "callback", callback);
 		
@@ -225,6 +237,7 @@ public class ConnectionModel implements Cacheable{
 		maxActive = PropertiesConstants.getInt(props, "maxActive",3);
 		maxIdle = PropertiesConstants.getInt(props, "maxIdle",1);
 		maxWait = PropertiesConstants.getInt(props, "maxWait",5000);
+		timeout = PropertiesConstants.getLong(props, "timeout",timeout);
 		callbackId = PropertiesConstants.getString(props, "callbackId", "");
 		callback = PropertiesConstants.getString(props, "callback", "");
 		
@@ -261,6 +274,7 @@ public class ConnectionModel implements Cacheable{
 		maxActive = JsonTools.getInt(json, "maxActive",3);
 		maxIdle = JsonTools.getInt(json, "maxIdle",1);
 		maxWait = JsonTools.getInt(json, "maxWait",5000);
+		timeout = JsonTools.getLong(json, "timeout", timeout);
 		callbackId = JsonTools.getString(json, "callbackId", callbackId);
 		callback = JsonTools.getString(json, "callback", callback);
 		

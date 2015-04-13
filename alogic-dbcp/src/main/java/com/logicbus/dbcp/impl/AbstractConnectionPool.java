@@ -49,6 +49,8 @@ import com.logicbus.dbcp.util.ConnectionPoolStat;
  * 
  * @version 1.6.3.15 [20150409 duanyy] <br>
  * - 修正Connection.isValid出异常的问题 <br>
+ * @version 1.6.3.17 [20150413 duanyy] <br>
+ * - 增加控制属性timeout <br>
  */
 abstract public class AbstractConnectionPool extends QueuedPool2<Connection> implements ConnectionPool{
 	protected Counter stat = null;
@@ -219,7 +221,7 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 		Connection wrapper = null;
 		Connection real = newConnection();
 		if (real != null){
-			wrapper = new ManagedConnection(this,real);
+			wrapper = new ManagedConnection(this,real,getTimeout());
 		}
 		return wrapper;
 	}
@@ -283,6 +285,8 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 	 * @return
 	 */
 	abstract protected int getMaxWait();
+	
+	abstract protected long getTimeout();
 	
 	/**
 	 * 创建新的链接
