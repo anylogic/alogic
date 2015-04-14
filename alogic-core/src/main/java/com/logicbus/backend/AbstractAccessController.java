@@ -38,8 +38,12 @@ import com.logicbus.models.servant.ServiceDescription;
  * - 共享锁由synchronized改为ReentrantLock
  * 
  * @version 1.2.8.2 [20141011 duanyy] <br>
- * - AccessStat变更可见性为public
- * - 实现Reportable和MetricsReportable
+ * - AccessStat变更可见性为public <br>
+ * - 实现Reportable和MetricsReportable <br>
+ * 
+ * @version 1.6.3.18 [20150414 duanyy] <br>
+ * - 方法{@link #getClientPriority(Path, ServiceDescription, Context, AccessStat) getClientPriority}
+ * 增加参数sessionId <br>
  */
 abstract public class AbstractAccessController implements AccessController {
 	/**
@@ -100,7 +104,7 @@ abstract public class AbstractAccessController implements AccessController {
 				current.timesOneMin ++;
 			}
 			
-			return getClientPriority(serviceId,servant,ctx,current);
+			return getClientPriority(sessionId,serviceId,servant,ctx,current);
 		}finally{
 			lock.unlock();
 		}
@@ -108,13 +112,14 @@ abstract public class AbstractAccessController implements AccessController {
 		
 	/**
 	 * 获取控制优先级
+	 * @param sessionId 会话ID
 	 * @param serviceId 服务ID
 	 * @param servant 服务描述
 	 * @param ctx 上下文
 	 * @param stat 当前Session的访问统计
 	 * @return 优先级
 	 */
-	abstract protected int getClientPriority(Path serviceId,ServiceDescription servant,
+	abstract protected int getClientPriority(String sessionId,Path serviceId,ServiceDescription servant,
 			Context ctx,AccessStat stat);
 	
 	
