@@ -34,6 +34,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.1.4 [20141128 duanyy] <br>
  * - 在装入include文件时，通过loadable变量检测是否装入 <br>
+ * 
+ * @version 1.6.3.18 [20150420 duanyy] <br>
+ * - 调整commands和includes处理次序，以便command参数能读取includes文件中的变量 <br>
  */
 public class Main implements CommandHelper,Process{
 	
