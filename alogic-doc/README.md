@@ -75,4 +75,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-dbcp:增加控制属性timeout(1.6.3.17)
 	 + alogic-core:优化AccessController的虚基类(1.6.3.18)
 	 + alogic-common:Main调整commands和includes处理次序，以便command参数能读取includes文件中的变量(1.6.3.19)
+	 + alogic-common:Main对于某些环境变量，设置到System的Properties中(1.6.3.20)
 
