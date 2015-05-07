@@ -41,6 +41,8 @@ import com.logicbus.remote.util.CallStat;
  * @author duanyy
  *
  * @since 1.2.9.3
+ * @version 1.6.3.21 [20150507 duanyy] <br>
+ * - 增加全局序列号的支持 <br>
  */
 public class Simulator implements Call {
 	protected static Logger logger = LogManager.getLogger(Simulator.class);
@@ -128,7 +130,11 @@ public class Simulator implements Call {
         }
 		return buf;
 	}
-	
+
+	public Result execute(Parameters paras, String globalSerial)
+			throws CallException {
+		return execute(paras);
+	}	
 	
 	public Result execute(Parameters paras) throws CallException {
 		long start = System.currentTimeMillis();

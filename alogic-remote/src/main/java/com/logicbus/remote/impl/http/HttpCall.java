@@ -47,7 +47,8 @@ import com.logicbus.remote.util.CallStat;
  * @version 1.2.9.3 [20141021 duanyy]
  * - 增加负载均衡机制，支持多个URI
  * - 增加结果数据的ID和Path映射
- * 
+ * @version 1.6.3.21 [20150507 duanyy] <br>
+ * - 增加全局序列号的支持 <br>
  */
 public class HttpCall implements Call {
 	protected static Logger logger = LogManager.getLogger(HttpCall.class);
@@ -136,8 +137,12 @@ public class HttpCall implements Call {
 		return new HttpParameters();
 	}
 
+	public Result execute(Parameters paras)
+			throws CallException {
+		return execute(paras,null);
+	}	
 	
-	public Result execute(Parameters paras) throws CallException {
+	public Result execute(Parameters paras, String globalSerial) throws CallException {
 		Parameter p = null;
 		
 		if (paras != null && queryParameters != null){
@@ -157,7 +162,10 @@ public class HttpCall implements Call {
 			}
 		}
 		
-		JsonBuffer buffer = new JsonBuffer();
+		JsonBuffer buffer = new TheBuffer();
+		if (globalSerial != null && globalSerial.length() > 0){
+			buffer.SetValue("globalSerial", globalSerial);
+		}
 		
 		if (paras != null && arguments != null){
 			Selector[] fields = arguments.getFields();
@@ -277,5 +285,11 @@ public class HttpCall implements Call {
 				json.put("runtime", _runtime);
 			}
 		}
+	}
+
+	private static class TheBuffer extends JsonBuffer{
+		public String[] getRequestAttributeNames() {
+			return new String[]{"GlobalSerial"};
+		}		
 	}
 }
