@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<script>
+	<using xmlTag="helloworld" module="com.anysoft.xscript.Helloworld"/>
+	<helloworld/>
+	<async>
+		<log msg="Helloworld,My first xscript! my id is ${id}"/>
+		<log msg="Helloworld,My first xscript! my name is ${name}"/>
+		<log msg="Helloworld,My first xscript!"/>
+		<sleep timeout="1000"/>
+	</async>
+	
+	<var id="var1" selector-value="my var1"/>
+	<var id="var2" selector-field="id" selector="SingleField"/>
+	<log msg="var1 = ${var1}"/>
+	<log msg="var2 = ${var2}"/>
+	
+	<segment>
+		<log msg="Testing exception 1"/>
+		<throw id="core.error" msg="异常测试"/>
+		<log msg="Testing exception 2"/>
+		
+		<except id="core.error">
+			<log msg="Exception is found"/>
+		</except>
+		
+		<finally>
+			<log msg="Finally"/>
+		</finally>
+	</segment>
+	
+	<log msg="Testing exception 3"/>
+	
+	<except>
+		<log msg="Exception is found aaaaa"/>
+	</except>
+	
+	<choose selector="Formula" formula="id!='alogic'">
+		<log msg="execute when formula result is true"/>
+		<log msg="execute when formula result is false"/>
+	</choose>
+	
+	<switch selector="Formula" formula="id">
+		<log case="alogic" msg="execute when formula result is alogic"/>
+		<log case="alogic1" msg="execute when formula result is alogic1"/>
+	</switch>	
+</script>
