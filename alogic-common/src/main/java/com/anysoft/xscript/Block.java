@@ -100,5 +100,5 @@ abstract public class Block extends AbstractStatement {
 		return new DefaultProperties("Default",parent);
 	}
 	
-	abstract void onConfigure(Element _e,Properties p);
+	protected abstract void onConfigure(Element _e,Properties p);
 }

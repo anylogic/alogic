@@ -30,7 +30,7 @@ public class Variable extends AbstractStatement {
 		}
 	}
 
-	int onExecute(Properties p, ExecuteWatcher watcher) {
+	protected int onExecute(Properties p, ExecuteWatcher watcher) {
 		if (selector == null){
 			return -1;
 		}

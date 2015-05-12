@@ -28,7 +28,7 @@ public class Choose extends Block {
 		super.configure(_e, _properties);
 	}
 
-	int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {
+	protected int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {
 		if (children.size() <= 0){
 			return -1;
 		}
@@ -52,6 +52,6 @@ public class Choose extends Block {
 	}
 
 	@Override
-	void onConfigure(Element _e, Properties p) {
+	protected void onConfigure(Element _e, Properties p) {
 	}
 }

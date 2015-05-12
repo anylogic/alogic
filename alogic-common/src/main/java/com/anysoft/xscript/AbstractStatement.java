@@ -134,7 +134,7 @@ abstract public class AbstractStatement implements Statement{
 		}
 	}
 	
-	abstract int onExecute(Properties p,ExecuteWatcher watcher) throws BaseException;
+	protected abstract int onExecute(Properties p,ExecuteWatcher watcher) throws BaseException;
 	
 	public boolean isExecutable(){
 		return true;

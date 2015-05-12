@@ -24,7 +24,7 @@ public class Helloworld extends AbstractStatement {
 	}
 
 	@Override
-	int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {
+	protected int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {
 		logger.info("java.vm.name=" + PropertiesConstants.getString(p,"java.vm.name",""));
 		logger.info("java.vm.version=" + PropertiesConstants.getString(p,"java.vm.version",""));
 		logger.info("java.vm.vendor=" + PropertiesConstants.getString(p,"java.vm.vendor",""));

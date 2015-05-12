@@ -29,7 +29,7 @@ public class Throw extends AbstractStatement {
 		msg = PropertiesConstants.getString(p,"msg","",true);
 	}
 
-	int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {
+	protected int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {
 		throw new BaseException(id,msg);
 	}
 

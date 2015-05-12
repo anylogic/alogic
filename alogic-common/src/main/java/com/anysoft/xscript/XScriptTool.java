@@ -27,8 +27,8 @@ public class XScriptTool {
 	/**
 	 * 将Xml编译为语句
 	 * 
-	 * @param root
-	 * @param 编译参数
+	 * @param root XML节点
+	 * @param p 编译参数
 	 * @return 语句实例
 	 */
 	public static Statement compile(Element root,Properties p) {

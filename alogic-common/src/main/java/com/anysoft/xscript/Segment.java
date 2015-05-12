@@ -18,11 +18,11 @@ public class Segment extends Block {
 		super(xmlTag,_parent);
 	}
 
-	void onConfigure(Element _e, Properties p) {
+	protected void onConfigure(Element _e, Properties p) {
 
 	}
 
-	int onExecute(Properties p, ExecuteWatcher watcher) {
+	protected int onExecute(Properties p, ExecuteWatcher watcher) {
 		List<Statement> _children = children;
 		Properties variables = getLocalVariables(p);
 		

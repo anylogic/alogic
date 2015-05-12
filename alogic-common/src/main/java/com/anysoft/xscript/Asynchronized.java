@@ -24,7 +24,7 @@ public class Asynchronized extends Block {
 	}
 
 	@Override
-	void onConfigure(Element _e, Properties p) {
+	protected void onConfigure(Element _e, Properties p) {
 		timeout = PropertiesConstants.getLong(p, "timeout", timeout);
 	}
 
