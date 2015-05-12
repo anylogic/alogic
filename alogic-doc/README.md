@@ -78,4 +78,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-common:Main对于某些环境变量，设置到System的Properties中(1.6.3.20)
 	 + alogic-remote:增加全局序列号的支持(1.6.3.21)
 	 + alogic-common:增加xscript脚本支持(1.6.3.22)
+	 + algoic-common:上传xscript文档，参见[xscript脚本介绍](alogic-common/xscript.md)(1.6.3.22)
 
