@@ -19,15 +19,14 @@ public class Helloworld extends AbstractStatement {
 	}
 
 	@Override
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-	}
-
-	@Override
 	protected int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {
 		logger.info("java.vm.name=" + PropertiesConstants.getString(p,"java.vm.name",""));
 		logger.info("java.vm.version=" + PropertiesConstants.getString(p,"java.vm.version",""));
 		logger.info("java.vm.vendor=" + PropertiesConstants.getString(p,"java.vm.vendor",""));
+		return 0;
+	}
+
+	protected int compiling(Element e, Properties p, CompileWatcher watcher) {
 		return 0;
 	}
 }

@@ -1,23 +1,40 @@
 package com.anysoft.xscript;
 
+import org.w3c.dom.Element;
+
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
-import com.anysoft.util.XMLConfigurable;
 
 /**
  * 脚本语句
  * 
  * @author duanyy
  * @since 1.6.3.22
+ * @version 1.6.3.23 [20150513 duanyy] <br>
+ * - 优化编译模式 <br>
  */
-public interface Statement extends XMLConfigurable,Reportable{
+public interface Statement extends Reportable{
+	
+	/**
+	 * 编译语句
+	 * @param e 对应的XML节点
+	 * @param p 编译参数
+	 * @param watcher 编译监控器
+	 * @return 编译结果
+	 * 
+	 * @since 1.6.3.23
+	 */
+	public int compile(Element e,Properties p,CompileWatcher watcher);
+	
 	/**
 	 * 执行语句
 	 * @param p 参数
+	 * @param watcher 执行监控器
 	 * @return 执行结果
 	 */
 	public int execute(Properties p,ExecuteWatcher watcher) throws BaseException;
+	
 	
 	/**
 	 * 获取父语句

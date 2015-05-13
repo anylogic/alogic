@@ -16,7 +16,8 @@ import com.anysoft.util.Properties;
  * 
  * @author duanyy
  * @since 1.6.3.22
- * 
+ * @version 1.6.3.23 [20150513 duanyy] <br>
+ * - 优化编译模式 <br>
  */
 abstract public class AbstractStatement implements Statement{
 	/**
@@ -133,6 +134,29 @@ abstract public class AbstractStatement implements Statement{
 			}
 		}
 	}
+	
+	public int compile(Element e,Properties p,CompileWatcher watcher){
+		long start = System.currentTimeMillis();
+		if (watcher != null){
+			watcher.begin(this, start);
+		}
+		try {
+			return compiling(e,p,watcher);
+		}catch (Exception ex){
+			if (watcher != null){
+				watcher.message(this, "error", ex.getMessage());
+			}
+			return -1;
+		}
+		finally{
+			if (watcher != null){
+				long now = System.currentTimeMillis();
+				watcher.end(this,now,now - start);
+			}
+		}
+	}
+	
+	protected abstract int compiling(Element e,Properties p,CompileWatcher watcher);
 	
 	protected abstract int onExecute(Properties p,ExecuteWatcher watcher) throws BaseException;
 	

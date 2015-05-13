@@ -15,7 +15,8 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @author duanyy
  * @since 1.6.3.22
- * 
+ * @version 1.6.3.23 [20150513 duanyy] <br>
+ * - 优化编译模式 <br>
  */
 public class Asynchronized extends Block {
 	protected long timeout = 30*60*60*1000L;
@@ -23,12 +24,11 @@ public class Asynchronized extends Block {
 		super(xmlTag,_parent);
 	}
 
-	@Override
-	protected void onConfigure(Element _e, Properties p) {
+	protected int onCompiling(Element _e, Properties p,CompileWatcher watcher){
 		timeout = PropertiesConstants.getLong(p, "timeout", timeout);
+		return 0;
 	}
 
-	@Override
 	public int onExecute(Properties p,ExecuteWatcher watcher) {
 		List<Statement> _children = children;
 		

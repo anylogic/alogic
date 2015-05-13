@@ -246,20 +246,22 @@ xscript的编译过程是将一个XML资源或XMLDOM编译为xscript的语法树
 ```java
 	/**
 	 * 将Xml编译为语句
-	 *
-	 * @param root
-	 * @param 编译参数
+	 * 
+	 * @param root XML节点
+	 * @param p 编译参数
+	 * @param watcher 编译监视器
 	 * @return 语句实例
 	 */
-	public static Statement compile(Element root,Properties p);
+	public static Statement compile(Element root,Properties p,CompileWatcher watcher);
 
 	/**
 	 * 将URL所指向的XML文档编译为语句
 	 * @param url URL
 	 * @param p 编译参数
+	 * @param watcher 编译监视器
 	 * @return 语句实例
 	 */
-	public static Statement compile(String url,Properties p);
+	public static Statement compile(String url,Properties p,CompileWatcher watcher);
 ```
 XScriptTool提供了两个静态方法来进行编译，两个方法其实是同一回事，方法一是直接对XMLDOM进行编译，而方法二是通过同一资源装入来装载指定的XML文档。
 
@@ -291,7 +293,7 @@ XScriptTool提供了一个静态方法来执行脚本。Statement是compile方�
 		String url = "java:///com/anysoft/xscript/Helloworld.xml#com.anysoft.xscript.Demo"
 
 		//编译该脚本
-		Statement stmt = XScriptTool.compile(url, Settings.get());
+		Statement stmt = XScriptTool.compile(url, Settings.get(),new CompileWatcher.Default());
 
 		//准备执行参数
 		Properties p = new DefaultProperties(
@@ -305,19 +307,19 @@ XScriptTool提供了一个静态方法来执行脚本。Statement是compile方�
 	}
 ```
 
-这里还有一个有趣的东西ExecuteWatcher。xscript提供一个接口，让你可以直接观察其语法树的执行情况，通过实现该接口，你可以监控脚本的执行情况，执行进度，执行效率等。
+这里还有两个有趣的东西ExecuteWatcher和CompileWatcher。xscript提供一个接口，让你可以直接观察其语法树的执行情况，通过实现该接口，你可以监控脚本的执行情况，执行进度，执行效率等。
 
 ```java
 /**
  * 执行监视器
- *
+ * 
  * @author duanyy
  * @since 1.6.3.22
  */
 public interface ExecuteWatcher {
 	/**
 	 * Statement执行完成
-	 *
+	 * 
 	 * @param statement 语句
 	 * @param p 执行参数
 	 * @param start 开始时间
@@ -332,6 +334,8 @@ public interface ExecuteWatcher {
 }
 ```
 
+同样道理，CompileWatcher用于监控脚本的编译情况。
+
 ### 如何开发xscript插件？
 xscript的另外一个令你兴奋功能就是强大的插件机制。你可以定制自己的插件，从而不断的扩充xscript的功能。
 
@@ -339,54 +343,68 @@ xscript的另外一个令你兴奋功能就是强大的插件机制。你可以�
 ```xml
 /**
  * 脚本语句
- *
+ * 
  * @author duanyy
  * @since 1.6.3.22
  */
-public interface Statement extends XMLConfigurable,Reportable{
+public interface Statement extends Reportable{
+	
+	/**
+	 * 编译语句
+	 * @param e 对应的XML节点
+	 * @param p 编译参数
+	 * @param watcher 编译监控器
+	 * @return 编译结果
+	 * 
+	 * @since 1.6.3.23
+	 */
+	public int compile(Element e,Properties p,CompileWatcher watcher);
+	
 	/**
 	 * 执行语句
 	 * @param p 参数
+	 * @param watcher 执行监控器
 	 * @return 执行结果
 	 */
 	public int execute(Properties p,ExecuteWatcher watcher) throws BaseException;
-
+	
+	
 	/**
 	 * 获取父语句
 	 * @return 语句
 	 */
 	public Statement parent();
-
+	
 	/**
 	 * 是否可执行
 	 * @return true|false
 	 */
 	public boolean isExecutable();
-
+	
 	/**
 	 * 获取XML语法的tag
 	 * @return tag
 	 */
 	public String getXmlTag();
-
+	
 	/**
 	 * 通过xml tag创建Statement实例
-	 *
+	 * 
 	 * @param xmlTag xmltag
 	 * @return Statement实例
 	 */
 	public Statement createStatement(String xmlTag,Statement parent);
-
+	
 	/**
 	 * 注册Statement的实现模块
 	 * <p>
 	 * 所注册的module在该节点及其子节点有效。
-	 *
+	 * 
 	 * @param xmltag xml tag
 	 * @param clazz Class实例
 	 */
 	public void registerModule(String xmltag,Class<?extends Statement> clazz);
-
+	
 	/**
 	 * 注册异常处理模块
 	 * @param id 异常code
@@ -408,21 +426,19 @@ public class Helloworld extends AbstractStatement {
 	}
 
 	@Override
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		//在这里读取自己所需的参数
-	}
-
-	@Override
-	int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {
+	protected int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {
 		logger.info("java.vm.name=" + PropertiesConstants.getString(p,"java.vm.name",""));
 		logger.info("java.vm.version=" + PropertiesConstants.getString(p,"java.vm.version",""));
 		logger.info("java.vm.vendor=" + PropertiesConstants.getString(p,"java.vm.vendor",""));
 		return 0;
 	}
+
+	protected int compiling(Element e, Properties p, CompileWatcher watcher) {
+		return 0;
+	}
 }
 ```
-基于AbstractStatement，你只需要完成两件事。第一，实现configure方法来读取自己所需的配置，该方法在compile期间被调用；第二，实现onExecute方法来做自己的事情。
+基于AbstractStatement，你只需要完成两件事。第一，实现compiling方法来读取自己所需的配置，该方法在compile期间被调用；第二，实现onExecute方法来做自己的事情。
 
 ### 变量体系
 在前面的章节中，我们反复遇到变量集，执行参数集等等。这些令人疑惑的东西到底是怎么回事？

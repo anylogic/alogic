@@ -18,10 +18,6 @@ public class Segment extends Block {
 		super(xmlTag,_parent);
 	}
 
-	protected void onConfigure(Element _e, Properties p) {
-
-	}
-
 	protected int onExecute(Properties p, ExecuteWatcher watcher) {
 		List<Statement> _children = children;
 		Properties variables = getLocalVariables(p);
@@ -30,6 +26,10 @@ public class Segment extends Block {
 			Statement statement = _children.get(i);
 			statement.execute(variables,watcher);
 		}
+		return 0;
+	}
+
+	protected int onCompiling(Element _e, Properties p, CompileWatcher watcher) {
 		return 0;
 	}
 }

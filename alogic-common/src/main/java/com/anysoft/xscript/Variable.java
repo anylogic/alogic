@@ -4,7 +4,6 @@ import org.w3c.dom.Element;
 
 import com.anysoft.selector.Selector;
 import com.anysoft.selector.impl.Constants;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 
 /**
@@ -21,13 +20,15 @@ public class Variable extends AbstractStatement {
 		super(_tag, _parent);
 	}
 
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	protected int compiling(Element _e, Properties _properties,CompileWatcher watcher) {
 		id = _e.getAttribute("id");
 		selector = Selector.newInstanceWithDefault(_e, _properties, Constants.class.getName());
 		if (selector == null){
-			logger.error("Can not create selector.tag=" + getXmlTag());
+			if (watcher != null){
+				watcher.message(this, "error", "Can not create selector.tag=" + getXmlTag());
+			}
 		}
+		return 0;
 	}
 
 	protected int onExecute(Properties p, ExecuteWatcher watcher) {

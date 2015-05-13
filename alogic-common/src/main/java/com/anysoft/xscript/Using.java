@@ -2,7 +2,6 @@ package com.anysoft.xscript;
 
 import org.w3c.dom.Element;
 
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
@@ -20,8 +19,7 @@ public class Using extends AbstractStatement {
 		super(xmlTag,_parent);
 	}
 	
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	protected int compiling(Element _e, Properties _properties,CompileWatcher watcher){
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
 		
 		String xmlTag = PropertiesConstants.getString(p,"xmlTag","",true);
@@ -30,18 +28,25 @@ public class Using extends AbstractStatement {
 		if (isNotNull(xmlTag) && isNotNull(module)){
 			Class<? extends Statement> clazz = getClass(module);
 			if (clazz == null){
-				logger.warn("Can not find class:" + module + ",ignored");
+				if (watcher != null){
+					watcher.message(this, "warn", "Can not find class:" + module + ",ignored");
+				}
 			}else{
 				Statement _parent = parent();
 				if (_parent == null){
-					logger.warn("Parent statement is null,ignored");
+					if (watcher != null){
+						watcher.message(this, "warn", "Parent statement is null,ignored");
+					}					
 				}else{
 					_parent.registerModule(xmlTag, clazz);
 				}
 			}
 		}else{
-			logger.warn("The xmltag or module is not valid,ignored");
+			if (watcher != null){
+				watcher.message(this, "warn", "The xmltag or module is not valid,ignored");
+			}			
 		}
+		return 0;
 	}
 	
 	public boolean isExecutable(){

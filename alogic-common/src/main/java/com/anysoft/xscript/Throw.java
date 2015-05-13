@@ -21,12 +21,13 @@ public class Throw extends AbstractStatement {
 		super(_tag, _parent);
 	}
 
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	protected int compiling(Element _e, Properties _properties,CompileWatcher watcher){
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
 		
 		id = PropertiesConstants.getString(p,"id",id,true);
 		msg = PropertiesConstants.getString(p,"msg","",true);
+		
+		return 0;
 	}
 
 	protected int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {

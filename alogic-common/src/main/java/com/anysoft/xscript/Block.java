@@ -18,6 +18,8 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @author duanyy
  * @since 1.6.3.22
+ * @version 1.6.3.23 [20150513 duanyy] <br>
+ * - 优化编译模式 <br>
  */
 abstract public class Block extends AbstractStatement {
 	/**
@@ -34,10 +36,8 @@ abstract public class Block extends AbstractStatement {
 		super(xmlTag,_parent);
 	}
 
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		XmlElementProperties p = new XmlElementProperties(_e,_properties);
-		
+	protected int compiling(Element _e, Properties _properties,CompileWatcher watcher){
+		XmlElementProperties p = new XmlElementProperties(_e, _properties);
 		NodeList _children = _e.getChildNodes();
 		
 		for (int i = 0 ; i < _children.getLength() ; i ++){
@@ -53,17 +53,20 @@ abstract public class Block extends AbstractStatement {
 			Statement statement = createStatement(xmlTag, this);
 			
 			if (statement == null){
-				logger.warn("Can not find plugin:" + xmlTag + ",Ignored.");
+				if (watcher != null){
+					watcher.message(this, "warn", "Can not find plugin:" + xmlTag + ",Ignored.");
+				}
 			}else{
-				statement.configure(e, p);
+				statement.compile(e, p,watcher);
 				if (statement.isExecutable()){
 					children.add(statement);
 				}
 			}
 		}
-		
-		onConfigure(_e,p);
+		return onCompiling(_e,p,watcher);
 	}
+	
+	abstract protected int onCompiling(Element _e, Properties p,CompileWatcher watcher);
 	
 	public int execute(Properties p,ExecuteWatcher watcher) throws BaseException{
 		long start = System.currentTimeMillis();
@@ -99,6 +102,4 @@ abstract public class Block extends AbstractStatement {
 	protected Properties getLocalVariables(Properties parent){
 		return new DefaultProperties("Default",parent);
 	}
-	
-	protected abstract void onConfigure(Element _e,Properties p);
 }

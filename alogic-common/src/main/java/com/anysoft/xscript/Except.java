@@ -19,8 +19,7 @@ public class Except extends AbstractStatement {
 		super(_tag, _parent);
 	}
 
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	protected int compiling(Element _e, Properties _properties,CompileWatcher watcher){
 		XmlElementProperties p = new XmlElementProperties(_e, _properties);
 
 		String id = _e.getAttribute("id");
@@ -41,13 +40,17 @@ public class Except extends AbstractStatement {
 			Statement statement = createStatement(xmlTag, this);
 
 			if (statement == null) {
-				logger.warn("Can not find plugin:" + xmlTag + ",Ignored.");
+				if (watcher != null){
+					watcher.message(this, "warn", "Can not find plugin:" + xmlTag + ",Ignored.");
+				}
 			} else {
-				statement.configure(e, p);
+				statement.compile(e, p,watcher);
 				if (statement.isExecutable()) {
 					Statement _parent = parent();
 					if (_parent == null) {
-						logger.warn("Parent statement is null,ignored");
+						if (watcher != null){
+							watcher.message(this, "warn", "Parent statement is null,ignored");
+						}
 					} else {
 						_parent.registerExceptionHandler(id, statement);
 					}
@@ -55,13 +58,14 @@ public class Except extends AbstractStatement {
 				break;
 			}
 		}
+		return 0;
 	}
 	
 	public boolean isExecutable(){
 		return false;
 	}
 
-	public int onExecute(Properties p,ExecuteWatcher watcher) {
+	public int onExecute(Properties p,ExecuteWatcher watcher) throws BaseException{
 		return 0;
 	}
 	

@@ -12,6 +12,8 @@ import com.anysoft.util.Properties;
  * 
  * @author duanyy
  * @since 1.6.3.22
+ * @version 1.6.3.23 [20150513 duanyy] <br>
+ * - 优化编译模式 <br>
  */
 public class Choose extends Block {
 	protected Selector selector = null;
@@ -19,15 +21,20 @@ public class Choose extends Block {
 		super(_tag, _parent);
 	}
 
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {	
+	public int compiling(Element _e, Properties _properties,CompileWatcher watcher){
 		selector = Selector.newInstanceWithDefault(_e, _properties, Constants.class.getName());
 		if (selector == null){
-			logger.error("Can not create selector.tag=" + getXmlTag());
+			if (watcher != null){
+				watcher.message(this, "error", "Can not create selector.tag=" + getXmlTag());
+			}
 		}
-		super.configure(_e, _properties);
+		return super.compiling(_e, _properties,watcher);
 	}
 
+	protected int onCompiling(Element _e, Properties p, CompileWatcher watcher) {
+		return 0;
+	}	
+	
 	protected int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {
 		if (children.size() <= 0){
 			return -1;
@@ -51,7 +58,5 @@ public class Choose extends Block {
 		return 0;
 	}
 
-	@Override
-	protected void onConfigure(Element _e, Properties p) {
-	}
+
 }

@@ -1,6 +1,7 @@
 package com.anysoft.xscript;
 
 import java.util.Hashtable;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -28,9 +29,7 @@ public class Switch extends AbstractStatement{
 		super(_tag, _parent);
 	}
 
-	@Override
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	protected int compiling(Element _e, Properties _properties,CompileWatcher watcher){
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
 		
 		selector = Selector.newInstanceWithDefault(_e, _properties, Constants.class.getName());
@@ -55,17 +54,22 @@ public class Switch extends AbstractStatement{
 				Statement statement = createStatement(xmlTag, this);
 				
 				if (statement == null){
-					logger.warn("Can not find plugin:" + xmlTag + ",Ignored.");
+					if (watcher != null){
+						watcher.message(this, "warn", "Can not find plugin:" + xmlTag + ",Ignored.");
+					}
 				}else{
-					statement.configure(e, p);
+					statement.compile(e, p,watcher);
 					if (statement.isExecutable()){
 						children.put(caseValue, statement);
 					}
 				}
 			}else{
-				logger.warn("The value is not valid,ignored");
+				if (watcher != null){
+					watcher.message(this, "warn", "The value is not valid,ignored");
+				}
 			}
 		}
+		return 0;
 	}
 
 	protected int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {

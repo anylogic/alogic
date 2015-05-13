@@ -29,14 +29,15 @@ public class XScriptTool {
 	 * 
 	 * @param root XML节点
 	 * @param p 编译参数
+	 * @param watcher 编译监视器
 	 * @return 语句实例
 	 */
-	public static Statement compile(Element root,Properties p) {
+	public static Statement compile(Element root,Properties p,CompileWatcher watcher) {
 		Script script = null;
 		
 		if (root != null){
 			script = new Script("script",null);
-			script.configure(root, p);
+			script.compile(root, p,watcher);
 		}
 		
 		return script;
@@ -46,9 +47,10 @@ public class XScriptTool {
 	 * 将URL所指向的XML文档编译为语句
 	 * @param url URL
 	 * @param p 编译参数
+	 * @param watcher 编译监视器
 	 * @return 语句实例
 	 */
-	public static Statement compile(String url,Properties p){
+	public static Statement compile(String url,Properties p,CompileWatcher watcher){
 		ResourceFactory rm = Settings.getResourceFactory();
 		
 		InputStream in = null;
@@ -63,7 +65,7 @@ public class XScriptTool {
 			IOTools.closeStream(in);
 		}
 		
-		return compile(root,p);
+		return compile(root,p,watcher);
 	}
 	
 	/**

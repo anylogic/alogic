@@ -8,7 +8,9 @@ public class Demo {
 
 	public static void main(String[] args) {
 		Statement stmt = XScriptTool.compile(
-				"java:///com/anysoft/xscript/Helloworld.xml#com.anysoft.xscript.Demo", Settings.get());
+				"java:///com/anysoft/xscript/Helloworld.xml#com.anysoft.xscript.Demo", 
+				Settings.get(),
+				new CompileWatcher.Default());
 		
 		Properties p = new DefaultProperties("Default",Settings.get());
 		
