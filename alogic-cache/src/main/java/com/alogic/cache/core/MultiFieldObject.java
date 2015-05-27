@@ -52,11 +52,21 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 	/**
 	 * 缺省实现
 	 * @author duanyy
-	 *
+	 * @version 1.6.3.24 [20150526 duanyy] <br>
+	 * - 现在可以通过构造函数来设置id <br>
 	 */
 	public static class Default implements MultiFieldObject{
 		protected String id;
 		protected Map<String,String> keyvalues = new HashMap<String,String>();
+		
+		public Default(){
+			
+		}
+		
+		public Default(String _id){
+			id = _id;
+		}
+		
 		public String getId() {
 			return id;
 		}

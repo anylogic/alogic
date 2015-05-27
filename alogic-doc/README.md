@@ -80,4 +80,6 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-common:增加xscript脚本支持(1.6.3.22)
 	 + algoic-common:上传xscript文档，参见[xscript脚本介绍](alogic-common/xscript.md)(1.6.3.22)
 	 + alogic-common:优化xscript的编译方式(1.6.3.23)
+	 + alogic-addons:增加多key的SQL语句Provider(1.6.3.24)
+	 + alogic-cache:MultiFieldObject.Default增加构造函数(1.6.3.24)
 
