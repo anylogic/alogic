@@ -18,6 +18,8 @@ import com.anysoft.util.Properties;
  * @since 1.6.3.22
  * @version 1.6.3.23 [20150513 duanyy] <br>
  * - 优化编译模式 <br>
+ * @version 1.6.3.25 <br>
+ * - 统一脚本的日志处理机制 <br>
  */
 abstract public class AbstractStatement implements Statement{
 	/**
@@ -30,6 +32,7 @@ abstract public class AbstractStatement implements Statement{
 	 */
 	private Statement parent = null;
 	private String xmlTag = null;
+	private String activity;
 	
 	public String getXmlTag(){
 		return xmlTag;
@@ -135,12 +138,36 @@ abstract public class AbstractStatement implements Statement{
 		}
 	}
 	
+	public void log(ScriptLogInfo logInfo){
+		if (parent != null){
+			parent.log(logInfo);
+		}
+	}
+	
+	public void log(String message,String level,int progress){
+		log(new ScriptLogInfo(activity,message,level,progress));
+	}
+	
+	public void log(String message,String level){
+		log(message,"info",-2);
+	}
+	
+	public void log(String message,int progress){
+		log(message,"info",progress);
+	}
+	
+	public void log(String message){
+		log(message,-2);
+	}
+	
 	public int compile(Element e,Properties p,CompileWatcher watcher){
 		long start = System.currentTimeMillis();
 		if (watcher != null){
 			watcher.begin(this, start);
 		}
 		try {
+			activity = e.getAttribute("id");
+			activity = activity == null || activity.length() <= 0 ? this.xmlTag:this.activity;
 			return compiling(e,p,watcher);
 		}catch (Exception ex){
 			if (watcher != null){
@@ -168,6 +195,10 @@ abstract public class AbstractStatement implements Statement{
 		logger.warn("Exception handler is not supported,Ignored.");
 	}
 	
+	public void registerLogger(ScriptLogger _logger){
+		logger.warn("ScriptLogger is not supported,Ignored.");
+	}
+	
 	public static final String STMT_FINALLY = "finally";
 	public static final String STMT_EXCEPTION = "except";
 	public static final String STMT_VAR = "var";
@@ -181,6 +212,7 @@ abstract public class AbstractStatement implements Statement{
 	public static final String STMT_SWITCH = "switch";
 	public static final String STMT_DEFAULT = "default";
 	public static final String STMT_CASE = "case";
+	public static final String STMT_LOGGER = "logger";
 	
 	static{
 		/**
@@ -197,5 +229,6 @@ abstract public class AbstractStatement implements Statement{
 		staticModules.put(STMT_THROW, Throw.class);
 		staticModules.put(STMT_CHOOSE, Choose.class);
 		staticModules.put(STMT_SWITCH, Switch.class);
+		staticModules.put(STMT_LOGGER, ScriptLogger.Plugin.class);
 	}
 }

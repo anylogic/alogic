@@ -13,6 +13,9 @@ import com.anysoft.util.Reportable;
  * @since 1.6.3.22
  * @version 1.6.3.23 [20150513 duanyy] <br>
  * - 优化编译模式 <br>
+ * @version 1.6.3.25 <br>
+ * - 统一脚本的日志处理机制 <br>
+ * 
  */
 public interface Statement extends Reportable{
 	
@@ -35,6 +38,13 @@ public interface Statement extends Reportable{
 	 */
 	public int execute(Properties p,ExecuteWatcher watcher) throws BaseException;
 	
+	/**
+	 * 写出日志
+	 * @param logInfo 日志信息
+	 * 
+	 * @since 1.6.3.25
+	 */
+	public void log(ScriptLogInfo logInfo);
 	
 	/**
 	 * 获取父语句
@@ -78,4 +88,13 @@ public interface Statement extends Reportable{
 	 * @param exceptionHandler 异常处理段
 	 */
 	public void registerExceptionHandler(String id,Statement exceptionHandler);
+	
+	/**
+	 * 注册日志处理器
+	 * 
+	 * @param logger 日志处理器
+	 * 
+	 * @since 1.6.3.25
+	 */
+	public void registerLogger(ScriptLogger logger);
 }

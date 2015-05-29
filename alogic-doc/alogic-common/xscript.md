@@ -2,6 +2,10 @@
 
 xscript是alogic支持的一种基于XML的脚本语言，用于在JVM内部运行批处理逻辑。
 
+###  更新历史
+
+- alogic-1.6.3.25 [20150529 duanyy] 统一脚本的日志处理机制,参见日志处理小结
+
 ### 语法树
 xscript采用XML解析器作为词法和语法解析器，在XMLDOM基础上进行语义解析。xscript最为基础的运行逻辑为Statement，其中有一种特殊的Statement为Block，定义了脚本块。Block和一般的Statement构成了xscript的语法树结构。
 
@@ -235,6 +239,29 @@ throw的用法如下：
 ```
 throw允许你指定一个异常ID和异常的信息，组合成BaseException抛出。
 
+### 日志处理
+从alogic-1.6.3.25开始，提供了统一的日志处理机制。
+
+脚本中，日志的输出可以通过log语句来进行日志的输出，例如：
+```
+<log msg="Helloworld" progress="100" level="info" id="activity1"/>
+```
+上述语句中，msg参数定义了要输出的信息模板（请注意是模板，模板是支持变量的）；progress定义当前处理的进度，它是一个整型值（从-2至10001,-2代表非进度,-1代表还没开始,10001 代表已经完成,0-10000 代表以10000为基数的百分比），缺省为-2；level定义了日志的级别，分为三个级别：error,warn,info；id定义了当前活动的id，缺省为语句id(即log)。
+
+这就意味着，你可以在脚本中向当前的日志处理器输出信息。
+
+在上一个版本中，log语句是通过log4j简单的实现了日志的输出，现在有了一个的日志处理器ScriptLogger。
+
+采用logger语句来定义ScriptLogger，例如:
+```
+	<logger module="com.anysoft.xscript.ScriptLogger$Default"/>
+```
+上面的代码定义了一个缺省实现的日志处理器（实现为com.anysoft.xscript.ScriptLogger$Default，采用log4j做了简单实现）
+
+> ScriptLogger和BizLogger类似，采用了一个基于有向树的流处理框架(com.anysoft.stream)，你可以定制ScriptLogger插件来实现日志的处理。
+
+值得注意的是，logger是定义在代码块下面的，也就是说每个代码块都可以定义一个自己的logger，如果代码块没有定义自己的logger，日志信息会被向父语句节点传递。对于根节点（script语句），如果没有定义logger，则会自动创建一个缺省实现的logger（即com.anysoft.xscript.ScriptLogger$Default）。
+
 ### 如何使用xscript？
 上面已经介绍了这个简单而强大的全新的脚本语言，那么问题来了，如何使用？
 
@@ -439,6 +466,32 @@ public class Helloworld extends AbstractStatement {
 }
 ```
 基于AbstractStatement，你只需要完成两件事。第一，实现compiling方法来读取自己所需的配置，该方法在compile期间被调用；第二，实现onExecute方法来做自己的事情。
+
+在alogic-1.6.3.25中，我们增加了日志处理机制。在定制开发中，可以通过AbstractStatement的日志输出方法输出日志。
+
+```
+	public void log(ScriptLogInfo logInfo){
+		if (parent != null){
+			parent.log(logInfo);
+		}
+	}
+	
+	public void log(String message,String level,int progress){
+		log(new ScriptLogInfo(activity,message,level,progress));
+	}
+	
+	public void log(String message,String level){
+		log(message,"info",-2);
+	}
+	
+	public void log(String message,int progress){
+		log(message,"info",progress);
+	}
+	
+	public void log(String message){
+		log(message,-2);
+	}
+```
 
 ### 变量体系
 在前面的章节中，我们反复遇到变量集，执行参数集等等。这些令人疑惑的东西到底是怎么回事？

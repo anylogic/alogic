@@ -20,6 +20,8 @@ import com.anysoft.util.XmlElementProperties;
  * @since 1.6.3.22
  * @version 1.6.3.23 [20150513 duanyy] <br>
  * - 优化编译模式 <br>
+ * @version 1.6.3.25 <br>
+ * - 统一脚本的日志处理机制 <br>
  */
 abstract public class Block extends AbstractStatement {
 	/**
@@ -31,6 +33,11 @@ abstract public class Block extends AbstractStatement {
 	 * 异常处理器
 	 */
 	protected Hashtable<String,Statement> exceptionAndFinallyHandlers = new Hashtable<String,Statement>();
+	
+	/**
+	 * 日志处理器（只支持一个）
+	 */
+	protected ScriptLogger scriptLogger = null;
 	
 	public Block(String xmlTag,Statement _parent) {
 		super(xmlTag,_parent);
@@ -97,6 +104,21 @@ abstract public class Block extends AbstractStatement {
 	
 	public void registerExceptionHandler(String id,Statement exceptionHandler){
 		exceptionAndFinallyHandlers.put(id, exceptionHandler);
+	}
+	
+	public void registerLogger(ScriptLogger _logger){
+		scriptLogger = _logger;
+	}
+	
+	public void log(ScriptLogInfo logInfo){
+		if (scriptLogger == null){
+			Statement parent = parent();
+			if (parent != null){
+				parent.log(logInfo);
+			}
+		}else{
+			scriptLogger.handle(logInfo, System.currentTimeMillis());
+		}
 	}
 	
 	protected Properties getLocalVariables(Properties parent){
