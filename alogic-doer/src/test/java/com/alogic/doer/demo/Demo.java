@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alogic.doer.client.TaskSubmitter;
+import com.alogic.doer.core.TaskReport.TaskState;
 import com.anysoft.util.Settings;
 
 public class Demo {
@@ -17,9 +18,21 @@ public class Demo {
 		parameters.put("name", "yyduan");
 		
 		TaskSubmitter.submit("job", "demo", parameters);
-		TaskSubmitter.submit("job1", "demo", parameters);
-		TaskSubmitter.submit("job2", "demo", parameters);
-		TaskSubmitter.submit("job3", "demo", parameters);
+		
+		while (true){
+			
+			TaskState state = TaskSubmitter.getTaskReport("job", "demo").state();
+			
+			if (state == TaskState.Done || state == TaskState.Failed){
+				break;
+			}
+			
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

@@ -83,4 +83,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-addons:增加多key的SQL语句Provider(1.6.3.24)
 	 + alogic-cache:MultiFieldObject.Default增加构造函数(1.6.3.24)
 	 + alogic-common:优化xscript的日志机制(1.6.3.25)
+	 + alogic-doer:增加xscript的执行插件(1.6.3.26)
 
