@@ -27,46 +27,38 @@ public class ScriptDoer extends TaskDoer.Abstract{
 	public void dispatch(Task task) throws BaseException {
 		currentTask = task;
 		try {
-			if (stmt != null){
-				try {
-					//向队列报告任务已经开始
-					queue.reportTaskState(task.id(), TaskState.Running, 0);
-					//执行任务
-					stmt.execute(task.getParameters(), new ExecuteWatcher.Default());
-					//任务完成
-					queue.reportTaskState(task.id(), TaskState.Done, 10000);
-				}catch (Throwable t){
-					logger.error("Failed to execute script", t);
-					//任务失败
-					queue.reportTaskState(task.id(), TaskState.Failed, 10000);
-				}
-			}else{
-				//脚本配置错误，直接报告错误
+			// 向队列报告任务已经开始
+			queue.reportTaskState(task.id(), TaskState.Running, 0);
+			if (script == null) {
+				logger.error("Can not find script element");
 				queue.reportTaskState(task.id(), TaskState.Failed, 10000);
+			} else {
+				Statement stmt = new TheScript(this, "script", null);
+				stmt.compile(script, task.getParameters(),
+						new CompileWatcher.Default());
+				// 执行任务
+				stmt.execute(task.getParameters(), new ExecuteWatcher.Default());
+				// 任务完成
+				queue.reportTaskState(task.id(), TaskState.Done, 10000);
 			}
-		}finally{
+		} catch (Throwable t) {
+			logger.error("Failed to execute script", t);
+			// 任务失败
+			queue.reportTaskState(task.id(), TaskState.Failed, 10000);
+		} finally {
 			currentTask = null;
 		}
 	}
-	
-	/**
-	 * xscript语句
-	 */
-	protected Statement stmt = null;
 	
 	/**
 	 * 当前处理的任务
 	 */
 	private Task currentTask = null;
 	
+	private Element script = null;
+	
 	public void onConfigure(Element _e, Properties p) {
-		Element scriptElement = XmlTools.getFirstElementByPath(_e, "script");
-		if (scriptElement == null){
-			logger.error("Can not find script element");
-		}else{
-			stmt = new TheScript(this,"script",null);
-			stmt.compile(scriptElement, p, new CompileWatcher.Default());
-		}
+		script = XmlTools.getFirstElementByPath(_e, "script");
 	}
 	
 	/**
