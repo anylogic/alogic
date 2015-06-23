@@ -1,12 +1,18 @@
 package com.logicbus.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.SystemStatus;
+import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.Servant;
+import com.logicbus.backend.ServantException;
+import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
+import com.logicbus.models.servant.ServiceDescription;
 
 
 /**
@@ -33,25 +39,57 @@ import com.logicbus.backend.message.XMLMessage;
  * @author duanyy
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 将MessageDoc和Context进行合并整合 <br>
+ * 
+ * @version 1.6.3.27 [20150623 duanyy] <br>
+ * - 增加XML和JSON双协议支持
  */
-public class GC extends Servant {
+public class GC extends AbstractServant {
+	@Override
+	protected void onDestroy() {
+
+	}
+
+	@Override
+	protected void onCreate(ServiceDescription sd) throws ServantException {
+
+	}
 	
-	
-	public int actionProcess(Context ctx) throws Exception{
+	protected int onXml(Context ctx) throws Exception {
+		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);	
+		
 		SystemStatus before = new SystemStatus();
 		System.gc();
 		SystemStatus after = new SystemStatus();
 		
-		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);	
 		Element root = msg.getRoot();
 		Document doc = root.getOwnerDocument();
 		Element result = doc.createElement("gcResult");
 		result.setAttribute("before", String.valueOf(before.getFreeMem()));
 		result.setAttribute("after", String.valueOf(after.getFreeMem()));
-		result.appendChild(
-				doc.createTextNode("内存回收成功,共回收"
-						+String.valueOf((after.getFreeMem() - before.getFreeMem())/1000)+"kb内存."));
+		result.setAttribute("msg", "内存回收成功,共回收"
+						+String.valueOf((after.getFreeMem() - before.getFreeMem())/1000)+"kb内存.");
 		root.appendChild(result);
 		return 0;
 	}
+
+	
+	protected int onJson(Context ctx) throws Exception {
+		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
+		
+		SystemStatus before = new SystemStatus();
+		System.gc();
+		SystemStatus after = new SystemStatus();
+		
+		Map<String,Object> root = msg.getRoot();
+		Map<String,Object> result = new HashMap<String,Object>();
+		
+		result.put("before", before.getFreeMem());
+		result.put("after", after.getFreeMem());
+		result.put("msg", "内存回收成功,共回收"
+						+String.valueOf((after.getFreeMem() - before.getFreeMem())/1000)+"kb内存.");
+		
+		root.put("gcResult", result);
+		
+		return 0;
+	}	
 }

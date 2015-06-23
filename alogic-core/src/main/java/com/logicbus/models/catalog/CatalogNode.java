@@ -1,13 +1,16 @@
 package com.logicbus.models.catalog;
 
+import com.anysoft.util.JsonSerializer;
 import com.anysoft.util.XmlSerializer;
 
 /**
  * 目录节点
  * @author hmyyduan
- *
+ * 
+ * @version 1.6.3.27 [20150623 duanyy] <br>
+ * - 增加JSON的序列化支持
  */
-public interface CatalogNode extends XmlSerializer{
+public interface CatalogNode extends XmlSerializer,JsonSerializer{
 	
 	/**
 	 * 获取名称

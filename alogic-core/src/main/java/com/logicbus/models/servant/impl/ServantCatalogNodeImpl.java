@@ -1,6 +1,10 @@
 package com.logicbus.models.servant.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,7 +17,10 @@ import com.logicbus.models.servant.ServiceDescription;
  * 目录节点实现
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.3.27 [20150623 duanyy] <br>
+ * - 增加JSON序列化支持 <br>
+ * 
  */
 public class ServantCatalogNodeImpl implements ServantCatalogNode {
 
@@ -81,6 +88,35 @@ public class ServantCatalogNodeImpl implements ServantCatalogNode {
 	
 	public void fromXML(Element e) {
 
+	}
+	
+	public void toJson(Map<String, Object> json) {
+		toJson(json,true);
+	}
+
+	public void fromJson(Map<String, Object> json) {
+
+	}	
+	
+	public void toJson(Map<String,Object> json,boolean outputServices){
+		if (json != null){
+			json.put("name", getName());
+			json.put("path", getPath().getPath());
+			
+			if (outputServices){
+				ServiceDescription[] sds = getServices();
+				List<Object> _services = new ArrayList<Object>();
+				
+				for (int i = 0 ; i < sds.length ; i ++){
+					ServiceDescription sd = (ServiceDescription) sds[i];
+					Map<String,Object> map = new HashMap<String,Object>();
+					sd.toJson(map);
+					_services.add(map);
+				}
+				
+				json.put("service", _services);
+			}
+		}
 	}
 	
 	/**

@@ -1,14 +1,22 @@
 package com.logicbus.service;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.Servant;
+import com.logicbus.backend.ServantException;
+import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.catalog.CatalogNode;
 import com.logicbus.models.servant.ServantCatalog;
 import com.logicbus.models.servant.ServantCatalogNode;
 import com.logicbus.models.servant.ServantManager;
+import com.logicbus.models.servant.ServiceDescription;
 
 /**
  * 查询所有服务目录中配置的服务信息
@@ -42,11 +50,22 @@ import com.logicbus.models.servant.ServantManager;
  * @author duanyy
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 将MessageDoc和Context进行合并整合 <br>
+ * 
+ * @version 1.6.3.27 [20150623 duanyy] <br>
+ * - 增加XML和JSON双协议支持 <br>
  */
-public class ServiceQuery extends Servant {
+public class ServiceQuery extends AbstractServant {
+	@Override
+	protected void onDestroy() {
+
+	}
+
+	@Override
+	protected void onCreate(ServiceDescription sd) throws ServantException {
+
+	}
 	
-	
-	public int actionProcess(Context ctx) throws Exception {
+	protected int onXml(Context ctx) throws Exception {
 		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
 		Element root = msg.getRoot();
 		Document doc = root.getOwnerDocument();
@@ -62,6 +81,27 @@ public class ServiceQuery extends Servant {
 			}
 			root.appendChild(catalogElem);
 		}
+		return 0;
+	}
+
+	
+	protected int onJson(Context ctx) throws Exception {
+		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
+		
+		ServantManager sm = ServantManager.get();
+		ServantCatalog catalog[] = sm.getServantCatalog();
+		
+		List<Object> _catalogs = new ArrayList<Object>();
+		for (int i = 0 ; i < catalog.length ; i ++){
+			ServantCatalogNode node = (ServantCatalogNode) catalog[i].getRoot();
+			if (node != null){
+				Map<String,Object> _catalog = new HashMap<String,Object>();
+				outputCatalog(catalog[i],node,_catalog);
+				_catalogs.add(_catalog);
+			}
+		}
+		
+		msg.getRoot().put("catalog", _catalogs);
 		return 0;
 	}
 	
@@ -83,4 +123,21 @@ public class ServiceQuery extends Servant {
 			e.appendChild(_e);
 		}
 	}
+	
+	protected void outputCatalog(ServantCatalog catalog,ServantCatalogNode root,Map<String,Object> json){
+		root.toJson(json);
+		CatalogNode [] children = catalog.getChildren(root);
+		if (children == null)
+			return ;
+		
+		List<Object> _catalogs = new ArrayList<Object>();
+		
+		for (int i = 0 ; i < children.length ; i ++){
+			Map<String,Object> _catalog = new HashMap<String,Object>();
+			outputCatalog(catalog,(ServantCatalogNode)children[i],_catalog);
+			_catalogs.add(_catalog);
+		}
+		
+		json.put("catalog", _catalogs);
+	}	
 }
