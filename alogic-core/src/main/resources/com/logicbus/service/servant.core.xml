@@ -197,7 +197,7 @@
 			note="恢复MetricsHandler的处理"
 			visible="public"
 			log = "brief" 
-			module="com.logicbus.service.BizLoggerResume"
+			module="com.logicbus.service.MetricsResume"
 		>
 			<properties>
 				<parameter id="jsonDefault" value="true"/>
