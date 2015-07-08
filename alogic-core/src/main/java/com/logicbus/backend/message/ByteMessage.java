@@ -76,7 +76,7 @@ public class ByteMessage implements Message {
 			
 			out.flush();
 		}catch (Exception ex){
-			logger.error("Error when writing data from inputstream",ex);
+			logger.error("Error when writing data to output stream",ex);
 		}finally{
 			if (closeStream){
 				IOTools.close(out);

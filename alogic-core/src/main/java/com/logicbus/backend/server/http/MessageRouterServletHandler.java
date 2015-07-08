@@ -6,8 +6,10 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+
 import com.anysoft.util.Settings;
 import com.anysoft.webloader.ServletHandler;
 import com.logicbus.backend.AccessController;
@@ -44,6 +46,9 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.6.1.2 [20141118 duanyy] <br>
  * - 支持HttpContext的数据截取,通过Servlet的变量intercept.mode来控制 <br>
+ * 
+ * @version 1.6.3.28 [20150708 duanyy] <br>
+ * - 允许设置为缓存模式 <br>
  */
 public class MessageRouterServletHandler implements ServletHandler {
 	/**
@@ -80,14 +85,20 @@ public class MessageRouterServletHandler implements ServletHandler {
 	 * Access-Control-Allow-Origin
 	 */
 	protected static String defaultAllowOrigin = "*";
+
+	protected boolean cacheAllowed = false; 
 	
 	public void init(ServletConfig servletConfig) throws ServletException {
 		Settings settings = Settings.get();
 		encoding = settings.GetValue("http.encoding", encoding);
 		defaultAllowOrigin = settings.GetValue("http.alloworigin",
 				defaultAllowOrigin);
+
 		ac = (AccessController) settings.get("accessController");
 
+		String _cacheAllowed = servletConfig.getInitParameter("cacheAllowed");
+		cacheAllowed = (_cacheAllowed != null && _cacheAllowed.equals("true"))?true:false;
+		
 		String normalizerClass = servletConfig.getInitParameter("normalizer");
 		normalizerClass = normalizerClass == null
 				|| normalizerClass.length() <= 0 ? "com.logicbus.backend.DefaultNormalizer"
@@ -124,11 +135,14 @@ public class MessageRouterServletHandler implements ServletHandler {
 			getServerInfo = true;
 		}
 		
-		response.setHeader("Expires", "Mon, 26 Jul 1970 05:00:00 GMT");
-		response.setHeader("Last-Modified", "Mon, 26 Jul 1970 05:00:00 GMT");
-		response.setHeader("Cache-Control", "no-cache, must-revalidate");
-		response.setHeader("Pragma", "no-cache");
-		
+		if (cacheAllowed){
+			response.setHeader("Cache-Control", "public");
+		}else{
+			response.setHeader("Expires", "Mon, 26 Jul 1970 05:00:00 GMT");
+			response.setHeader("Last-Modified", "Mon, 26 Jul 1970 05:00:00 GMT");
+			response.setHeader("Cache-Control", "no-cache, must-revalidate");
+			response.setHeader("Pragma", "no-cache");
+		}
 		// 1.2.1 duanyy
 		// to support CORS
 		String origin = request.getHeader("Origin");

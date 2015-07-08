@@ -7,7 +7,7 @@ public class XmlOutter extends XMLResource<SequenceGenerator>{
 
 	@Override
 	public String getObjectName() {
-		return "cache";
+		return "seq";
 	}
 
 	@Override

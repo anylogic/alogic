@@ -85,4 +85,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-common:优化xscript的日志机制(1.6.3.25)
 	 + alogic-doer:增加xscript的执行插件(1.6.3.26)
 	 + alogic-core:核心服务增加XML和JSON双协议支持(1.6.3.27)
+	 + alogic-blob:增加alogic-blob框架，用于存储和查询Blob数据(1.6.3.28)
 
