@@ -61,12 +61,10 @@ public interface CompileWatcher {
 			}
 		}
 
-		@Override
 		public void begin(Statement stmt, long timestamp) {
 			logger.info("开始编译:" + stmt.getXmlTag());
 		}
 
-		@Override
 		public void end(Statement stmt, long timestamp, long duration) {
 			logger.info("完成编译:" + stmt.getXmlTag() + ",耗时:" + duration + "ms");
 		}

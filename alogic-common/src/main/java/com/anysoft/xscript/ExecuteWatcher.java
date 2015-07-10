@@ -30,7 +30,6 @@ public interface ExecuteWatcher {
 		 */
 		protected static final Logger logger = LogManager.getLogger(ExecuteWatcher.class);
 		
-		@Override
 		public void executed(Statement statement, Properties p, long start,
 				long duration) {
 			logger.info(statement.getXmlTag() + "---> 开始于" + new Date(start) + ",耗时:" + duration + "毫秒");

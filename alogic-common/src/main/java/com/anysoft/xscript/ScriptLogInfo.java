@@ -75,7 +75,6 @@ public class ScriptLogInfo implements Flowable{
 		return progress;
 	}
 	
-	@Override
 	public String getValue(String varName, Object context, String defaultValue) {
 		if (varName.equals("msg")){
 			return message;
@@ -89,12 +88,10 @@ public class ScriptLogInfo implements Flowable{
 		return defaultValue;
 	}
 
-	@Override
 	public Object getContext(String varName) {
 		return this;
 	}
 
-	@Override
 	public String getStatsDimesion() {
 		return level;
 	}
