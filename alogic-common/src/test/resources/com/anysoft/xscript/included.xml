@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<script>
+	<log msg="Helloworld,I am included! my id is ${id}"/>
+</script>

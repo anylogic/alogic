@@ -9,6 +9,8 @@
 		<sleep timeout="1000"/>
 	</async>
 	
+	<include src="java:///com/anysoft/xscript/included.xml"/>
+	
 	<var id="var1" selector-value="my var1"/>
 	<var id="var2" selector-field="id" selector="SingleField"/>
 	<log msg="var1 = ${var1}"/>

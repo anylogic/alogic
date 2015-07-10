@@ -41,6 +41,7 @@ public static void main(){
 - 多线程(async,sleep)
 - 条件(choose,switch)
 - 异常处理(throw,except,finally)
+- 包含(include)
 
 除了这些内置插件，还可用通过using语句来引入自定义插件，例如：
 ```xml
@@ -238,6 +239,14 @@ throw的用法如下：
 	<throw id="<id>" msg="<msg>"/>
 ```
 throw允许你指定一个异常ID和异常的信息，组合成BaseException抛出。
+
+### 包含
+从alogic-1.6.3.29开始，提供了include语句。
+
+include用于包含另外一个xscript脚本,用法如下：
+```
+	<include src="<url>"/>
+```
 
 ### 日志处理
 从alogic-1.6.3.25开始，提供了统一的日志处理机制。

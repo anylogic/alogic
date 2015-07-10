@@ -32,11 +32,12 @@ public class LocalBlobManager implements BlobManager {
 	public void report(Element xml) {
 		if (xml != null){
 			xml.setAttribute("module", getClass().getName());
-			
+			xml.setAttribute("id", id);
 			File file = new File(home);
 			if (file.exists()){
 				xml.setAttribute("totalSpace", String.valueOf(file.getTotalSpace()));
 				xml.setAttribute("usableSpace", String.valueOf(file.getUsableSpace()));
+				xml.setAttribute("home", home);
 			}
 		}
 	}
@@ -44,11 +45,12 @@ public class LocalBlobManager implements BlobManager {
 	public void report(Map<String, Object> json) {
 		if (json != null){
 			json.put("module", getClass().getName());
-			
+			json.put("id", id);
 			File file = new File(home);
 			if (file.exists()){
 				json.put("totalSpace", file.getTotalSpace());
 				json.put("usableSpace", file.getUsableSpace());
+				json.put("home", home);
 			}
 		}
 	}

@@ -20,6 +20,8 @@ import com.anysoft.util.Properties;
  * - 优化编译模式 <br>
  * @version 1.6.3.25 <br>
  * - 统一脚本的日志处理机制 <br>
+ * @version 1.6.3.29 <br>
+ * - 增加inlcude语句<br>
  */
 abstract public class AbstractStatement implements Statement{
 	/**
@@ -213,6 +215,7 @@ abstract public class AbstractStatement implements Statement{
 	public static final String STMT_DEFAULT = "default";
 	public static final String STMT_CASE = "case";
 	public static final String STMT_LOGGER = "logger";
+	public static final String STMT_INCLUDE="include";
 	
 	static{
 		/**
@@ -230,5 +233,6 @@ abstract public class AbstractStatement implements Statement{
 		staticModules.put(STMT_CHOOSE, Choose.class);
 		staticModules.put(STMT_SWITCH, Switch.class);
 		staticModules.put(STMT_LOGGER, ScriptLogger.Plugin.class);
+		staticModules.put(STMT_INCLUDE,Include.class);
 	}
 }
