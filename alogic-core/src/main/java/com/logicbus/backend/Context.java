@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Random;
 
 import com.anysoft.formula.DataProvider;
-import com.anysoft.util.KeyGen;
 import com.logicbus.backend.message.MessageDoc;
 
 /**
@@ -33,6 +33,9 @@ import com.logicbus.backend.message.MessageDoc;
  * 
  * @version 1.6.3.10 [20140324 duanyy] <br>
  * - 增加忽略本次输出的功能 <br>
+ * 
+ * @version 1.6.3.30 [20150714 duanyy] <br>
+ * - 全局序列号只包含数字和字母 <br>
  */
 abstract public class Context extends MessageDoc implements DataProvider{
 
@@ -61,8 +64,38 @@ abstract public class Context extends MessageDoc implements DataProvider{
 	 * 
 	 */
 	public static String createGlobalSerial(){
-		return String.valueOf(System.currentTimeMillis()) + KeyGen.getKey(7);
+		return String.valueOf(System.currentTimeMillis()) + randomString(7);
 	}
+	
+	/**
+	 * 字符表
+	 */
+	protected static final char[] Chars = {
+	      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+	      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+	      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
+	      'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+	      'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
+	      'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
+	      '8', '9'
+	 };
+	
+	/**
+	 * 按照指定宽度生成随机字符串
+	 * @param _width 字符串的宽度
+	 * @return 随机字符串
+	 */
+	static protected String randomString(int _width){
+		int width = _width <= 0 ? 6 : _width;
+		char [] ret = new char[width];
+		Random ran = new Random();
+		for (int i = 0 ; i < width ; i ++){
+			int intValue = ran.nextInt(62) % 62;
+			ret[i] = Chars[intValue];
+		}
+		
+		return new String(ret);
+	}	
 	
 	/**
 	 * 从输入流中读入文本

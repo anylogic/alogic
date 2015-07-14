@@ -87,4 +87,6 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-core:核心服务增加XML和JSON双协议支持(1.6.3.27)
 	 + alogic-blob:增加alogic-blob框架，用于存储和查询Blob数据(1.6.3.28)
 	 + alogic-common:增加xscript的include语句插件(1.6.3.29)
+	 + alogic-dbcp:增加一些db操作工具(1.6.3.30)
+	 + alogic-dbcp:增加SQL预处理器(1.6.3.30)
 

@@ -34,6 +34,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.3.17 [20150413 duanyy] <br>
  * - 增加控制属性timeout <br>
+ * 
+ * @version 1.6.3.30 [20150714 duanyy] <br>
+ * - 通过XML配置的时候，可以读入环境变量<br>
  */
 public class ConnectionModel implements Cacheable{
 	/**
@@ -227,7 +230,7 @@ public class ConnectionModel implements Cacheable{
 
 	
 	public void fromXML(Element e) {
-		XmlElementProperties props = new XmlElementProperties(e,null);
+		XmlElementProperties props = new XmlElementProperties(e,Settings.get());
 		
 		name = PropertiesConstants.getString(props,"id", "");
 		driver = PropertiesConstants.getString(props, "driver", "");
