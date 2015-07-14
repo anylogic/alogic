@@ -17,14 +17,13 @@ public class PluginManager implements FunctionHelper {
 		bindedListener = listener;
 	}
 	
-	@Override
 	public Expression customize(String funcName) {
 		if (funcName.equals("not_nvl")){
-			return new NotNull(funcName,bindedListener);
+			return new Plugin.NotNull(funcName,bindedListener);
 		}
 		
-		if (funcName.equals("value")){
-			return new Value(funcName,bindedListener);
+		if (funcName.equals("bind")){
+			return new Plugin.Bind(funcName,bindedListener);
 		}
 		
 		return null;

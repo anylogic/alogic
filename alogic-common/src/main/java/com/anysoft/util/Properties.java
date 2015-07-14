@@ -13,6 +13,9 @@ import com.anysoft.formula.DataProvider;
  * 
  * @version 1.6.1.1 [20141118 duanyy] <br>
  * - 实现DataProvider接口 <br>
+ * 
+ * @version 1.6.3.30 [20150714 duanyy] <br>
+ * - 修正缺省值为null的空指针问题 <br>
  */
 abstract public class Properties implements DataProvider{
 	/**
@@ -171,7 +174,7 @@ abstract public class Properties implements DataProvider{
 			}
 		}
 		//在本变量集找到
-		if (_bVariable){
+		if (_bVariable && __value != null && __value.length() > 0){
 			//计算变量
 			__value = FillValue(_name,__value);
 		}
