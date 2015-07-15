@@ -52,6 +52,9 @@ abstract public class Plugin extends Function {
 			if (value != null){
 				value = getArgument(1).getValue(provider);
 			}
+			if (value == null){
+				value = new ExprValue("");
+			}
 			return value;
 		}
 	}
