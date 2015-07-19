@@ -89,4 +89,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-common:增加xscript的include语句插件(1.6.3.29)
 	 + alogic-dbcp:增加一些db操作工具(1.6.3.30)
 	 + alogic-dbcp:增加SQL预处理器(1.6.3.30)
+	 + alogic-core:增加消息协议MultiPartForm，支持Http文件上传(1.6.3.31)
 
