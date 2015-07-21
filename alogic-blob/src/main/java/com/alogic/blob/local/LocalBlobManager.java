@@ -9,10 +9,13 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
+import com.alogic.blob.core.BlobInfo;
+import com.alogic.blob.core.BlobRegister;
 import com.alogic.blob.core.BlobReader;
 import com.alogic.blob.core.BlobManager;
 import com.alogic.blob.core.BlobWriter;
 import com.anysoft.util.BaseException;
+import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;
@@ -22,6 +25,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @author duanyy
  * @since 1.6.3.28
+ * 
+ * @version 1.6.3.32 [duanyy 20150720] <br>
+ * - 增加md5,content-type等信息 <br>
  */
 public class LocalBlobManager implements BlobManager {
 	/**
@@ -55,7 +61,7 @@ public class LocalBlobManager implements BlobManager {
 		}
 	}
 
-	public BlobWriter newFile() {
+	public BlobWriter newFile(String contentType) {
 		String id = newFileId();
 		File file = new File(getRealPath(id));
 		if (!file.exists()){
@@ -65,7 +71,7 @@ public class LocalBlobManager implements BlobManager {
 					parentFile.mkdirs();
 				}
 				file.createNewFile();
-				return new LocalBlobFile(id,file);
+				return new LocalBlobWriter(id,file,contentType);
 			} catch (IOException e) {
 				logger.error("Can not create new file:" + file.getPath(),e);
 			}
@@ -74,21 +80,32 @@ public class LocalBlobManager implements BlobManager {
 	}
 
 	public BlobReader getFile(String id) {
-		File file = new File(getRealPath(id));
-		if (file.exists() && file.canRead() && file.isFile()){
-			return new LocalBlobFile(id,file);
+		BlobInfo info = fileRegister != null ? fileRegister.find(id): null;
+		
+		if (info != null){
+			File file = new File(getRealPath(id));
+			if (file.exists() && file.canRead() && file.isFile()){
+				return new LocalBlobReader(id,file,info);
+			}
 		}
 		return null;
 	}
 
 	public boolean existFile(String id) {
-		File file = new File(getRealPath(id));
-		return file.exists();
+		BlobInfo info = fileRegister != null ? fileRegister.find(id): null;
+		if (info != null){
+			File file = new File(getRealPath(id));
+			return file.exists();
+		}else{
+			return false;
+		}
 	}
 
 	public boolean deleteFile(String id) {
+		fileRegister.delete(id);
+		
 		File file = new File(getRealPath(id));
-		if (!file.exists() || file.canWrite()){
+		if (!file.exists() || !file.canWrite()){
 			return false;
 		}
 		
@@ -101,8 +118,6 @@ public class LocalBlobManager implements BlobManager {
 		
 		id = PropertiesConstants.getString(p,"id",id);
 		
-		contentType = PropertiesConstants.getString(p,"contentType",contentType);
-		
 		home = PropertiesConstants.getString(p,"home",home);
 		
 		{
@@ -112,17 +127,16 @@ public class LocalBlobManager implements BlobManager {
 				homeFile.mkdirs();
 			}
 		}
+		
+		Factory<BlobRegister> factory = new Factory<BlobRegister>();
+		fileRegister = factory.newInstance(_e, _properties, "register", LocalFileRegister.class.getName());
 	}
-	
-	public String getContentType() {
-		return contentType;
-	}
-	
-	protected String contentType = "application/octet-stream";
-	
-	protected String home = "${ketty.home}/blob/${id}";
+
+	protected String home = "${ketty.home}/blob/data/${id}";
 	
 	protected String id = "default";
+	
+	protected BlobRegister fileRegister = null;
 	
 	/**
 	 * 通过文件id映射实际路径
@@ -175,5 +189,19 @@ public class LocalBlobManager implements BlobManager {
 		}
 		
 		return new String(ret);
+	}
+
+	public void commit(BlobWriter writer) {
+		if (fileRegister != null){
+			fileRegister.add(writer.getBlobInfo());
+		}
+	}
+
+	public void cancel(BlobWriter writer) {
+		String id = writer.getBlobInfo().id();
+		File file = new File(getRealPath(id));
+		if (file.exists() && file.canWrite()){
+			file.delete();
+		}
 	}
 }

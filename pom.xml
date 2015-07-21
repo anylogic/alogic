@@ -28,12 +28,12 @@
               <repository>
                      <id>releases</id>
                      <name>Internal Releases</name>
-                     <url>http://132.122.1.152:8081/nexus/content/repositories/releases</url>
+                     <url>http://10.142.90.59:8002/content/repositories/releases</url>
               </repository>
               <snapshotRepository>
                      <id>snapshots</id>
                      <name>Internal Snapshots</name>
-                     <url>http://132.122.1.152:8081/nexus/content/repositories/snapshots</url>
+                     <url>http://10.142.90.59:8002/content/repositories/snapshots</url>
               </snapshotRepository>
        </distributionManagement> 
   <groupId>com.github.alogic</groupId>

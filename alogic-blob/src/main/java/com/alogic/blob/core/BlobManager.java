@@ -8,16 +8,18 @@ import com.anysoft.util.XMLConfigurable;
  * 
  * @author duanyy
  * @since 1.6.3.28
+ * @version 1.6.3.32 [duanyy 20150720] <br>
+ * - 增加md5,content-type等信息 <br>
  */
 public interface BlobManager extends XMLConfigurable,Reportable{
 	
 	/**
 	 * 新建Blob文件
-	 * 
+	 * @param contentType 文件的content-type
 	 * @return BlobWriter实例
 	 * 
 	 */
-	public BlobWriter newFile();
+	public BlobWriter newFile(String contentType);
 	
 	/**
 	 * 查找已存在的Blob文件
@@ -41,8 +43,14 @@ public interface BlobManager extends XMLConfigurable,Reportable{
 	public boolean deleteFile(String id);
 	
 	/**
-	 * 获取ContentType
-	 * @return contentType
+	 * 提交文件
+	 * @param writer BlobWriter
 	 */
-	public String getContentType();
+	public void commit(BlobWriter writer);
+	
+	/**
+	 * 取消文件注册
+	 * @param writer BlobWriter
+	 */
+	public void cancel(BlobWriter writer);
 }

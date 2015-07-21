@@ -18,7 +18,7 @@ public class BlobCreate {
 		
 		BlobManager manager = BlobTool.getBlobManager();
 		
-		BlobWriter writer = manager.newFile();
+		BlobWriter writer = manager.newFile("text/plain");
 		
 		OutputStream out = writer.getOutputStream();
 		
@@ -29,12 +29,14 @@ public class BlobCreate {
 			
 			out.close();
 			
-			System.out.println("This file id is " + writer.id());
+			System.out.println("This file id is " + writer.getBlobInfo().id());
+			
+			manager.commit(writer);
 		}catch (Exception ex){
+			manager.cancel(writer);
 			ex.printStackTrace();
 		}
 		
-		System.out.println(Download.TheNormalizer.class.getName());
 	}
 
 }

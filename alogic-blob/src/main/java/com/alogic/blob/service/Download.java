@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import com.alogic.blob.client.BlobTool;
+import com.alogic.blob.core.BlobInfo;
 import com.alogic.blob.core.BlobManager;
 import com.alogic.blob.core.BlobReader;
 import com.anysoft.util.IOTools;
@@ -55,7 +56,9 @@ public class Download extends Servant {
 			throw new ServantException("core.blob_not_found","Can not find a blob file named " + fileId);
 		}
 		
-		ctx.setResponseContentType(manager.getContentType());
+		BlobInfo info = reader.getBlobInfo();
+		
+		ctx.setResponseContentType(info.contentType());
 		
 		InputStream in = reader.getInputStream(0);
 		OutputStream out = ctx.getOutputStream();

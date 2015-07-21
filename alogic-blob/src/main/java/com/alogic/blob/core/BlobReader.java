@@ -7,8 +7,11 @@ import java.io.InputStream;
  * 
  * @author duanyy
  * @since 1.6.3.28
+ * 
+ * @version 1.6.3.32 [duanyy 20150720] <br>
+ * - 增加md5,content-type等信息 <br>
  */
-public interface BlobReader extends BlobInfo{
+public interface BlobReader{
 	
 	/**
 	 * 获取输入流
@@ -16,4 +19,10 @@ public interface BlobReader extends BlobInfo{
 	 * @return 输入流
 	 */
 	public InputStream getInputStream(long offset);
+	
+	/**
+	 * 获取BlobInfo
+	 * @return BlobInfo
+	 */
+	public BlobInfo getBlobInfo();
 }
