@@ -53,7 +53,7 @@ public interface BlobInfo extends Reportable{
 		
 		public Default(String _id,String _contentType){
 			id = _id;
-			contentType = _contentType;
+			contentType = _contentType == null?"application/octet-stream":_contentType;
 		}
 		
 		public Default(String _id,String _contentType,String _md5,long _length){
