@@ -12,7 +12,19 @@
 				<parameter id="servant.maxActive" value="200"/>
 				<parameter id="servant.maxIdle" value="5"/>
 			</properties>
-		</service>		
+		</service>
+		<service 
+			id = "Upload" 
+			name="Upload" 
+			note="上传Blob文件" 
+			visible="protected"
+			log = "brief" 
+			module="com.alogic.blob.service.Upload">
+			<properties>
+				<parameter id="servant.maxActive" value="200"/>
+				<parameter id="servant.maxIdle" value="5"/>
+			</properties>
+		</service>				
 		<service 
 			id = "Report" 
 			name="Report" 
