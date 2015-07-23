@@ -26,6 +26,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @author duanyy
  * @since 1.6.3.32
+ * 
+ * @version 1.6.3.33 [duanyy 20150723] <br>
+ * - 变更home的参数名为home.data
  */
 public class LocalFileRegister implements BlobRegister{
 	/**
@@ -105,7 +108,7 @@ public class LocalFileRegister implements BlobRegister{
 			throws BaseException {
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
 		
-		home = PropertiesConstants.getString(p,"home",home);
+		home = PropertiesConstants.getString(p,"home.metadata",home);
 		
 		{
 			//确保目录存在

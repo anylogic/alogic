@@ -28,6 +28,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.3.32 [duanyy 20150720] <br>
  * - 增加md5,content-type等信息 <br>
+ * 
+ * @version 1.6.3.33 [duanyy 20150723] <br>
+ * - 变更home的参数名为home.data
  */
 public class LocalBlobManager implements BlobManager {
 	/**
@@ -118,7 +121,7 @@ public class LocalBlobManager implements BlobManager {
 		
 		id = PropertiesConstants.getString(p,"id",id);
 		
-		home = PropertiesConstants.getString(p,"home",home);
+		home = PropertiesConstants.getString(p,"home.data",home);
 		
 		{
 			//确保目录存在

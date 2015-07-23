@@ -9,6 +9,9 @@ import java.util.Map;
  * 
  * @author duanyy
  * @since 1.6.3.30
+ * 
+ * @version 1.6.3.33 [20150723 duanyy] <br>
+ * - 增加selectAsObjects方法<br>
  */
 public class DBTools {
 	
@@ -143,6 +146,25 @@ public class DBTools {
 			Select.close(selector);
 		}
 	}
+	
+	/**
+	 * Select单行数据
+	 * 
+	 * @param conn 数据库连接
+	 * @param sql SQL语句
+	 * @param args SQL语句的参数
+	 * @return 单行数据
+	 */
+	public static Map<String, Object> selectAsObjects(Connection conn, String sql,
+			Object... args) {
+		Select selector = new Select(conn);
+		try {
+			selector.execute(sql, args);
+			return selector.singleRow();
+		} finally {
+			Select.close(selector);
+		}
+	}	
 
 	/**
 	 * Select单行数据
@@ -166,6 +188,29 @@ public class DBTools {
 			Select.close(selector);
 		}
 	}
+	
+	/**
+	 * Select单行数据
+	 * 
+	 * @param conn 数据库连接
+	 * @param sql SQL语句
+	 * @param renderer 行数据渲染器
+	 * @param args SQL语句的参数
+	 * @return 单行数据
+	 */	
+	public static Map<String, Object> selectAsObjects(Connection conn, String sql,
+			RowRenderer<Object> renderer, Object... args) {
+		Select selector = new Select(conn);
+		try {
+			selector.execute(sql, args);
+			if (renderer != null) {
+				return selector.singleRow(renderer, null);
+			}
+			return selector.singleRow();
+		} finally {
+			Select.close(selector);
+		}
+	}	
 
 	/**
 	 * Select多行数据
