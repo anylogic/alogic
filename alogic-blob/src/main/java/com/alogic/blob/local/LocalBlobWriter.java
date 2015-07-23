@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import com.alogic.blob.core.BlobInfo;
 import com.alogic.blob.core.BlobWriter;
+import com.anysoft.util.IOTools;
 
 /**
  * 本地实现的BlobWriter
@@ -67,6 +68,8 @@ public class LocalBlobWriter implements BlobWriter{
 				logger.error("Can not find file:" + file.getPath());
 			} catch (IOException e) {
 				logger.error("Can not read file:" + file.getPath());
+			}finally{
+				IOTools.close(in);
 			}
 		}
 		
