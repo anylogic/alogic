@@ -2,15 +2,14 @@ package com.logicbus.service;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.Servant;
 import com.logicbus.backend.ServantException;
+import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
 
@@ -28,10 +27,21 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 将MessageDoc和Context进行合并整合 <br>
  */
-public class Simulator extends Servant {
+public class Simulator extends AbstractServant {
+	
+	protected void onDestroy() {
+
+	}
 
 	
-	public int actionProcess(Context ctx) throws Exception {
+	protected void onCreate(ServiceDescription sd) throws ServantException {
+		Properties props = sd.getProperties();
+		
+		avg = PropertiesConstants.getInt(props, "avg", avg);
+	}
+
+	
+	protected int onXml(Context ctx) throws Exception {
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 		
 		int _avg = getArgument("avg",avg,ctx);
@@ -47,15 +57,21 @@ public class Simulator extends Servant {
 		root.appendChild(doc.createTextNode("I have sleep " + duration + " ms."));
 		
 		return 0;
-	}
-
+	}	
 	
-	public void create(ServiceDescription sd) throws ServantException{
-		super.create(sd);
+	protected int onJson(Context ctx) throws Exception {
+		JsonMessage msg = (JsonMessage) ctx.asMessage(JsonMessage.class);
 		
-		Properties props = sd.getProperties();
+		int _avg = getArgument("avg",avg,ctx);
+		Random r = new Random();
 		
-		avg = PropertiesConstants.getInt(props, "avg", avg);
+		int duration = (int)((r.nextGaussian()/4 + 1) * _avg);
+		
+		TimeUnit.MILLISECONDS.sleep(duration);
+		
+		msg.getRoot().put("msg", "I have sleep " + duration + " ms.");
+		
+		return 0;		
 	}
 	
 	/**
