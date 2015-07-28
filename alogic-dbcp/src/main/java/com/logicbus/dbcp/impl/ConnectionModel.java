@@ -21,6 +21,8 @@ import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
+import com.anysoft.util.code.Coder;
+import com.anysoft.util.code.CoderFactory;
 
 /**
  * 连接模型
@@ -37,6 +39,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.3.30 [20150714 duanyy] <br>
  * - 通过XML配置的时候，可以读入环境变量<br>
+ * 
+ * @version 1.6.3.35 [20150728 duanyy] <br>
+ * - 增加密文形式的密码 <br>
  */
 public class ConnectionModel implements Cacheable{
 	/**
@@ -110,6 +115,11 @@ public class ConnectionModel implements Cacheable{
 	}
 	
 	/**
+	 * 加密的coder
+	 */
+	protected String coder = "Default";
+	
+	/**
 	 * 最大连接数
 	 */
 	protected int maxActive = 3;
@@ -173,6 +183,7 @@ public class ConnectionModel implements Cacheable{
 		e.setAttribute("driver", driver);
 		e.setAttribute("url", url);
 		e.setAttribute("username", username);
+		e.setAttribute("coder", coder);
 		e.setAttribute("maxActive", String.valueOf(maxActive));
 		e.setAttribute("maxIdle", String.valueOf(maxIdle));
 		e.setAttribute("maxWait", String.valueOf(maxWait));
@@ -201,6 +212,7 @@ public class ConnectionModel implements Cacheable{
 		JsonTools.setString(json, "driver",driver);
 		JsonTools.setString(json, "url",url);
 		JsonTools.setString(json, "username", username);
+		JsonTools.setString(json,"coder",coder);
 		JsonTools.setInt(json, "maxActive", maxActive);
 		JsonTools.setInt(json, "maxIdle", maxIdle);
 		JsonTools.setInt(json, "maxWait", maxWait);
@@ -237,6 +249,7 @@ public class ConnectionModel implements Cacheable{
 		url = PropertiesConstants.getString(props, "url", "");
 		username = PropertiesConstants.getString(props, "username","");
 		password = PropertiesConstants.getString(props, "password","");
+		coder = PropertiesConstants.getString(props, "coder",coder);
 		maxActive = PropertiesConstants.getInt(props, "maxActive",3);
 		maxIdle = PropertiesConstants.getInt(props, "maxIdle",1);
 		maxWait = PropertiesConstants.getInt(props, "maxWait",5000);
@@ -274,6 +287,7 @@ public class ConnectionModel implements Cacheable{
 		url = JsonTools.getString(json, "url", "");
 		username = JsonTools.getString(json, "username", "");
 		password = JsonTools.getString(json, "password", "");
+		coder = JsonTools.getString(json, "coder", coder);
 		maxActive = JsonTools.getInt(json, "maxActive",3);
 		maxIdle = JsonTools.getInt(json, "maxIdle",1);
 		maxWait = JsonTools.getInt(json, "maxWait",5000);
@@ -333,7 +347,17 @@ public class ConnectionModel implements Cacheable{
 			}			
 			if (confirmer == null){
 				Class.forName(driver, true, cl);
-				conn = DriverManager.getConnection(url, username, password);
+				String _password = password;
+				if (coder != null && coder.length() > 0){
+					//通过coder进行密码解密
+					try {
+						Coder _coder = CoderFactory.newCoder(coder);
+						_password = _coder.decode(password, username);
+					}catch (Exception ex){
+						logger.error("Can not find coder:" + coder);
+					}
+				}
+				conn = DriverManager.getConnection(url, username, _password);
 			}else{
 				String _driver = confirmer.confirm("driver", driver);
 				String _url = confirmer.confirm("url", url);
