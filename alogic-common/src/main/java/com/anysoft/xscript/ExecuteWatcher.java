@@ -12,6 +12,9 @@ import com.anysoft.util.Properties;
  * 
  * @author duanyy
  * @since 1.6.3.22
+ * 
+ * @version 1.6.3.36 [20150729 duanyy] <br>
+ * - 增加Quiet实现 <br>
  */
 public interface ExecuteWatcher {
 	/**
@@ -34,5 +37,17 @@ public interface ExecuteWatcher {
 				long duration) {
 			logger.info(statement.getXmlTag() + "---> 开始于" + new Date(start) + ",耗时:" + duration + "毫秒");
 		}
+	}
+	
+	/**
+	 * Quiet实现
+	 * @author duanyy
+	 * @since 1.6.3.36
+	 */
+	public static class Quiet implements ExecuteWatcher{
+		public void executed(Statement statement, Properties p, long start,
+				long duration) {
+
+		}		
 	}
 }

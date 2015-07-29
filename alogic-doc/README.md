@@ -94,4 +94,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-blob:增加Blob文件上传功能(1.6.3.33)
 	 + alogic-core:服务Simulator增加XML和JSON双协议支持(1.6.3.34)
 	 + alogic-dbcp:增加密文形式的密码(1.6.3.35)
+	 + alogic-main:xscript增加命令行入口(1.6.3.36)
 

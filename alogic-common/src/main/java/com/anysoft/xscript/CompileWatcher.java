@@ -8,6 +8,9 @@ import org.apache.log4j.Logger;
  * 
  * @author duanyy
  * @since 1.6.3.23
+ * 
+ * @version 1.6.3.36 [20150729 duanyy] <br>
+ * - 增加Quiet实现 <br>
  */
 public interface CompileWatcher {
 	/**
@@ -69,5 +72,26 @@ public interface CompileWatcher {
 			logger.info("完成编译:" + stmt.getXmlTag() + ",耗时:" + duration + "ms");
 		}
 
+	}
+	
+	/**
+	 * Quiet实现
+	 * @author duanyy
+	 * @since 1.6.3.36
+	 */
+	public static class Quiet implements CompileWatcher{
+
+		public void message(Statement stmt, String msgType, String msg) {
+			
+		}
+
+		public void begin(Statement stmt, long timestamp) {
+			
+		}
+
+		public void end(Statement stmt, long timestamp, long duration) {
+			
+		}
+		
 	}
 }
