@@ -6,6 +6,7 @@ import java.util.Map;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.BaseException;
+import com.anysoft.util.Configurable;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
@@ -17,13 +18,7 @@ import com.anysoft.util.XmlElementProperties;
  * @author duanyy
  * @since 1.6.3.37
  */
-public interface Matcher extends XMLConfigurable,Reportable {
-	/**
-	 * 通过变量集配置
-	 * @param p 变量集
-	 * @throws BaseException
-	 */
-	public void configure(Properties p) throws BaseException;
+public interface Matcher extends Configurable,XMLConfigurable,Reportable {
 	
 	/**
 	 * 是否匹配

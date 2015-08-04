@@ -4,16 +4,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.alogic.timer.matcher.Crontab;
 import com.anysoft.util.BaseException;
+import com.anysoft.util.Configurable;
 import com.anysoft.util.DefaultProperties;
+import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
+import com.anysoft.util.XmlTools;
 
 /**
  * 定时器
@@ -21,7 +27,7 @@ import com.anysoft.util.XmlElementProperties;
  * @author duanyy
  * @since 1.6.3.37
  */
-public interface Timer extends XMLConfigurable,Reportable {
+public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	/**
 	 * 定时器状态
 	 * @author duanyy
@@ -47,8 +53,9 @@ public interface Timer extends XMLConfigurable,Reportable {
 	
 	/**
 	 * 调度
+	 * @param committer 任务提交者
 	 */
-	public void schedule();
+	public void schedule(TaskCommitter committer);
 	
 	/**
 	 * 暂停定时器
@@ -87,19 +94,16 @@ public interface Timer extends XMLConfigurable,Reportable {
 	public Date toDate();	
 	
 	/**
-	 * 根据环境变量配置
-	 * 
-	 * @param p 环境变量
-	 * @throws BaseException
-	 */
-	public void configure(Properties p) throws BaseException;
-	
-	/**
 	 * Abstract
 	 * @author duanyy
 	 * @since 1.6.3.37
 	 */
 	abstract public static class Abstract implements Timer{		
+		/**
+		 * logger of log4j
+		 */
+		protected static final Logger logger = LogManager.getLogger(Timer.class);
+		
 		/**
 		 * 上次调度时间
 		 */
@@ -124,6 +128,12 @@ public interface Timer extends XMLConfigurable,Reportable {
 		 * 上下文
 		 */
 		protected DefaultProperties ctx = new DefaultProperties();
+		
+		public void configure(Element _e, Properties _properties)
+				throws BaseException {
+			Properties p = new XmlElementProperties(_e,_properties);
+			configure(p);
+		}		
 		
 		public void report(Element xml) {
 			if (xml != null){
@@ -191,31 +201,49 @@ public interface Timer extends XMLConfigurable,Reportable {
 			return state;
 		}
 
-		public void schedule() {
-			synchronized(this){
-				if (getState() != State.Running){
-					//当前定时器没有定义为Running
-					return ;
+		public void schedule(TaskCommitter committer) {
+			synchronized (this) {
+				if (getState() != State.Running) {
+					// 当前定时器没有定义为Running
+					logger.warn("The timer is not running:" + getId());
+					return;
 				}
 
-				if (task != null && matcher != null){
-					Date now = new Date();
-					Date fromDate = fromDate();
-					Date toDate = toDate();
-					if (fromDate != null && toDate != null && (now.before(fromDate()) || now.after(toDate()))){
-						//必须在定时器的有效期之内才能调度
-						return ;
-					}
-					
-					if (task.getState() != Task.State.Idle){
-						//不是空闲状态
-						return ;
-					}
-					boolean match = matcher.match(lastDate,now,ctx);
-					if (match){
-						lastDate = now;
-						//to do this task
-					}
+				if (task == null) {
+					logger.error("The task is not set:" + getId());
+					return;
+				}
+
+				if (matcher == null) {
+					logger.error("The matcher is not set:" + getId());
+					return;
+				}
+
+				if (committer == null) {
+					logger.error("The committer is not set:" + getId());
+					return;
+				}
+
+				Date now = new Date();
+				Date fromDate = fromDate();
+				Date toDate = toDate();
+				if (fromDate != null && toDate != null
+						&& (now.before(fromDate()) || now.after(toDate()))) {
+					// 必须在定时器的有效期之内才能调度
+					return;
+				}
+
+				if (task.getState() != Task.State.Idle) {
+					// 不是空闲状态
+					return;
+				}
+				boolean match = matcher.match(lastDate, now, ctx);
+				if (match) {
+					lastDate = now;
+					//通知task准备执行
+					task.prepare(ctx);
+					// to commit this task
+					committer.commit(task, this);
 				}
 			}
 		}
@@ -263,11 +291,12 @@ public interface Timer extends XMLConfigurable,Reportable {
 			task = _task;
 		}		
 		
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
-			// Can not be configured with xml
+		public Simple(String _id,Matcher _matcher,Runnable runnable){
+			id = _id;
+			matcher = _matcher;
+			task = new Task.Wrapper(runnable);
 		}
-
+		
 		public String getId() {
 			return id;
 		}
@@ -290,7 +319,7 @@ public interface Timer extends XMLConfigurable,Reportable {
 	 * @author duanyy
 	 * @since 1.6.3.37
 	 */
-	public static class XML extends Abstract{
+	public static class XMLed extends Abstract{
 		/**
 		 * 定时器ID
 		 */
@@ -372,6 +401,29 @@ public interface Timer extends XMLConfigurable,Reportable {
 				throws BaseException {
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);	
+			
+			Element _matcher = XmlTools.getFirstElementByPath(_e, "matcher");
+			if (_matcher == null){
+				logger.error("Can not create matcher : " + getId());
+			}else{
+				Factory<Matcher> factory = new Factory<Matcher>(){
+					public String getClassName(String _module) throws BaseException{
+						if (_module.indexOf(".") >= 0){
+							return _module;
+						}
+						return "com.alogic.timer.matcher." + _module;
+					}
+				};
+				matcher = factory.newInstance(_matcher, p, "module", Crontab.class.getName());
+			}
+			
+			Element _task = XmlTools.getFirstElementByPath(_e, "task");
+			if (_task == null){
+				logger.error("Can not create task : " + getId());
+			}else{
+				Factory<Task> factory = new Factory<Task>();
+				task = factory.newInstance(_task, p, "module");
+			}
 		}
 		
 		private static volatile int seed = 10001;

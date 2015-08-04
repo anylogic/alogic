@@ -29,7 +29,6 @@ public class Tool implements Process {
 	
 	protected String coder = "DES3";
 	
-	@Override
 	public int init(DefaultProperties p) {
 		text = PropertiesConstants.getString(p, "txt", "");
 		if (isNull(text)){
@@ -47,7 +46,6 @@ public class Tool implements Process {
 		return 0;
 	}
 
-	@Override
 	public int run() {
 		try{
 			Coder _coder = CoderFactory.newCoder(coder);
