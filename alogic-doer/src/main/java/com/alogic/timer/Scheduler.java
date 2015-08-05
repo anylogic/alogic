@@ -1,5 +1,6 @@
 package com.alogic.timer;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,11 +15,18 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.anysoft.util.BaseException;
+import com.anysoft.util.Factory;
+import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Settings;
 import com.anysoft.util.XmlElementProperties;
+import com.anysoft.util.XmlTools;
+import com.anysoft.util.resource.ResourceFactory;
 
 /**
  * 调度者
@@ -99,19 +107,16 @@ public interface Scheduler extends Timer,Runnable {
 			comitter = _committer;
 		}
 		
-		@Override
 		public void configure(Properties p) throws BaseException {
 			interval = PropertiesConstants.getLong(p,"interval",interval,true);
 		}
 
-		@Override
 		public void configure(Element _e, Properties _properties)
 				throws BaseException {
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);
 		}
 
-		@Override
 		public void report(Element xml) {
 			if (xml != null){
 				xml.setAttribute("module", getClass().getName());
@@ -264,4 +269,111 @@ public interface Scheduler extends Timer,Runnable {
 		}
 	}
 	
+	/**
+	 * 基于XML配置的实现
+	 * 
+	 * @author duanyy
+	 *
+	 */
+	public static class XMLed extends Simple{
+		/**
+		 * 缺省的Timer实现
+		 */
+		protected String dftTimer = Timer.XMLed.class.getName();
+		
+		public void configure(Element _e, Properties _properties)
+				throws BaseException {
+			Properties p = new XmlElementProperties(_e,_properties);
+			
+			dftTimer = PropertiesConstants.getString(p,"dftTimerClass",dftTimer,true);
+			
+			configure(p);
+			
+			Element _committer = XmlTools.getFirstElementByPath(_e, "committer");
+			if (_committer == null){
+				comitter = new ThreadPoolTaskCommitter();
+				comitter.configure(_e, _properties);
+				logger.warn("Can not find committer element,Use default:" + comitter.getClass().getName());
+			}else{
+				Factory<TaskCommitter> factory = new Factory<TaskCommitter>();
+				comitter = factory.newInstance(_committer, p, "module", ThreadPoolTaskCommitter.class.getName());
+			}
+			
+			loadTimerFromElement(_e,p);
+		}
+		
+		protected void loadTimerFromElement(Element root,Properties p){
+			loadIncludeFiles(root,p);
+			
+			NodeList timerList = XmlTools.getNodeListByPath(root, "timer");
+			Factory<Timer> factory = new Factory<Timer>();
+			
+			for (int i = 0 ;i < timerList.getLength(); i ++){
+				Node n = timerList.item(i);
+				if (n.getNodeType() != Node.ELEMENT_NODE){
+					continue;
+				}
+				Element e = (Element)n;
+				
+				try {
+					Timer timer = factory.newInstance(e, p, "module", dftTimer);
+					if (timer != null){
+						schedule(timer);
+					}
+				}catch (Exception ex){
+					logger.error("Can not create timer",ex);
+				}
+			}
+		}
+		
+		protected void loadIncludeFiles(Element root,Properties p){
+			NodeList includes = XmlTools.getNodeListByPath(root, "include");
+			
+			for (int i = 0 ;i < includes.getLength() ; i++){
+				Node n = includes.item(i);
+				if (n.getNodeType() != Node.ELEMENT_NODE){
+					continue;
+				}
+				Element e = (Element)n;
+				String src = e.getAttribute("src");
+				if (src == null || src.length() <= 0){
+					continue;
+				}
+				
+				Document doc = loadDocument(p.transform(src),null);
+				if (doc == null){
+					continue;
+				}
+				
+				loadTimerFromElement(doc.getDocumentElement(),p);
+			}
+		}
+		
+		/**
+		 * 从主/备地址中装入文档
+		 * 
+		 * @param master 主地址
+		 * @param secondary 备用地址
+		 * @return XML文档
+		 */
+		protected static Document loadDocument(String master,String secondary){
+			ResourceFactory rm = Settings.getResourceFactory();
+			if (null == rm){
+				rm = new ResourceFactory();
+			}
+			
+			Document ret = null;
+			InputStream in = null;
+			try {
+				in = rm.load(master,secondary, null);
+				ret = XmlTools.loadFromInputStream(in);		
+			} catch (Exception ex){
+				logger.error("Error occurs when load xml file,source=" + master, ex);
+			}finally {
+				IOTools.closeStream(in);
+			}		
+			return ret;
+		}
+	}
+
 }
