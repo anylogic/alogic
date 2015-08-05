@@ -2,6 +2,7 @@ package com.alogic.timer.matcher;
 
 import java.util.Date;
 
+import com.alogic.timer.ContextHolder;
 import com.alogic.timer.Matcher.Abstract;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
@@ -24,7 +25,7 @@ public class Once extends Abstract {
 	}
 
 	@Override
-	public boolean match(Date _last, Date _now,Properties ctx) {
+	public boolean match(Date _last, Date _now,ContextHolder ctx) {
 		count ++;
 		return count <= 1;
 	}

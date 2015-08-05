@@ -2,6 +2,7 @@ package com.alogic.timer.matcher;
 
 import java.util.Date;
 
+import com.alogic.timer.ContextHolder;
 import com.alogic.timer.Matcher.Abstract;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
@@ -32,8 +33,8 @@ public class Interval extends Abstract {
 	}
 
 	@Override
-	public boolean match(Date _last, Date _now,Properties ctx) {
-		return (_now.getTime() - _last.getTime() >= interval);
+	public boolean match(Date _last, Date _now,ContextHolder ctx) {
+		return ((_now.getTime() - _last.getTime()) >= interval);
 	}
 
 	@Override

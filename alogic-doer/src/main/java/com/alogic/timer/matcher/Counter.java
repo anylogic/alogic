@@ -2,6 +2,7 @@ package com.alogic.timer.matcher;
 
 import java.util.Date;
 
+import com.alogic.timer.ContextHolder;
 import com.alogic.timer.Matcher.Abstract;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
@@ -46,7 +47,7 @@ public class Counter extends Abstract {
 	}
 
 	@Override
-	public boolean match(Date _last, Date _now,Properties ctx) {
+	public boolean match(Date _last, Date _now,ContextHolder ctx) {
 		if (count <= 0 || count >= scheduled_count){
 			//还可以继续
 			if (_last == null? true :(_now.getTime() - _last.getTime() >= interval)){

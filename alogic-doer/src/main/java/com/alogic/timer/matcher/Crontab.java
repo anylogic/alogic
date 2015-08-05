@@ -3,6 +3,7 @@ package com.alogic.timer.matcher;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.alogic.timer.ContextHolder;
 import com.alogic.timer.Matcher.Abstract;
 import com.alogic.timer.matcher.util.SetValueMatcher;
 import com.alogic.timer.matcher.util.parser.DayOfMonth;
@@ -75,7 +76,7 @@ public class Crontab extends Abstract {
 	}
 
 	@Override
-	public boolean match(Date _last, Date _now,Properties ctx) {
+	public boolean match(Date _last, Date _now,ContextHolder ctx) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(_now);
 		

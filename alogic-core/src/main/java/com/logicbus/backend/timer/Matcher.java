@@ -9,7 +9,7 @@ import com.anysoft.util.Properties;
  * @author duanyy
  *
  */
-public interface Matcher extends Reportable{
+public interface Matcher{
 	/**
 	 * 按照规则匹配时间
 	 * @param _last 上次调度时间

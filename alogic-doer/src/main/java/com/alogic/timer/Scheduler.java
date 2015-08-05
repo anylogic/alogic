@@ -1,14 +1,24 @@
 package com.alogic.timer;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.BaseException;
-import com.anysoft.util.Configurable;
 import com.anysoft.util.Properties;
-import com.anysoft.util.Reportable;
-import com.anysoft.util.XMLConfigurable;
+import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.XmlElementProperties;
 
 /**
  * 调度者
@@ -16,7 +26,7 @@ import com.anysoft.util.XMLConfigurable;
  * @author duanyy
  * @since 1.6.3.37
  */
-public interface Scheduler extends Configurable,XMLConfigurable,Reportable,Runnable {
+public interface Scheduler extends Timer,Runnable {
 	/**
 	 * 获取所管理的Timer列表
 	 * @return Timer列表
@@ -29,7 +39,7 @@ public interface Scheduler extends Configurable,XMLConfigurable,Reportable,Runna
 	 * @return Timer
 	 */
 	public Timer get(String id);
-	
+
 	/**
 	 * 将指定的Timer加入调度列表
 	 * @param timer 定时器
@@ -53,84 +63,205 @@ public interface Scheduler extends Configurable,XMLConfigurable,Reportable,Runna
 	public void schedule(String id,Matcher matcher,Runnable runnable);
 	
 	/**
+	 * 设置任务提交者
+	 * @param committer 任务提交者
+	 */
+	public void setTaskCommitter(TaskCommitter committer);
+	
+	/**
 	 * 删除指定ID的timer
 	 * @param id ID
 	 */
 	public void remove(String id);
 	
 	/**
+	 * 开始调度
+	 */
+	public void start();
+	
+	/**
+	 * 停止调度
+	 */
+	public void stop();
+	
+	/**
 	 * Abstract
 	 * @author duanyy
 	 *
 	 */
-	public static class Abstract implements Scheduler{
-
+	abstract public static class Abstract implements Scheduler{
+		protected static final Logger logger = LogManager.getLogger(Timer.class);
+		protected State state = State.Running;
+		protected TaskCommitter comitter = null;
+		protected long interval = 1000;
+		
+		public void setTaskCommitter(TaskCommitter _committer){
+			comitter = _committer;
+		}
+		
 		@Override
 		public void configure(Properties p) throws BaseException {
-			// TODO Auto-generated method stub
-			
+			interval = PropertiesConstants.getLong(p,"interval",interval,true);
 		}
 
 		@Override
 		public void configure(Element _e, Properties _properties)
 				throws BaseException {
-			// TODO Auto-generated method stub
-			
+			Properties p = new XmlElementProperties(_e,_properties);
+			configure(p);
 		}
 
 		@Override
 		public void report(Element xml) {
-			// TODO Auto-generated method stub
-			
+			if (xml != null){
+				xml.setAttribute("module", getClass().getName());
+				
+				Timer[] timers = getTimers();
+				if (timers.length > 0){
+					Document doc = xml.getOwnerDocument();
+					for (int i = 0 ; i < timers.length ; i ++){
+						Timer t = timers[i];
+						
+						Element _timer = doc.createElement("timer");
+						t.report(_timer);
+						
+						xml.appendChild(_timer);
+					}
+				}
+				
+				if (comitter != null){
+					Document doc = xml.getOwnerDocument();
+					Element _committer = doc.createElement("committer");
+					comitter.report(_committer);
+					xml.appendChild(_committer);
+				}
+			}
 		}
 
 		@Override
 		public void report(Map<String, Object> json) {
-			// TODO Auto-generated method stub
-			
+			if (json != null){
+				json.put("module", getClass().getName());
+				
+				Timer[] timers = getTimers();
+				if (timers.length > 0){
+					List<Object> _timer = new ArrayList<Object>();
+					
+					for (int i = 0 ; i < timers.length ; i ++){
+						Timer t = timers[i];
+						
+						Map<String,Object> _map = new HashMap<String,Object>();
+						t.report(_map);
+						
+						_timer.add(_map);
+					}
+					
+					json.put("timer", _timer);
+				}
+				
+				if (comitter != null){
+					Map<String,Object> _comitter = new HashMap<String,Object>();
+					comitter.report(_comitter);
+					json.put("comitter", _comitter);
+				}
+			}
 		}
 
+		public void schedule(String id, Matcher matcher, Task task) {
+			schedule(new Timer.Simple(id, matcher, task));
+		}
+
+		public void schedule(String id, Matcher matcher, Runnable runnable) {
+			schedule(new Timer.Simple(id, matcher, runnable));
+		}
+
+		public String getId() {
+			return "root";
+		}
+
+		public State getState() {
+			return state;
+		}
+
+		public void pause() {
+			state = State.Paused;
+		}
+
+		public void resume() {
+			state = State.Running;
+		}
+		
+		public void schedule(TaskCommitter committer) {
+			// do noting
+		}
+		
+		public void start() {
+			exec.scheduleAtFixedRate(this, 0,1000, TimeUnit.MILLISECONDS);
+		}		
+		
+		public void stop(){
+			exec.shutdown();
+		}
+		
 		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			
+		public Date forecastNextDate() {
+			return new Date();
 		}
-
+		
+		protected ScheduledThreadPoolExecutor exec = new  ScheduledThreadPoolExecutor(5);
+		
+		public boolean isTimeToClear(){return false;}
+	}
+	
+	/**
+	 * 简单实现
+	 * @author duanyy
+	 *
+	 */
+	public static class Simple extends Abstract{
+		protected Hashtable<String,Timer> timers = new Hashtable<String,Timer>();
+		
 		@Override
 		public Timer[] getTimers() {
-			// TODO Auto-generated method stub
-			return null;
+			return timers.values().toArray(new Timer[0]);
 		}
 
 		@Override
 		public Timer get(String id) {
-			// TODO Auto-generated method stub
-			return null;
+			return timers.get(id);
 		}
 
 		@Override
 		public void schedule(Timer timer) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void schedule(String id, Matcher matcher, Task task) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void schedule(String id, Matcher matcher, Runnable runnable) {
-			// TODO Auto-generated method stub
-			
+			timers.put(timer.getId(), timer);
 		}
 
 		@Override
 		public void remove(String id) {
-			// TODO Auto-generated method stub
-			
+			timers.remove(id);
 		}
 		
+		@Override
+		public void run() {
+			try {
+				Iterator<Timer> iter = timers.values().iterator();
+				List<String> toBeClear = new ArrayList<String>();
+				
+				while (iter.hasNext()){
+					Timer timer = iter.next();
+					timer.schedule(comitter);
+					if (timer.isTimeToClear()){
+						toBeClear.add(timer.getId());
+					}
+				}
+				
+				for (String id:toBeClear){
+					timers.remove(id);
+				}
+			}catch (Exception ex){
+				ex.printStackTrace();
+			}
+		}
 	}
+	
 }

@@ -24,10 +24,10 @@ public interface Matcher extends Configurable,XMLConfigurable,Reportable {
 	 * 是否匹配
 	 * @param _last 上次调度时间
 	 * @param _now 当前时间
-	 * @param _ctx 上下文
+	 * @param _ctxHolder 上下文持有人
 	 * @return true|false
 	 */
-	public boolean match(Date _last,Date _now,Properties _ctx);
+	public boolean match(Date _last,Date _now,ContextHolder _ctxHolder);
 	
 	/**
 	 * 是否可以清除

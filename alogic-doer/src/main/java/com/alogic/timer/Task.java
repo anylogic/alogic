@@ -58,15 +58,15 @@ public interface Task extends Configurable,XMLConfigurable,Runnable,Reportable{
 	/**
 	 * 准备执行
 	 * 
-	 * @param ctx 任务的上下文
+	 * @param ctxHolder 上下文持有人
 	 */
-	public void prepare(Properties ctx);
+	public void prepare(ContextHolder ctxHolder);
 	
 	/**
 	 * 执行
 	 * @param ctx 任务的上下文
 	 */
-	public void execute(Properties ctx);
+	public void execute(TaskContext ctx);
 	
 	/**
 	 * Abstract
@@ -79,26 +79,33 @@ public interface Task extends Configurable,XMLConfigurable,Runnable,Reportable{
 		 * 任务状态
 		 */
 		protected State state = State.Idle;
-		protected Properties ctx = null;
+		protected ContextHolder ctxHolder = null;
 		protected String currentId;
 		
 		public String getCurrentId(){
 			return currentId;
 		}
 		
-		public void prepare(Properties _ctx){
+		public void prepare(ContextHolder _ctxHolder){
 			state = State.Scheduled;
-			ctx = _ctx;
+			ctxHolder = _ctxHolder;
 			currentId = newTaskId();
 		}
 		
 		public void run(){
+			TaskContext ctx = null;
+			if (ctxHolder != null){
+				ctx = ctxHolder.getContext();
+			}			
 			try {
 				state = State.Working;
 				execute(ctx);
 			}catch (Throwable t){
 				logger.fatal("Exception when executing the task:" + getCurrentId());
 			}finally{
+				if (ctxHolder != null){
+					ctxHolder.saveContext(ctx,this);
+				}
 				state = State.Idle;
 			}
 		}
@@ -187,7 +194,7 @@ public interface Task extends Configurable,XMLConfigurable,Runnable,Reportable{
 		}
 
 		@Override
-		public void execute(Properties ctx) {
+		public void execute(TaskContext ctx) {
 			if (real != null){
 				real.run();
 			}
