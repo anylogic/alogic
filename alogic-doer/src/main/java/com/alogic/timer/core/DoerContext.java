@@ -1,4 +1,4 @@
-package com.alogic.timer;
+package com.alogic.timer.core;
 
 import com.anysoft.util.DefaultProperties;
 
@@ -8,6 +8,6 @@ import com.anysoft.util.DefaultProperties;
  * @author duanyy
  *
  */
-public class TaskContext extends DefaultProperties {
+public class DoerContext extends DefaultProperties {
 
 }

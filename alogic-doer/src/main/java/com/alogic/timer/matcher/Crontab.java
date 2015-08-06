@@ -3,8 +3,8 @@ package com.alogic.timer.matcher;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.alogic.timer.ContextHolder;
-import com.alogic.timer.Matcher.Abstract;
+import com.alogic.timer.core.ContextHolder;
+import com.alogic.timer.core.Matcher.Abstract;
 import com.alogic.timer.matcher.util.SetValueMatcher;
 import com.alogic.timer.matcher.util.parser.DayOfMonth;
 import com.alogic.timer.matcher.util.parser.DayOfWeek;
@@ -70,12 +70,10 @@ public class Crontab extends Abstract {
 		return false;
 	}
 
-	@Override
 	public void configure(Properties p) throws BaseException {
 		parseCrontab(PropertiesConstants.getString(p,"crontab", "00 * * * *"));
 	}
 
-	@Override
 	public boolean match(Date _last, Date _now,ContextHolder ctx) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(_now);

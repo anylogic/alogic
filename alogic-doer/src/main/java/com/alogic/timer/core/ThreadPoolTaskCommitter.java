@@ -1,4 +1,4 @@
-package com.alogic.timer;
+package com.alogic.timer.core;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -12,9 +12,9 @@ import com.anysoft.util.Properties;
  * @author duanyy
  * @since 1.6.3.37
  */
-public class ThreadPoolTaskCommitter extends TaskCommitter.Abstract{
+public class ThreadPoolTaskCommitter extends DoerCommitter.Abstract{
 
-	protected void onCommit(Task task, Timer timer) {
+	protected void onCommit(Doer task, Timer timer) {
 		exec.schedule(task, 0, TimeUnit.MILLISECONDS);
 	}
 	

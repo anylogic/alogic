@@ -2,8 +2,8 @@ package com.alogic.timer.matcher;
 
 import java.util.Date;
 
-import com.alogic.timer.ContextHolder;
-import com.alogic.timer.Matcher.Abstract;
+import com.alogic.timer.core.ContextHolder;
+import com.alogic.timer.core.Matcher.Abstract;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -27,17 +27,14 @@ public class Interval extends Abstract {
 		interval = _interval;
 	}
 	
-	@Override
 	public void configure(Properties p) throws BaseException {
 		interval = PropertiesConstants.getLong(p,"interval",interval);
 	}
 
-	@Override
 	public boolean match(Date _last, Date _now,ContextHolder ctx) {
 		return ((_now.getTime() - _last.getTime()) >= interval);
 	}
 
-	@Override
 	public boolean isTimeToClear() {
 		//never clear
 		return false;

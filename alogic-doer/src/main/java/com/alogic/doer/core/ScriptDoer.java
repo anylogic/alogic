@@ -22,8 +22,7 @@ import com.anysoft.xscript.Statement;
  * 
  */
 public class ScriptDoer extends TaskDoer.Abstract{
-
-	@Override
+	
 	public void dispatch(Task task) throws BaseException {
 		currentTask = task;
 		try {

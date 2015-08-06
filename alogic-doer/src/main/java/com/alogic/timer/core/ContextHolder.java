@@ -1,4 +1,4 @@
-package com.alogic.timer;
+package com.alogic.timer.core;
 
 import java.util.Map;
 
@@ -22,14 +22,14 @@ public interface ContextHolder extends Reportable,Configurable,XMLConfigurable{
 	 * 获取当前的Context
 	 * @return Context
 	 */
-	public TaskContext getContext();
+	public DoerContext getContext();
 	
 	/**
 	 * 保存Context
 	 * @param ctx Context
 	 * @param task Task
 	 */
-	public void saveContext(TaskContext ctx,Task task);
+	public void saveContext(DoerContext ctx,Doer task);
 	
 	/**
 	 * 缺省实现
@@ -37,7 +37,7 @@ public interface ContextHolder extends Reportable,Configurable,XMLConfigurable{
 	 *
 	 */
 	public static class Default implements ContextHolder{
-		protected TaskContext ctx = new TaskContext();
+		protected DoerContext ctx = new DoerContext();
 		
 		public void report(Element xml) {
 			if (xml != null){
@@ -51,21 +51,18 @@ public interface ContextHolder extends Reportable,Configurable,XMLConfigurable{
 			}
 		}
 
-		public TaskContext getContext() {
+		public DoerContext getContext() {
 			return ctx;
 		}
 
-		@Override
-		public void saveContext(TaskContext _ctx, Task task) {
+		public void saveContext(DoerContext _ctx, Doer task) {
 			ctx = _ctx;
 		}
 
-		@Override
 		public void configure(Properties p) throws BaseException {
 			// nothing to do
 		}
 
-		@Override
 		public void configure(Element _e, Properties _properties)
 				throws BaseException {
 			Properties p = new XmlElementProperties(_e,_properties);

@@ -1,4 +1,4 @@
-package com.alogic.timer;
+package com.alogic.timer.core;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -54,7 +54,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	 * 调度
 	 * @param committer 任务提交者
 	 */
-	public void schedule(TaskCommitter committer);
+	public void schedule(DoerCommitter committer);
 	
 	/**
 	 * 暂停定时器
@@ -99,7 +99,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		/**
 		 * 待调度的任务
 		 */
-		protected Task task = null;
+		protected Doer task = null;
 		
 		/**
 		 * 匹配器
@@ -140,7 +140,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 				}
 				
 				if (task != null){
-					Element _task = doc.createElement("task");
+					Element _task = doc.createElement("doer");
 					task.report(_task);
 					xml.appendChild(_task);
 				}
@@ -173,7 +173,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 				if (task != null){
 					Map<String,Object> _task = new HashMap<String,Object>();
 					task.report(_task);
-					json.put("task", _task);
+					json.put("doer", _task);
 				}
 				
 				if (matcher != null){
@@ -208,7 +208,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 
 		public boolean isTimeToClear(){return matcher != null && matcher.isTimeToClear();}
 		
-		public void schedule(TaskCommitter committer) {
+		public void schedule(DoerCommitter committer) {
 			synchronized (this) {
 				if (getState() != State.Running) {
 					// 当前定时器没有定义为Running
@@ -241,7 +241,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 					return;
 				}
 				
-				if (task.getState() != Task.State.Idle) {
+				if (task.getState() != Doer.State.Idle) {
 					// 不是空闲状态
 					return;
 				}
@@ -293,7 +293,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		 */
 		protected String id;
 		
-		public Simple(String _id,Matcher _matcher,Task _task){
+		public Simple(String _id,Matcher _matcher,Doer _task){
 			id = _id;
 			matcher = _matcher;
 			task = _task;
@@ -303,7 +303,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		public Simple(String _id,Matcher _matcher,Runnable runnable){
 			id = _id;
 			matcher = _matcher;
-			task = new Task.Wrapper(runnable);
+			task = new Doer.Wrapper(runnable);
 			ctxHolder = new ContextHolder.Default();
 		}
 		
@@ -427,11 +427,11 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 				matcher = factory.newInstance(_matcher, p, "module", Crontab.class.getName());
 			}
 			
-			Element _task = XmlTools.getFirstElementByPath(_e, "task");
+			Element _task = XmlTools.getFirstElementByPath(_e, "doer");
 			if (_task == null){
 				logger.error("Can not create task : " + getId());
 			}else{
-				Factory<Task> factory = new Factory<Task>();
+				Factory<Doer> factory = new Factory<Doer>();
 				task = factory.newInstance(_task, p, "module");
 			}
 			

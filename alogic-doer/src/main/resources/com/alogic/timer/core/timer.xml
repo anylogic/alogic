@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<scheduler module="com.alogic.timer.core.Scheduler$XMLed">
+	<committer module="com.alogic.timer.core.ThreadPoolTaskCommitter"/>
+</scheduler>

@@ -1,4 +1,4 @@
-package com.alogic.timer;
+package com.alogic.timer.core;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ import com.anysoft.util.XmlElementProperties;
  * @author duanyy
  * @since 1.6.3.37
  */
-public interface TaskCommitter extends Reportable,Configurable,XMLConfigurable{
+public interface DoerCommitter extends Reportable,Configurable,XMLConfigurable{
 	
 	/**
 	 * 提交任务
@@ -32,18 +32,18 @@ public interface TaskCommitter extends Reportable,Configurable,XMLConfigurable{
 	 * @param timer 触发任务的timer
 	 * 
 	 */
-	public void commit(Task task,Timer timer);
+	public void commit(Doer task,Timer timer);
 	
 	/**
 	 * Abstract
 	 * @author duanyy
 	 *
 	 */
-	abstract public static class Abstract implements TaskCommitter{
+	abstract public static class Abstract implements DoerCommitter{
 		/**
 		 * a logger of log4j
 		 */
-		protected static final Logger logger = LogManager.getLogger(TaskCommitter.class);
+		protected static final Logger logger = LogManager.getLogger(DoerCommitter.class);
 		
 		/**
 		 * 计数器
@@ -85,7 +85,7 @@ public interface TaskCommitter extends Reportable,Configurable,XMLConfigurable{
 			configure(p);	
 		}
 
-		public void commit(Task task, Timer timer) {
+		public void commit(Doer task, Timer timer) {
 			long start = System.currentTimeMillis();
 			boolean error = false;
 			try {
@@ -100,7 +100,7 @@ public interface TaskCommitter extends Reportable,Configurable,XMLConfigurable{
 			}
 		}
 		
-		abstract protected void onCommit(Task task, Timer timer);
+		abstract protected void onCommit(Doer task, Timer timer);
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public interface TaskCommitter extends Reportable,Configurable,XMLConfigurable{
 	public static class Simulator extends Abstract{
 
 		@Override
-		protected void onCommit(Task task, Timer timer) {
+		protected void onCommit(Doer task, Timer timer) {
 			logger.info("Commit task,task:" + task.getCurrentId() + ",timer:" + timer.getId());
 			task.run();
 		}

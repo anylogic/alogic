@@ -1,4 +1,4 @@
-package com.alogic.timer;
+package com.alogic.timer.core;
 
 import java.util.Map;
 import java.util.Random;
@@ -15,15 +15,15 @@ import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
 
 /**
- * 定时任务
+ * 任务执行者
  * 
  * @author duanyy
  * @since 1.6.3.37
  */
-public interface Task extends Configurable,XMLConfigurable,Runnable,Reportable{
+public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	
 	/**
-	 * 任务状态
+	 * 状态
 	 * 
 	 * @author duanyy
 	 *
@@ -66,15 +66,15 @@ public interface Task extends Configurable,XMLConfigurable,Runnable,Reportable{
 	 * 执行
 	 * @param ctx 任务的上下文
 	 */
-	public void execute(TaskContext ctx);
+	public void execute(DoerContext ctx);
 	
 	/**
 	 * Abstract
 	 * @author duanyy
 	 *
 	 */
-	abstract public static class Abstract implements Task {
-		protected static final Logger logger = LogManager.getLogger(Task.class);
+	abstract public static class Abstract implements Doer {
+		protected static final Logger logger = LogManager.getLogger(Doer.class);
 		/**
 		 * 任务状态
 		 */
@@ -93,7 +93,7 @@ public interface Task extends Configurable,XMLConfigurable,Runnable,Reportable{
 		}
 		
 		public void run(){
-			TaskContext ctx = null;
+			DoerContext ctx = null;
 			if (ctxHolder != null){
 				ctx = ctxHolder.getContext();
 			}			
@@ -188,13 +188,11 @@ public interface Task extends Configurable,XMLConfigurable,Runnable,Reportable{
 			real = runnable;
 		}
 		
-		@Override
 		public void configure(Properties p) throws BaseException {
 			// nothing to do
 		}
 
-		@Override
-		public void execute(TaskContext ctx) {
+		public void execute(DoerContext ctx) {
 			if (real != null){
 				real.run();
 			}

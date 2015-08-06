@@ -1,4 +1,4 @@
-package com.alogic.timer;
+package com.alogic.timer.core;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public interface Scheduler extends Timer,Runnable {
 	 * @param matcher 匹配器
 	 * @param task 任务
 	 */
-	public void schedule(String id,Matcher matcher,Task task);
+	public void schedule(String id,Matcher matcher,Doer task);
 	
 	/**
 	 * 按照指定的匹配规则调度指定的Runnable
@@ -74,7 +74,7 @@ public interface Scheduler extends Timer,Runnable {
 	 * 设置任务提交者
 	 * @param committer 任务提交者
 	 */
-	public void setTaskCommitter(TaskCommitter committer);
+	public void setTaskCommitter(DoerCommitter committer);
 	
 	/**
 	 * 删除指定ID的timer
@@ -100,10 +100,10 @@ public interface Scheduler extends Timer,Runnable {
 	abstract public static class Abstract implements Scheduler{
 		protected static final Logger logger = LogManager.getLogger(Timer.class);
 		protected State state = State.Running;
-		protected TaskCommitter comitter = null;
+		protected DoerCommitter comitter = null;
 		protected long interval = 1000;
 		
-		public void setTaskCommitter(TaskCommitter _committer){
+		public void setTaskCommitter(DoerCommitter _committer){
 			comitter = _committer;
 		}
 		
@@ -143,7 +143,6 @@ public interface Scheduler extends Timer,Runnable {
 			}
 		}
 
-		@Override
 		public void report(Map<String, Object> json) {
 			if (json != null){
 				json.put("module", getClass().getName());
@@ -172,7 +171,7 @@ public interface Scheduler extends Timer,Runnable {
 			}
 		}
 
-		public void schedule(String id, Matcher matcher, Task task) {
+		public void schedule(String id, Matcher matcher, Doer task) {
 			schedule(new Timer.Simple(id, matcher, task));
 		}
 
@@ -196,7 +195,7 @@ public interface Scheduler extends Timer,Runnable {
 			state = State.Running;
 		}
 		
-		public void schedule(TaskCommitter committer) {
+		public void schedule(DoerCommitter committer) {
 			// do noting
 		}
 		
@@ -208,7 +207,6 @@ public interface Scheduler extends Timer,Runnable {
 			exec.shutdown();
 		}
 		
-		@Override
 		public Date forecastNextDate() {
 			return new Date();
 		}
@@ -226,27 +224,22 @@ public interface Scheduler extends Timer,Runnable {
 	public static class Simple extends Abstract{
 		protected Hashtable<String,Timer> timers = new Hashtable<String,Timer>();
 		
-		@Override
 		public Timer[] getTimers() {
 			return timers.values().toArray(new Timer[0]);
 		}
 
-		@Override
 		public Timer get(String id) {
 			return timers.get(id);
 		}
 
-		@Override
 		public void schedule(Timer timer) {
 			timers.put(timer.getId(), timer);
 		}
 
-		@Override
 		public void remove(String id) {
 			timers.remove(id);
 		}
 		
-		@Override
 		public void run() {
 			try {
 				Iterator<Timer> iter = timers.values().iterator();
@@ -295,7 +288,7 @@ public interface Scheduler extends Timer,Runnable {
 				comitter.configure(_e, _properties);
 				logger.warn("Can not find committer element,Use default:" + comitter.getClass().getName());
 			}else{
-				Factory<TaskCommitter> factory = new Factory<TaskCommitter>();
+				Factory<DoerCommitter> factory = new Factory<DoerCommitter>();
 				comitter = factory.newInstance(_committer, p, "module", ThreadPoolTaskCommitter.class.getName());
 			}
 			

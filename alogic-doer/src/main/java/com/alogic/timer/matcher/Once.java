@@ -2,8 +2,8 @@ package com.alogic.timer.matcher;
 
 import java.util.Date;
 
-import com.alogic.timer.ContextHolder;
-import com.alogic.timer.Matcher.Abstract;
+import com.alogic.timer.core.ContextHolder;
+import com.alogic.timer.core.Matcher.Abstract;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 
@@ -18,19 +18,16 @@ public class Once extends Abstract {
 	 * 已调度次数
 	 */
 	protected int count = 0;
-	
-	@Override
+
 	public void configure(Properties p) throws BaseException {
 		//nothing to do
 	}
 
-	@Override
 	public boolean match(Date _last, Date _now,ContextHolder ctx) {
 		count ++;
 		return count <= 1;
 	}
 
-	@Override
 	public boolean isTimeToClear() {
 		return count > 1;
 	}

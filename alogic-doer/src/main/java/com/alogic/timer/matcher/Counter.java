@@ -2,8 +2,8 @@ package com.alogic.timer.matcher;
 
 import java.util.Date;
 
-import com.alogic.timer.ContextHolder;
-import com.alogic.timer.Matcher.Abstract;
+import com.alogic.timer.core.ContextHolder;
+import com.alogic.timer.core.Matcher.Abstract;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -40,13 +40,11 @@ public class Counter extends Abstract {
 		interval = _interval;
 	}	
 	
-	@Override
 	public void configure(Properties p) throws BaseException {
 		count = PropertiesConstants.getLong(p,"count",count,true);
 		interval = PropertiesConstants.getLong(p,"interval",interval,true);
 	}
 
-	@Override
 	public boolean match(Date _last, Date _now,ContextHolder ctx) {
 		if (count <= 0 || count >= scheduled_count){
 			//还可以继续
@@ -58,7 +56,6 @@ public class Counter extends Abstract {
 		return false;
 	}
 
-	@Override
 	public boolean isTimeToClear() {
 		return scheduled_count > count;
 	}

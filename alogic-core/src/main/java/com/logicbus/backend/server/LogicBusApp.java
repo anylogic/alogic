@@ -1,13 +1,8 @@
 package com.logicbus.backend.server;
 
-import java.io.InputStream;
-
 import javax.servlet.ServletContext;
-
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-
 import com.anysoft.metrics.core.Fragment;
 import com.anysoft.metrics.core.MetricsHandler;
 import com.anysoft.stream.Handler;
@@ -23,7 +18,6 @@ import com.logicbus.backend.IpAndServiceAccessController;
 import com.logicbus.backend.QueuedServantFactory;
 import com.logicbus.backend.ServantFactory;
 import com.logicbus.backend.bizlog.BizLogger;
-import com.logicbus.backend.timer.TimerManager;
 
 
 /**
@@ -53,6 +47,9 @@ import com.logicbus.backend.timer.TimerManager;
  * 
  * @version 1.3.0.2 [20141031 duanyy] <br>
  * - 增加全局配置文件，变量名为settings.global.master和settings.global.secondary
+ * 
+ * @version 1.6.3.37 [20140806 duanyy] <br>
+ * - 淘汰旧的timer框架，采用新的timer框架 <br>
  */
 public class LogicBusApp implements WebApp {
 	/**
@@ -62,7 +59,6 @@ public class LogicBusApp implements WebApp {
 		
 	protected void onInit(Settings settings){	
 		ClassLoader classLoader = Settings.getClassLoader();
-		ResourceFactory resourceFactory = Settings.getResourceFactory();
 		
 		XmlTools.setDefaultEncoding(settings.GetValue("http.encoding","utf-8"));
 		
@@ -124,35 +120,6 @@ public class LogicBusApp implements WebApp {
 				logger.error("Failed to initialize servantFactory.Using default:" + QueuedServantFactory.class.getName());
 			}
 			settings.registerObject("servantFactory", sf);
-		}
-		// 启动定时器
-		{
-			String __tmClass = settings.GetValue("timer.manager",
-					"com.logicbus.backend.timer.TimerManager");
-			
-			String __timerConfig = settings.GetValue("timer.config.master", 
-					"java:///com/logicbus/backend/timer/timer.default.xml#com.logicbus.backend.server.LogicBusApp");
-
-			String __timerSecondaryConfig = settings.GetValue("timer.config.secondary", 
-					"java:///com/logicbus/backend/timer/timer.default.xml#com.logicbus.backend.server.LogicBusApp");
-			if (__timerConfig != null && __timerConfig.length() > 0){
-				logger.info("Start timer..");
-				InputStream in = null;
-				try {
-					in = resourceFactory.load(__timerConfig,__timerSecondaryConfig, null);
-					Document doc = XmlTools.loadFromInputStream(in);
-					// 启动定时器
-					TimerManager __tm = TimerManager.get(__tmClass,classLoader);
-					__tm.schedule(doc.getDocumentElement());
-
-					logger.info("Start timer..OK!");
-				} catch (Exception ex) {
-					logger.error("Error loading xml file,source=" + __timerConfig, ex);
-					logger.info("Start timer..Failed!");
-				} finally {
-					IOTools.closeStream(in);
-				}
-			}		
 		}
 	}
 	
@@ -217,11 +184,7 @@ public class LogicBusApp implements WebApp {
 		onInit(settings);
 	}
 
-	protected void onDestroy(Settings settings){
-		TimerManager __tm = TimerManager.get();
-		logger.info("Stop timer..");
-		__tm.stop();
-		
+	protected void onDestroy(Settings settings){		
 		ServantFactory sf = (ServantFactory)settings.get("servantFactory");
 		if (sf != null){
 			logger.info("The servantFactory is closing..");
