@@ -79,6 +79,11 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	public void execute(Task task);
 	
 	/**
+	 * 完成任务
+	 */
+	public void complete();
+	
+	/**
 	 * Abstract
 	 * @author duanyy
 	 *
@@ -143,8 +148,12 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 			}catch (Throwable t){
 				logger.fatal("Exception when executing the task:" + task.id());
 			}finally{
-				state = State.Idle;
+				complete();
 			}
+		}
+		
+		public void complete(){
+			state = State.Idle;
 		}
 		
 		public void report(Element xml) {
@@ -197,6 +206,19 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 			if (real != null){
 				real.run();
 			}
+		}
+	}
+	
+	/**
+	 * Quiet实现
+	 * 
+	 * <p>仅触发定时，具体逻辑有TaskComitter确定。
+	 */
+	public static class Quiet extends Abstract{
+
+		@Override
+		public void execute(Task task) {
+
 		}
 	}
 }

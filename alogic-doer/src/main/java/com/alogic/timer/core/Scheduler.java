@@ -225,7 +225,11 @@ public interface Scheduler extends Timer,Runnable {
 	 */
 	public static class Simple extends Abstract{
 		protected Hashtable<String,Timer> timers = new Hashtable<String,Timer>();
-		
+		protected boolean async = true;
+		public void configure(Properties p) throws BaseException {
+			super.configure(p);
+			async = PropertiesConstants.getBoolean(p,"async",async,true);
+		}		
 		public Timer[] getTimers() {
 			return timers.values().toArray(new Timer[0]);
 		}
@@ -245,13 +249,28 @@ public interface Scheduler extends Timer,Runnable {
 		public void run() {
 			try {
 				Iterator<Timer> iter = timers.values().iterator();
-				List<String> toBeClear = new ArrayList<String>();
+				final List<String> toBeClear = new ArrayList<String>();
 				
 				while (iter.hasNext()){
-					Timer timer = iter.next();
-					timer.schedule(comitter);
-					if (timer.isTimeToClear()){
-						toBeClear.add(timer.getId());
+					final Timer timer = iter.next();
+					
+					if (async){
+						Thread thread = new Thread(){
+							public void run(){
+								timer.schedule(comitter);
+								if (timer.isTimeToClear()){
+									toBeClear.add(timer.getId());
+								}
+							}
+						};
+						
+						thread.setDaemon(true);
+						thread.start();
+					}else{
+						timer.schedule(comitter);
+						if (timer.isTimeToClear()){
+							toBeClear.add(timer.getId());
+						}
 					}
 				}
 				
