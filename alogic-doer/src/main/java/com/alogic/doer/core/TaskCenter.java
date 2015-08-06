@@ -8,12 +8,14 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.alogic.timer.core.Task;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Settings;
+import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
 
@@ -58,10 +60,15 @@ public interface TaskCenter extends TaskDispatcher{
 				JsonTools.setString(json,"module",getClass().getName());
 			}
 		}
+		
+		public void configure(Properties p) throws BaseException {
 
+		}
+		
 		public void configure(Element _e, Properties _properties)
 				throws BaseException {
-			// do nothing
+			Properties p = new XmlElementProperties(_e,_properties);
+			configure(p);			
 		}
 
 		public void dispatch(Task task) {
@@ -70,8 +77,7 @@ public interface TaskCenter extends TaskDispatcher{
 
 		public TaskReport getTaskReport(String id, String queue) {
 			return null;
-		}
-		
+		}		
 	}
 	
 	/**

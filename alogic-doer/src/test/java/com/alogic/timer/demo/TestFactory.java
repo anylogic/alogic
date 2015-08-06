@@ -16,8 +16,9 @@ public class TestFactory {
 		});
 		
 		scheduler.schedule("testMore", new Interval(1000), new Runnable(){
+			private int count = 0;
 			public void run() {
-				System.out.println("testMore.");
+				System.out.println("the count is " + count ++);
 			}
 		});
 		
@@ -29,7 +30,7 @@ public class TestFactory {
 			} catch (InterruptedException e) {
 			}
 		}
-		
+		System.out.println("timeout");
 		scheduler.stop();
 	}
 

@@ -1,7 +1,11 @@
 package com.alogic.doer.core;
 
 import java.util.Map;
+
 import org.w3c.dom.Element;
+
+import com.alogic.timer.core.Task;
+import com.alogic.timer.core.Task.State;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Reportable;
 
@@ -30,7 +34,7 @@ public interface TaskReport extends Reportable{
 	 * 获取任务处理状态
 	 * @return 处理状态
 	 */
-	public TaskState state();
+	public State state();
 	
 	/**
 	 * 获取对应的任务
@@ -43,39 +47,6 @@ public interface TaskReport extends Reportable{
 	 * @return 进度
 	 */
 	public int getPercent();
-	
-	/**
-	 * 任务状态
-	 * 
-	 * @author duanyy
-	 *
-	 */
-	public static enum TaskState{
-		/**
-		 * 新建
-		 */
-		New,
-		/**
-		 * 已进入队列
-		 */
-		Queued,
-		/**
-		 * 已从队列中领取
-		 */
-		Polled,
-		/**
-		 * 正在运行
-		 */
-		Running,
-		/**
-		 * 运行失败
-		 */
-		Failed,
-		/**
-		 * 已完成
-		 */
-		Done
-	}
 	
 	/**
 	 * 缺省实现
@@ -123,7 +94,7 @@ public interface TaskReport extends Reportable{
 			return stateTime;
 		}
 
-		public TaskState state() {
+		public State state() {
 			return state;
 		}
 
@@ -135,7 +106,7 @@ public interface TaskReport extends Reportable{
 			return percent;
 		}
 		
-		public void reportTaskState(TaskState _state,int _percent){
+		public void reportState(State _state,int _percent){
 			state = _state;
 			//当_percent小于0时不进行更新
 			percent = _percent < 0 ? percent : _percent;
@@ -146,7 +117,6 @@ public interface TaskReport extends Reportable{
 		protected long createTime = System.currentTimeMillis();
 		protected long stateTime = System.currentTimeMillis();
 		protected int percent = 0;
-		protected TaskState state = TaskState.New;
-		
+		protected State state = State.New;
 	}
 }

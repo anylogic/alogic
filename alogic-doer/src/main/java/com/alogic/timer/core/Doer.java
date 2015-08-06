@@ -1,12 +1,9 @@
 package com.alogic.timer.core;
 
 import java.util.Map;
-import java.util.Random;
-
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
-
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Properties;
@@ -34,39 +31,52 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		 */
 		Idle,
 		/**
-		 * 已调度
-		 */
-		Scheduled,
-		/**
 		 * 工作中
 		 */
 		Working
 	}
 	
 	/**
-	 * 获取当前ID
-	 * @return ID
-	 */
-	public String getCurrentId();
-	
-	/**
-	 * 获取任务状态
+	 * 获取Doer状态
 	 * @return
 	 */
 	public State getState();
 	
 	/**
-	 * 准备执行
-	 * 
-	 * @param ctxHolder 上下文持有人
+	 * 设置上下文持有者
+	 * @param holder 持有者
 	 */
-	public void prepare(ContextHolder ctxHolder);
+	public void setContextHolder(ContextHolder holder);
+	
+	/**
+	 * 获取上下文持有者
+	 * @return holder
+	 */
+	public ContextHolder getContextHolder();
+	
+	/**
+	 * 设置当前的任务
+	 * @param task 任务
+	 */
+	public void setCurrentTask(Task task);
+	
+	/**
+	 * 获取当前的任务
+	 * @return 当前任务
+	 */
+	public Task getCurrentTask();
+	
+	/**
+	 * 设置任务状态监听器
+	 * @param listener 监听器
+	 */
+	public void setTaskStateListener(TaskStateListener listener);
 	
 	/**
 	 * 执行
-	 * @param ctx 任务的上下文
+	 * @param task 待执行的任务
 	 */
-	public void execute(DoerContext ctx);
+	public void execute(Task task);
 	
 	/**
 	 * Abstract
@@ -79,33 +89,60 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		 * 任务状态
 		 */
 		protected State state = State.Idle;
-		protected ContextHolder ctxHolder = null;
-		protected String currentId;
 		
-		public String getCurrentId(){
-			return currentId;
+		/**
+		 * 上下文持有者
+		 */
+		private ContextHolder ctxHolder = null;
+		
+		/**
+		 * 当前current
+		 */
+		private Task current = null;
+		
+		/**
+		 * 状态监听器
+		 */
+		private TaskStateListener stateListener = null;
+		
+		public void setContextHolder(ContextHolder holder) {
+			ctxHolder = holder;
+		}
+
+		public ContextHolder getContextHolder() {
+			return ctxHolder;
+		}
+
+		public void setCurrentTask(Task task) {
+			current = task;
+		}
+
+		public Task getCurrentTask() {
+			return current;
+		}
+
+		public void setTaskStateListener(TaskStateListener listener) {
+			stateListener = listener;
 		}
 		
-		public void prepare(ContextHolder _ctxHolder){
-			state = State.Scheduled;
-			ctxHolder = _ctxHolder;
-			currentId = newTaskId();
+		public void reportState(Task.State state,int percent){
+			if (stateListener != null){
+				stateListener.reportState(current, state, percent);
+			}
 		}
 		
 		public void run(){
-			DoerContext ctx = null;
-			if (ctxHolder != null){
-				ctx = ctxHolder.getContext();
-			}			
+			Task task = getCurrentTask();
 			try {
-				state = State.Working;
-				execute(ctx);
-			}catch (Throwable t){
-				logger.fatal("Exception when executing the task:" + getCurrentId());
-			}finally{
-				if (ctxHolder != null){
-					ctxHolder.saveContext(ctx,this);
+				if (task == null){
+					logger.error("Can not execute because the task is null.");
+				}else{
+					state = State.Working;
+					execute(task);
 				}
+			}catch (Throwable t){
+				logger.fatal("Exception when executing the task:" + task.id());
+			}finally{
 				state = State.Idle;
 			}
 		}
@@ -113,7 +150,6 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		public void report(Element xml) {
 			if (xml != null){
 				xml.setAttribute("module", getClass().getName());
-				xml.setAttribute("current", getCurrentId());
 				xml.setAttribute("state", state.name());
 			}
 		}
@@ -121,7 +157,6 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		public void report(Map<String, Object> json) {
 			if (json != null){
 				json.put("module", getClass().getName());
-				json.put("current", getCurrentId());
 				json.put("state", state.name());
 			}
 		}
@@ -138,40 +173,6 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		
 		public void configure(Properties p) throws BaseException {
 			// nothing to do
-		}
-		
-		protected String newTaskId(){
-			return System.currentTimeMillis() + randomString(6);
-		}
-		
-		/**
-		 * 字符表
-		 */
-		protected static final char[] Chars = {
-		      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-		      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-		      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
-		      'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-		      'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
-		      'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
-		      '8', '9'
-		 };
-		
-		/**
-		 * 按照指定宽度生成随机字符串
-		 * @param _width 字符串的宽度
-		 * @return 随机字符串
-		 */
-		static protected String randomString(int _width){
-			int width = _width <= 0 ? 6 : _width;
-			char [] ret = new char[width];
-			Random ran = new Random();
-			for (int i = 0 ; i < width ; i ++){
-				int intValue = ran.nextInt(62) % 62;
-				ret[i] = Chars[intValue];
-			}
-			
-			return new String(ret);
 		}
 	}
 
@@ -192,7 +193,7 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 			// nothing to do
 		}
 
-		public void execute(DoerContext ctx) {
+		public void execute(Task task) {
 			if (real != null){
 				real.run();
 			}

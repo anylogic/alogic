@@ -6,21 +6,27 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
-import com.alogic.doer.core.TaskReport.TaskState;
+import com.alogic.timer.core.ContextHolder;
+import com.alogic.timer.core.Doer;
+import com.alogic.timer.core.Task;
+import com.alogic.timer.core.Task.State;
+import com.alogic.timer.core.TaskStateListener;
 import com.anysoft.util.BaseException;
+import com.anysoft.util.Factory;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;
+import com.anysoft.util.XmlTools;
 
 
 /**
- * 任务处理者
+ * 任务争抢者
  * 
  * @author duanyy
  * @since 1.6.3.4
  */
-public interface TaskDoer extends TaskDispatcher,Runnable{
+public interface TaskRobber extends TaskDispatcher,Runnable{
 	/**
 	 * 开始任务处理线程
 	 */
@@ -60,11 +66,11 @@ public interface TaskDoer extends TaskDispatcher,Runnable{
 	 * @author duanyy
 	 * @since 1.6.3.4
 	 */
-	abstract public static class Abstract implements TaskDoer{
+	abstract public static class Abstract implements TaskRobber{
 		/**
 		 * a logger of log4j
 		 */
-		protected static final Logger logger = LogManager.getLogger(TaskDoer.class);
+		protected static final Logger logger = LogManager.getLogger(TaskRobber.class);
 		
 		/**
 		 * 线程句柄
@@ -78,18 +84,13 @@ public interface TaskDoer extends TaskDispatcher,Runnable{
 		public void configure(Element _e, Properties _properties)
 				throws BaseException {
 			Properties p = new XmlElementProperties(_e,_properties);
+			configure(p);
+		}
+		
+		public void configure(Properties p) throws BaseException {
 			timeout = PropertiesConstants.getLong(p, "timeout", timeout);
 			interval = PropertiesConstants.getLong(p, "interval", interval);
-			
-			onConfigure(_e,new XmlElementProperties(_e,_properties));
 		}
-
-		/**
-		 * 处理configure事件
-		 * @param _e XML配置节点
-		 * @param p 变量集
-		 */
-		public abstract void onConfigure(Element _e,Properties p);
 		
 		public void setTaskQueue(TaskQueue _queue){
 			queue = _queue;
@@ -152,38 +153,65 @@ public interface TaskDoer extends TaskDispatcher,Runnable{
 	}
 	
 	/**
-	 * 空的任务处理者实现
-	 * 
+	 * 缺省实现
 	 * @author duanyy
-	 * @since 1.6.3.4
+	 *
 	 */
-	public static class Null extends Abstract {
+	public static class Default extends Abstract implements TaskStateListener {
 
 		public void dispatch(Task task) throws BaseException {
-			TaskQueue queue = getQueue();
-			
-			queue.reportTaskState(task.id(), TaskState.Running, 0);
-			logger.info("\tid\t:" + task.id());
-			logger.info("\tqueue\t:" + task.queue());
-			logger.info("\tparameters\t:" + task.getParameters().toString());
-			
-			for (int i = 0; i < 100 ;i ++){
-				queue.reportTaskState(task.id(), TaskState.Running, i*10);
-				
-				try {
-					Thread.sleep(2000);
-				}catch (Exception ex){
-					
-				}
+			if (doer != null){
+				doer.setCurrentTask(task);
+				doer.setTaskStateListener(this);
+				doer.setContextHolder(ctxHolder);
+				doer.run();
 			}
-			
-			queue.reportTaskState(task.id(), TaskState.Done, 10000);
-		}
-
-		@Override
-		public void onConfigure(Element _e, Properties p) {
-			// nothing to do
 		}
 		
+		public void configure(Element _e, Properties _properties)
+				throws BaseException {
+			Properties p = new XmlElementProperties(_e,_properties);
+			configure(p);
+			
+			Element _task = XmlTools.getFirstElementByPath(_e, "doer");
+			if (_task == null){
+				logger.error("Can not create doer");
+			}else{
+				Factory<Doer> factory = new Factory<Doer>();
+				doer = factory.newInstance(_task, p, "module");
+			}
+			
+			Element _context = XmlTools.getFirstElementByPath(_e, "context");
+			if (_context == null){
+				ctxHolder = new ContextHolder.Default();
+			}else{
+				Factory<ContextHolder> factory = new Factory<ContextHolder>();
+				ctxHolder = factory.newInstance(_context, p, "module", ContextHolder.Default.class.getName());
+			}
+		}
+		
+		/**
+		 * 实际执行的doer
+		 */
+		protected Doer doer = null;
+
+		/**
+		 * 上下文持有者
+		 */
+		protected ContextHolder ctxHolder = null;
+		
+		public void reportState(Task task, State state, int percent) {
+			TaskQueue queue = getQueue();
+			if (queue != null){
+				queue.reportState(task, state, percent);
+			}
+		}
+
+		public void reportState(String id, State state, int percent) {
+			TaskQueue queue = getQueue();
+			if (queue != null){
+				queue.reportState(id, state, percent);
+			}
+		}
 	}
 }

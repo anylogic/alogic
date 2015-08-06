@@ -28,11 +28,10 @@ public interface DoerCommitter extends Reportable,Configurable,XMLConfigurable{
 	/**
 	 * 提交任务
 	 * 
-	 * @param task 待提交的任务
-	 * @param timer 触发任务的timer
-	 * 
+	 * @param doer 任务执行者
+	 * @param task 任务
 	 */
-	public void commit(Doer task,Timer timer);
+	public void commit(Doer doer,Task task);
 	
 	/**
 	 * Abstract
@@ -85,11 +84,11 @@ public interface DoerCommitter extends Reportable,Configurable,XMLConfigurable{
 			configure(p);	
 		}
 
-		public void commit(Doer task, Timer timer) {
+		public void commit(Doer doer,Task task) {
 			long start = System.currentTimeMillis();
 			boolean error = false;
 			try {
-				onCommit(task,timer);
+				onCommit(doer,task);
 			}catch (Exception ex){
 				error = true;
 				logger.error("Fail to commit task.",ex);
@@ -100,22 +99,6 @@ public interface DoerCommitter extends Reportable,Configurable,XMLConfigurable{
 			}
 		}
 		
-		abstract protected void onCommit(Doer task, Timer timer);
-	}
-	
-	/**
-	 * 模拟提交者
-	 * 
-	 * @author duanyy
-	 *
-	 */
-	public static class Simulator extends Abstract{
-
-		@Override
-		protected void onCommit(Doer task, Timer timer) {
-			logger.info("Commit task,task:" + task.getCurrentId() + ",timer:" + timer.getId());
-			task.run();
-		}
-		
+		abstract protected void onCommit(Doer doer, Task task);
 	}
 }

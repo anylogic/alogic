@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <TaskCenter module="com.alogic.doer.local.LocalTaskCenter">
-	<queue id="demo" module="com.alogic.doer.core.ScriptDoer" cnt="1">
-		<script>
-			<log msg="Hello ${name}"/>
-			<sleep timeout="1000"/>
-		</script>
+	<queue id="demo" cnt="1">
+		<doer module="com.alogic.timer.core.ScriptDoer">
+			<script>
+				<log msg="Hello ${name}"/>
+				<sleep timeout="1000"/>
+			</script>
+		</doer>
 	</queue>
 </TaskCenter>

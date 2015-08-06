@@ -1,10 +1,9 @@
-package com.alogic.doer.core;
+package com.alogic.timer.core;
 
 import org.w3c.dom.Element;
-
-import com.alogic.doer.core.TaskReport.TaskState;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
+import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
 import com.anysoft.xscript.CompileWatcher;
 import com.anysoft.xscript.ExecuteWatcher;
@@ -15,50 +14,41 @@ import com.anysoft.xscript.Statement;
 /**
  * 脚本处理者
  * 
- * <p>
- * 通过xscript来实现任务
- * 
  * @author duanyy
- * 
+ * @since 1.6.3.37
  */
-public class ScriptDoer extends TaskDoer.Abstract{
-	
-	public void dispatch(Task task) throws BaseException {
-		currentTask = task;
+public class ScriptDoer extends Doer.Abstract{
+	private Element script = null;
+	public void execute(Task task) {
 		try {
 			// 向队列报告任务已经开始
-			queue.reportTaskState(task.id(), TaskState.Running, 0);
+			reportState(Task.State.Running, 0);
 			if (script == null) {
 				logger.error("Can not find script element");
-				queue.reportTaskState(task.id(), TaskState.Failed, 10000);
+				reportState(Task.State.Failed, 10000);
 			} else {
 				Statement stmt = new TheScript(this, "script", null);
-				stmt.compile(script, task.getParameters(),
-						new CompileWatcher.Default());
+				stmt.compile(script, task.getParameters(),new CompileWatcher.Default());
 				// 执行任务
 				stmt.execute(task.getParameters(), new ExecuteWatcher.Default());
 				// 任务完成
-				queue.reportTaskState(task.id(), TaskState.Done, 10000);
+				reportState(Task.State.Done, 10000);
 			}
 		} catch (Throwable t) {
 			logger.error("Failed to execute script", t);
 			// 任务失败
-			queue.reportTaskState(task.id(), TaskState.Failed, 10000);
-		} finally {
-			currentTask = null;
-		}
+			reportState(Task.State.Failed, 10000);
+		}	
 	}
-	
-	/**
-	 * 当前处理的任务
-	 */
-	private Task currentTask = null;
-	
-	private Element script = null;
-	
-	public void onConfigure(Element _e, Properties p) {
+
+	public void configure(Element _e, Properties _properties)
+			throws BaseException {
+		Properties p = new XmlElementProperties(_e,_properties);
+		configure(p);		
+		
 		script = XmlTools.getFirstElementByPath(_e, "script");
 	}
+
 	
 	/**
 	 * 处理进度报告
@@ -66,6 +56,7 @@ public class ScriptDoer extends TaskDoer.Abstract{
 	 * @param logInfo 日志信息
 	 */
 	public void report(ScriptLogInfo logInfo) {
+		Task currentTask = getCurrentTask();
 		if (currentTask != null){
 			//当前有任务处理才有意义
 			String id = logInfo.activity();
@@ -77,7 +68,7 @@ public class ScriptDoer extends TaskDoer.Abstract{
 				
 				if (progress >= -1){
 					//百分比进度
-					queue.reportTaskState(taskId, TaskState.Running, progress);
+					reportState(Task.State.Running, progress);
 				}
 			}
 		}

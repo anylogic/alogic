@@ -128,6 +128,7 @@ public interface Scheduler extends Timer,Runnable {
 						Timer t = timers[i];
 						
 						Element _timer = doc.createElement("timer");
+						_timer.setAttribute("detail", "false");
 						t.report(_timer);
 						
 						xml.appendChild(_timer);
@@ -155,6 +156,7 @@ public interface Scheduler extends Timer,Runnable {
 						Timer t = timers[i];
 						
 						Map<String,Object> _map = new HashMap<String,Object>();
+						_map.put("detail", "false");
 						t.report(_map);
 						
 						_timer.add(_map);
@@ -204,7 +206,7 @@ public interface Scheduler extends Timer,Runnable {
 		}		
 		
 		public void stop(){
-			exec.shutdown();
+			exec.shutdownNow();
 		}
 		
 		public Date forecastNextDate() {
@@ -259,6 +261,11 @@ public interface Scheduler extends Timer,Runnable {
 			}catch (Exception ex){
 				ex.printStackTrace();
 			}
+		}
+		
+		public Task newTask() {
+			//never used
+			return null;
 		}
 	}
 	

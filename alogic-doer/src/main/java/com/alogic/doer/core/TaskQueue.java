@@ -1,6 +1,6 @@
 package com.alogic.doer.core;
 
-import com.alogic.doer.core.TaskReport.TaskState;
+import com.alogic.timer.core.TaskStateListener;
 
 /**
  * 任务队列
@@ -8,7 +8,7 @@ import com.alogic.doer.core.TaskReport.TaskState;
  * @author duanyy
  *
  */
-public interface TaskQueue extends TaskDispatcher {
+public interface TaskQueue extends TaskDispatcher,TaskStateListener {
 	
 	/**
 	 * 获取队列的ID
@@ -23,7 +23,7 @@ public interface TaskQueue extends TaskDispatcher {
 	 * 
 	 * @param doer 任务处理人
 	 */
-	public void askForTask(TaskDoer doer,long timeout);
+	public void askForTask(TaskDispatcher doer,long timeout);
 	
 	/**
 	 * 获取指定任务的报告
@@ -32,11 +32,4 @@ public interface TaskQueue extends TaskDispatcher {
 	 * @return 任务报告
 	 */
 	public TaskReport getTaskReport(String id);
-	
-	/**
-	 * 报告任务的状态
-	 * @param state
-	 * @param percent
-	 */
-	public void reportTaskState(String id,TaskState state,int percent);
 }

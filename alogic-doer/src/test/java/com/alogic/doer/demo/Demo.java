@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alogic.doer.client.TaskSubmitter;
-import com.alogic.doer.core.TaskReport.TaskState;
+import com.alogic.timer.core.Task;
 import com.anysoft.util.Settings;
 
 public class Demo {
@@ -21,9 +21,9 @@ public class Demo {
 		
 		while (true){
 			
-			TaskState state = TaskSubmitter.getTaskReport("job", "demo").state();
+			Task.State state = TaskSubmitter.getTaskReport("job", "demo").state();
 			
-			if (state == TaskState.Done || state == TaskState.Failed){
+			if (state == Task.State.Done || state == Task.State.Failed){
 				break;
 			}
 			

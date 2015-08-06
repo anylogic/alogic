@@ -1,6 +1,8 @@
 package com.alogic.doer.core;
 
+import com.alogic.timer.core.Task;
 import com.anysoft.util.BaseException;
+import com.anysoft.util.Configurable;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
 
@@ -11,7 +13,7 @@ import com.anysoft.util.XMLConfigurable;
  * @since 1.6.3.4
  * 
  */
-public interface TaskDispatcher extends XMLConfigurable, Reportable {
+public interface TaskDispatcher extends XMLConfigurable,Configurable, Reportable {
 	/**
 	 * 分发任务
 	 * 

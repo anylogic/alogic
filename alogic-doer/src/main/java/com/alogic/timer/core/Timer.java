@@ -3,16 +3,21 @@ package com.alogic.timer.core;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.alogic.timer.matcher.Crontab;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
+import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Factory;
+import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
@@ -79,6 +84,12 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	 * @return true|false
 	 */
 	public boolean isTimeToClear();
+	
+	/**
+	 * 创建新的任务
+	 * @return 任务
+	 */
+	public Task newTask();
 		
 	/**
 	 * Abstract
@@ -97,9 +108,9 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		protected Date lastDate = new Date();
 		
 		/**
-		 * 待调度的任务
+		 * 任务执行者
 		 */
-		protected Doer task = null;
+		protected Doer doer = null;
 		
 		/**
 		 * 匹配器
@@ -132,25 +143,28 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 					xml.setAttribute("lastDate", String.valueOf(lastDate.getTime()));
 				}
 				
-				Document doc = xml.getOwnerDocument();
-				if (ctxHolder != null){
-					Element _ctx = doc.createElement("context");
-					ctxHolder.report(_ctx);
-					xml.appendChild(_ctx);
-				}
+				String detail = xml.getAttribute("detail");
 				
-				if (task != null){
-					Element _task = doc.createElement("doer");
-					task.report(_task);
-					xml.appendChild(_task);
+				if (detail == null || !detail.equals("false")){
+					Document doc = xml.getOwnerDocument();
+					if (ctxHolder != null){
+						Element _ctx = doc.createElement("context");
+						ctxHolder.report(_ctx);
+						xml.appendChild(_ctx);
+					}
+					
+					if (doer != null){
+						Element _task = doc.createElement("doer");
+						doer.report(_task);
+						xml.appendChild(_task);
+					}
+					
+					if (matcher != null){
+						Element _matcher = doc.createElement("matcher");
+						matcher.report(_matcher);
+						xml.appendChild(_matcher);
+					}
 				}
-				
-				if (matcher != null){
-					Element _matcher = doc.createElement("matcher");
-					matcher.report(_matcher);
-					xml.appendChild(_matcher);
-				}
-				
 			}
 		}
 
@@ -160,26 +174,30 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 				json.put("id", getId());
 				json.put("state", getState().name());
 				
+				boolean detail = JsonTools.getBoolean(json, "detail", true);
+				
 				if (lastDate != null){
 					json.put("lastDate",lastDate.getTime());
 				}
 				
-				if (ctxHolder != null){
-					Map<String,Object> _ctx = new HashMap<String,Object>();
-					ctxHolder.report(_ctx);
-					json.put("context", _ctx);
-				}
-				
-				if (task != null){
-					Map<String,Object> _task = new HashMap<String,Object>();
-					task.report(_task);
-					json.put("doer", _task);
-				}
-				
-				if (matcher != null){
-					Map<String,Object> _matcher = new HashMap<String,Object>();
-					matcher.report(_matcher);
-					json.put("matcher", _matcher);
+				if (detail){
+					if (ctxHolder != null){
+						Map<String,Object> _ctx = new HashMap<String,Object>();
+						ctxHolder.report(_ctx);
+						json.put("context", _ctx);
+					}
+					
+					if (doer != null){
+						Map<String,Object> _task = new HashMap<String,Object>();
+						doer.report(_task);
+						json.put("doer", _task);
+					}
+					
+					if (matcher != null){
+						Map<String,Object> _matcher = new HashMap<String,Object>();
+						matcher.report(_matcher);
+						json.put("matcher", _matcher);
+					}
 				}
 			}
 		}
@@ -216,8 +234,8 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 					return;
 				}
 
-				if (task == null) {
-					logger.error("The task is not set:" + getId());
+				if (doer == null) {
+					logger.error("The doer is not set:" + getId());
 					return;
 				}
 
@@ -241,7 +259,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 					return;
 				}
 				
-				if (task.getState() != Doer.State.Idle) {
+				if (doer.getState() != Doer.State.Idle) {
 					// 不是空闲状态
 					return;
 				}
@@ -249,10 +267,10 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 				boolean match = matcher.match(lastDate, now, ctxHolder);
 				if (match) {
 					lastDate = now;
-					//通知task准备执行
-					task.prepare(ctxHolder);
+					//准备执行
+					doer.setContextHolder(ctxHolder);
 					// to commit this task
-					committer.commit(task, this);
+					committer.commit(doer, newTask());
 				}
 			}
 		}
@@ -279,7 +297,45 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 				}
 			}
 			return null;
-		}		
+		}
+		
+		/**
+		 * 生成一个任务id
+		 * @return 任务id
+		 */
+		protected static String newTaskId(){
+			return System.currentTimeMillis()+ randomString(6);
+		}
+		
+		/**
+		 * 字符表
+		 */
+		protected static final char[] Chars = {
+		      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+		      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+		      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
+		      'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+		      'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
+		      'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
+		      '8', '9'
+		 };
+		
+		/**
+		 * 按照指定宽度生成随机字符串
+		 * @param _width 字符串的宽度
+		 * @return 随机字符串
+		 */
+		static protected String randomString(int _width){
+			int width = _width <= 0 ? 6 : _width;
+			char [] ret = new char[width];
+			Random ran = new Random();
+			for (int i = 0 ; i < width ; i ++){
+				int intValue = ran.nextInt(62) % 62;
+				ret[i] = Chars[intValue];
+			}
+			
+			return new String(ret);
+		}
 	}
 	
 	/**
@@ -293,17 +349,17 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		 */
 		protected String id;
 		
-		public Simple(String _id,Matcher _matcher,Doer _task){
+		public Simple(String _id,Matcher _matcher,Doer _doer){
 			id = _id;
 			matcher = _matcher;
-			task = _task;
+			doer = _doer;
 			ctxHolder = new ContextHolder.Default();
 		}		
 		
 		public Simple(String _id,Matcher _matcher,Runnable runnable){
 			id = _id;
 			matcher = _matcher;
-			task = new Doer.Wrapper(runnable);
+			doer = new Doer.Wrapper(runnable);
 			ctxHolder = new ContextHolder.Default();
 		}
 		
@@ -320,6 +376,10 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 
 		public Date toDate() {
 			return null;
+		}
+
+		public Task newTask() {
+			return new Task.Default(newTaskId(), getId());
 		}
 	}
 	
@@ -358,6 +418,16 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		 */
 		protected Date toDate = new Date(System.currentTimeMillis() + 50 * 365 * 24 * 60 * 60 * 1000);				
 		
+		/**
+		 * 队列
+		 */
+		protected String queue;
+		
+		/**
+		 * 调用参数
+		 */
+		protected DefaultProperties parameters;
+		
 		public String getId() {
 			return id;
 		}
@@ -368,6 +438,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 				id = newTimerId();
 			}
 			
+			queue = PropertiesConstants.getString(p,"queue",id,true);
 			name = PropertiesConstants.getString(p,"name","",true);
 			note = PropertiesConstants.getString(p,"note","",true);
 		}
@@ -378,6 +449,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 			if (xml != null){
 				xml.setAttribute("name", name);
 				xml.setAttribute("note", note);
+				xml.setAttribute("queue", queue);
 				
 				if (fromDate != null){
 					xml.setAttribute("fromDate", String.valueOf(fromDate.getTime()));
@@ -395,6 +467,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 			if (json != null){
 				json.put("name", name);
 				json.put("note", note);
+				json.put("queue", queue);
 				
 				if (fromDate != null){
 					json.put("fromDate", fromDate.getTime());
@@ -429,10 +502,10 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 			
 			Element _task = XmlTools.getFirstElementByPath(_e, "doer");
 			if (_task == null){
-				logger.error("Can not create task : " + getId());
+				logger.error("Can not create doer : " + getId());
 			}else{
 				Factory<Doer> factory = new Factory<Doer>();
-				task = factory.newInstance(_task, p, "module");
+				doer = factory.newInstance(_task, p, "module");
 			}
 			
 			Element _context = XmlTools.getFirstElementByPath(_e, "context");
@@ -442,8 +515,38 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 				Factory<ContextHolder> factory = new Factory<ContextHolder>();
 				ctxHolder = factory.newInstance(_context, p, "module", ContextHolder.Default.class.getName());
 			}
+			
+			Element _parameters = XmlTools.getFirstElementByPath(_e, "parameters");
+			if (_parameters != null){
+				loadParameter(_parameters);
+			}
 		}
 		
+		private void loadParameter(Element root) {
+			NodeList list = XmlTools.getNodeListByPath(root,"parameter");
+			if (list.getLength() > 0){
+				parameters = new DefaultProperties();
+				
+				for (int i = 0 ;i < list.getLength() ; i ++){
+					Node n = list.item(i);
+					if (n.getNodeType() != Node.ELEMENT_NODE){
+						continue;
+					}
+					
+					Element e = (Element)n;
+					
+					String key = e.getAttribute("id");
+					String value = e.getAttribute("value");
+				
+					if (key == null || value == null || key.length() <= 0){
+						continue;
+					}
+					
+					parameters.SetValue(key, value.length() <= 0 ? "true":value);
+				}
+			}
+		}
+
 		private static volatile int seed = 10001;
 		
 		synchronized protected String newTimerId(){
@@ -458,5 +561,9 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 			return toDate;
 		}
 		
+		public Task newTask() {
+			return parameters == null ? new Task.Default(newTaskId(), getId()) 
+			: new Task.Default(newTaskId(), getId(),parameters);
+		}
 	}
 }

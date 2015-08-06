@@ -14,10 +14,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.alogic.doer.core.Task;
 import com.alogic.doer.core.TaskCenter;
 import com.alogic.doer.core.TaskQueue;
 import com.alogic.doer.core.TaskReport;
+import com.alogic.timer.core.Task;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Counter;
 import com.anysoft.util.Properties;
@@ -66,10 +66,14 @@ public class LocalTaskCenter implements TaskCenter {
 		}
 	}
 
+	public void configure(Properties p) throws BaseException {
+
+	}
+	
 	public void configure(Element _e, Properties _properties)
 			throws BaseException {
 		Properties p = new XmlElementProperties(_e,_properties);
-		
+		configure(p);
 		//counter
 		counter = new SimpleCounter(p);
 		
@@ -93,11 +97,11 @@ public class LocalTaskCenter implements TaskCenter {
 				}
 				
 				LocalTaskQueue q = new LocalTaskQueue();
-				
 				try {
 					q.configure(e, p);
 					queues.put(id, q);
 				}catch (Exception ex){
+					ex.printStackTrace();
 					logger.error("Can not config TaskQueue,module:" + q.getClass().getName());
 				}
 			}
@@ -149,5 +153,6 @@ public class LocalTaskCenter implements TaskCenter {
 
 	protected Counter counter = null;
 	protected Hashtable<String,TaskQueue> queues = null;
+
 
 }

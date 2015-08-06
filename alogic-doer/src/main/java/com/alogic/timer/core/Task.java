@@ -1,4 +1,4 @@
-package com.alogic.doer.core;
+package com.alogic.timer.core;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,10 +15,44 @@ import com.anysoft.util.Reportable;
 
 /**
  * 任务
+ * 
  * @author duanyy
- *
+ * @since 1.6.3.37
  */
 public interface Task extends JsonSerializer,Reportable{
+	
+	/**
+	 * 任务状态
+	 * 
+	 * @author duanyy
+	 *
+	 */
+	public static enum State{
+		/**
+		 * 新建
+		 */
+		New,
+		/**
+		 * 已进入队列
+		 */
+		Queued,
+		/**
+		 * 已从队列中领取
+		 */
+		Polled,
+		/**
+		 * 正在运行
+		 */
+		Running,
+		/**
+		 * 运行失败
+		 */
+		Failed,
+		/**
+		 * 已完成
+		 */
+		Done
+	}
 	
 	/**
 	 * 获取任务ID
