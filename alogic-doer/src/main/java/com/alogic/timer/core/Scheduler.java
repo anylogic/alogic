@@ -247,6 +247,10 @@ public interface Scheduler extends Timer,Runnable {
 		}
 		
 		public void run() {
+			if (state != State.Running){
+				//not running
+				return ;
+			}
 			try {
 				Iterator<Timer> iter = timers.values().iterator();
 				final List<String> toBeClear = new ArrayList<String>();

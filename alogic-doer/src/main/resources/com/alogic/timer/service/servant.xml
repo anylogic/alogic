@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog name="root">
+	<catalog name="scheduler">
+		<catalog name="tc">
+			<service 
+				id = "Report" 
+				name="Report" 
+				note="查询任务中心信息" 
+				visible="protected"
+				log = "none" 
+				module="com.alogic.doer.service.TaskCenterReport">
+				<properties>
+					<parameter id="jsonDefault" value="false"/>
+					<parameter id="servant.maxActive" value="10"/>
+					<parameter id="servant.maxIdle" value="1"/>
+				</properties>		    
+			</service>
+			<service 
+				id = "TaskReport" 
+				name="TaskReport" 
+				note="查询指定的任务信息" 
+				visible="protected"
+				log = "none" 
+				module="com.alogic.doer.service.TaskReportReport">
+				<properties>
+					<parameter id="jsonDefault" value="false"/>
+					<parameter id="servant.maxActive" value="10"/>
+					<parameter id="servant.maxIdle" value="1"/>
+				</properties>		    
+			</service>			
+		</catalog>
+		<service 
+			id = "Report" 
+			name="Report" 
+			note="查询调度器信息" 
+			visible="protected"
+			log = "none" 
+			module="com.alogic.timer.service.SchedulerReport">
+			<properties>
+				<parameter id="jsonDefault" value="false"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>		    
+		</service>
+		<service 
+			id = "Pause" 
+			name="Pause" 
+			note="暂停调度器" 
+			visible="protected"
+			log = "none" 
+			module="com.alogic.timer.service.SchedulerPause">
+			<properties>
+				<parameter id="jsonDefault" value="false"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>		    
+		</service>
+		<service 
+			id = "Resume" 
+			name="Resume" 
+			note="恢复调度器" 
+			visible="protected"
+			log = "none" 
+			module="com.alogic.timer.service.SchedulerResume">
+			<properties>
+				<parameter id="jsonDefault" value="false"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>		    
+		</service>		
+		<catalog name="timer">
+			<service 
+				id = "Report" 
+				name="Report" 
+				note="查询指定的定时器信息" 
+				visible="protected"
+				log = "none" 
+				module="com.alogic.timer.service.TimerReport">
+				<properties>
+					<parameter id="jsonDefault" value="false"/>
+					<parameter id="servant.maxActive" value="10"/>
+					<parameter id="servant.maxIdle" value="1"/>
+				</properties>		    
+			</service>
+			<service 
+				id = "Pause" 
+				name="Pause" 
+				note="暂停指定的定时器" 
+				visible="protected"
+				log = "none" 
+				module="com.alogic.timer.service.TimerPause">
+				<properties>
+					<parameter id="jsonDefault" value="false"/>
+					<parameter id="servant.maxActive" value="10"/>
+					<parameter id="servant.maxIdle" value="1"/>
+				</properties>		    
+			</service>
+			<service 
+				id = "Resume" 
+				name="Resume" 
+				note="恢复指定的定时器" 
+				visible="protected"
+				log = "none" 
+				module="com.alogic.timer.service.TimerResume">
+				<properties>
+					<parameter id="jsonDefault" value="false"/>
+					<parameter id="servant.maxActive" value="10"/>
+					<parameter id="servant.maxIdle" value="1"/>
+				</properties>		    
+			</service>						
+		</catalog>
+	</catalog>
+</catalog>

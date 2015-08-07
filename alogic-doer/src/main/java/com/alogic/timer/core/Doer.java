@@ -216,7 +216,6 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	 */
 	public static class Quiet extends Abstract{
 
-		@Override
 		public void execute(Task task) {
 
 		}
