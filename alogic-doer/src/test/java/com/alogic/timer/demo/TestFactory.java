@@ -23,14 +23,9 @@ public class TestFactory {
 		});
 		
 		scheduler.start();
-		
-		for (int i = 0 ; i < 20 ; i ++){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
-		}
-		System.out.println("timeout");
+
+		scheduler.join(20000);
+
 		scheduler.stop();
 	}
 

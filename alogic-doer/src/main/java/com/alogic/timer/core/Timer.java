@@ -30,6 +30,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  * @since 1.6.3.37
+ * 
+ * @version 1.6.3.38 [duanyy 20150812] <br>
+ * - 增加集群功能 <br>
  */
 public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	/**
@@ -38,7 +41,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	 *
 	 */
 	public enum State {
-		Running,Paused
+		Running,Paused,Stopping,Stopped,Idle
 	}
 	/**
 	 * 获取定时器ID

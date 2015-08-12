@@ -25,12 +25,7 @@ public class Simple {
 		
 		scheduler.start();
 		
-		for (int i = 0 ; i < 20 ; i ++){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
-		}
+		scheduler.join(20000);
 		
 		scheduler.stop();
 	}

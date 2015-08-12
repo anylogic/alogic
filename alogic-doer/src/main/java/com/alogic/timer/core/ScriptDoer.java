@@ -5,8 +5,6 @@ import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
-import com.anysoft.xscript.CompileWatcher;
-import com.anysoft.xscript.ExecuteWatcher;
 import com.anysoft.xscript.Script;
 import com.anysoft.xscript.ScriptLogInfo;
 import com.anysoft.xscript.Statement;
@@ -16,6 +14,9 @@ import com.anysoft.xscript.Statement;
  * 
  * @author duanyy
  * @since 1.6.3.37
+ * 
+ * @version 1.6.3.38 [duanyy 20150812] <br>
+ * - 去掉编译和执行日志 <br>
  */
 public class ScriptDoer extends Doer.Abstract{
 	private Element script = null;
@@ -28,9 +29,9 @@ public class ScriptDoer extends Doer.Abstract{
 				reportState(Task.State.Failed, 10000);
 			} else {
 				Statement stmt = new TheScript(this, "script", null);
-				stmt.compile(script, task.getParameters(),new CompileWatcher.Default());
+				stmt.compile(script, task.getParameters(),null);
 				// 执行任务
-				stmt.execute(task.getParameters(), new ExecuteWatcher.Default());
+				stmt.execute(task.getParameters(), null);
 				// 任务完成
 				reportState(Task.State.Done, 10000);
 			}

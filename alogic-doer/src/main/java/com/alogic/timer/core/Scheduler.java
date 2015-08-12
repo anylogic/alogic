@@ -1,6 +1,7 @@
 package com.alogic.timer.core;
 
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,8 +9,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -33,6 +33,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @author duanyy
  * @since 1.6.3.37
+ * 
+ * @version 1.6.3.38 [duanyy 20150812] <br>
+ * - 增加集群功能 <br>
  */
 public interface Scheduler extends Timer,Runnable {
 	/**
@@ -93,6 +96,10 @@ public interface Scheduler extends Timer,Runnable {
 	public void stop();
 	
 	/**
+	 * 等待线程结束直到超时
+	 */
+	public void join(long timeout);
+	/**
 	 * Abstract
 	 * @author duanyy
 	 *
@@ -102,6 +109,8 @@ public interface Scheduler extends Timer,Runnable {
 		protected State state = State.Running;
 		protected DoerCommitter comitter = null;
 		protected long interval = 1000;
+		protected Lock lock = null;
+		protected Thread thread = null;
 		
 		public void setTaskCommitter(DoerCommitter _committer){
 			comitter = _committer;
@@ -109,6 +118,7 @@ public interface Scheduler extends Timer,Runnable {
 		
 		public void configure(Properties p) throws BaseException {
 			interval = PropertiesConstants.getLong(p,"interval",interval,true);
+			lock = getLock(p);
 		}
 
 		public void configure(Element _e, Properties _properties)
@@ -190,10 +200,16 @@ public interface Scheduler extends Timer,Runnable {
 		}
 
 		public void pause() {
+			if (state != State.Running){
+				throw new BaseException("core.incorrect_state","The current state is not Running,Can not pause.");
+			}
 			state = State.Paused;
 		}
 
 		public void resume() {
+			if (state != State.Paused){
+				throw new BaseException("core.incorrect_state","The current state is not Paused,Can not pause.");
+			}
 			state = State.Running;
 		}
 		
@@ -202,20 +218,97 @@ public interface Scheduler extends Timer,Runnable {
 		}
 		
 		public void start() {
-			exec.scheduleAtFixedRate(this, 0,1000, TimeUnit.MILLISECONDS);
+			thread = new Thread(this);
+			thread.setDaemon(true);
+			thread.start();
 		}		
 		
 		public void stop(){
-			exec.shutdownNow();
+			state = State.Stopping;
+			logger.info("Try to stop the scheduler....[" + state.toString() + "]");
+			if (thread != null){
+				//等待2秒钟，再打断线程
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+				}
+				thread.interrupt();
+			}			
+			if (lock != null){
+				lock.unlock();
+			}
+		}
+		
+		public void run(){
+			try {
+				//首先，scheduler的状态为idle
+				state = State.Idle;
+				logger.info("Start scheduler....");
+				
+				if (lock != null){
+					logger.info("Getting the lock....[" + state.toString() + "]");
+					lock.lock();
+				}
+				//取的lock之后，状态为Running
+				state = State.Running;
+				logger.info("Scheduler is working now....[" + state.toString() + "]");
+				while (state != State.Stopping){
+					scheduleOnce();				
+					try {
+						Thread.sleep(interval);
+					} catch (InterruptedException e) {
+						logger.info("Schdule thread has been interrupted,exit");
+						break;
+					}
+				}
+			}finally {
+				//最后，为Stopped
+				state = State.Stopped;
+				logger.info("Scheduler has stopped.[" + state.toString() + "]");
+			}
+		}
+		
+		abstract protected void scheduleOnce();
+		
+		public void join(long timeout){
+			if (thread != null){
+				try {
+					thread.join(timeout);
+				} catch (InterruptedException e) {
+				}
+			}
 		}
 		
 		public Date forecastNextDate() {
 			return new Date();
 		}
 		
-		protected ScheduledThreadPoolExecutor exec = new  ScheduledThreadPoolExecutor(5);
-		
 		public boolean isTimeToClear(){return false;}
+		
+		private Lock getLock(Properties p) {
+			Lock lock = null;
+			String module = PropertiesConstants.getString(p,"lock","");
+			if (module != null && module.length() > 0){
+				try {
+					ClassLoader cl = Settings.getClassLoader();
+					
+					@SuppressWarnings("unchecked")
+					Constructor<Lock> constructor = (Constructor<Lock>) cl.loadClass(module).getConstructor(
+							new Class[]{String.class,Properties.class}
+							);
+					
+					String lockName = PropertiesConstants.getString(p,"lock.name", "${server.app}");
+					if (lockName == null || lockName.length() <= 0){
+						lockName = "global";
+					}
+					
+					lock = (Lock)constructor.newInstance(new Object[]{lockName,p});
+				} catch (Exception e) {
+					logger.error("Can not create Lock instance,module:" + module);
+				}
+			}
+			return lock;
+		}
 	}
 	
 	/**
@@ -246,7 +339,7 @@ public interface Scheduler extends Timer,Runnable {
 			timers.remove(id);
 		}
 		
-		public void run() {
+		protected void scheduleOnce() {
 			if (state != State.Running){
 				//not running
 				return ;

@@ -1,9 +1,9 @@
 package com.alogic.timer.demo;
 
 import com.alogic.doer.client.TaskCenterTaskCommitter;
+import com.alogic.timer.core.Doer;
 import com.alogic.timer.core.Scheduler;
 import com.alogic.timer.matcher.Interval;
-import com.alogic.timer.matcher.Once;
 import com.anysoft.util.Settings;
 
 public class TestTaskCenter {
@@ -13,27 +13,12 @@ public class TestTaskCenter {
 		
 		Scheduler scheduler = new Scheduler.Simple();
 		scheduler.setTaskCommitter(new TaskCenterTaskCommitter());
-		
-		scheduler.schedule("demo2", new Once(), new Runnable(){
-			public void run() {
-				System.out.println("This will be scheduled once.");
-			}
-		});
-		
-		scheduler.schedule("demo", new Interval(1000), new Runnable(){
-			public void run() {
-				System.out.println("testMore.");
-			}
-		});
+	
+		scheduler.schedule("demo", new Interval(1000), new Doer.Quiet());
 		
 		scheduler.start();
 		
-		for (int i = 0 ; i < 20 ; i ++){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
-		}
+		scheduler.join(20000);
 		
 		scheduler.stop();
 	}
