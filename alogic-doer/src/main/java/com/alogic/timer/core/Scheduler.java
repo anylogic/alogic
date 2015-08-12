@@ -208,7 +208,7 @@ public interface Scheduler extends Timer,Runnable {
 
 		public void resume() {
 			if (state != State.Paused){
-				throw new BaseException("core.incorrect_state","The current state is not Paused,Can not pause.");
+				throw new BaseException("core.incorrect_state","The current state is not Paused,Can not resume.");
 			}
 			state = State.Running;
 		}

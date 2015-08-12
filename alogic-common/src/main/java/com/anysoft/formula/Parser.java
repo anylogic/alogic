@@ -24,6 +24,10 @@ package com.anysoft.formula;
  * 
  * @author duanyy
  * @version 1.0
+ * 
+ * @version 1.6.3.39 [duanyy 20150812] <br>
+ * - 修正%算法的bug; <br>
+ * - 修正无参函数的解析错误问题;<br>
  */
 public class Parser {
 	/**
@@ -112,7 +116,7 @@ public class Parser {
 	}
 	
 	public Parser(){
-		
+		funcHelper = new DefaultFunctionHelper();
 	}
 	public Parser(FunctionHelper helper){
 		funcHelper = helper;
@@ -159,6 +163,10 @@ public class Parser {
 			match( DIVIDE );
 			Expression higher = sign_expression() ;
 			result = higher_expression_R( Expression.BinaryExpression.createChild(Expression.Operator.OP_Div,left,higher) );
+		} else if (type == MOD){
+			match(MOD);
+			Expression higher = sign_expression() ;
+			result = higher_expression_R( Expression.BinaryExpression.createChild(Expression.Operator.OP_Mod,left,higher) );
 		}
 		return result;
 	}
@@ -204,15 +212,15 @@ public class Parser {
 				{
 					match(LEFT_BRACKET);
 					result = expression_R_Logical_Or
-				(
-				expression_R_Logical_And
 					(
-					expression_R_Compare
+					expression_R_Logical_And
 						(
-							expression_R(higher_expression())
+						expression_R_Compare
+							(
+								expression_R(higher_expression())
+							)
 						)
-					)
-				);
+					);
 					match( RIGHT_BRACKET );
 				}
 			else
@@ -248,34 +256,38 @@ public class Parser {
 			if (result != null)
 			{
 				match( LEFT_BRACKET );
-				result.addArgument(expression_R_Logical_Or
-				(
-				expression_R_Logical_And
-					(
-					expression_R_Compare
-						(
-							expression_R(higher_expression())
-						)
-					)
-				));
-				for(;;)
-				{
-					if( type == RIGHT_BRACKET )
-					{
-						match( RIGHT_BRACKET );
-						break;
-					}
-					match(PARAMETER_SEPERATOR);
+				if (type == RIGHT_BRACKET){
+					match( RIGHT_BRACKET );
+				}else{
 					result.addArgument(expression_R_Logical_Or
-				(
-				expression_R_Logical_And
 					(
-					expression_R_Compare
+					expression_R_Logical_And
 						(
-							expression_R(higher_expression())
+						expression_R_Compare
+							(
+								expression_R(higher_expression())
+							)
 						)
-					)
-				));	
+					));
+					for(;;)
+					{
+						if( type == RIGHT_BRACKET )
+						{
+							match( RIGHT_BRACKET );
+							break;
+						}
+						match(PARAMETER_SEPERATOR);
+						result.addArgument(expression_R_Logical_Or
+						(
+						expression_R_Logical_And
+							(
+							expression_R_Compare
+								(
+									expression_R(higher_expression())
+								)
+							)
+						));	
+					}
 				}
 				return result;
 			}

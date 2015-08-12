@@ -100,4 +100,6 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-doc:增加SQL预处理器文档(1.6.3.37)
 	 + alogic-doer:增加相应的管理服务(1.6.3.37)
 	 + alogic-doer:增加scheduler的集群功能(1.6.3.38)
+	 + alogic-common:增加公式解析器文档,参见[公式解析器](alogic-common/formulaparser.md)(1.6.3.39)
+	 + alogic-common:修正公式解析器的bug(1.6.3.39)
 
