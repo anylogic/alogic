@@ -18,7 +18,7 @@ public class DayOfWeek extends Default{
 		return range;
 	}
 	public int parseSingleItem(String _item) {
-		Integer found = mappings.get(_item);
+		Integer found = mappings.get(_item.toUpperCase());
 		if (found != null){
 			return found.intValue();
 		}
