@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jvmEnv id="env" name="系统环境变量" type="Group">
+	<property id="CLASSPATH" name="JAVA类路径" module="Path" type="Array"/>	
+	<property id="PATH" name="执行路径" module="Path" type="Array"/>	
+	<property id="USER" name="当前用户"/>	
+	<property id="HOME" name="用户HOME目录"/>
+	<property id="PWD" name="当前目录"/>
+	<property id="LOGNAME" name="登录用户"/>
+	<property id="LANG" name="语言编码"/>
+</jvmEnv>

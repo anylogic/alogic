@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jvmSystemProperties id="systemProperties" name="系统环境变量" type="Group">
+	<property id="java" name="Java" module="Group" type="Group">
+		<property id="java.version" name="运行时环境版本"/>
+		<property id="java.vendor" name="运行时环境供应商"/>
+		<property id="java.vendor.url" name="供应商的 URL"/>
+		
+		<property id="java.vm.specification.version" name="虚拟机规范版本"/>
+		<property id="java.vm.specification.vendor" name="虚拟机规范供应商"/>
+		<property id="java.vm.specification.name" name="虚拟机规范名称"/>
+		
+		<property id="java.vm.version" name="虚拟机实现版本"/>
+		<property id="java.vm.vendor" name="虚拟机实现供应商"/>
+		<property id="java.vm.name" name="虚拟机实现名称"/>
+		
+		<property id="java.specification.version" name="运行时环境规范版本"/>
+		<property id="java.specification.vendor" name="运行时环境规范供应商"/>
+		<property id="java.specification.name" name="运行时环境规范名称"/>
+		
+		<property id="java.home" name="Java安装目录"/>
+		<property id="java.class.version" name="Java类格式版本号"/>
+		
+		<property id="java.class.path" name="Java类路径" module="Path" type="Array"/>
+		<property id="java.library.path" name="加载库时搜索的路径列表" module="Path" type="Array"/>
+		
+		<property id="java.compiler" name="JIT编译器的名称"/>
+		<property id="java.ext.dirs" name="一个或多个扩展目录的路径" module="Path" type="Array"/>				
+	</property>
+	<property id="os" name="操作系统" module="Group" type="Group">
+		<property id="os.name" name="操作系统的名称"/>
+		<property id="os.arch" name="操作系统的架构"/>
+		<property id="os.version" name="操作系统的版本"/>
+		
+		<property id="file.separator" name="文件分隔符"/>
+		<property id="path.separator" name="路径分隔符"/>
+		<property id="line.separator" name="行分隔符"/>				
+	</property>	
+	<property id="user" name="用户" module="Group" type="Group">
+		<property id="user.name" name="用户的账户名称"/>
+		<property id="user.home" name="用户的主目录"/>
+		<property id="user.dir" name="用户的当前工作目录"/>			
+	</property>	
+</jvmSystemProperties>

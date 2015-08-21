@@ -24,6 +24,9 @@ package com.anysoft.formula;
  * @version 1.0.1
  *     + {@link DataProvider#getValue(String, Object, String) getValue}函数的返回类型修改为String
  *     + {@link DataProvider#getValue(String, Object, String) getValue}函数增加缺省值参数
+ *     
+ * @version 1.6.3.41 [20150820 duanyy] <br>
+ * - 增加Env和SystemProperties的实现<br>
  */
 public interface DataProvider {
 	/**
@@ -42,4 +45,40 @@ public interface DataProvider {
 	 * @return context 上下文对象
 	 */
 	public Object getContext(String varName);
+	
+	/**
+	 * 封装SystemProperties的DataProvider
+	 * @author duanyy
+	 * @since 1.6.3.41
+	 */
+	public static class SystemPropertiesDataProvider implements DataProvider{
+		public String getValue(String varName, Object context,
+				String defaultValue) {
+			return System.getProperty(varName, defaultValue);
+		}
+
+		public Object getContext(String varName) {
+			return this;
+		}
+	}
+	
+	/**
+	 * 封装Env的DataProvider
+	 * @author duanyy
+	 * @since 1.6.3.41
+	 */
+	public static class EnvDataProvider implements DataProvider{
+		public String getValue(String varName, Object context,
+				String defaultValue) {
+			String value = System.getenv(varName);
+			if (value == null || value.length() <= 0){
+				value = defaultValue;
+			}
+			return value;
+		}
+
+		public Object getContext(String varName) {
+			return this;
+		}
+	}
 }

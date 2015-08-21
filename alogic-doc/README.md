@@ -103,4 +103,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-common:增加公式解析器文档,参见[公式解析器](alogic-common/formulaparser.md)(1.6.3.39)
 	 + alogic-common:修正公式解析器的bug(1.6.3.39)
 	 + alogic-doer:增加Monthly,Daily,Weekly,Hourly等日期匹配器实现(1.6.3.40)
+	 + alogic-common:增加属性格式化功能(1.6.3.41)
 

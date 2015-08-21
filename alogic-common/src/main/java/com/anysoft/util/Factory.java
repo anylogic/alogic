@@ -142,7 +142,7 @@ public class Factory<object> {
 	 * @throws BaseException
 	 * 
 	 * @since 1.0.9
-	 * @version 1.6.3.37 [duanyy 20150804]<br>
+	 * @since 1.6.3.37 [duanyy 20150804]<br>
 	 * - 支持Configurable的自动初始化 <br>
 	 * 
 	 */
