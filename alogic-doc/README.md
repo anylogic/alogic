@@ -105,4 +105,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-doer:增加Monthly,Daily,Weekly,Hourly等日期匹配器实现(1.6.3.40)
 	 + alogic-common:增加属性格式化功能(1.6.3.41)
 	 + alogic:正式发布1.6.3版本。
-
+ - 1.6.4 [20150825 duanyy]
+	 + 创建1.6.4-SNAPSHOT版本，开始1.6.4版本开发
