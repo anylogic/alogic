@@ -23,6 +23,7 @@
   	<module>alogic-doer</module>
   	<module>alogic-seq</module>
   	<module>alogic-blob</module>
+  	<module>alogic-lucene</module>
   </modules>
        <distributionManagement>
               <repository>
