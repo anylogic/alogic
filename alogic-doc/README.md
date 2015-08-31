@@ -108,3 +108,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  - 1.6.4 [20150825 duanyy]
 	 + 创建1.6.4-SNAPSHOT版本，开始1.6.4版本开发
 	 + alogic-lucene:增加搜索引擎模块(1.6.4.1)
+	 + alogic-blob:BlobInfo增加length(1.6.4.2)

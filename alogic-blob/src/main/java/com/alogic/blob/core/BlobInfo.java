@@ -43,7 +43,8 @@ public interface BlobInfo extends Reportable{
 	/**
 	 * 缺省实现
 	 * @author duanyy
-	 *
+	 * @version 1.6.4.2 <br>
+	 * - BlobInfo增加length <br>
 	 */
 	public static class Default implements BlobInfo{
 		protected String id;
@@ -107,6 +108,10 @@ public interface BlobInfo extends Reportable{
 		
 		public void contentType(String _contentType){
 			contentType = _contentType;
+		}
+		
+		public void length(long _length){
+			length = _length;
 		}
 	}
 }

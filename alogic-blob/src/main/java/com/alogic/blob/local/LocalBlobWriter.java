@@ -21,6 +21,8 @@ import com.anysoft.util.IOTools;
  * @author duanyy
  * @since 1.6.3.32
  * 
+ * @version 1.6.4.2 <br>
+ * - BlobInfo增加length <br>
  */ 
 public class LocalBlobWriter implements BlobWriter{
 	/**
@@ -64,6 +66,7 @@ public class LocalBlobWriter implements BlobWriter{
 			try {
 				in = new FileInputStream(file);
 				info.md5(DigestUtils.md5Hex(in));
+				info.length(file.length());
 			} catch (FileNotFoundException e) {
 				logger.error("Can not find file:" + file.getPath());
 			} catch (IOException e) {
