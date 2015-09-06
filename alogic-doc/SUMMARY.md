@@ -11,6 +11,7 @@
    * [远程调用组件](alogic-framework/007.md)
    * [Cache组件](alogic-framework/008.md)
    * [全局序列组件](alogic-framework/009.md)
+   * [定时小任务组件](alogic-framework/doer.md)
 * [alogic-common微架构指南](alogic-common.md)
    * [xscript脚本](alogic-common/xscript.md)
    * [SQL预处理器](alogic-common/sqlprocessor.md)

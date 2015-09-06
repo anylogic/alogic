@@ -23,5 +23,6 @@ alogic-framework提供了分布式Web服务开发的一整套方法和思路，�
 * [远程调用组件](alogic-framework/007.md)
 * [Cache组件](alogic-framework/008.md)
 * [全局序列组件](alogic-framework/009.md)
+* [定时小任务组件](alogic-framework/doer.md)
 
 
