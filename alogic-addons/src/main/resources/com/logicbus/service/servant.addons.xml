@@ -332,7 +332,21 @@
 				<parameter id="servant.maxActive" value="10"/>
 				<parameter id="servant.maxIdle" value="1"/>
 			</properties>
-		</service>		
+		</service>	
+		<service 
+				id="CachedObject" 
+				name="CachedObject" 
+				note="查询指定cache信息的指定对象"
+				visible="public"
+				module="com.alogic.cache.service.CacheObjectQuery"
+				log = "none" 
+		>
+			<properties>
+				<parameter id="jsonDefault" value="true"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>
+		</service>			
 		<service 
 				id="Expire" 
 				name="Expire" 
