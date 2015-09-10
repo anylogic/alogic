@@ -20,6 +20,7 @@
 ## 输出文档
 
 输出为JSON文档，信息如下：
+
 | 编号 | 代码 | 类型 | 名称 | 说明 |
 | ---- | ---- | ---- | ---- | ---- |
 | 1 | pool | Object | dbcp对象 | |
@@ -36,6 +37,7 @@
 | 1.9.2 | pool/runtime/stat | Object | 统计信息 | |
 
 统计对象的信息如下：
+
 | 编号 | 代码 | 类型 | 名称 | 说明 |
 | ---- | ---- | ---- | ---- | ---- |
 | 1 | @module | String | 实现模块 | |
@@ -56,6 +58,7 @@
 | 6.5 | current/@avg | double | 平均耗时(毫秒) | | 
 
 连接池信息如下：
+
 | 编号 | 代码 | 类型 | 名称 | 说明 |
 | ---- | ---- | ---- | ---- | ---- |
 | 1 | @maxActive | Long | 最大的实例个数 | |
@@ -73,10 +76,10 @@
 下面是一个样例，
 服务地址如下；
 ```
-http://localhost:9000/services/component/dbcp/Query?id=itportal
+	http://localhost:9000/services/component/dbcp/Query?id=itportal
 ```
 输出结果：
-```
+```javascript
 	{
 	    "duration": "17", 
 	    "host": "0:0:0:0:0:0:0:1:9000", 
