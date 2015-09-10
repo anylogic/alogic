@@ -13,6 +13,10 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.2.7.2 [20140910 duanyy] <br>
  * - 增加基于Properties的构造函数
+ * 
+ * @version 1.6.4.4 [20150910 duanyy] <br>
+ * - ServiceDetailQuery的快捷方式改为detail <br>
+ * 
  */
 public class DefaultNormalizer implements Normalizer {
 
@@ -36,7 +40,7 @@ public class DefaultNormalizer implements Normalizer {
 		{
 			int start = path.indexOf("/");
 			id = path.substring(start);
-			if (queryString != null && queryString.equals("wsdl")){
+			if (queryString != null && queryString.equals("detail")){
 				ctx.SetValue("service", id);
 				id = "/core/ServiceDetailQuery";
 			}else{

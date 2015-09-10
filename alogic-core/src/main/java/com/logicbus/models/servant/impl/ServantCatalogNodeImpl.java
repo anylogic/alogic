@@ -20,7 +20,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.3.27 [20150623 duanyy] <br>
  * - 增加JSON序列化支持 <br>
- * 
+ * @version 1.6.4.4 [20150910 duanyy] <br>
+ * - 不再输出服务的详细信息 <br>
  */
 public class ServantCatalogNodeImpl implements ServantCatalogNode {
 
@@ -105,16 +106,35 @@ public class ServantCatalogNodeImpl implements ServantCatalogNode {
 			
 			if (outputServices){
 				ServiceDescription[] sds = getServices();
-				List<Object> _services = new ArrayList<Object>();
-				
-				for (int i = 0 ; i < sds.length ; i ++){
-					ServiceDescription sd = (ServiceDescription) sds[i];
-					Map<String,Object> map = new HashMap<String,Object>();
-					sd.toJson(map);
-					_services.add(map);
+				if (sds.length > 0){
+					List<Object> _services = new ArrayList<Object>();
+					
+					for (int i = 0 ; i < sds.length ; i ++){
+						ServiceDescription sd = (ServiceDescription) sds[i];
+						Map<String,Object> map = new HashMap<String,Object>();
+						
+						//自1.6.4.4之后，仅仅输出简要信息
+						
+						//id
+						map.put("id",sd.getServiceID());
+						//name
+						map.put("name", sd.getName());
+						//note
+						map.put("note", sd.getNote());
+						//module
+						map.put("module",sd.getModule());
+						//visible
+						map.put("visible",sd.getVisible());
+						//path
+						map.put("path",sd.getPath());
+						//Properties
+						map.put("log", sd.getLogType().toString());
+						
+						_services.add(map);
+					}
+					
+					json.put("service", _services);
 				}
-				
-				json.put("service", _services);
 			}
 		}
 	}
@@ -133,11 +153,29 @@ public class ServantCatalogNodeImpl implements ServantCatalogNode {
 		
 		if (outputServices){
 			ServiceDescription[] sds = getServices();
-			for (int i = 0 ; i < sds.length ; i ++){
-				ServiceDescription sd = (ServiceDescription) sds[i];
-				Element service = doc.createElement("service");	
-				sd.toXML(service);
-				root.appendChild(service);
+			if (sds.length > 0){
+				for (int i = 0 ; i < sds.length ; i ++){
+					ServiceDescription sd = (ServiceDescription) sds[i];
+					Element service = doc.createElement("service");	
+					
+					//自1.6.4.4之后，仅仅输出简要信息
+					//id
+					service.setAttribute("id",sd.getServiceID());
+					//name
+					service.setAttribute("name", sd.getName());
+					//note
+					service.setAttribute("note", sd.getNote());
+					//module
+					service.setAttribute("module",sd.getModule());
+					//visible
+					service.setAttribute("visible",sd.getVisible());
+					//path
+					service.setAttribute("path",sd.getPath());
+					//Properties
+					service.setAttribute("log", sd.getLogType().toString());
+					
+					root.appendChild(service);
+				}
 			}
 		}
 	}

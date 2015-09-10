@@ -41,7 +41,7 @@ public class IndexerTool {
 	 */
 	public static Indexer[] list(){
 		IndexerSource src = IndexerSource.get();
-		return src.current();
+		return src.current().toArray(new Indexer[0]);
 	}
 	
 	/**

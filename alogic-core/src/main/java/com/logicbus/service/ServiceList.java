@@ -1,4 +1,5 @@
 package com.logicbus.service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,45 +20,12 @@ import com.logicbus.models.servant.ServantManager;
 import com.logicbus.models.servant.ServiceDescription;
 
 /**
- * 查询所有服务目录中配置的服务信息
- * 
- * <br>
- * 查询所有服务目录中配置的服务信息
- * 
- * 实现了一个内部核心服务，定义在/com/logicbus/service/servant.xml中，具体配置如下:<br>
- * 
- * {@code 
- * <service 
- * id="ServiceQuery" 
- * name="ServiceQuery" 
- * note="查询系统中所部署的所有服务"
- * visible="protected"
- * module="com.logicbus.service.ServiceQuery"
- * />
- * }
- * 
- * <br>
- * 本服务属于系统核心管理服务，内置了快捷访问,直接访问服务根目录即可访问.<br>
- * {@code
- * http://[host]:[port]/[webcontext]/services
- * }
- * <br>
- * 如果配置在服务器中，访问地址为：<br>
- * {@code
- * http://[host]:[port]/[webcontext]/services/core/ServiceQuery 
- * }
+ * 查询服务列表
  * 
  * @author duanyy
- * @version 1.4.0 [20141117 duanyy] <br>
- * - 将MessageDoc和Context进行合并整合 <br>
- * 
- * @version 1.6.3.27 [20150623 duanyy] <br>
- * - 增加XML和JSON双协议支持 <br>
- * 
- * @version 1.6.4.4 [20150910 duanyy] <br>
- * - 不再输出空的catalog
+ * @since 1.6.4.4
  */
-public class ServiceQuery extends AbstractServant {
+public class ServiceList extends AbstractServant {
 	@Override
 	protected void onDestroy() {
 
@@ -74,16 +42,14 @@ public class ServiceQuery extends AbstractServant {
 		Document doc = root.getOwnerDocument();
 		ServantManager sm = ServantManager.get();
 		ServantCatalog catalog[] = sm.getServantCatalog();
-		
+		Element services = doc.createElement("service");	
 		for (int i = 0 ; i < catalog.length ; i ++){
-			Element catalogElem = doc.createElement("catalog");
-			
 			ServantCatalogNode node = (ServantCatalogNode) catalog[i].getRoot();
 			if (node != null){
-				outputCatalog(catalog[i],node,catalogElem);
+				outputCatalog(catalog[i],node,services);
 			}
-			root.appendChild(catalogElem);
 		}
+		root.appendChild(services);
 		return 0;
 	}
 
@@ -94,17 +60,15 @@ public class ServiceQuery extends AbstractServant {
 		ServantManager sm = ServantManager.get();
 		ServantCatalog catalog[] = sm.getServantCatalog();
 		
-		List<Object> _catalogs = new ArrayList<Object>();
+		List<Object> services = new ArrayList<Object>();
 		for (int i = 0 ; i < catalog.length ; i ++){
 			ServantCatalogNode node = (ServantCatalogNode) catalog[i].getRoot();
 			if (node != null){
-				Map<String,Object> _catalog = new HashMap<String,Object>();
-				outputCatalog(catalog[i],node,_catalog);
-				_catalogs.add(_catalog);
+				outputCatalog(catalog[i],node,services);
 			}
 		}
 		
-		msg.getRoot().put("catalog", _catalogs);
+		msg.getRoot().put("service", services);
 		return 0;
 	}
 	
@@ -115,32 +79,73 @@ public class ServiceQuery extends AbstractServant {
 	 * @param e 输出的Element
 	 */
 	protected void outputCatalog(ServantCatalog catalog,ServantCatalogNode root,Element e){
-		root.toXML(e);
 		Document doc = e.getOwnerDocument();
+		
+		ServiceDescription [] services = root.getServices();
+		
+		for (ServiceDescription sd:services){
+			Element _service = doc.createElement("service");
+			
+			//仅仅输出简要信息
+			//id
+			_service.setAttribute("id",sd.getServiceID());
+			//name
+			_service.setAttribute("name", sd.getName());
+			//note
+			_service.setAttribute("note", sd.getNote());
+			//module
+			_service.setAttribute("module",sd.getModule());
+			//visible
+			_service.setAttribute("visible",sd.getVisible());
+			//path
+			_service.setAttribute("path",sd.getPath());
+			//Properties
+			_service.setAttribute("log", sd.getLogType().toString());
+			
+			e.appendChild(_service);
+		}
+		
+		//迭代子节点
 		CatalogNode [] children = catalog.getChildren(root);
 		if (children == null || children.length <= 0)
 			return ;
 		for (int i = 0 ; i < children.length ; i ++){
-			Element _e = doc.createElement("catalog");
-			outputCatalog(catalog,(ServantCatalogNode)children[i],_e);
-			e.appendChild(_e);
+			outputCatalog(catalog,(ServantCatalogNode)children[i],e);
 		}
 	}
 	
-	protected void outputCatalog(ServantCatalog catalog,ServantCatalogNode root,Map<String,Object> json){
-		root.toJson(json);
+	protected void outputCatalog(ServantCatalog catalog,ServantCatalogNode root,List<Object> json){
+		ServiceDescription [] services = root.getServices();
+		
+		for (ServiceDescription sd:services){
+			Map<String,Object> map = new HashMap<String,Object>();
+			
+			//仅仅输出简要信息
+			//id
+			map.put("id",sd.getServiceID());
+			//name
+			map.put("name", sd.getName());
+			//note
+			map.put("note", sd.getNote());
+			//module
+			map.put("module",sd.getModule());
+			//visible
+			map.put("visible",sd.getVisible());
+			//path
+			map.put("path",sd.getPath());
+			//Properties
+			map.put("log", sd.getLogType().toString());
+			
+			json.add(map);
+		}
+		
+		//迭代子节点
 		CatalogNode [] children = catalog.getChildren(root);
 		if (children == null || children.length <= 0)
 			return ;
 		
-		List<Object> _catalogs = new ArrayList<Object>();
-		
 		for (int i = 0 ; i < children.length ; i ++){
-			Map<String,Object> _catalog = new HashMap<String,Object>();
-			outputCatalog(catalog,(ServantCatalogNode)children[i],_catalog);
-			_catalogs.add(_catalog);
+			outputCatalog(catalog,(ServantCatalogNode)children[i],json);
 		}
-		
-		json.put("catalog", _catalogs);
 	}	
 }

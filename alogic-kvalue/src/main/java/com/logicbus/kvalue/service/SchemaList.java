@@ -1,4 +1,4 @@
-package com.alogic.cache.service;
+package com.logicbus.kvalue.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,23 +9,23 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.alogic.cache.context.CacheSource;
-import com.alogic.cache.core.CacheStore;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
+import com.logicbus.kvalue.context.KValueSource;
+import com.logicbus.kvalue.core.Schema;
 import com.logicbus.models.servant.ServiceDescription;
 
 /**
- * 列出当前存在的cache列表
+ * 查询活跃的Schema列表
  * 
  * @author duanyy
- * @since 1.6.3.3
+ * @since 1.6.4.4
  * 
  */
-public class CacheList extends AbstractServant {
+public class SchemaList extends AbstractServant {
 
 	protected int onXml(Context ctx) throws Exception{
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
@@ -33,13 +33,13 @@ public class CacheList extends AbstractServant {
 		Document doc = msg.getDocument();
 		Element root = msg.getRoot();
 		
-		CacheSource src = CacheSource.get();
+		KValueSource src = KValueSource.get();
 		
-		Collection<CacheStore> caches = src.current();
-		for (CacheStore cache:caches){
-			Element eleCache = doc.createElement("cache");
-			cache.report(eleCache);
-			root.appendChild(eleCache);
+		Collection<Schema> current = src.current();
+		for (Schema c:current){
+			Element elem = doc.createElement("schema");
+			c.report(elem);
+			root.appendChild(elem);
 		}
 		
 		return 0;
@@ -49,16 +49,16 @@ public class CacheList extends AbstractServant {
 		
 		List<Object> list = new ArrayList<Object>();
 		
-		CacheSource src = CacheSource.get();
+		KValueSource src = KValueSource.get();
 		
-		Collection<CacheStore> caches = src.current();
-		for (CacheStore cache:caches){
+		Collection<Schema> current = src.current();
+		for (Schema c:current){
 			Map<String,Object> map = new HashMap<String,Object>();
-			cache.report(map);
+			c.report(map);
 			list.add(map);
 		}
 		
-		msg.getRoot().put("cache", list);
+		msg.getRoot().put("schema", list);
 		
 		return 0;
 	}

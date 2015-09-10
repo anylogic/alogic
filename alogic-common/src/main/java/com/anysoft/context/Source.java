@@ -1,6 +1,7 @@
 package com.anysoft.context;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -34,6 +35,10 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.5.2 [20141017 duanyy] <br>
  * - 实现Reportable接口 <br>
+ * 
+ * @version 1.6.4.4 [20150910 duanyy] <br>
+ * - 增加获取当前缓存对象列表的接口 <br>
+ * - Report不在输出缓存对象列表 <br>
  */
 abstract public class Source<object extends Reportable> implements Context<object>,Watcher<object> {
 	
@@ -56,8 +61,6 @@ abstract public class Source<object extends Reportable> implements Context<objec
 	 * 配置来源
 	 */
 	protected List<Context<object>> sources = new ArrayList<Context<object>>();
-	
-	
 	
 	public void configure(Element _e, Properties _properties)
 			throws BaseException {
@@ -85,6 +88,13 @@ abstract public class Source<object extends Reportable> implements Context<objec
 		}
 	}
 	
+	/**
+	 * 获取当前的cache列表
+	 * @return cache列表
+	 */
+	public Collection<object> current(){
+		return caches.values();
+	}
 
 	/**
 	 * 创建实例
@@ -173,42 +183,19 @@ abstract public class Source<object extends Reportable> implements Context<objec
 	}
 	
 	
-	public void report(Element xml){
-		if (xml != null){
+	public void report(Element xml) {
+		if (xml != null) {
 			xml.setAttribute("module", getClass().getName());
 			xml.setAttribute("ctxName", getContextName());
-			
+
 			Document doc = xml.getOwnerDocument();
-			
-			//contexts
-			{
-				Element _contexts = doc.createElement("contexts");
-				
-				for (Context<object> c:sources){
-					Element _ctx = doc.createElement(getContextName());
-					
-					c.report(_ctx);
-					
-					_contexts.appendChild(_ctx);
-				}
-				
-				xml.appendChild(_contexts);
-			}
-			
-			//caches
-			{
-				Element _caches = doc.createElement("caches");
-				
-				Enumeration<String> _keys = caches.keys();
-				
-				while (_keys.hasMoreElements()){
-					String key = _keys.nextElement();					
-					Element _cache = doc.createElement("cache");
-					_cache.setAttribute("id", key);
-					_caches.appendChild(_cache);
-				}
-				
-				xml.appendChild(_caches);
+
+			for (Context<object> c : sources) {
+				Element _ctx = doc.createElement(getContextName());
+
+				c.report(_ctx);
+
+				xml.appendChild(_ctx);
 			}
 		}
 	}
@@ -232,22 +219,6 @@ abstract public class Source<object extends Reportable> implements Context<objec
 				}
 				
 				json.put(getContextName(), _contexts);
-			}
-			
-			//caches
-			{
-				List<Object> _caches = new ArrayList<Object>();
-				
-				Enumeration<String> _keys = caches.keys();
-				while (_keys.hasMoreElements()){
-					String key = _keys.nextElement();
-				
-					Map<String,Object> _cache = new HashMap<String,Object>();
-					_cache.put("id", key);
-					_caches.add(_cache);
-				}
-				
-				json.put("cache", _caches);
 			}
 		}
 	}

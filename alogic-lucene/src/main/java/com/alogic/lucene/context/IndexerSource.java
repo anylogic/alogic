@@ -20,7 +20,8 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @author duanyy
  * @since 1.6.4.1
- * 
+ * @version 1.6.4.4 [20150910 duanyy] <br>
+ * - 父类已经提供了current，淘汰掉 <br>
  */
 public class IndexerSource extends Source<Indexer>{
 
@@ -31,14 +32,6 @@ public class IndexerSource extends Source<Indexer>{
 	protected String getContextName(){
 		return "context";
 	}	
-	
-	/**
-	 * 获取当前的Indexer列表
-	 * @return Indexer列表
-	 */
-	public Indexer [] current(){
-		return caches.values().toArray(new Indexer[caches.size()]);
-	}
 	
 	/**
 	 * 通过XML元素创建Context

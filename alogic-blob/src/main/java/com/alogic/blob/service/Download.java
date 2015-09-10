@@ -112,10 +112,11 @@ public class Download extends Servant {
 	 * 用于转化服务路径
 	 * 
 	 * @author duanyy
-	 *
+	 * @version 1.6.4.4 [20150910 duanyy] <br>
+	 * - 缺省代理路径改为/component/blob/Download
 	 */
 	public static class TheNormalizer implements Normalizer {
-		protected String proxyServiceId = "/blob/Download";
+		protected String proxyServiceId = "/component/blob/Download";
 		
 		public TheNormalizer(Properties p){
 			proxyServiceId = PropertiesConstants.getString(p, "normalizer.blob.id", proxyServiceId);

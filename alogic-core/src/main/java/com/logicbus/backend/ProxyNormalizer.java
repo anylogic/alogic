@@ -21,11 +21,12 @@ import com.logicbus.models.catalog.Path;
  * @author duanyy
  *
  * @since 1.2.7.2
- * 
+ * @version 1.6.4.4 [20150910 duanyy] <br>
+ * - 缺省的代理服务的路径调整为/core/util/Proxy <br>
  */
 public class ProxyNormalizer implements Normalizer {
 
-	protected String proxyServiceId = "/core/Proxy";
+	protected String proxyServiceId = "/core/util/Proxy";
 	
 	protected Logger logger = LogManager.getLogger(ProxyNormalizer.class);
 	

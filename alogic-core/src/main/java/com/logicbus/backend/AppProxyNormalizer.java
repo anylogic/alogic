@@ -19,13 +19,14 @@ import com.logicbus.models.catalog.Path;
  *
  * @since 1.2.7.2
  *  
- * @version 1.2.8.2 [20141010 duanyy]
- * - 修正app取值中的/问题
- * 
+ * @version 1.2.8.2 [20141010 duanyy] <br>
+ * - 修正app取值中的/问题 <br>
+ * @version 1.6.4.4 [20150910 duanyy] <br>
+ * - 缺省的代理服务的路径调整为/alogic/util/Proxy <br>
  */
 public class AppProxyNormalizer implements Normalizer {
 
-	protected String proxyServiceId = "/core/AppProxy";
+	protected String proxyServiceId = "/alogic/util/Proxy";
 	
 	public AppProxyNormalizer(Properties p){
 		proxyServiceId = PropertiesConstants.getString(p, "normalizer.appproxy.id", proxyServiceId);

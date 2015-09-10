@@ -24,6 +24,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.3.3 <br>
  * - 增加对象快速存取方法{@link #getObject(String, String, boolean)} <br>
+ * 
+ * @version 1.6.4.4 [20150910 duanyy] <br>
+ * - 父类已经提供了current，淘汰掉 <br>
  */
 public class CacheSource extends Source<CacheStore> {
 
@@ -31,14 +34,6 @@ public class CacheSource extends Source<CacheStore> {
 	public Context<CacheStore> newInstance(Element e, Properties p,
 			String attrName) {
 		return factory.newInstance(e,p,attrName,InnerContext.class.getName());
-	}
-	
-	/**
-	 * 获取当前的cache列表
-	 * @return cache列表
-	 */
-	public CacheStore [] current(){
-		return caches.values().toArray(new CacheStore[caches.size()]);
 	}
 	
 	protected String getContextName(){

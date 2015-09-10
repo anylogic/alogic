@@ -110,3 +110,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-lucene:增加搜索引擎模块(1.6.4.1)
 	 + alogic-blob:BlobInfo增加length(1.6.4.2)
 	 + alogic-cache:增加查询缓存对象的服务(1.6.4.3)
+	 + alogic-addons:调整内置服务列表，并增加内置服务(1.6.4.4)

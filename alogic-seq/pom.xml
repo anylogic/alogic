@@ -9,7 +9,7 @@
   <dependencies>
   	<dependency>
   		<groupId>com.github.alogic</groupId>
-  		<artifactId>alogic-common</artifactId>
+  		<artifactId>alogic-core</artifactId>
   		<version>${project.version}</version>
   	</dependency>
   </dependencies>
