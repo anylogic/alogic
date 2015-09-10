@@ -8,7 +8,7 @@
 
 服务的路径如下：
 ```
-/core/ServiceResume
+	/core/ServiceResume
 ```
 
 本服务可以简单方式访问，例如：
@@ -27,9 +27,10 @@
 ## 输出文档
 
 输出为JSON文档，信息如下：
+
 | 编号 | 代码 | 类型 | 名称 | 说明 |
 | ---- | ---- | ---- | ---- | ---- |
-| 1 | service | Object | 服务对象  | 服务描述的JSON对象，见样例 |
+| 1 | service | Object | 服务对象 | 服务描述的JSON对象,见样例 |
 
 ## 异常
 * 如果调用成功，返回代码为core.ok;
@@ -39,10 +40,10 @@
 下面是一个样例，
 服务地址如下；
 ```
-http://localhost:9000/services/core/ServiceList?resume
+	http://localhost:9000/services/core/ServiceList?resume
 ```
 输出结果：
-```
+```javascript
 	{
 	    "duration": "34", 
 	    "host": "0:0:0:0:0:0:0:1:9000", 
