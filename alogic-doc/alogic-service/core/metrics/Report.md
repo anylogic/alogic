@@ -20,6 +20,7 @@
 ## 输出文档
 
 输出为JSON文档，信息如下：
+
 | 编号 | 代码 | 类型 | 名称 | 说明 |
 | ---- | ---- | ---- | ---- | ---- |
 | 1 | handler | Object | handler对象 | |
@@ -46,7 +47,7 @@
 http://localhost:9000/services/core/metrics/Report
 ```
 输出结果：
-```
+```javascript
 	{
 	    "duration": "20", 
 	    "host": "10.19.156.31:9000", 
