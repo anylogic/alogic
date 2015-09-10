@@ -29,7 +29,7 @@
 | 1.3 | handler/@maxQueueLength | Long | 最大队列长度 | 仅异步模式有效 |
 | 1.4 | handler/@interval | Long | 处理间隔(毫秒) | 仅异步模式有效 |
 | 1.5 | handler/@isRunning | Boolean | 是否在运行 | |
-| 1.6 | handler/@currentQueueLength | Long | 仅异步模式有效 | |
+| 1.6 | handler/@currentQueueLength | Long | 当前队列长度 | 仅异步模式有效 |
 | 1.7 | handler/@async | Boolean | 是否开启异步模式 |
 | 1.8 | handler/item[] | Object[] | 统计项列表 |
 | 1.8.1 | handler/item[]/@dim | 统计维度 | |
