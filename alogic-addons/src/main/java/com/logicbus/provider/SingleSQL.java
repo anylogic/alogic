@@ -18,6 +18,8 @@ import com.logicbus.dbcp.sql.Select;
  * 
  * @author duanyy
  * @since 1.6.3.3
+ * @version 1.6.4.5 [20150910 duanyy] <br>
+ * - 优化Report输出 <br>
  */
 public class SingleSQL extends MultiFieldObjectProvider.Abstract {
 
@@ -53,4 +55,20 @@ public class SingleSQL extends MultiFieldObjectProvider.Abstract {
 	}
 	protected String sql;
 	protected String dbcp;
+	
+	public void report(Element xml) {
+		if (xml != null){
+			super.report(xml);
+			xml.setAttribute("sql", sql);
+			xml.setAttribute("dbcp", dbcp);
+		}
+	}
+
+	public void report(Map<String, Object> json) {
+		if (json != null){
+			super.report(json);
+			json.put("sql", sql);
+			json.put("dbcp", dbcp);
+		}
+	}
 }

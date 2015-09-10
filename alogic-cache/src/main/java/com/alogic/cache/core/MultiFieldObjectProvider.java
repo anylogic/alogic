@@ -1,7 +1,9 @@
 package com.alogic.cache.core;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.anysoft.cache.Provider;
@@ -71,7 +73,11 @@ public interface MultiFieldObjectProvider extends Provider<MultiFieldObject>,XML
 			if (xml != null){
 				xml.setAttribute("module", getClass().getName());
 				if (counter != null){
-					counter.report(xml);
+					Document doc = xml.getOwnerDocument();
+					
+					Element stat = doc.createElement("stat");
+					counter.report(stat);
+					xml.appendChild(stat);
 				}
 			}
 		}
@@ -80,7 +86,9 @@ public interface MultiFieldObjectProvider extends Provider<MultiFieldObject>,XML
 			if (json != null){
 				JsonTools.setString(json,"module",getClass().getName());
 				if (counter != null){
-					counter.report(json);
+					Map<String,Object> stat = new HashMap<String,Object>();
+					counter.report(stat);
+					json.put("stat", stat);
 				}
 			}
 		}

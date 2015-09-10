@@ -75,12 +75,26 @@ alogic提供的内置服务封装在alogic-addons工程中,可在服务目录配
 		* [暂停服务](alogic-service/core/ServicePause.md)
 		* [恢复服务](alogic-service/core/ServiceResume.md)
 	* 访问控制
+		* [查询访问控制器的统计信息](alogic-service/core/AclQuery.md)
 	* 日志
+		* [日志处理报告](alogic-service/core/log/Report.md)
+		* [暂停日志处理](alogic-service/core/log/Pause.md)
+		* [恢复日志处理](alogic-service/core/log/Resume.md)
 	* 指标
-	* 工具
+		* [指标处理报告](alogic-service/core/metrics/Report.md)
+		* [暂停指标处理](alogic-service/core/metrics/Pause.md)
+		* [恢复指标处理](alogic-service/core/metrics/Resume.md)	
 * 公共组件
 	* 缓存
+		* [配置源报告](alogic-service/component/cache/Source.md)
+		* [活跃缓存列表](alogic-service/component/cache/List.md)
+		* [查询指定缓存信息](alogic-service/component/cache/Query.md)
+		* [查询缓存对象信息](alogic-service/component/cache/CachedObject.md)
+		* [过期缓存](alogic-service/component/cache/Expire.md)
 	* 数据库连接池
+		* [配置源报告](alogic-service/component/dbcp/Source.md)
+		* [活跃数据库连接池列表](alogic-service/component/dbcp/List.md)
+		* [查询数据库连接池信息](alogic-service/component/dbcp/Query.md)
 	* 远程调用
 	* kvalue
 	* 全局序列

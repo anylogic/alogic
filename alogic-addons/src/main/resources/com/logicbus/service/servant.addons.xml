@@ -367,7 +367,7 @@
 				note="查询指定ID的数据库连接池信息"
 				visible="system"
 				log = "none" 
-				module="com.logicbus.dbcp.service.DbcpList"
+				module="com.logicbus.dbcp.service.DbcpQuery"
 			>
 				<properties>
 					<parameter id="jsonDefault" value="true"/>

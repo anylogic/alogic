@@ -22,7 +22,8 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  * @since 1.6.3.3
- * 
+ * @version 1.6.4.5 [20150910 duanyy] <br>
+ * - Report输出时输出module <br>
  */
 abstract public class AbstractCacheStore implements CacheStore {
 	/**
@@ -103,6 +104,7 @@ abstract public class AbstractCacheStore implements CacheStore {
 			xml.setAttribute("id", id);
 			xml.setAttribute("name",name);
 			xml.setAttribute("note", note);
+			xml.setAttribute("module", getClass().getName());
 			Document doc = xml.getOwnerDocument();
 			
 			if (expirePolicy != null){	
@@ -123,6 +125,7 @@ abstract public class AbstractCacheStore implements CacheStore {
 			JsonTools.setString(json, "id", id);
 			JsonTools.setString(json, "name", name);
 			JsonTools.setString(json, "note", note);
+			JsonTools.setString(json, "module", getClass().getName());
 			
 			if (expirePolicy != null){
 				Map<String,Object> map = new HashMap<String,Object>();

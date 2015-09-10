@@ -15,7 +15,10 @@ import com.anysoft.stream.Flowable;
  * - 通过com.anysoft.stream来实现
  * 
  * @version 1.2.7.1 [20140902 duanyy] <br>
- * - 出于节约内存的考虑，去掉host属性
+ * - 出于节约内存的考虑，去掉host属性 <br>
+ * 
+ * @version 1.6.4.5 [20150910 duanyy] <br>
+ * - 统计维度不再包含client信息 <br>
  */
 public class BizLogItem implements Comparable<BizLogItem>,Flowable {
 	
@@ -102,7 +105,7 @@ public class BizLogItem implements Comparable<BizLogItem>,Flowable {
 
 	
 	public String getStatsDimesion() {
-		return client + "%" + id + "%" + result;
+		return id + "%" + result;
 	}	
 	
 	
