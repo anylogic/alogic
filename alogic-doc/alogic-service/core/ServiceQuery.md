@@ -23,6 +23,7 @@
 ## 输出文档
 
 输出为JSON文档，信息如下：
+
 | 编号 | 代码 | 类型 | 名称 | 说明 |
 | ---- | ---- | ---- | ---- | ---- |
 | 1 | catalog | Object[] | 服务目录列表  | 服务目录对象JSON描述见样例 |
@@ -38,7 +39,7 @@
 	http://localhost:9000/services/core/ServiceQuery
 ```
 输出结果：
-```
+```javascript
 	{
 	    "duration": "358", 
 	    "host": "0:0:0:0:0:0:0:1:9000", 
