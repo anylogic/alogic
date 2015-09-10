@@ -21,6 +21,7 @@
 ## 输出文档
 
 输出为JSON文档，信息如下：
+
 | 编号 | 代码 | 类型 | 名称 | 说明 |
 | ---- | ---- | ---- | ---- | ---- |
 | 1 | cache | Object | 缓存对象 | |
@@ -37,6 +38,7 @@
 | 1.9.2 | cache/provider/stat | Object | 提供者的统计对象 | 
 
 统计对象的信息如下：
+
 | 编号 | 代码 | 类型 | 名称 | 说明 |
 | ---- | ---- | ---- | ---- | ---- |
 | 1 | @module | String | 实现模块 | |
@@ -68,7 +70,7 @@
 http://localhost:9000/services/component/cache/Query?cacheId=posts
 ```
 输出结果：
-```
+```javascript
 	{
 	    "duration": "33", 
 	    "host": "0:0:0:0:0:0:0:1:9000", 
