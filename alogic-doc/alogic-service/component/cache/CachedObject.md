@@ -22,6 +22,7 @@
 ## 输出文档
 
 输出为JSON文档，信息如下：
+
 | 编号 | 代码 | 类型 | 名称 | 说明 |
 | ---- | ---- | ---- | ---- | ---- |
 | 1 | cachedObject | Object | 缓存对象 | 对象的具体内容由业务确定 |
@@ -39,7 +40,7 @@
 http://localhost:9000/services/component/cache/CachedObject?cacheId=posts&objectId=1
 ```
 输出结果：
-```
+```javascript
 	{
 	    "duration": "0", 
 	    "host": "0:0:0:0:0:0:0:1:9000", 
