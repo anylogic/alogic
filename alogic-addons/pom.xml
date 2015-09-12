@@ -18,11 +18,21 @@
   		<artifactId>alogic-remote</artifactId>
   		<version>${project.version}</version>
   	</dependency>
+   	<dependency>
+  		<groupId>com.github.alogic</groupId>
+  		<artifactId>alogic-blob</artifactId>
+  		<version>${project.version}</version>
+  	</dependency> 	
   	<dependency>
   		<groupId>com.github.alogic</groupId>
   		<artifactId>alogic-dbcp</artifactId>
   		<version>${project.version}</version>
   	</dependency>
+   	<dependency>
+  		<groupId>com.github.alogic</groupId>
+  		<artifactId>alogic-seq</artifactId>
+  		<version>${project.version}</version>
+  	</dependency> 	
   	<dependency>
   		<groupId>com.github.alogic</groupId>
   		<artifactId>alogic-together</artifactId>

@@ -1,0 +1,228 @@
+package com.alogic.idu.util;
+
+import java.util.List;
+import java.util.Map;
+
+import com.alogic.cache.context.CacheSource;
+import com.alogic.cache.core.CacheStore;
+import com.anysoft.util.Factory;
+import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
+import com.logicbus.backend.AbstractServant;
+import com.logicbus.backend.Context;
+import com.logicbus.backend.ServantException;
+import com.logicbus.backend.message.JsonMessage;
+import com.logicbus.models.servant.ServiceDescription;
+
+/**
+ * 服务实现的基类
+ * 
+ * @author duanyy
+ *
+ * @since 1.6.4.6
+ */
+abstract public class Base extends AbstractServant {
+	/**
+	 * 权限Guard
+	 */
+	protected Guard guard = null;
+	
+	/**
+	 * 数据权限Guard
+	 */
+	protected DataGuard dataGuard = null;
+	
+	/**
+	 * 本服务的权限项,可通过参数privilege配置，缺省为空
+	 */
+	protected String privilege = "";
+	
+	/**
+	 * 相关的CacheId,可通过参数cache.id配置,缺省为空
+	 */
+	protected String cacheId = "";
+		
+	@Override
+	protected void onDestroy() {
+
+	}
+
+	@Override
+	protected void onCreate(ServiceDescription sd) throws ServantException {
+		Properties p = sd.getProperties();
+
+		privilege = PropertiesConstants.getString(p, "privilege", "",true);
+		cacheId = PropertiesConstants.getString(p,"cache.id",cacheId,true);
+				
+		//是否打开guard，缺省为false
+		boolean guardOn = PropertiesConstants.getBoolean(p,"guard.on",false,true);
+		if (guardOn){
+			try {
+				guard = createGuard(p);
+				dataGuard = createDataGuard(p);
+			}catch (Exception ex){
+				logger.error("Can not create guard or dataguard instance");
+			}
+		}
+		onCreate(sd,p);
+	}
+
+	/**
+	 * 处理Create事件
+	 * @param sd 服务描述
+	 * @param p 服务属性
+	 * @throws ServantException
+	 */
+	abstract protected void onCreate(ServiceDescription sd, Properties p)
+			throws ServantException;	
+	
+	@Override
+	protected int onXml(Context ctx) throws Exception{
+		throw new ServantException("core.not_supported",
+				"Protocol XML is not suppurted.");		
+	}
+	
+	@Override
+	protected int onJson(Context ctx) throws Exception {
+		JsonMessage msg = (JsonMessage) ctx.asMessage(JsonMessage.class);
+		return onJson(ctx,msg);
+	}
+	
+	/**
+	 * 处理Json协议的调用
+	 * @param ctx 上下文
+	 * @param msg 消息
+	 * @throws Exception
+	 */
+	abstract protected int onJson(Context ctx, JsonMessage msg)
+			throws Exception;	
+	
+	/**
+	 * 指定的id是否为空
+	 * @param id id
+	 * @return true|false
+	 */
+	protected boolean isNull(String id) {
+		return id == null || id.length() <= 0;
+	}
+	
+	/**
+	 * 在相关缓存中清除指定的对象
+	 * @param id 对象ID
+	 */
+	protected void clearCache(String id){
+		if (!isNull(cacheId)){
+			CacheSource cs = CacheSource.get();
+			
+			CacheStore store = cs.get(cacheId);
+			
+			if (store != null){
+				store.expire(id);
+			}
+		}
+	}
+	
+	/**
+	 * 获取相关的缓存
+	 * @return 缓存
+	 */
+	protected CacheStore getCacheStore() throws ServantException{
+		if (isNull(cacheId)){
+			throw new ServantException("core.cache_not_defined","The relational cache is not defined");
+		}
+		
+		CacheSource cs = CacheSource.get();
+		
+		CacheStore store = cs.get(cacheId);
+		
+		if (store == null){
+			throw new ServantException("core.cache_not_found","The cache is not found,cacheId=" + cacheId);
+		}
+		
+		return store;
+	}
+	
+	/**
+	 * 检查本次操作的权限
+	 * 
+	 * @param userId 操作人员
+	 * @return true|false
+	 */	
+	protected boolean checkPrivilege(String userId){
+		boolean enable = false;
+		
+		if (guard != null){
+			enable = guard.checkPrivilege(userId, privilege);
+		}
+		
+		return enable;
+	}
+	
+	/**
+	 * 检查本次操作权限
+	 * @param userId 操作人员
+	 * @param objectId 所操作的对象ID
+	 * @return true|false
+	 */	
+	protected boolean checkPrivilege(String userId,String objectId){
+		boolean enable = true;
+		
+		if (guard != null){
+			enable = guard.checkPrivilege(userId, privilege,objectId,dataGuard);
+		}
+		
+		return enable;
+	}	
+	
+	/**
+	 * 检查指定用户在指定button列表上是否具有权限
+	 * 
+	 * @param userId
+	 * @param buttons
+	 */
+	protected void checkPrivilege(String userId,List<Map<String,Object>> buttons){
+		if (guard != null){
+			guard.checkPrivilege(userId, buttons);
+		}
+	}
+	
+	/**
+	 * 检查指定用户在指定button列表上是否具有权限
+	 * 
+	 * @param userId
+	 * @param buttons
+	 * @param objectId
+	 */
+	public void checkPrivilege(String userId,List<Map<String,Object>> buttons,String objectId){
+		if (guard != null){
+			guard.checkPrivilege(userId, buttons,objectId,dataGuard);
+		}
+	}
+	
+	/**
+	 * 根据环境变量创建Guard实例
+	 * @param p 环境变量
+	 * @return Guard
+	 * @throws ServantException
+	 */
+	protected Guard createGuard(Properties p) throws ServantException{
+		Factory<Guard> factory = new Factory<Guard>();
+		return factory.newInstance(
+				PropertiesConstants.getString(p,"guard.module",Guard.Default.class.getName()), 
+				p);
+	}
+	
+	/**
+	 * 根据环境变量创建DataGuard实例
+	 * @param p 环境变量
+	 * @return DataGuard
+	 * @throws ServantException
+	 */
+	protected DataGuard createDataGuard(Properties p)throws ServantException{
+		Factory<DataGuard> factory = new Factory<DataGuard>();
+		return factory.newInstance(
+				PropertiesConstants.getString(p,"dataGuard.module",DataGuard.Default.class.getName()), 
+				p);
+	}	
+	
+}
