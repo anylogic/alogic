@@ -113,3 +113,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-addons:调整内置服务列表，并增加内置服务(1.6.4.4)
 	 + alogic:补充文档,修正bug(1.6.4.5)
 	 + alogic-addons:增加IDU实现，提供了基于数据库的简单的Insert Delete Update方案(1.6.4.6)
+	 + alogic-blob:增加文件id的扫描功能(1.6.4.7)

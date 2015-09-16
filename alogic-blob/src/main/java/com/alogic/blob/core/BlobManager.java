@@ -1,7 +1,19 @@
 package com.alogic.blob.core;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.w3c.dom.Element;
+
+import com.anysoft.util.BaseException;
+import com.anysoft.util.Configurable;
+import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
+import com.anysoft.util.XmlElementProperties;
 
 /**
  * Blob管理器
@@ -10,9 +22,17 @@ import com.anysoft.util.XMLConfigurable;
  * @since 1.6.3.28
  * @version 1.6.3.32 [duanyy 20150720] <br>
  * - 增加md5,content-type等信息 <br>
+ * 
+ * @version 1.6.4.7 [duanyy 20150916] <br>
+ * - 增加文件扫描接口 <br>
+ * - 增加虚基类实现 <br>
  */
-public interface BlobManager extends XMLConfigurable,Reportable{
-	
+public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
+	/**
+	 * 获取id 
+	 * @return id
+	 */
+	public String getId();
 	/**
 	 * 新建Blob文件
 	 * @param contentType 文件的content-type
@@ -53,4 +73,71 @@ public interface BlobManager extends XMLConfigurable,Reportable{
 	 * @param writer BlobWriter
 	 */
 	public void cancel(BlobWriter writer);
+	
+	/**
+	 * 扫描文件注册表（可能有的实现不支持）
+	 * 
+	 * @param ids 用来存储文件id的容器
+	 * @param cookies 扫描上下文
+	 * @param limit 限制记录数
+	 * @return cookies 扫描上下文
+	 */
+	public String list(List<String> ids,String cookies,int limit);
+	
+	/**
+	 * 虚基类
+	 * 
+	 * @author duanyy
+	 * @since 1.6.4.7
+	 */
+	abstract public static class Abstract implements BlobManager{
+		/**
+		 * a logger of log4j
+		 */
+		protected static final Logger logger = LogManager.getLogger(BlobManager.class);
+		
+		/**
+		 * id
+		 */
+		protected String id;
+		
+		@Override
+		public String getId(){
+			return id;
+		}
+		
+		@Override
+		public void configure(Element _e, Properties _properties)
+				throws BaseException {
+			XmlElementProperties p = new XmlElementProperties(_e,_properties);
+			configure(p);
+		}
+		
+		@Override
+		public void configure(Properties p) throws BaseException {
+			id = PropertiesConstants.getString(p,"id",id);
+		}
+	
+		@Override
+		public void report(Element xml) {
+			if (xml != null){
+				xml.setAttribute("module", getClass().getName());
+				xml.setAttribute("id", getId());
+			}
+		}
+
+		@Override
+		public void report(Map<String, Object> json) {
+			if (json != null){
+				json.put("module", getClass().getName());
+				json.put("id", getId());
+			}
+		}
+		
+		@Override
+		public String list(List<String> ids, String cookies,int limit) {
+			throw new BaseException("core.not_supported",
+					"This function is not suppurted yet.");	
+		}
+	}
 }

@@ -552,6 +552,20 @@
 				</properties>		
 			</service>
 			<service 
+				id="FileList" 
+				name="FileList" 
+				note="查询指定blob中文件id列表"
+				visible="system"
+				log = "none" 
+				module="com.alogic.blob.service.BlobFileList"
+			>
+				<properties>
+					<parameter id="jsonDefault" value="true"/>
+					<parameter id="servant.maxActive" value="100"/>
+					<parameter id="servant.maxIdle" value="5"/>
+				</properties>		
+			</service>			
+			<service 
 				id = "Download" 
 				name="Download" 
 				note="下载Blob文件" 

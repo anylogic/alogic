@@ -2,6 +2,7 @@ package com.alogic.blob.local;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -30,9 +31,11 @@ import com.anysoft.util.XmlElementProperties;
  * - 增加md5,content-type等信息 <br>
  * 
  * @version 1.6.3.33 [duanyy 20150723] <br>
- * - 变更home的参数名为home.data
+ * - 变更home的参数名为home.data <br>
+ * @version 1.6.4.7 [duanyy 20150916] <br>
+ * - 从BlobManager.Abstract继承 <br>
  */
-public class LocalBlobManager implements BlobManager {
+public class LocalBlobManager extends BlobManager.Abstract {
 	/**
 	 * a logger of log4j
 	 */
@@ -40,8 +43,8 @@ public class LocalBlobManager implements BlobManager {
 	
 	public void report(Element xml) {
 		if (xml != null){
-			xml.setAttribute("module", getClass().getName());
-			xml.setAttribute("id", id);
+			super.report(xml);
+			
 			File file = new File(home);
 			if (file.exists()){
 				xml.setAttribute("totalSpace", String.valueOf(file.getTotalSpace()));
@@ -53,8 +56,8 @@ public class LocalBlobManager implements BlobManager {
 
 	public void report(Map<String, Object> json) {
 		if (json != null){
-			json.put("module", getClass().getName());
-			json.put("id", id);
+			super.report(json);
+			
 			File file = new File(home);
 			if (file.exists()){
 				json.put("totalSpace", file.getTotalSpace());
@@ -114,13 +117,12 @@ public class LocalBlobManager implements BlobManager {
 		
 		return file.delete();
 	}
-
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		XmlElementProperties p = new XmlElementProperties(_e,_properties);
+	
+	@Override
+	public void configure(Properties p) throws BaseException {
+		super.configure(p);
 		
 		id = PropertiesConstants.getString(p,"id",id);
-		
 		home = PropertiesConstants.getString(p,"home.data",home);
 		
 		{
@@ -130,6 +132,13 @@ public class LocalBlobManager implements BlobManager {
 				homeFile.mkdirs();
 			}
 		}
+	}
+
+	@Override
+	public void configure(Element _e, Properties _properties)
+			throws BaseException {
+		XmlElementProperties p = new XmlElementProperties(_e,_properties);
+		configure(p);
 		
 		Factory<BlobRegister> factory = new Factory<BlobRegister>();
 		fileRegister = factory.newInstance(_e, _properties, "register", LocalFileRegister.class.getName());
@@ -206,5 +215,10 @@ public class LocalBlobManager implements BlobManager {
 		if (file.exists() && file.canWrite()){
 			file.delete();
 		}
+	}
+	
+	@Override
+	public String list(List<String> ids, String cookies,int limit) {
+		return fileRegister == null ? null : fileRegister.list(ids, cookies,limit);
 	}
 }

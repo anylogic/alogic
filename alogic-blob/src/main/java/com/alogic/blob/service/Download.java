@@ -131,8 +131,8 @@ public class Download extends Servant {
 			if (path != null && path.length() > 0){
 				int start = findStart(path);
 				int pos = findPos(start,path);
-				domain = path.substring(start,pos);
-				fileId = path.substring(pos);
+				domain = trimSlash(path.substring(start,pos));
+				fileId = trimSlash(path.substring(pos+1));
 			}
 		
 			if (isNull(fileId)){
@@ -191,4 +191,30 @@ public class Download extends Servant {
 		}
 		return found;
 	}	
+	
+	static private String trimSlash(String str){
+		int length = str.length();
+		int start = 0;
+		
+		for (int i = 0 ;i < length ; i ++){
+			if (str.charAt(i) != '/'){
+				start = i;
+				break;
+			}
+		}
+		
+		int end = length - 1;
+		for (int i = length - 1; i >= 0 ; i --){
+			if(str.charAt(i) != '/'){
+				end = i;
+				break;
+			}
+		}
+		
+		if (end > start){
+			return str.substring(start,end + 1);
+		}else{
+			return "";
+		}
+	}
 }

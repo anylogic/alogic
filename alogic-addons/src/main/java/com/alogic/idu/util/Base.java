@@ -55,7 +55,7 @@ abstract public class Base extends AbstractServant {
 		cacheId = PropertiesConstants.getString(p,"cache.id",cacheId,true);
 				
 		//是否打开guard，缺省为false
-		boolean guardOn = PropertiesConstants.getBoolean(p,"guard.on",false,true);
+		boolean guardOn = PropertiesConstants.getBoolean(p,"guard.on",true,true);
 		if (guardOn){
 			try {
 				guard = createGuard(p);
@@ -149,7 +149,7 @@ abstract public class Base extends AbstractServant {
 	 * @return true|false
 	 */	
 	protected boolean checkPrivilege(String userId){
-		boolean enable = false;
+		boolean enable = true;
 		
 		if (guard != null){
 			enable = guard.checkPrivilege(userId, privilege);

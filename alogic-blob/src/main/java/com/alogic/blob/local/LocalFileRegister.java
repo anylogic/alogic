@@ -19,7 +19,6 @@ import com.alogic.blob.core.BlobRegister;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-import com.anysoft.util.XmlElementProperties;
 
 /**
  * 本地实现的Register
@@ -28,9 +27,12 @@ import com.anysoft.util.XmlElementProperties;
  * @since 1.6.3.32
  * 
  * @version 1.6.3.33 [duanyy 20150723] <br>
- * - 变更home的参数名为home.data
+ * - 变更home的参数名为home.data <br>
+ * 
+ * @version 1.6.4.7 [duanyy 20150916] <br>
+ * - 从BlobRegister.Abstract继承 <br>
  */
-public class LocalFileRegister implements BlobRegister{
+public class LocalFileRegister extends BlobRegister.Abstract{
 	/**
 	 * a logger of log4j
 	 */
@@ -104,10 +106,8 @@ public class LocalFileRegister implements BlobRegister{
 		}	
 	}	
 	
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		XmlElementProperties p = new XmlElementProperties(_e,_properties);
-		
+	@Override
+	public void configure(Properties p) throws BaseException {
 		home = PropertiesConstants.getString(p,"home.metadata",home);
 		
 		{
@@ -116,14 +116,15 @@ public class LocalFileRegister implements BlobRegister{
 			if (!homeFile.exists()){
 				homeFile.mkdirs();
 			}
-		}		
-	}
-
+		}	
+	}	
+	
 	protected String home = "${ketty.home}/blob/metadata/${id}";
 	
 	public void report(Element xml) {
 		if (xml != null){
-			xml.setAttribute("module", getClass().getName());
+			super.report(xml);
+			
 			File file = new File(home);
 			if (file.exists()){
 				xml.setAttribute("totalSpace", String.valueOf(file.getTotalSpace()));
@@ -135,7 +136,8 @@ public class LocalFileRegister implements BlobRegister{
 
 	public void report(Map<String, Object> json) {
 		if (json != null){
-			json.put("module", getClass().getName());
+			super.report(json);
+			
 			File file = new File(home);
 			if (file.exists()){
 				json.put("totalSpace", file.getTotalSpace());

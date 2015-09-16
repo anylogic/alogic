@@ -1,6 +1,7 @@
 package com.anysoft.util;
 
 import java.util.Hashtable;
+import java.util.Collection;
 
 /**
  * 通用对象管理器
@@ -9,8 +10,11 @@ import java.util.Hashtable;
  *
  * @param <object> 对象的类名
  * 
- * @version 1.2.1 [20140711 duanyy]
- * - 增加{@link #clear() clear()}方法
+ * @version 1.2.1 [20140711 duanyy] <br>
+ * - 增加{@link #clear() clear()}方法 <br>
+ * 
+ * @version 1.6.4.7 [20150915 duanyy] <br>
+ * - 增加{@link #values() values()}方法 <br>
  */
 public class Manager<object> {
 	
@@ -52,6 +56,14 @@ public class Manager<object> {
 	 */
 	public String[] keys() {
 		return objs.keySet().toArray(new String[0]);
+	}
+	
+	/**
+	 * 获取values
+	 * @return values
+	 */
+	public Collection<object> values(){
+		return objs.values();
 	}
 	
 	/**
