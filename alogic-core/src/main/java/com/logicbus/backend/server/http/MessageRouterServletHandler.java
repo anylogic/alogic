@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
 import com.anysoft.webloader.ServletHandler;
 import com.logicbus.backend.AccessController;
@@ -49,6 +50,9 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.6.3.28 [20150708 duanyy] <br>
  * - 允许设置为缓存模式 <br>
+ * 
+ * @version 1.6.4.8 [20151013 duanyy] <br>
+ * - CORS成了可选配置 <br>
  */
 public class MessageRouterServletHandler implements ServletHandler {
 	/**
@@ -88,11 +92,15 @@ public class MessageRouterServletHandler implements ServletHandler {
 
 	protected boolean cacheAllowed = false; 
 	
+	protected boolean corsSupport = true;
+	
 	public void init(ServletConfig servletConfig) throws ServletException {
 		Settings settings = Settings.get();
 		encoding = settings.GetValue("http.encoding", encoding);
 		defaultAllowOrigin = settings.GetValue("http.alloworigin",
 				defaultAllowOrigin);
+		corsSupport = PropertiesConstants.getBoolean(settings, "http.cors", corsSupport);
+		
 
 		ac = (AccessController) settings.get("accessController");
 
@@ -145,8 +153,11 @@ public class MessageRouterServletHandler implements ServletHandler {
 		}
 		// 1.2.1 duanyy
 		// to support CORS
-		String origin = request.getHeader("Origin");
-		response.setHeader("Access-Control-Allow-Origin", origin == null || origin.length() <= 0 ? defaultAllowOrigin : origin);
+		if (corsSupport){
+			String origin = request.getHeader("Origin");
+			response.setHeader("Access-Control-Allow-Origin", origin == null || origin.length() <= 0 ? defaultAllowOrigin : origin);
+			response.setHeader("Access-Control-Allow-Credentials", "true");
+		}
 		
 		HttpContext ctx = new HttpContext(request,response,encoding,interceptMode);
 		try{
