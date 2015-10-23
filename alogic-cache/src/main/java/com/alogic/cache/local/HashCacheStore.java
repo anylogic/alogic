@@ -16,7 +16,8 @@ import com.anysoft.util.Properties;
  * @author duanyy
  * 
  * @since 1.6.3.3
- * 
+ * @version 1.6.4.9 [20151023 duanyy] <br>
+ * - 缓存接口增加set方法 <br>
  */
 public class HashCacheStore extends AbstractCacheStore{
 
@@ -32,6 +33,10 @@ public class HashCacheStore extends AbstractCacheStore{
 		values.clear();
 	}
 
+	public MultiFieldObject set(String id, MultiFieldObject newValue) {
+		return values.put(id, newValue);
+	}
+	
 	public MultiFieldObject load(String id, boolean cacheAllowed) {
 		if (!cacheAllowed){
 			return provider.load(id,cacheAllowed);
@@ -112,4 +117,6 @@ public class HashCacheStore extends AbstractCacheStore{
 		requestTimes += cnt;
 		hitTimes += (hit)?1:0;
 	}
+
+
 }

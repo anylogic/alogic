@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.alogic.cache.core.MultiFieldObjectProvider.Null;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.JsonTools;
@@ -83,10 +84,13 @@ abstract public class AbstractCacheStore implements CacheStore {
 		if (eProvider != null){
 			Factory<MultiFieldObjectProvider> factory = new Factory<MultiFieldObjectProvider>();
 			try {
-				provider = factory.newInstance(eProvider, p, "module");
+				provider = factory.newInstance(eProvider, p, "module",Null.class.getName());
 			}catch(Exception ex){
-				logger.error("Can not create provider",ex);
+				provider = new MultiFieldObjectProvider.Null();
+				logger.error("Can not create provider,use default:" + provider.getClass().getName(),ex);
 			}
+		}else{
+			provider = new MultiFieldObjectProvider.Null();
 		}
 		
 		onConfigure(_e,p);

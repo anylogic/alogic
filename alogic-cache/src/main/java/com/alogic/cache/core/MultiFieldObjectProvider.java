@@ -25,9 +25,56 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.3.3 增加虚基类
  * 
+ * @version 1.6.4.9 [duanyy 20151023] <br>
+ * - 增加Null实现
  */
 public interface MultiFieldObjectProvider extends Provider<MultiFieldObject>,XMLConfigurable,Reportable {
 	
+	/**
+	 * Null实现
+	 * @author duanyy
+	 *
+	 * @since 1.6.4.9 
+	 */
+	public static class Null implements MultiFieldObjectProvider {
+
+		@Override
+		public MultiFieldObject load(String id, boolean cacheAllowed) {
+			//本provider不提供任何对象
+			return null;
+		}
+
+		@Override
+		public void addWatcher(Watcher<MultiFieldObject> watcher) {
+			//无需watcher
+		}
+
+		@Override
+		public void removeWatcher(Watcher<MultiFieldObject> watcher) {
+			//无需watcher
+		}
+
+		@Override
+		public void configure(Element _e, Properties _properties)
+				throws BaseException {
+			//没有
+		}
+
+		@Override
+		public void report(Element xml) {
+			if (xml != null){
+				xml.setAttribute("module", getClass().getName());
+			}
+		}
+
+		@Override
+		public void report(Map<String, Object> json) {
+			if (json != null){
+				json.put("module", getClass().getName());
+			}
+		}
+		
+	}
 	/**
 	 * 虚基类
 	 * 

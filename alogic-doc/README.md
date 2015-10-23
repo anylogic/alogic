@@ -115,3 +115,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-addons:增加IDU实现，提供了基于数据库的简单的Insert Delete Update方案(1.6.4.6)
 	 + alogic-blob:增加文件id的扫描功能(1.6.4.7)
 	 + alogic-core:CORS成了可选配置(1.6.4.8)
+	 + alogic-cache:缓存接口增加set方法(1.6.4.9)
+	 + alogic-cache:增加NullProvider(1.6.4.9)

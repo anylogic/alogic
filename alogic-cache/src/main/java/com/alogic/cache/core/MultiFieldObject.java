@@ -32,7 +32,7 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 	/**
 	 * 获取field的值，当field不存在或为空时，返回dftValue
 	 * @param key
-	 * @param defValue
+	 * @param dftValue
 	 * @return field的值
 	 */
 	public String getField(String key,String dftValue);
@@ -45,7 +45,7 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 	
 	/**
 	 * 获取field的个数
-	 * @return
+	 * @return field的个数
 	 */
 	public int count();
 	

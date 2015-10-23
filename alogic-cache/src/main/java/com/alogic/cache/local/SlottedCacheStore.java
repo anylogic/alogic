@@ -16,7 +16,8 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @author duanyy
  * @since 1.6.3.3
- * 
+ * @version 1.6.4.9 [20151023 duanyy] <br>
+ * - 缓存接口增加set方法 <br>
  */
 public class SlottedCacheStore extends AbstractCacheStore {
 	public MultiFieldObject get(String id,boolean cacheAllowed) {
@@ -37,6 +38,32 @@ public class SlottedCacheStore extends AbstractCacheStore {
 		MultiVesionValue mvv = values[idx];
 		
 		return mvv != null ? mvv.getAndExpire(id, ttl,expirePolicy) : null;
+	}	
+	
+	public MultiFieldObject set(String id, MultiFieldObject newValue) {
+		//先看看cache中有没有
+		int idx = getIndex(id);
+	
+		MultiVesionValue mvv = values[idx];
+		
+		MultiFieldObject found = null;
+		if (mvv != null){
+			found = mvv.get(id, ttl,expirePolicy);
+		}		
+		
+		if (found == null){
+			synchronized (this){
+				if (mvv == null){
+					mvv = new MultiVesionValue(versions);								
+					values[idx] = mvv;
+				}
+				mvv.add(id, found, ttl,expirePolicy);
+			}
+		}else{
+			mvv.replace(id, found, ttl,expirePolicy);
+		}
+		
+		return found;
 	}	
 	
 	public MultiFieldObject load(String id, boolean cacheAllowed) {
@@ -181,6 +208,18 @@ public class SlottedCacheStore extends AbstractCacheStore {
 			return null;
 		}
 		
+		public void replace(String id,MultiFieldObject _data,int ttl,ExpirePolicy policy){
+			int versions = values.length;			
+			long now = System.currentTimeMillis();
+			
+			for (int i = 0 ;i < versions ; i ++){
+				if (values[i] != null && values[i].equals(id)){
+					values[i] = _data;
+					timestamps[i] = now;
+				}
+			}			
+		}
+		
 		public void add(String id,MultiFieldObject _data,int ttl,ExpirePolicy policy){
 			int versions = values.length;			
 			long now = System.currentTimeMillis();
@@ -227,5 +266,4 @@ public class SlottedCacheStore extends AbstractCacheStore {
 			json.put("hitRate", df.format(getHitRate()));
 		}
 	}
-
 }
