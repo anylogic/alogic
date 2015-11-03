@@ -81,9 +81,9 @@ public class SimpleCounter implements Counter {
 			Document doc = root.getOwnerDocument();
 			
 			root.setAttribute("module", getClass().getName());
-			root.setAttribute("start", DateUtil.formatDate(new Date(startTime), "yyyyMMddHHmmss"));
-			root.setAttribute("lastVistiedTime", DateUtil.formatDate(new Date(lastVisitedTime), "yyyyMMddHHmmss"));
-			root.setAttribute("cycleStart", DateUtil.formatDate(new Date(currentCycleStart), "yyyyMMddHHmmss"));
+			root.setAttribute("start", String.valueOf(startTime));
+			root.setAttribute("lastVistiedTime", String.valueOf(lastVisitedTime));
+			root.setAttribute("cycleStart", String.valueOf(currentCycleStart));
 			
 			if (total != null){
 				Element stat = doc.createElement("total");
@@ -107,9 +107,9 @@ public class SimpleCounter implements Counter {
 	public void report(Map<String, Object> json) {
 		if (json != null){
 			json.put("module", getClass().getName());
-			json.put("start", DateUtil.formatDate(new Date(startTime), "yyyyMMddHHmmss"));
-			json.put("lastVistiedTime", DateUtil.formatDate(new Date(lastVisitedTime), "yyyyMMddHHmmss"));
-			json.put("cycleStart", DateUtil.formatDate(new Date(currentCycleStart), "yyyyMMddHHmmss"));
+			json.put("start", startTime);
+			json.put("lastVisitedTime", lastVisitedTime);
+			json.put("cycleStart", currentCycleStart);
 			
 			if (total != null){
 				Map<String,Object> stat = new HashMap<String,Object>();

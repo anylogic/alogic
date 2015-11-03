@@ -244,6 +244,7 @@ abstract public class QueuedPool2<pooled extends AutoCloseable> implements Pool<
 			
 			xml.setAttribute("maxIdle", String.valueOf(idleQueueLength));
 			xml.setAttribute("maxActive", String.valueOf(maxQueueLength));
+			xml.setAttribute("module", getClass().getName());
 		}
 	}
 	
@@ -257,6 +258,7 @@ abstract public class QueuedPool2<pooled extends AutoCloseable> implements Pool<
 			
 			json.put("maxIdle", idleQueueLength);
 			json.put("maxActive", maxQueueLength);
+			json.put("module", getClass().getName());
 		}
 	}
 }

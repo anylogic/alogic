@@ -117,3 +117,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-core:CORS成了可选配置(1.6.4.8)
 	 + alogic-cache:缓存接口增加set方法(1.6.4.9)
 	 + alogic-cache:增加NullProvider(1.6.4.9)
+	 + alogic-core:所有日期输出不再格式化，由前端解决(1.6.4.10)
