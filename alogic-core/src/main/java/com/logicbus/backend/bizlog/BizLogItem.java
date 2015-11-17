@@ -3,6 +3,7 @@ package com.logicbus.backend.bizlog;
 import java.lang.reflect.Field;
 
 import com.anysoft.stream.Flowable;
+import com.logicbus.models.servant.ServiceDescription;
 
 /**
  * 日志项
@@ -19,6 +20,9 @@ import com.anysoft.stream.Flowable;
  * 
  * @version 1.6.4.5 [20150910 duanyy] <br>
  * - 统计维度不再包含client信息 <br>
+ * 
+ * @version 1.6.4.11 [20151116 duanyy] <br>
+ * - 增加logType属性 <br>
  */
 public class BizLogItem implements Comparable<BizLogItem>,Flowable {
 	
@@ -43,9 +47,9 @@ public class BizLogItem implements Comparable<BizLogItem>,Flowable {
 	public String clientIP;
 	
 	/**
-	 * 服务主机
+	 * 日志级别
 	 */
-	//public String host;
+	public ServiceDescription.LogType logType;
 	
 	/**
 	 * 结果代码

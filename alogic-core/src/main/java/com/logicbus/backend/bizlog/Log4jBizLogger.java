@@ -13,6 +13,7 @@ import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
+import com.logicbus.models.servant.ServiceDescription.LogType;
 
 /**
  * 基于Log4j的BizLogger
@@ -24,7 +25,10 @@ import com.anysoft.util.Settings;
  * - 增加app信息的输出
  * 
  * @version 1.2.8 [20140917 duanyy] <br>
- * - Handler:handle和flush方法增加timestamp参数，以便时间同步
+ * - Handler:handle和flush方法增加timestamp参数，以便时间同步 <br>
+ * 
+ * @version 1.6.4.11 [20151116 duanyy] <br>
+ * - 日志类型为none的服务日志也将输出到bizlog，在此过滤掉为none的输出
  */
 public class Log4jBizLogger extends AbstractHandler<BizLogItem> implements BizLogger {
 
@@ -91,6 +95,9 @@ public class Log4jBizLogger extends AbstractHandler<BizLogItem> implements BizLo
 
 	
 	protected void onHandle(BizLogItem item,long t) {
+		if (item.logType == LogType.none){
+			return;
+		}
 		if (logger == null){
 			synchronized (this){
 				host = log4jProperties.GetValue("host", "${server.host}:${server.port}");

@@ -64,6 +64,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - Servant体系抛弃MessageDoc <br>
+ * 
+ * @version 1.6.4.11 [20151116 duanyy] <br>
+ * - 日志类型为none的服务日志也将输出到bizlog
  */
 public class MessageRouter {
 	
@@ -155,13 +158,10 @@ public class MessageRouter {
 	
 	protected static int log(Path id,String sessionId,ServiceDescription sd,Context ctx){
 		ServiceDescription.LogType logType = 
-				(sd != null) ? sd.getLogType():ServiceDescription.LogType.brief;
-		
-		if (logType == ServiceDescription.LogType.none)
-			return 0;
-		
+				(sd != null) ? sd.getLogType():ServiceDescription.LogType.brief;	
 		BizLogItem item = new BizLogItem();
 		
+		item.logType = logType;
 		item.sn = ctx.getGlobalSerial();
 		item.id = (sd != null)?id.toString():"/core/Null";
 		item.clientIP = ctx.getClientIp();
