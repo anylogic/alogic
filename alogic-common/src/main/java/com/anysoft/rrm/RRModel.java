@@ -76,13 +76,17 @@ public class RRModel<data extends RRData> implements XMLConfigurable,Configurabl
 			xml.setAttribute("id", id);
 			
 			String cycle = xml.getAttribute("cycle");
+			String current = xml.getAttribute("current");
+			
 			Document doc = xml.getOwnerDocument();
 			
 			if (cycle != null && cycle.length() > 0){
 				RRArchive<data> found = rras.get(cycle);
 				if (found != null){
 					Element _rra = doc.createElement("rra");
-					_rra.setAttribute("hist", "true");
+					if (current == null || !current.equals("true")){
+						_rra.setAttribute("hist", "true");
+					}
 					found.report(_rra);
 					xml.appendChild(_rra);
 				}
@@ -104,11 +108,14 @@ public class RRModel<data extends RRData> implements XMLConfigurable,Configurabl
 			json.put("id", id);
 			
 			String cycle = JsonTools.getString(json, "cycle", "");
+			boolean current = JsonTools.getBoolean(json, "current", false);
 			if (cycle != null && cycle.length() > 0){
 				RRArchive<data> found = rras.get(cycle);
 				if (found != null){
 					Map<String,Object> _rra = new HashMap<String,Object>();
-					_rra.put("hist", true);
+					if (!current){
+						_rra.put("hist", true);
+					}
 					found.report(_rra);
 					json.put("rra", _rra);
 				}

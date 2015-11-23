@@ -120,3 +120,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-core:所有日期输出不再格式化，由前端解决(1.6.4.10)
 	 + alogic-core:日志类型为none的服务日志也将输出到bizlog(1.6.4.11)
 	 + alogic-common:增加环形数据模型(RRM)模块(1.6.4.11)
+	 + alogic-common:修正RRM的bug(1.6.4.12)
