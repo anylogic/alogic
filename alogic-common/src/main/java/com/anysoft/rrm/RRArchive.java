@@ -61,12 +61,13 @@ public class RRArchive<data extends RRData> implements Reportable,Configurable,X
 		int index = (int)(timestamp/step) % rows;
 		if (rrds[index] == null){
 			//当前槽位是空的
-			rrds[index] = fragment;
+			rrds[index] = fragment.copy();
 			rrds[index].timestamp(timestamp);
 		}else{
 			//当前槽位不是空的
 			if (rrds[index].timestamp() < timestamp){
 				//有可能是前面时间周期的内容，覆盖掉
+				rrds[index] = fragment.copy(); 
 				rrds[index].timestamp(timestamp);
 			}else{
 				//有可能是当前周期的内容，在上面做加法

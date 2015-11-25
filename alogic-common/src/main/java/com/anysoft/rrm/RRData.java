@@ -19,6 +19,12 @@ public interface RRData extends Reportable {
 	public void incr(RRData fragment);
 	
 	/**
+	 * 克隆自身
+	 * @return 新的片段
+	 */
+	public RRData copy();
+	
+	/**
 	 * 获取时间戳
 	 * @return 时间戳
 	 */
