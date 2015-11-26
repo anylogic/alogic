@@ -1,5 +1,6 @@
 package com.anysoft.rrm;
 
+import java.util.Collection;
 import java.util.Hashtable;
 
 import com.anysoft.util.Properties;
@@ -7,13 +8,13 @@ import com.anysoft.util.Properties;
 /**
  * 管理器
  * @author duanyy
- *
+ * @version 1.6.4.14 [20151126 duanyy] <br>
+ * - 增加list方法.<br>
  */
 public class RRModelManager {
 	
-	private Hashtable<String,Object> rrms = new Hashtable<String,Object>();
+	private Hashtable<String,RRModel<? extends RRData>> rrms = new Hashtable<String,RRModel<? extends RRData>>();
 	
-	@SuppressWarnings("unchecked")
 	public RRModel<? extends RRData> getModel(String id){
 		return (RRModel<? extends RRData>) rrms.get(id);
 	}
@@ -47,6 +48,10 @@ public class RRModelManager {
 		
 	public void clear(){
 		rrms.clear();
+	}
+	
+	public Collection<RRModel<? extends RRData>> list(){
+		return rrms.values();
 	}
 
 	protected static RRModelManager instance = new RRModelManager();
