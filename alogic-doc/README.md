@@ -123,3 +123,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-common:修正RRM的bug(1.6.4.12)
 	 + alogic-common:修正RRM的bug(1.6.4.13)
 	 + alogic-common:RRModelManager增加列表接口(1.6.4.14)
+	 + alogic-kvalue:删除部分测试代码(1.6.4.15)
