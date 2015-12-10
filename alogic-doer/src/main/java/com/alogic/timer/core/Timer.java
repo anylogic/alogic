@@ -33,6 +33,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.3.38 [duanyy 20150812] <br>
  * - 增加集群功能 <br>
+ * 
+ * @version 1.6.4.16 [duanyy 20151110] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	/**
@@ -262,7 +265,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 					return;
 				}
 				
-				if (doer.getState() != Doer.State.Idle) {
+				if (doer.getState() != Doer.State.IDLE) {
 					// 不是空闲状态
 					return;
 				}

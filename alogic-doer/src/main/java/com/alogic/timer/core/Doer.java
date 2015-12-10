@@ -16,6 +16,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @author duanyy
  * @since 1.6.3.37
+ * 
+ * @version 1.6.4.16 [duanyy 20151110] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	
@@ -29,11 +32,11 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		/**
 		 * 空闲
 		 */
-		Idle,
+		IDLE,
 		/**
 		 * 工作中
 		 */
-		Working
+		WORKING
 	}
 	
 	/**
@@ -89,11 +92,14 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	 *
 	 */
 	abstract public static class Abstract implements Doer {
-		protected static final Logger logger = LogManager.getLogger(Doer.class);
+		/**
+		 * a logger of log4j
+		 */
+		protected static final Logger LOG = LogManager.getLogger(Doer.class);
 		/**
 		 * 任务状态
 		 */
-		protected State state = State.Idle;
+		protected State state = State.IDLE;
 		
 		/**
 		 * 上下文持有者
@@ -110,26 +116,32 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		 */
 		private TaskStateListener stateListener = null;
 		
+		@Override
 		public void setContextHolder(ContextHolder holder) {
 			ctxHolder = holder;
 		}
 
+		@Override
 		public ContextHolder getContextHolder() {
 			return ctxHolder;
 		}
 
+		@Override
 		public void setCurrentTask(Task task) {
 			current = task;
 		}
 
+		@Override
 		public Task getCurrentTask() {
 			return current;
 		}
 
+		@Override
 		public void setTaskStateListener(TaskStateListener listener) {
 			stateListener = listener;
 		}
 		
+
 		public void reportState(Task.State state,int percent){
 			if (stateListener != null){
 				stateListener.reportState(current, state, percent);
@@ -140,22 +152,23 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 			Task task = getCurrentTask();
 			try {
 				if (task == null){
-					logger.error("Can not execute because the task is null.");
+					LOG.error("Can not execute because the task is null.");
 				}else{
-					state = State.Working;
+					state = State.WORKING;
 					execute(task);
 				}
-			}catch (Throwable t){
-				logger.fatal("Exception when executing the task:" + task.id());
+			}catch (Exception t){
+				LOG.fatal("Exception when executing the task:" + task.id(),t);
 			}finally{
 				complete();
 			}
 		}
 		
 		public void complete(){
-			state = State.Idle;
+			state = State.IDLE;
 		}
 		
+		@Override
 		public void report(Element xml) {
 			if (xml != null){
 				xml.setAttribute("module", getClass().getName());
@@ -163,6 +176,7 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 			}
 		}
 
+		@Override
 		public void report(Map<String, Object> json) {
 			if (json != null){
 				json.put("module", getClass().getName());
@@ -170,16 +184,18 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 			}
 		}
 
+		@Override
 		public State getState() {
 			return state;
 		}
 
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		@Override
+		public void configure(Element _e, Properties _properties){
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);			
 		}		
 		
+		@Override
 		public void configure(Properties p) throws BaseException {
 			// nothing to do
 		}
@@ -192,16 +208,18 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	 *
 	 */
 	public static class Wrapper extends Abstract{
-		protected Runnable real = null;
+		private Runnable real = null;
 		
 		public Wrapper(Runnable runnable){
 			real = runnable;
 		}
 		
-		public void configure(Properties p) throws BaseException {
+		@Override
+		public void configure(Properties p){
 			// nothing to do
 		}
 
+		@Override
 		public void execute(Task task) {
 			if (real != null){
 				real.run();
@@ -215,9 +233,9 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	 * <p>仅触发定时，具体逻辑有TaskComitter确定。
 	 */
 	public static class Quiet extends Abstract{
-
+		@Override
 		public void execute(Task task) {
-
+			// nothing to do
 		}
 	}
 }

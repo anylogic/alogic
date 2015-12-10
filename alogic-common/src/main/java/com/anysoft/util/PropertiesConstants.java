@@ -23,9 +23,14 @@ import java.util.Date;
  * 
  * @version 1.4.3 [20140904 duanyy]
  * - 增加getDouble和setDouble方法
- * 
+ * @version 1.6.4.16 [duanyy 20151110] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class PropertiesConstants {
+	
+	private PropertiesConstants(){
+		
+	}
 	
 	/**
 	 * 向Properties设置String值
@@ -75,6 +80,8 @@ public class PropertiesConstants {
 		props.SetValue(name, String.valueOf(value));
 	}
 	
+	public static final String DEFAULT_DATE_PATTERN = "yyyyMMddHHmmss";
+	
 	/**
 	 * 向Properties设置Date值，格式:yyyyMMddHHmmss
 	 * @param props Properties实例
@@ -82,7 +89,7 @@ public class PropertiesConstants {
 	 * @param date 变量值
 	 */
 	public static void setDate(Properties props,String name,Date date){
-		String value = DateUtil.formatDate(date, "yyyyMMddHHmmss");
+		String value = DateUtil.formatDate(date, DEFAULT_DATE_PATTERN);
 		props.SetValue(name,value);
 	}
 	
@@ -95,7 +102,7 @@ public class PropertiesConstants {
 	 */
 	public static Date getDate(Properties props,String name,Date defaultValue){
 		String value = props.GetValue(name, "",true,false);
-		return DateUtil.parseDate(value, "yyyyMMddHHmmss",defaultValue);
+		return DateUtil.parseDate(value, DEFAULT_DATE_PATTERN,defaultValue);
 	}
 
 	/**
@@ -110,7 +117,7 @@ public class PropertiesConstants {
 	 */
 	public static Date getDate(Properties props,String name,Date defaultValue,boolean noParent){
 		String value = props.GetValue(name, "",true,noParent);
-		return DateUtil.parseDate(value, "yyyyMMddHHmmss",defaultValue);		
+		return DateUtil.parseDate(value, DEFAULT_DATE_PATTERN,defaultValue);		
 	}
 	
 	/**
@@ -157,7 +164,7 @@ public class PropertiesConstants {
 		}
 		try {
 			return Integer.parseInt(sInt);
-		}catch (Exception ex){
+		}catch (NumberFormatException ex){
 			return defaultValue;
 		}			
 	}
@@ -189,7 +196,7 @@ public class PropertiesConstants {
 		}
 		try{
 			return Long.parseLong(sLong);
-		}catch (Exception ex){
+		}catch (NumberFormatException ex){
 			return defaultValue;
 		}
 	}
@@ -211,7 +218,7 @@ public class PropertiesConstants {
 		}
 		try{
 			return Long.parseLong(sLong);
-		}catch (Exception ex){
+		}catch (NumberFormatException ex){
 			return defaultValue;
 		}		
 	}
@@ -244,7 +251,7 @@ public class PropertiesConstants {
 		}
 		try{
 			return Double.parseDouble(sLong);
-		}catch (Exception ex){
+		}catch (NumberFormatException ex){
 			return defaultValue;
 		}
 	}
@@ -267,7 +274,7 @@ public class PropertiesConstants {
 		}
 		try{
 			return Double.parseDouble(sLong);
-		}catch (Exception ex){
+		}catch (NumberFormatException ex){
 			return defaultValue;
 		}		
 	}	
@@ -293,7 +300,8 @@ public class PropertiesConstants {
 		}
 		return false;
 	}
-	
+	public static final String BOOL_TRUE = "true";
+	public static final String BOOL_FALSE = "false";
 	/**
 	 *  从Properties中获取boolean值
 	 * @param props Properties实例
@@ -308,10 +316,8 @@ public class PropertiesConstants {
 		String sBoolean = props.GetValue(name,"",true,noParent);
 		if (sBoolean.length() <= 0)
 			return defaultValue;
-		if (sBoolean.equals("true")){
-			return true;
-		}
-		return false;		
+		
+		return defaultValue ? BOOL_FALSE.equalsIgnoreCase(sBoolean):BOOL_TRUE.equalsIgnoreCase(sBoolean);
 	}
 	
 	/**
@@ -324,9 +330,9 @@ public class PropertiesConstants {
 	 */
 	public static void setBoolean(Properties props,String name,boolean value){
 		if (value){
-			props.SetValue(name, "true");
+			props.SetValue(name, BOOL_TRUE);
 		}else{
-			props.SetValue(name, "false");
+			props.SetValue(name, BOOL_FALSE);
 		}
 	}
 	
@@ -350,7 +356,7 @@ public class PropertiesConstants {
 		Font f = null;
 		try{
 			f = Font.decode(sFont);
-		}catch (Throwable t){
+		}catch (Exception t){
 			f = defaultValue;
 		}
 		return f;
@@ -374,7 +380,7 @@ public class PropertiesConstants {
 		Font f = null;
 		try{
 			f = Font.decode(sFont);
-		}catch (Throwable t){
+		}catch (Exception t){
 			f = defaultValue;
 		}
 		return f;
@@ -401,12 +407,13 @@ public class PropertiesConstants {
 			break;
 		case Font.BOLD | Font.ITALIC:
 			styleName = "BOLDITALIC";
+			break;
 		default:
 			styleName = "PLAIN";
 		}
 		int size = f.getSize();
 		
-		props.SetValue(name,fontName + "-" + styleName + "-" + String.valueOf(size));
+		props.SetValue(name,fontName + "-" + styleName + "-" + size);
 	}
 	
 	/**
@@ -513,10 +520,9 @@ public class PropertiesConstants {
 			int width = Integer.parseInt(bound[2]);
 			int height = Integer.parseInt(bound[3]);
 			return new Rectangle(x, y, width, height);
-		} catch (Throwable t) {
-			
+		} catch (Exception t) {
+			return defaultValue;
 		}
-		return defaultValue;
 	}
 	
 	/**
@@ -545,10 +551,9 @@ public class PropertiesConstants {
 			int width = Integer.parseInt(bound[2]);
 			int height = Integer.parseInt(bound[3]);
 			return new Rectangle(x, y, width, height);
-		} catch (Throwable t) {
-			
+		} catch (Exception t) {
+			return defaultValue;
 		}
-		return defaultValue;
 	}	
 	
 	/**
@@ -589,10 +594,9 @@ public class PropertiesConstants {
 			int width = Integer.parseInt(bound[0]);
 			int height = Integer.parseInt(bound[1]);
 			return new Dimension(width, height);
-		} catch (Throwable t) {
-			
+		} catch (Exception t) {
+			return defaultValue;			
 		}
-		return defaultValue;
 	}
 	
 	/**
@@ -619,10 +623,9 @@ public class PropertiesConstants {
 			int width = Integer.parseInt(bound[0]);
 			int height = Integer.parseInt(bound[1]);
 			return new Dimension(width, height);
-		} catch (Throwable t) {
-			
+		} catch (Exception t) {
+			return defaultValue;			
 		}
-		return defaultValue;
 	}
 		
 	
@@ -667,10 +670,9 @@ public class PropertiesConstants {
 			int bottom = Integer.parseInt(inset[2]);
 			int right = Integer.parseInt(inset[3]);
 			return new Insets(top,left,bottom,right);
-		}catch (Throwable t){
-			
+		}catch (Exception t){
+			return defaultValue;			
 		}
-		return defaultValue;
 	}
 	
 	
@@ -701,10 +703,9 @@ public class PropertiesConstants {
 			int bottom = Integer.parseInt(inset[2]);
 			int right = Integer.parseInt(inset[3]);
 			return new Insets(top,left,bottom,right);
-		}catch (Throwable t){
-			
+		}catch (Exception t){
+			return defaultValue;			
 		}
-		return defaultValue;
 	}	
 	
 	/**

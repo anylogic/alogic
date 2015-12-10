@@ -471,7 +471,7 @@
 				note="全局序列配置来源报告"
 				visible="system"
 				log = "none" 
-				module="com.alogic.seq.service.SeqSourceReport"
+				module="com.alogic.sequence.service.SeqSourceReport"
 			>
 				<properties>
 					<parameter id="jsonDefault" value="true"/>
@@ -485,7 +485,7 @@
 				note="查询活跃的seq列表"
 				visible="system"
 				log = "none" 
-				module="com.alogic.seq.service.SeqList"
+				module="com.alogic.sequence.service.SeqList"
 			>
 				<properties>
 					<parameter id="jsonDefault" value="true"/>
@@ -499,7 +499,7 @@
 				note="查询指定的seq"
 				visible="system"
 				log = "none" 
-				module="com.alogic.seq.service.SeqQuery"
+				module="com.alogic.sequence.service.SeqQuery"
 			>
 				<properties>
 					<parameter id="jsonDefault" value="true"/>

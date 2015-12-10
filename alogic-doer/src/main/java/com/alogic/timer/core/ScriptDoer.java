@@ -1,7 +1,6 @@
 package com.alogic.timer.core;
 
 import org.w3c.dom.Element;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
@@ -17,15 +16,19 @@ import com.anysoft.xscript.Statement;
  * 
  * @version 1.6.3.38 [duanyy 20150812] <br>
  * - 去掉编译和执行日志 <br>
+ * @version 1.6.4.16 [duanyy 20151110] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class ScriptDoer extends Doer.Abstract{
 	private Element script = null;
+	
+	@Override
 	public void execute(Task task) {
 		try {
 			// 向队列报告任务已经开始
 			reportState(Task.State.Running, 0);
 			if (script == null) {
-				logger.error("Can not find script element");
+				LOG.error("Can not find script element");
 				reportState(Task.State.Failed, 10000);
 			} else {
 				Statement stmt = new TheScript(this, "script", null);
@@ -35,15 +38,15 @@ public class ScriptDoer extends Doer.Abstract{
 				// 任务完成
 				reportState(Task.State.Done, 10000);
 			}
-		} catch (Throwable t) {
-			logger.error("Failed to execute script", t);
+		} catch (Exception t) {
+			LOG.error("Failed to execute script", t);
 			// 任务失败
 			reportState(Task.State.Failed, 10000);
 		}	
 	}
 
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	@Override
+	public void configure(Element _e, Properties _properties){
 		Properties p = new XmlElementProperties(_e,_properties);
 		configure(p);		
 		
@@ -90,7 +93,7 @@ public class ScriptDoer extends Doer.Abstract{
 			super(xmlTag, _parent);
 			doer = _doer;
 		}
-		
+		@Override
 		public void log(ScriptLogInfo logInfo){
 			super.log(logInfo);
 			if (doer != null){

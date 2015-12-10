@@ -6,57 +6,71 @@ package com.anysoft.util;
  * 
  * @author duanyy
  *
- * @param <Key>
- * @param <Value>
+ * @param <K>
+ * @param <V>
  * 
  * @since 1.3.6
- * 
+ * @version 1.6.4.16 [duanyy 20151110] <br>
+ * - 根据sonar建议优化代码 <br>
  */
-public interface Pair<Key, Value>{
+public interface Pair<K, V>{
 	/**
 	 *  获取Key
 	 * @return Key
 	 */
-	public Key key();
+	public K key();
 	/**
 	 * 获取Value
 	 * @return Key
 	 */
-	public Value value();
+	public V value();
 	
-	public static class Default<Key,Value> implements Pair<Key,Value>{
-		protected Key key = null;
-		protected Value value = null;
+	public static class Default<K,V> implements Pair<K,V>{
+		protected K key = null;
+		protected V value = null;
 		
-		public Default(Key _key,Value _value){
-			key = _key;
-			value = _value;
+		public Default(K k,V v){
+			key = k;
+			value = v;
 		}
 
+		@Override
 		public int hashCode(){
 			if (key == null) return 0;
 			return key.hashCode();
 		}
 		
-		public boolean equals(Default<Key,Value> another){
-			if (this == another) return true;
+		@Override
+		public boolean equals(Object other){
+			if (this == other){ 
+				return true;
+			}
+			
+			@SuppressWarnings("unchecked")
+			Default<K,V> another = (Default<K,V>)other;
+			
 			if (another == null || another.key ==  null){
 				return false;
 			}
-			if (key == null) return false;
+			
+			if (key == null){ 
+				return false;
+			}
 			
 			return key.equals(another.key);
 		}
 		
-		
-		public Key key() {
+		@Override
+		public K key() {
 			return key;
 		}
 
-		
-		public Value value() {
+		@Override
+		public V value() {
 			return value;
 		}
+		
+		@Override
 		public String toString(){
 			return key.toString() + "=" + value.toString();
 		}
