@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -32,8 +34,14 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.0.3 [20141114 duanyy] <br>
  * - 修正队列可能为空的异常 <br>
+ * 
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 abstract public class AbstractHandler<data extends Flowable> implements Handler<data> {
+	
+	protected static final Logger LOG = LogManager.getLogger(AbstractHandler.class);
+	
 	/**
 	 * 当前的时间周期，缺省半个小时
 	 */
@@ -116,9 +124,7 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 				}				
 			}
 		}
-		if (found != null){
-			found.incr(1);
-		}		
+		found.incr(1);	
 	}	
 	
 	
@@ -327,7 +333,7 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 					flush(System.currentTimeMillis());
 					Thread.sleep(interval);
 				}catch (Exception ex){
-					
+					LOG.error("Thread is interruppted",ex);
 				}
 			}
 		}

@@ -13,7 +13,7 @@ import com.anysoft.util.WatcherHub;
  * 
  * @author duanyy
  * @since 1.0.6
- * @param <data> 缓存对象类
+ * @param <D1> 缓存对象类
  * 
  * @version 1.0.7 [20140409 duanyy] <br>
  * + 增加{@link com.anysoft.cache.CacheManager#_get(String)} <br>
@@ -28,10 +28,11 @@ import com.anysoft.util.WatcherHub;
  * 
  * @version 1.5.2 [20141017 duanyy] <br>
  * - 淘汰ChangeAware机制，采用更为通用的Watcher <br>
- * 
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
-public class CacheManager<data extends Cacheable> extends Manager<data> 
-implements Provider<data>,Watcher<data> {
+public class CacheManager<D1 extends Cacheable> extends Manager<D1> 
+implements Provider<D1>,Watcher<D1> {
 
 	/**
 	 * a logger of log4j
@@ -40,47 +41,49 @@ implements Provider<data>,Watcher<data> {
 	/**
 	 * 委托的Provider
 	 */
-	protected Provider<data> provider = null;
+	protected Provider<D1> provider = null;
 	
 	/**
 	 * 锁对象
 	 */
 	protected Object lock = new Object();
 	
+	protected WatcherHub<D1> watchers = new WatcherHub<D1>(); // NOSONAR
+	
 	/**
 	 * Constructor
 	 */
 	public CacheManager(){
-		
+		// nothing to do
 	}
 	
 	/**
 	 * Constructor
-	 * @param _provider 委托的Provider
+	 * @param p 委托的Provider
 	 */
-	public CacheManager(Provider<data> _provider){
-		provider = _provider;
+	public CacheManager(Provider<D1> p){
+		provider = p;
 		if (provider != null){
 			provider.addWatcher(this);
 		}
 	}
 	
 	
-	public data load(String id) {
+	public D1 load(String id) {
 		return load(id,true);
 	}
 	
-	
-	public data load(String id, boolean noCache) {
+	@Override
+	public D1 load(String id, boolean noCache) {
 		if (provider != null){
 			return provider.load(id,noCache);
 		}
 		return null;
 	}	
 
-	
-	public data get(String id) {
-		data found = super.get(id);
+	@Override
+	public D1 get(String id) {
+		D1 found = super.get(id);
 		if (found == null){
 			synchronized(lock){
 				found = super.get(id);
@@ -112,7 +115,7 @@ implements Provider<data>,Watcher<data> {
 	 * @return data
 	 * @since 1.0.7
 	 */
-	protected data _get(String id){
+	protected D1 _get(String id){
 		return super.get(id);
 	}
 	
@@ -125,20 +128,20 @@ implements Provider<data>,Watcher<data> {
 	 * @param obj 数据对象
 	 * @since 1.0.7
 	 */
-	protected void _add(String id,data obj){
+	protected void _add(String id,D1 obj){
 		synchronized (lock){
 			super.add(id, obj);
 		}
 	}
 	
-	
-	public void add(String id, data obj) {
+	@Override
+	public void add(String id, D1 obj) {
 		synchronized (lock){
 			super.add(id, obj);
 		}
 	}	
 
-	
+	@Override
 	public void remove(String id) {
 		synchronized (lock){
 			super.remove(id);
@@ -149,14 +152,14 @@ implements Provider<data>,Watcher<data> {
 	 * 向缓存中增加对象
 	 * @param obj
 	 */
-	public void add(data obj){
+	public void add(D1 obj){
 		synchronized (lock){
 			super.add(obj.getId(), obj);
 		}
 	}
 
-	
-	public void changed(String id, data _data) {
+	@Override
+	public void changed(String id, D1 _data) {
 		synchronized (lock){
 			logger.info("model is changed,id = " + id);
 			add(id, _data);
@@ -167,37 +170,37 @@ implements Provider<data>,Watcher<data> {
 		}
 	}
 
-	
-	public void added(String id, data _data) {
+	@Override
+	public void added(String id, D1 data) {
 		// do nothing
 		if (watchers != null){
-			watchers.added(id, _data);
+			watchers.added(id, data);
 		}
 	}
 
-	
-	public void removed(String id, data _data) {
+	@Override
+	public void removed(String id, D1 data) {
 		synchronized (lock){
 			logger.info("model is removed,id = " + id);
 			remove(id);
 		}
 		
 		if (watchers != null){
-			watchers.changed(id, _data);
+			watchers.changed(id, data);
 		}
 	}
 
-	
-	public void addWatcher(Watcher<data> watcher) {
+	@Override
+	public void addWatcher(Watcher<D1> watcher) {
 		if (watchers != null)
 			watchers.addWatcher(watcher);
 	}
 
-	
-	public void removeWatcher(Watcher<data> watcher) {
+	@Override
+	public void removeWatcher(Watcher<D1> watcher) {
 		if (watchers != null)
 			watchers.removeWatcher(watcher);
 	}
 	
-	protected WatcherHub<data> watchers = new WatcherHub<data>();
+	
 }

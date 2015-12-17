@@ -16,26 +16,27 @@ import com.anysoft.util.Watcher;
  * 
  * @version 1.6.3.3 [20150226 duanyy]
  * - 淘汰load(String)方法
- * 
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
-public interface Provider<data extends Cacheable> {
+public interface Provider<D1 extends Cacheable> {
 	/**
 	 * 装入对象
 	 * @param id 对象ID
 	 * @param cacheAllowed 允许装入缓存的对象
 	 * @return data
 	 */
-	public data load(String id,boolean cacheAllowed);
+	public D1 load(String id,boolean cacheAllowed);
 	
 	/**
 	 * 注册监控器
 	 * @param watcher
 	 */
-	public void addWatcher(Watcher<data> watcher);
+	public void addWatcher(Watcher<D1> watcher);
 	
 	/**
 	 * 注销监控器
 	 * @param watcher
 	 */
-	public void removeWatcher(Watcher<data> watcher);
+	public void removeWatcher(Watcher<D1> watcher);
 }

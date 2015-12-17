@@ -44,6 +44,8 @@ import com.anysoft.util.resource.ResourceFactory;
  * @version 1.5.2 [20141017 duanyy] <br>
  * - 实现Reportable接口 <br>
  * 
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class Settings extends DefaultProperties implements XmlSerializer,Reportable{
 	/**
@@ -130,7 +132,7 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 			in = rm.load(_url,secondary, null);
 			Document doc = XmlTools.loadFromInputStream(in);		
 			loadFromDocument(doc);			
-		}catch (Throwable ex){
+		}catch (Exception ex){
 			logger.error("Error occurs when load xml file,source=" + _url, ex);
 		}finally {
 			IOTools.closeStream(in);
@@ -142,12 +144,12 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 	 * @param p DefaultProperties实例
 	 */
 	public void addSettings(DefaultProperties p){
-		Enumeration<String> __keys = p.keys();
-		while (__keys.hasMoreElements()){
-			String __name = (String)__keys.nextElement();
-			String __value = p.GetValue(__name,"",false,true);
-			if (__value != null && __value.length() > 0)
-				SetValue(__name, __value);
+		Enumeration<String> keys = p.keys();
+		while (keys.hasMoreElements()){
+			String name = (String)keys.nextElement();
+			String value = p.GetValue(name,"",false,true);
+			if (value != null && value.length() > 0)
+				SetValue(name, value);
 		}
 	}
 	
@@ -175,7 +177,7 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 		toXML(root);
 	}
 
-	
+	@Override
 	public void report(Element xml) {
 		if (xml != null){
 			Document doc = xml.getOwnerDocument();
@@ -205,7 +207,7 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 		}
 	}
 
-	
+	@Override
 	public void report(Map<String, Object> json) {
 		if (json != null){
 			//parameters
@@ -252,7 +254,7 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 	 * 输出到XML节点
 	 * @param root 输出信息的根节点
 	 */
-	
+	@Override
 	public void toXML(Element root) {
 		//为了输出文件的美观，添加一个\n文件节点
 		Document doc = root.getOwnerDocument();
@@ -278,7 +280,7 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 	 * 从XML节点中读入
 	 * @param root 读入信息的根节点
 	 */
-	
+	@Override
 	public void fromXML(Element root) {
 		NodeList nodeList = root.getChildNodes();	
 		for (int i = 0 ; i < nodeList.getLength() ; i ++){
@@ -286,12 +288,12 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 			if (node.getNodeType() != Node.ELEMENT_NODE){
 				continue;
 			}
-			if (node.getNodeName().equals("parameter")){
+			if ("parameter".equals(node.getNodeName())){
 				Element e = (Element)node;
 				String id = e.getAttribute("id");
 				String value = e.getAttribute("value");
 				//支持final标示,如果final为true,则不覆盖原有的取值
-				boolean isFinal = e.getAttribute("final").equals("true")?true:false;
+				boolean isFinal = "true".equals(e.getAttribute("final"))?true:false;
 				if (isFinal){
 					String oldValue = this._GetValue(id);
 					if (oldValue == null || oldValue.length() <= 0){

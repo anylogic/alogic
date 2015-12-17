@@ -40,18 +40,25 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.3.20 [20150421 duanyy] <br>
  * - 对于某些环境变量，设置到System的Properties中 <br>
+ * 
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class Main implements CommandHelper,Process{
 	
 	/**
+	 * Help指令
+	 */
+	public static final String CMD_HELP = "help";	
+	/**
 	 * a logger of log4j
 	 */
-	protected static Logger logger = LogManager.getLogger(Main.class);
+	protected static final Logger LOG = LogManager.getLogger(Main.class);
 	
 	/**
 	 * a print stream to print help
 	 */
-	protected static PrintStream helpPS = System.out;
+	protected static PrintStream helpPS = System.out;// NOSONAR
 	/**
 	 * 当前指令
 	 */
@@ -66,14 +73,20 @@ public class Main implements CommandHelper,Process{
 	 * 帮助主题
 	 */
 	protected String helpTopic = "all";
+
+	/**
+	 * 当前支持的command列表
+	 */
+	protected Hashtable<String,Command> commands = new Hashtable<String,Command>();// NOSONAR
 	
 	/**
-	 * Help指令
+	 * 当前的资源工厂
 	 */
-	public static final String CMD_HELP = "help";
+	protected ResourceFactory resourceFactory = null;	
 	
+	@Override
 	public void printHelp(PrintStream ps) {
-		if (!helpTopic.equals("all")){
+		if (!"all".equals(helpTopic)){
 			Command cmd = commands.get(helpTopic);
 			if (cmd != null){
 				ps.println("Syntax:");
@@ -92,25 +105,73 @@ public class Main implements CommandHelper,Process{
 		ps.println("Main cmd=<command> [<var>=<value>]");
 		ps.println("Commands supported are listed below:");
 		
-		Enumeration<Command> _commands = commands.elements();
+		Enumeration<Command> cmds = commands.elements();
 		
-		while (_commands.hasMoreElements()){
-			Command command = _commands.nextElement();
-			ps.println("\t-" + command.getId() + "\t:" + command.getNote());
+		while (cmds.hasMoreElements()){
+			Command cmd = cmds.nextElement();
+			ps.println("\t-" + cmd.getId() + "\t:" + cmd.getNote());
 		}
 		
 		ps.println("\t-help\t:Print this help");
 	}
 
 	/**
-	 * 当前支持的command列表
+	 * 从本地文件装入配置
+	 * @param p 变量集
+	 * @param filename 本地文件名
 	 */
-	protected Hashtable<String,Command> commands = new Hashtable<String,Command>();
+	private void loadConfigFromLocalFile(DefaultProperties p,String filename){
+		File file = new File(filename);
+		if (file.exists() && file.isFile()) {
+			try {
+				Document doc = XmlTools.loadFromFile(file);
+				if (doc != null){
+					loadConfigFromElement(p,doc.getDocumentElement());
+				}
+			} catch (Exception e) {
+				LOG.error("Can not load xml file,url = " + filename, e);
+			}
+		} else {
+			LOG.error("The config file is not a valid file,url = "
+					+ filename);
+		}		
+	}
 	
-	/**
-	 * 当前的资源工厂
-	 */
-	protected ResourceFactory resourceFactory = null;
+	private ResourceFactory getResourceFactory(DefaultProperties p){
+		if (resourceFactory == null) {
+			// 设置全局的ResourceFactory
+			String rf = p.GetValue("resource.factory",
+					"com.anysoft.util.resource.ResourceFactory");
+			try {
+				LOG.info("Use resource factory:" + rf);
+				resourceFactory = (ResourceFactory) Class.forName(rf).newInstance();
+			} catch (Exception ex) {
+				LOG.error("Can not create instance of :" + rf,ex);
+			}
+			if (resourceFactory == null) {
+				resourceFactory = new ResourceFactory();
+				LOG.info("Use default:" + ResourceFactory.class.getName());
+			}
+		}
+		return resourceFactory;
+	}
+	
+	private void loadConfigFromResource(DefaultProperties p,String fileUrl){
+		ResourceFactory rf = getResourceFactory(p);
+		InputStream in = null;
+		try {
+			in = rf.load(fileUrl, null);
+			Document doc = XmlTools.loadFromInputStream(in);
+			if (doc != null){
+				loadConfigFromElement(p,doc.getDocumentElement());
+			}
+		}catch (Exception ex){
+			LOG.error("The config file is not a valid file,url = "
+					+ fileUrl,ex);
+		}finally{
+			IOTools.close(in);
+		}		
+	}
 	
 	/**
 	 * 装入配置信息
@@ -121,111 +182,41 @@ public class Main implements CommandHelper,Process{
 		//装入配置文件,从参数conf中读入，缺省为config.xml
 		String filename = PropertiesConstants.getString(p,"conf","");
 		if (filename != null && filename.length() > 0){
-			File _conf = new File(filename);
-			if (_conf.exists() && _conf.isFile()) {
-				try {
-					Document doc = XmlTools.loadFromFile(_conf);
-					if (doc != null){
-						loadConfigFromElement(p,doc.getDocumentElement());
-					}
-				} catch (Exception e) {
-					logger.error("Can not load xml file,url = " + filename, e);
-				}
-			} else {
-				logger.error("The config file is not a valid file,url = "
-						+ filename);
-			}
+			loadConfigFromLocalFile(p,filename);
 		}else{
-			if (resourceFactory == null) {
-				// 设置全局的ResourceFactory
-				String rf = p.GetValue("resource.factory",
-						"com.anysoft.util.resource.ResourceFactory");
-				try {
-					logger.info("Use resource factory:" + rf);
-					resourceFactory = (ResourceFactory) Class.forName(rf).newInstance();
-				} catch (Exception ex) {
-					logger.error("Can not create instance of :" + rf);
-				}
-				if (resourceFactory == null) {
-					resourceFactory = new ResourceFactory();
-					logger.info("Use default:" + ResourceFactory.class.getName());
-				}
-			}
-			
 			filename = PropertiesConstants.getString(p,"conf.url","java:///config.xml");
-			InputStream in = null;
-			try {
-				in = resourceFactory.load(filename, null);
-				Document doc = XmlTools.loadFromInputStream(in);
-				if (doc != null){
-					loadConfigFromElement(p,doc.getDocumentElement());
-				}
-			}catch (Exception ex){
-				logger.error("The config file is not a valid file,url = "
-						+ filename);
-			}finally{
-				IOTools.close(in);
-			}
+			loadConfigFromResource(p,filename);
 		}
 	}	
 
 	protected void loadConfig(DefaultProperties p, String link) {
-		if (resourceFactory == null) {
-			// 设置全局的ResourceFactory
-			String rf = p.GetValue("resource.factory",
-					"com.anysoft.util.resource.ResourceFactory");
-			try {
-				logger.info("Use resource factory:" + rf);
-				resourceFactory = (ResourceFactory) Class.forName(rf).newInstance();
-			} catch (Exception ex) {
-				logger.error("Can not create instance of :" + rf);
-			}
-			if (resourceFactory == null) {
-				resourceFactory = new ResourceFactory();
-				logger.info("Use default:" + ResourceFactory.class.getName());
-			}
-		}
-		
-		InputStream in = null;
-		try {
-			in = resourceFactory.load(link, null);
-			Document doc = XmlTools.loadFromInputStream(in);	
-			if (doc != null){
-				loadConfigFromElement(p,doc.getDocumentElement());
-			}
-		}catch (Throwable ex){
-			logger.error("Error occurs when load xml file,source=" + link, ex);
-		}finally {
-			IOTools.closeStream(in);
-		}
+		loadConfigFromResource(p,link);
 	}	
 	
-	protected void loadConfigFromElement(DefaultProperties p,Element e) {
+	private void loadParameterConfigFromElement(DefaultProperties p,Element e){ // NOSONAR
 		//首先处理环境变量：settings/parameter
-		NodeList _parameters = XmlTools.getNodeListByPath(e, "settings/parameter");
-		if (_parameters != null && _parameters.getLength() > 0){
+		NodeList nodeList = XmlTools.getNodeListByPath(e, "settings/parameter");
+		if (nodeList != null && nodeList.getLength() > 0){
 			
-			for (int i = 0 ;i < _parameters.getLength() ; i ++){
-				Node _n = _parameters.item(i);
+			for (int i = 0 ;i < nodeList.getLength() ; i ++){
+				Node n = nodeList.item(i);
 				
-				if (Node.ELEMENT_NODE != _n.getNodeType()){
+				if (Node.ELEMENT_NODE != n.getNodeType()){
 					continue;
 				}
 				
-				Element _parameter = (Element)_n;
+				Element parameter = (Element)n;
 				
-				String id = _parameter.getAttribute("id");
-				String value = _parameter.getAttribute("value");
-				boolean system = e.getAttribute("system").equals("true")?true:false;
+				String id = parameter.getAttribute("id");
+				String value = parameter.getAttribute("value");
+				boolean system = "true".equals(e.getAttribute("system"))?true:false;
 				if (system){
 					if (id != null && value != null){
 						System.setProperty(id, value);
 					}
 				}else{
-
 					// 支持final标示,如果final为true,则不覆盖原有的取值
-					boolean isFinal = e.getAttribute("final").equals("true") ? true
-							: false;
+					boolean isFinal = "true".equals(e.getAttribute("final")) ? true	: false;
 					if (isFinal) {
 						String oldValue = p.GetValue(id, "", false, true);
 						if (oldValue == null || oldValue.length() <= 0) {
@@ -236,61 +227,72 @@ public class Main implements CommandHelper,Process{
 					}
 				}
 			}
-		}
-		
+		}		
+	}
+	
+	private void loadCommandConfigFromElement(DefaultProperties p,Element e){
 		//处理commands/command
-		NodeList _commands = XmlTools.getNodeListByPath(e, "commands/command");
-		if (_commands != null && _commands.getLength() > 0){
+		NodeList nodeList = XmlTools.getNodeListByPath(e, "commands/command");
+		if (nodeList != null && nodeList.getLength() > 0){
 			
-			for (int i = 0 ;i < _commands.getLength() ; i ++){
-				Node _n = _commands.item(i);
+			for (int i = 0 ;i < nodeList.getLength() ; i ++){
+				Node node = nodeList.item(i);
 				
-				if (Node.ELEMENT_NODE != _n.getNodeType()){
+				if (Node.ELEMENT_NODE != node.getNodeType()){
 					continue;
 				}
 				
-				Element _command = (Element) _n;
+				Element element = (Element) node;
 				
 				Command cmd = new Command();
-				cmd.configure(_command, p);
+				cmd.configure(element, p);
 				
 				if (cmd.isOk()){
 					commands.put(cmd.getId(), cmd);
 				}
 			}
-		}
-		
+		}		
+	}
+	
+	private void loadIncludeConfigFromElement(DefaultProperties p,Element e){
 		//处理includes/include
-		NodeList _includes = XmlTools.getNodeListByPath(e, "includes/include");
-		if (_includes != null && _includes.getLength() > 0){
+		NodeList nodeList = XmlTools.getNodeListByPath(e, "includes/include");
+		if (nodeList != null && nodeList.getLength() > 0){
 			
-			for (int i = 0 ;i < _includes.getLength() ; i++){
-				Node _n = _includes.item(i);
+			for (int i = 0 ;i < nodeList.getLength() ; i++){
+				Node node = nodeList.item(i);
 				
-				if (Node.ELEMENT_NODE != _n.getNodeType()){
+				if (Node.ELEMENT_NODE != node.getNodeType()){
 					continue;
 				}
 				
-				Element _include = (Element)_n;
+				Element element = (Element)node;
 				
-				String link = _include.getAttribute("link");
+				String link = element.getAttribute("link");
 				if (link != null && link.length() > 0){
-					String loadable = _include.getAttribute("loadable");
+					String loadable = element.getAttribute("loadable");
 					if (loadable != null){
-						String _loadable = p.transform(loadable);
-						if (_loadable.length() > 0){
+						String load = p.transform(loadable);
+						if (load.length() > 0){
 							loadConfig(p,p.transform(link));
 						}else{
-							logger.info("Find xml link file,but the loadable is null");
+							LOG.info("Find xml link file,but the loadable is null");
 						}
 					}else{
 						loadConfig(p,p.transform(link));
 					}
 				}
 			}
-		}
+		}		
+	}
+	
+	protected void loadConfigFromElement(DefaultProperties p,Element e) {
+		loadParameterConfigFromElement(p,e);
+		loadCommandConfigFromElement(p,e);
+		loadIncludeConfigFromElement(p,e);
 	}
 
+	@Override
 	public int init(DefaultProperties p) {
 		commandLine = new DefaultProperties("default",p);
 		//从配置文件中装入
@@ -308,7 +310,7 @@ public class Main implements CommandHelper,Process{
 		}
 		return 0;
 	}
-
+	@Override
 	public int run() {
 		if (command.equals(CMD_HELP)){
 			printHelp(helpPS);
@@ -326,45 +328,43 @@ public class Main implements CommandHelper,Process{
 		String module = cmd.getModule();
 		Process process = null;
 		try {
-			Factory<Process> factory = new Factory<Process>();
+			Factory<Process> factory = new Factory<Process>();// NOSONAR
 			process = factory.newInstance(module);
 		}catch (Exception ex){
-			logger.error("Can not create process instance,module=" +module,ex);
+			LOG.error("Can not create process instance,module=" +module,ex);
 			return -1;
 		}
 		
 		DefaultProperties p = commandLine;
-		{
-			//检查参数
-			List<Argument> arguments = cmd.getArguments();
-			
-			for (Argument argu:arguments){
-				String id = argu.getId();
-				String value = argu.getValue(p);
-				
-				if (value == null || value.length() <= 0){
-					if (!argu.isNullable()){
-						helpTopic = command;
-						helpPS.println("Can not find argument named " + id );
-						printHelp(helpPS);
-						return -1;
-					}
-				}else{
-					p.SetValue(id, value);
+
+		// 检查参数
+		List<Argument> arguments = cmd.getArguments();
+
+		for (Argument argu : arguments) {
+			String id = argu.getId();
+			String value = argu.getValue(p);
+
+			if (value == null || value.length() <= 0) {
+				if (!argu.isNullable()) {
+					helpTopic = command;
+					helpPS.println("Can not find argument named " + id);
+					printHelp(helpPS);
+					return -1;
 				}
+			} else {
+				p.SetValue(id, value);
 			}
 		}
-		
-		int result = 0;
-		result = process.init(p);
-		if  (result == 0){
+
+		int result = process.init(p);
+		if (result == 0) {
 			result = process.run();
 		}
 		return result;
 	}
 
 	public static void main(String[] args) {
-		Copyright.bless(logger, "\t\t");
+		Copyright.bless(LOG, "\t\t");
 		int result = 0;
 		try {
 			CommandLine cmdLine = new CommandLine(args,new SystemProperties());		
@@ -375,7 +375,7 @@ public class Main implements CommandHelper,Process{
 				result = main.run();
 			}
 		}catch (Exception ex){
-			logger.error(ex.getMessage(), ex);
+			LOG.error(ex.getMessage(), ex);
 			result = -1;
 		}
 		System.exit(result);

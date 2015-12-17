@@ -34,15 +34,18 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.3.2 [20150213 duanyy] <br>
  * - 接口{@link com.anysoft.cache.Cacheable Cacheable}增加了{@link com.anysoft.cache.Cacheable#expire() Cacheable.expire}方法 <br>
+ * 
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class SimpleModel extends Properties implements Cacheable {
 	protected String id = "";
 	
-	public SimpleModel(String _id){
-		id = _id;
+	public SimpleModel(String theId){
+		id = theId;
 	}
 	
-	
+	@Override
 	public void fromXML(Element root) {
 		fields.clear();
 		
@@ -87,7 +90,7 @@ public class SimpleModel extends Properties implements Cacheable {
 		}
 	}
 
-	
+	@Override
 	public void toXML(Element root) {
 		root.setAttribute("id", id);
 		
@@ -119,7 +122,7 @@ public class SimpleModel extends Properties implements Cacheable {
 	}
 
 	@SuppressWarnings("unchecked")
-	
+	@Override
 	public void fromJson(Map<String,Object> root) {
 		fields.clear();
 		
@@ -155,7 +158,7 @@ public class SimpleModel extends Properties implements Cacheable {
 		}
 	}
 
-	
+	@Override
 	public void toJson(Map<String,Object> root) {
 		JsonTools.setString(root, "id", id);
 		
@@ -187,16 +190,16 @@ public class SimpleModel extends Properties implements Cacheable {
 		}
 	}
 
-	
+	@Override
 	public String getId() {
 		return id;
 	}
 
-	
+	@Override
 	public boolean isExpired() {
 		return false;
 	}
-	
+	@Override
 	public void expire(){
 		// do nothing
 	}
@@ -209,7 +212,7 @@ public class SimpleModel extends Properties implements Cacheable {
 	
 	protected HashMap<String,Field> fields = new HashMap<String,Field>();
 	
-	
+	@Override
 	public void Clear() {
 		fields.clear();
 	}

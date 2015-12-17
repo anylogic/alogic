@@ -17,13 +17,21 @@ import com.anysoft.util.resource.ResourceFactory;
  * 工具类
  * @author duanyy
  * @since 1.6.3.22
+ * 
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class XScriptTool {
+	
 	/**
 	 * a logger of log4j
 	 */
-	public static final Logger logger = LogManager.getLogger(XScriptTool.class);
+	public static final Logger logger = LogManager.getLogger(XScriptTool.class);	
 	
+	private XScriptTool(){
+		
+	}
+
 	/**
 	 * 将Xml编译为语句
 	 * 
@@ -59,7 +67,7 @@ public class XScriptTool {
 			in = rm.load(url,null);
 			Document doc = XmlTools.loadFromInputStream(in);		
 			root = doc.getDocumentElement();	
-		}catch (Throwable ex){
+		}catch (Exception ex){
 			logger.error("Error occurs when load xml file,source=" + url, ex);
 		}finally {
 			IOTools.closeStream(in);

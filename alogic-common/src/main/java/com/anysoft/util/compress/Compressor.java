@@ -3,7 +3,6 @@ package com.anysoft.util.compress;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 
 /**
@@ -11,6 +10,9 @@ import com.anysoft.util.Factory;
  * 
  * @author duanyy
  * @since 1.0.11
+ * 
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public interface Compressor {
 	/**
@@ -19,7 +21,7 @@ public interface Compressor {
 	 * @return 压缩后的数据
 	 * @throws Exception
 	 */
-	public byte[] compress(byte[] data) throws Exception;
+	public byte[] compress(byte[] data) throws Exception; // NOSONAR
 	
 	/**
 	 * 解压bytes
@@ -27,7 +29,7 @@ public interface Compressor {
 	 * @return 原始数据
 	 * @throws Exception
 	 */
-	public byte[] decompress(byte[] data) throws Exception;
+	public byte[] decompress(byte[] data) throws Exception; // NOSONAR
 	
 	/**
 	 * 压缩
@@ -35,7 +37,7 @@ public interface Compressor {
 	 * @param out 输出流
 	 * @throws Exception
 	 */
-	public void compress(InputStream in,OutputStream out)throws Exception;
+	public void compress(InputStream in,OutputStream out)throws Exception;// NOSONAR
 	
 	/**
 	 * 解压
@@ -43,19 +45,19 @@ public interface Compressor {
 	 * @param out 输出流
 	 * @throws Exception
 	 */
-	public void decompress(InputStream in,OutputStream out)throws Exception;
+	public void decompress(InputStream in,OutputStream out)throws Exception;// NOSONAR
 	
 	
 	public static class TheFatory extends Factory<Compressor>{
 		public TheFatory(ClassLoader cl){
 			super(cl);
 		}
-		
-		public String getClassName(String _module) throws BaseException{
-			if (_module.indexOf('.') >= 0){
-				return _module;
+		@Override
+		public String getClassName(String module){
+			if (module.indexOf('.') >= 0){
+				return module;
 			}
-			return "com.anysoft.util.compress.compressor." + _module;
+			return "com.anysoft.util.compress.compressor." + module;
 		}
 	}
 }

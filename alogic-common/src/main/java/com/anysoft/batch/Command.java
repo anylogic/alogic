@@ -8,7 +8,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XMLConfigurable;
@@ -19,19 +18,21 @@ import com.anysoft.util.XmlTools;
  * 指令
  * 
  * @author duanyy
- *
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class Command implements XMLConfigurable,CommandHelper {
 	protected String id;
-	/**
-	 * to get id
-	 * @return the id
-	 */
-	public String getId(){
-		return id;
-	}
-	
+
 	protected String note;
+		
+	protected String module;
+	
+	/**
+	 *　命令行参数
+	 */
+	protected List<Argument> arguments = new ArrayList<Argument>();	//NO SONAR
+	
 	/**
 	 * to get note
 	 * @return the note
@@ -40,7 +41,13 @@ public class Command implements XMLConfigurable,CommandHelper {
 		return note;
 	}
 	
-	public String module;
+	/**
+	 * to get id
+	 * @return the id
+	 */
+	public String getId(){
+		return id;
+	}	
 	/**
 	 * to get module
 	 * @return the module
@@ -54,11 +61,6 @@ public class Command implements XMLConfigurable,CommandHelper {
 	}
 	
 	/**
-	 *　命令行参数
-	 */
-	protected List<Argument> arguments = new ArrayList<Argument>();
-	
-	/**
 	 * 获取命令行参数列表
 	 * @return 参数列表
 	 */
@@ -67,27 +69,27 @@ public class Command implements XMLConfigurable,CommandHelper {
 	/**
 	 * 从XML节点中装入配置
 	 */
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		Properties p = new XmlElementProperties(_e,_properties);
+	@Override
+	public void configure(Element element, Properties props) {
+		Properties p = new XmlElementProperties(element,props);
 		
 		id = PropertiesConstants.getString(p, "id", "");
 		note = PropertiesConstants.getString(p, "note", "");
 		module = PropertiesConstants.getString(p, "process", DefaultProcess.class.getName());
 		
-		NodeList _arguments = XmlTools.getNodeListByPath(_e, "argument");
-		if (_arguments != null && _arguments.getLength() > 0){
-			for (int i = 0 ;i < _arguments.getLength() ; i ++){
-				Node n = _arguments.item(i);
+		NodeList argus = XmlTools.getNodeListByPath(element, "argument");
+		if (argus != null && argus.getLength() > 0){
+			for (int i = 0 ;i < argus.getLength() ; i ++){
+				Node n = argus.item(i);
 				
 				if (Node.ELEMENT_NODE != n.getNodeType()){
 					continue;
 				}
 				
-				Element _argument = (Element) n;
+				Element argument = (Element) n;
 				
 				Argument argu = new Argument();
-				argu.configure(_argument, p);
+				argu.configure(argument, p);
 				
 				if (argu.isOK()){
 					arguments.add(argu);
@@ -96,10 +98,11 @@ public class Command implements XMLConfigurable,CommandHelper {
 		}
 	}
 
+	@Override
 	public void printHelp(PrintStream ps) {
 		ps.println("Command\t:" + getId() + "\t" + getNote());
 		
-		if (arguments != null && arguments.size() > 0){
+		if (!arguments.isEmpty()){
 			ps.println("\t|Arguments are listed below:");
 			
 			for (Argument argu:arguments){

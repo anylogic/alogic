@@ -36,12 +36,14 @@ public interface Pair<K, V>{
 
 		@Override
 		public int hashCode(){
-			if (key == null) return 0;
-			return key.hashCode();
+			return key == null ? 0 : key.hashCode();
 		}
 		
 		@Override
 		public boolean equals(Object other){
+			if (!(other instanceof Default)){
+				return false;
+			}
 			if (this == other){ 
 				return true;
 			}
@@ -49,7 +51,7 @@ public interface Pair<K, V>{
 			@SuppressWarnings("unchecked")
 			Default<K,V> another = (Default<K,V>)other;
 			
-			if (another == null || another.key ==  null){
+			if (another.key ==  null){
 				return false;
 			}
 			

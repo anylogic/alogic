@@ -16,10 +16,23 @@ import com.anysoft.util.XmlElementProperties;
  * 指令参数
  * 
  * @author duanyy
- *
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class Argument implements XMLConfigurable,CommandHelper {
 	protected String id;
+	
+	protected String name;
+	
+	protected String note;	
+	
+	/**
+	 * the selector
+	 */
+	protected Selector selector = null;	
+	
+	protected boolean nullable = false;	
+	
 	/**
 	 * to get the argument id
 	 * @return the argument id
@@ -27,8 +40,7 @@ public class Argument implements XMLConfigurable,CommandHelper {
 	public String getId(){
 		return id;
 	}
-	
-	protected String name;
+
 	/**
 	 * to get the argument name
 	 * @return the argument name
@@ -36,8 +48,7 @@ public class Argument implements XMLConfigurable,CommandHelper {
 	public String getName(){
 		return name;
 	}
-	
-	protected String note;
+
 	/**
 	 * to get the note
 	 * @return the note
@@ -45,8 +56,6 @@ public class Argument implements XMLConfigurable,CommandHelper {
 	public String getNote(){
 		return note;
 	}
-	
-	protected boolean nullable = false;
 	
 	/**
 	 * whether or not the value can be null
@@ -59,21 +68,18 @@ public class Argument implements XMLConfigurable,CommandHelper {
 	public boolean isOK(){
 		return selector != null && selector.isOk();
 	}
-	/**
-	 * the selector
-	 */
-	protected Selector selector = null;
-	
-	public void configure(Element _e, Properties _properties)
+
+	@Override
+	public void configure(Element e, Properties props)
 			throws BaseException {
-		Properties p = new XmlElementProperties(_e,_properties);
+		Properties p = new XmlElementProperties(e,props);
 		
 		id = PropertiesConstants.getString(p, "selector-id", "");
 		name = PropertiesConstants.getString(p, "name", "");
 		note = PropertiesConstants.getString(p,"note","");
 		nullable = PropertiesConstants.getBoolean(p, "nullable", nullable);
 		
-		selector = Selector.newInstance(_e,p,"SingleField");
+		selector = Selector.newInstance(e,p,"SingleField");
 	}
 
 	/**
@@ -86,22 +92,19 @@ public class Argument implements XMLConfigurable,CommandHelper {
 		return selector != null?selector.select(dp):"";
 	}
 
+	@Override
 	public void printHelp(PrintStream ps) {
 		ps.println("\t|" + getId() + "\t-" + getName());
-		if (note != null && note.length() > 0){
+		if (note != null && note.length() > 0) {
 			ps.println("\t\t|" + getNote());
 		}
-		{
-			// nullable
-			ps.println("\t\t|Nullable = " + Boolean.toString(nullable));
-		}
-		{
-			// default value
-			ps.println("\t\t|Default Value = " + (selector == null ? "":selector.getDefaultValue()));
-		}
-		{
-			// selector
-			ps.println("\t\t|Selector = " + (selector == null ? "null":selector.getClass().getName()));
-		}
+		// nullable
+		ps.println("\t\t|Nullable = " + Boolean.toString(nullable));
+		// default value
+		ps.println("\t\t|Default Value = "
+				+ (selector == null ? "" : selector.getDefaultValue()));
+		// selector
+		ps.println("\t\t|Selector = "
+				+ (selector == null ? "null" : selector.getClass().getName()));
 	}
 }

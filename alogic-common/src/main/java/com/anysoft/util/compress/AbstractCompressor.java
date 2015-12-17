@@ -4,23 +4,20 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import com.anysoft.util.CommandLine;
-import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
-import com.anysoft.util.KeyGen;
-import com.anysoft.util.Settings;
-
 
 /**
  * Compressor的虚基类
  * @author duanyy
  * @version 1.0.11
- * 
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
-abstract public class AbstractCompressor implements Compressor {
+public abstract class AbstractCompressor implements Compressor {
 
+	protected static final int BUFFER_SIZE = 1024;
 	
+	@Override
 	public byte[] compress(byte[] data) throws Exception {
 		ByteArrayInputStream bais = null;
 		ByteArrayOutputStream baos = null;
@@ -37,7 +34,7 @@ abstract public class AbstractCompressor implements Compressor {
 		}
 	}
 
-	
+	@Override
 	public byte[] decompress(byte[] data) throws Exception {
         ByteArrayInputStream bais = null;
         ByteArrayOutputStream baos = null;
@@ -54,90 +51,43 @@ abstract public class AbstractCompressor implements Compressor {
         }
 	}
 
-	protected static int BufferSize = 1024;
-	
-	
+	@Override
 	public void compress(InputStream in, OutputStream out) throws Exception {
-		OutputStream _out = null;
+		OutputStream wrapped = null;
 		
 		try {
-			_out = getOutputStream(out);
+			wrapped = getOutputStream(out);
 			
 			int count = 0;  
-	        byte data[] = new byte[BufferSize];  
-	        while ((count = in.read(data, 0, BufferSize)) != -1) {  
-	        	_out.write(data, 0, count);  
+	        byte [] data = new byte[BUFFER_SIZE];  
+	        while ((count = in.read(data, 0, BUFFER_SIZE)) != -1) {  
+	        	wrapped.write(data, 0, count);  
 	        }  
 	
-	        _out.close();  
+	        wrapped.close();  
 		}finally {
-			IOTools.closeStream(_out);
+			IOTools.closeStream(wrapped);
 		}
 	}
 
-	abstract protected OutputStream getOutputStream(OutputStream out) throws Exception;
-
-	
+	 
+	@Override
 	public void decompress(InputStream in, OutputStream out) throws Exception {
-		InputStream _in = null;
-		
+		InputStream wrapped = null;		
 		try {
-			_in = getInputStream(in);
+			wrapped = getInputStream(in);
 	        int count = 0;  
-	        byte data[] = new byte[BufferSize];  
-	        while ((count = _in.read(data, 0, BufferSize)) != -1) {  
+	        byte [] data = new byte[BUFFER_SIZE];  
+	        while ((count = wrapped.read(data, 0, BUFFER_SIZE)) != -1) {  
 	        	out.write(data, 0, count);  
 	        }  
 	  
-	        _in.close(); 
+	        wrapped.close(); 
 		} finally {
-			IOTools.closeStream(_in);
+			IOTools.closeStream(wrapped);
 		}
 	}
-
-	abstract protected InputStream getInputStream(InputStream in) throws Exception;
 	
-	
-	public static void main(String [] args){
-		CommandLine cmd = new CommandLine(args);
-		Settings settings = Settings.get();	
-		settings.addSettings(cmd);
-		
-		ClassLoader cl = (ClassLoader)settings.get("classLoader");
-		
-		Factory<Compressor> factory = new Compressor.TheFatory(cl);
-		
-		
-		
-		String data = KeyGen.getKey(100);
-		
-		System.out.println("The data is " + data);
-		System.out.println("The data size is " + data.length());
-		
-		try {
-			Compressor compressor = factory.newInstance("BZIP2");
-			
-			byte [] compressed = compressor.compress(data.getBytes());
-			
-			System.out.println("BZIP2 is " + compressed.length);
-			
-			
-			System.out.println(new String(compressor.decompress(compressed)));
-		}catch (Exception ex){
-			ex.printStackTrace();
-		}
-		try {
-			Compressor compressor = factory.newInstance("GZIP");
-			
-			byte [] compressed = compressor.compress(data.getBytes());
-			
-			System.out.println("GZIP is " + compressed.length);
-			
-			
-			System.out.println(new String(compressor.decompress(compressed)));
-		}catch (Exception ex){
-			ex.printStackTrace();
-		}	
-	
-	}
+	protected abstract OutputStream getOutputStream(OutputStream out) throws Exception; // NOSONAR
+	protected abstract InputStream getInputStream(InputStream in) throws Exception; // NOSONAR
 }

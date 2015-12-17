@@ -29,12 +29,14 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @author duanyy
  * 
- * @since 1.6.0.1
- * 
+ * @since 1.6.0.1 <br>
+ * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class WebAppMain extends WebAppContextListener {
 	protected List<ServletContextListener> listeners = null;
 	
+	@Override
 	public void contextDestroyed(ServletContextEvent e) {
 		super.contextDestroyed(e);
 		
@@ -48,7 +50,7 @@ public class WebAppMain extends WebAppContextListener {
 		}
 	}
 
-	
+	@Override
 	public void contextInitialized(ServletContextEvent e) {
 		super.contextInitialized(e);
 		
@@ -80,7 +82,7 @@ public class WebAppMain extends WebAppContextListener {
 						}
 					}
 				}
-			}catch (Throwable ex){
+			}catch (Exception ex){
 				logger.error("Error occurs when load xml file,source=" + _addons, ex);
 			}finally {
 				IOTools.closeStream(in); 
