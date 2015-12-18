@@ -9,7 +9,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.alogic.cache.core.MultiFieldObjectProvider.Null;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
@@ -25,8 +24,11 @@ import com.anysoft.util.XmlTools;
  * @since 1.6.3.3
  * @version 1.6.4.5 [20150910 duanyy] <br>
  * - Report输出时输出module <br>
+ * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
  */
-abstract public class AbstractCacheStore implements CacheStore {
+public abstract class AbstractCacheStore implements CacheStore {
 	/**
 	 * a logger of log4j
 	 */
@@ -42,12 +44,29 @@ abstract public class AbstractCacheStore implements CacheStore {
 	 */
 	protected MultiFieldObjectProvider provider = null;
 	
+	/**
+	 * id
+	 */
+	protected String id;
+	
+	/**
+	 * name
+	 */
+	protected String name;
+	
+	/**
+	 * note
+	 */
+	protected String note;	
+	
+	@Override
 	public void addWatcher(Watcher<MultiFieldObject> watcher) {
 		if (provider != null){
 			provider.addWatcher(watcher);
 		}
 	}
 
+	@Override
 	public void removeWatcher(Watcher<MultiFieldObject> watcher) {
 		if (provider != null){
 			provider.addWatcher(watcher);
@@ -58,20 +77,20 @@ abstract public class AbstractCacheStore implements CacheStore {
 		return load(id,true);
 	}
 
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		Properties p = new XmlElementProperties(_e,_properties);
+	@Override
+	public void configure(Element element, Properties props){
+		Properties p = new XmlElementProperties(element,props);
 		
 		id = PropertiesConstants.getString(p,"id", "");
 		name = PropertiesConstants.getString(p,"name","");
 		note = PropertiesConstants.getString(p,"note", "");
 		
-		Element eExpire = XmlTools.getFirstElementByPath(_e, "policy");
+		Element eExpire = XmlTools.getFirstElementByPath(element, "policy"); // NOSONAR
 		if (eExpire != null){
-			Factory<ExpirePolicy> factory = new Factory<ExpirePolicy>();
+			Factory<ExpirePolicy> factory = new Factory<ExpirePolicy>(); // NOSONAR
 			
 			try {
-				expirePolicy = factory.newInstance(eExpire, p, "module", ExpirePolicy.Default.class.getName());
+				expirePolicy = factory.newInstance(eExpire, p, "module", ExpirePolicy.Default.class.getName()); // NOSONAR
 			}catch (Exception ex){
 				logger.error("Can not create Expire Policy,use default",ex);
 				expirePolicy = new ExpirePolicy.Default();
@@ -80,9 +99,9 @@ abstract public class AbstractCacheStore implements CacheStore {
 			expirePolicy = new ExpirePolicy.Default();
 		}
 		
-		Element eProvider = XmlTools.getFirstElementByPath(_e, "provider");
+		Element eProvider = XmlTools.getFirstElementByPath(element, "provider"); // NOSONAR
 		if (eProvider != null){
-			Factory<MultiFieldObjectProvider> factory = new Factory<MultiFieldObjectProvider>();
+			Factory<MultiFieldObjectProvider> factory = new Factory<MultiFieldObjectProvider>(); // NOSONAR
 			try {
 				provider = factory.newInstance(eProvider, p, "module",Null.class.getName());
 			}catch(Exception ex){
@@ -93,16 +112,17 @@ abstract public class AbstractCacheStore implements CacheStore {
 			provider = new MultiFieldObjectProvider.Null();
 		}
 		
-		onConfigure(_e,p);
+		onConfigure(element,p);
 	}
 
 	/**
 	 * 处理Configure时间
-	 * @param _e XML的Element
+	 * @param e XML的Element
 	 * @param p 变量集
 	 */
-	abstract protected void onConfigure(Element _e, Properties p);
+	protected abstract void onConfigure(Element e, Properties p);
 
+	@Override
 	public void report(Element xml) {
 		if (xml != null){
 			xml.setAttribute("id", id);
@@ -124,6 +144,7 @@ abstract public class AbstractCacheStore implements CacheStore {
 		}
 	}
 
+	@Override
 	public void report(Map<String, Object> json) {
 		if (json != null){
 			JsonTools.setString(json, "id", id);
@@ -132,42 +153,32 @@ abstract public class AbstractCacheStore implements CacheStore {
 			JsonTools.setString(json, "module", getClass().getName());
 			
 			if (expirePolicy != null){
-				Map<String,Object> map = new HashMap<String,Object>();
+				Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR
 				expirePolicy.report(map);
 				json.put("policy", map);
 			}
 			if (provider != null){
-				Map<String,Object> map = new HashMap<String,Object>();
+				Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR
 				provider.report(map);
 				json.put("provider", map);
 			}
 		}
 	}
 
+	@Override
 	public String id() {
 		return id;
 	}
 
+	@Override
 	public String name() {
 		return name;
 	}
 
+	@Override
 	public String note() {
 		return note;
 	}
 
-	/**
-	 * id
-	 */
-	protected String id;
-	
-	/**
-	 * name
-	 */
-	protected String name;
-	
-	/**
-	 * note
-	 */
-	protected String note;
+
 }

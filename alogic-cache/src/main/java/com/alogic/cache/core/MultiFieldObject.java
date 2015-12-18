@@ -19,7 +19,8 @@ import com.anysoft.util.JsonTools;
  * 
  * @author duanyy
  * @since 1.6.3.3
- * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
  */
 public interface MultiFieldObject extends Cacheable,DataProvider {
 	/**
@@ -57,28 +58,33 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 	 */
 	public static class Default implements MultiFieldObject{
 		protected String id;
-		protected Map<String,String> keyvalues = new HashMap<String,String>();
+		protected Map<String,String> keyvalues = new HashMap<String,String>(); // NOSONAR
+		protected static Object context = new Object();
 		
 		public Default(){
-			
+			// nothing to do
 		}
 		
-		public Default(String _id){
-			id = _id;
+		public Default(String pId){
+			id = pId;
 		}
 		
+		@Override
 		public String getId() {
 			return id;
 		}
 
+		@Override
 		public boolean isExpired() {
 			return false;
 		}
 
+		@Override
 		public void expire() {
 			keyvalues.clear();
 		}
 
+		@Override
 		public void toXML(Element e) {
 			if (e != null){
 				e.setAttribute("id", id);
@@ -92,26 +98,29 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 			}
 		}
 
+		@Override
 		public void fromXML(Element e) {
-			if (e != null){
-				id = e.getAttribute("id");
-				
-				NamedNodeMap attrs = e.getAttributes();
-				
-				for (int i = 0 ; i < attrs.getLength() ; i ++){
-					Node node = attrs.item(i);
-					if (Node.ATTRIBUTE_NODE == node.getNodeType()){
-						Attr attr = (Attr)node;
-						if (attr.getNodeName().equals("id")){
-							continue;
-						}
-						
-						keyvalues.put(attr.getNodeName(), attr.getNodeValue());
+			if (e == null) {
+				return;
+			}
+			id = e.getAttribute("id");
+
+			NamedNodeMap attrs = e.getAttributes();
+
+			for (int i = 0; i < attrs.getLength(); i++) {
+				Node node = attrs.item(i);
+				if (Node.ATTRIBUTE_NODE == node.getNodeType()) {
+					Attr attr = (Attr) node;
+					if ("id".equals(attr.getNodeName())) {
+						continue;
 					}
+
+					keyvalues.put(attr.getNodeName(), attr.getNodeValue());
 				}
 			}
 		}
-
+		
+		@Override
 		public void toJson(Map<String, Object> json) {
 			if (json != null){
 				JsonTools.setString(json, "id", id);
@@ -124,7 +133,8 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 				}
 			}
 		}
-
+		
+		@Override
 		public void fromJson(Map<String, Object> json) {
 			if (json != null){
 				id = JsonTools.getString(json, "id", "");
@@ -137,37 +147,42 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 				}
 			}
 		}
-
+		
+		@Override
 		public String getValue(String varName, Object context,
 				String defaultValue) {
 			String found = keyvalues.get(varName);
 			return found == null || found.length() <= 0 ? defaultValue:found;
 		}
 
-		protected static Object context = new Object();
+		@Override
 		public Object getContext(String varName) {
 			return context;
 		}
-
+		
+		@Override
 		public void setField(String key, String value) {
 			keyvalues.put(key, value);
 		}
 
+		@Override
 		public String getField(String key, String dftValue) {
 			String found = keyvalues.get(key);
 			return found == null || found.length() <= 0 ? dftValue:found;
 		}
-
+		@Override
 		public String[] keys() {
 			return keyvalues.keySet().toArray(new String[keyvalues.size()]);
 		}
 
+		@Override
 		public int count() {
 			return keyvalues.size();
 		}
 		
+		@Override
 		public String toString(){
-			StringBuffer value = new StringBuffer(id);
+			StringBuilder value = new StringBuilder(id);
 			
 			Iterator<Entry<String,String>> iter = keyvalues.entrySet().iterator();
 			

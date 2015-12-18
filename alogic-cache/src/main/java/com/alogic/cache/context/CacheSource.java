@@ -27,15 +27,20 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.4.4 [20150910 duanyy] <br>
  * - 父类已经提供了current，淘汰掉 <br>
+ * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
  */
 public class CacheSource extends Source<CacheStore> {
-
+	private static final TheFactory factory = new TheFactory();
+	private static CacheSource theInstance = null;
 	@Override
 	public Context<CacheStore> newInstance(Element e, Properties p,
 			String attrName) {
 		return factory.newInstance(e,p,attrName,InnerContext.class.getName());
 	}
 	
+	@Override
 	protected String getContextName(){
 		return "context";
 	}	
@@ -64,14 +69,13 @@ public class CacheSource extends Source<CacheStore> {
 		
 	}
 	
-	public static final TheFactory factory = new TheFactory();
-	
 	public static Context<CacheStore> newInstance(Element doc,Properties p){
-		if (doc == null) return null;
+		if (doc == null) 
+			return null;
 		return factory.newInstance(doc, p);
 	}	
 	
-	public static CacheSource theInstance = null;
+	
 	public static CacheSource get(){
 		if (theInstance != null){
 			return theInstance;

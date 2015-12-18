@@ -3,8 +3,6 @@ package com.alogic.cache.core;
 import java.util.Map;
 
 import org.w3c.dom.Element;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
@@ -15,7 +13,8 @@ import com.anysoft.util.XMLConfigurable;
  * @author duanyy
  *
  * @since 1.6.3.3
- * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
  */
 public interface ExpirePolicy extends XMLConfigurable,Reportable{
 	
@@ -36,19 +35,22 @@ public interface ExpirePolicy extends XMLConfigurable,Reportable{
 	 */
 	public static class Default implements ExpirePolicy{
 
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		@Override
+		public void configure(Element e, Properties p){
 			// nothing to do
 		}
 
+		@Override
 		public void report(Element xml) {
 			// nothing to do
 		}
 
+		@Override
 		public void report(Map<String, Object> json) {
 			// nothing to do
 		}
 
+		@Override
 		public boolean isExpired(MultiFieldObject value,long timestamp,long now,int ttl) {
 			return timestamp + ttl < now;
 		}

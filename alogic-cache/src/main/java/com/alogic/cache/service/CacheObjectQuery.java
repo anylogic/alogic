@@ -21,10 +21,14 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author duanyy
  * @since 1.6.4.3
+ * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
  */
 public class CacheObjectQuery extends AbstractServant {
 
-	protected int onXml(Context ctx) throws Exception{
+	@Override
+	protected int onXml(Context ctx){
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		String id = getArgument("cacheId",ctx);
@@ -37,7 +41,7 @@ public class CacheObjectQuery extends AbstractServant {
 		
 		CacheStore found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find a cache :" + id);
+			throw new ServantException("user.data_not_found","Can not find a cache :" + id); // NOSONAR
 		}
 		
 		MultiFieldObject object = found.get(objectId, true);
@@ -53,7 +57,8 @@ public class CacheObjectQuery extends AbstractServant {
 		return 0;
 	}
 	
-	protected int onJson(Context ctx) throws Exception{
+	@Override
+	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		String id = getArgument("cacheId",ctx);
 		String objectId = getArgument("objectId",ctx);
@@ -69,7 +74,7 @@ public class CacheObjectQuery extends AbstractServant {
 			throw new ServantException("user.data_not_found","Can not find the object :" + objectId);
 		}
 		
-		Map<String,Object> map = new HashMap<String,Object>();
+		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR
 		object.toJson(map);
 		msg.getRoot().put("cachedObject", map);
 		
@@ -78,11 +83,12 @@ public class CacheObjectQuery extends AbstractServant {
 	
 	@Override
 	protected void onDestroy() {
-		
+		// nothing to do
 	}
+	
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
-
+	protected void onCreate(ServiceDescription sd) {
+		// nothing to do
 	}
 
 }

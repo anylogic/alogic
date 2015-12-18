@@ -20,11 +20,13 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author duanyy
  * @since 1.6.3.3
- * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
  */
 public class CacheExpire  extends AbstractServant {
 
-	protected int onXml(Context ctx) throws Exception{
+	@Override
+	protected int onXml(Context ctx){
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		String id = getArgument("cacheId",ctx);
@@ -54,7 +56,8 @@ public class CacheExpire  extends AbstractServant {
 		return 0;
 	}
 	
-	protected int onJson(Context ctx) throws Exception{
+	@Override
+	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		String id = getArgument("cacheId",ctx);
 		
@@ -73,7 +76,7 @@ public class CacheExpire  extends AbstractServant {
 			found.expire(objectId);
 		}
 		
-		Map<String,Object> map = new HashMap<String,Object>();
+		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR
 		found.report(map);
 		msg.getRoot().put("cache", map);
 		
@@ -82,11 +85,11 @@ public class CacheExpire  extends AbstractServant {
 	
 	@Override
 	protected void onDestroy() {
-		
+		// nothing to do
 	}
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
-
+	protected void onCreate(ServiceDescription sd) {
+		// nothing to do
 	}
 
 }
