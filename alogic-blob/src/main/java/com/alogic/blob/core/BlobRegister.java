@@ -3,6 +3,8 @@ package com.alogic.blob.core;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.BaseException;
@@ -11,7 +13,7 @@ import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
-import com.logicbus.backend.ServantException;
+
 
 /**
  * 文件注册器
@@ -23,6 +25,9 @@ import com.logicbus.backend.ServantException;
  * @version 1.6.4.7 [duanyy 20150916] <br>
  * - 增加文件扫描接口 <br>
  * - 增加虚基类实现 <br>
+ * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public interface BlobRegister extends XMLConfigurable,Configurable,Reportable{
 	/**
@@ -59,18 +64,21 @@ public interface BlobRegister extends XMLConfigurable,Configurable,Reportable{
 	 * @author duanyy
 	 *
 	 */
-	abstract public static class Abstract implements BlobRegister{
-
+	 public abstract static class Abstract implements BlobRegister{
+		/**
+		 * a logger of log4j
+		 */
+		protected static final Logger logger = LogManager.getLogger(BlobRegister.class);
+		
 		@Override
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
-			XmlElementProperties p = new XmlElementProperties(_e,_properties);
+		public void configure(Element e, Properties props){
+			XmlElementProperties p = new XmlElementProperties(e,props);
 			configure(p);			
 		}
 
 		@Override
-		public void configure(Properties p) throws BaseException {
-			
+		public void configure(Properties p){
+			// nothing to do
 		}		
 		
 		@Override

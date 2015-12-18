@@ -26,6 +26,9 @@ import com.anysoft.util.XmlElementProperties;
  * @version 1.6.4.7 [duanyy 20150916] <br>
  * - 增加文件扫描接口 <br>
  * - 增加虚基类实现 <br>
+ * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 	/**
@@ -90,7 +93,7 @@ public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 	 * @author duanyy
 	 * @since 1.6.4.7
 	 */
-	abstract public static class Abstract implements BlobManager{
+	 public abstract static class Abstract implements BlobManager{
 		/**
 		 * a logger of log4j
 		 */
@@ -107,14 +110,13 @@ public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 		}
 		
 		@Override
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
-			XmlElementProperties p = new XmlElementProperties(_e,_properties);
+		public void configure(Element e, Properties props){
+			XmlElementProperties p = new XmlElementProperties(e,props);
 			configure(p);
 		}
 		
 		@Override
-		public void configure(Properties p) throws BaseException {
+		public void configure(Properties p){
 			id = PropertiesConstants.getString(p,"id",id);
 		}
 	

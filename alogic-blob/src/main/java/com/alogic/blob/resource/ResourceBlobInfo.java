@@ -7,14 +7,17 @@ import com.alogic.blob.core.BlobInfo;
  * 
  * @author duanyy
  * @since 1.6.4.7
+ * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public class ResourceBlobInfo extends BlobInfo.Default{
 	protected String path;
 
-	public ResourceBlobInfo(String _id, String _contentType, String _md5,
-			long _length,String _path) {
-		super(_id, _contentType, _md5, _length);
-		path = _path;
+	public ResourceBlobInfo(String pId, String pContentType, String pMd5,
+			long pLength,String pPath) {
+		super(pId, pContentType, pMd5, pLength);
+		path = pPath;
 	}
 
 	public String getPath(){

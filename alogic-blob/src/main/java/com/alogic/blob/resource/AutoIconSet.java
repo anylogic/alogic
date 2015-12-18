@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -25,21 +24,12 @@ import com.anysoft.util.Settings;
 import com.anysoft.util.XmlElementProperties;
 
 /**
- * 基于ClassPath的BlobManager
- * 
+ * 自动图标集
  * @author duanyy
- * @since 1.6.4.7
- * 
- * @version 1.6.4.18 [duanyy 20151218] <br>
- * - 增加自动图标集 <br>
+ * @since 1.6.4.18
  */
-public class ResourceBlobManager extends BlobManager.Abstract{
-	
-	/**
-	 * blobs
-	 */
-	private Map<String,ResourceBlobInfo> blobs = new ConcurrentHashMap<String,ResourceBlobInfo>(); // NOSONAR
-	
+public class AutoIconSet extends BlobManager.Abstract{
+
 	/**
 	 * 路径
 	 */
@@ -55,17 +45,21 @@ public class ResourceBlobManager extends BlobManager.Abstract{
 	 */
 	private String contentType = "image/*";	
 	
+	/**
+	 * 保存多个图标资源的数组
+	 */
+	private List<ResourceBlobInfo> blobs = new ArrayList<ResourceBlobInfo>(); // NOSONAR
+	
 	public String getHome(){return home;}
 	
 	public Class<?> getBootstrap(){return bootstrap;}
 	
-	public String getContentType(){return contentType;}
+	public String getContentType(){return contentType;}	
 	
 	@Override
 	public void configure(Element pElement, Properties pProps){
 		XmlElementProperties p = new XmlElementProperties(pElement,pProps);
 		configure(p);
-		
 	}
 	
 	@Override
@@ -74,7 +68,7 @@ public class ResourceBlobManager extends BlobManager.Abstract{
 		
 		contentType = PropertiesConstants.getString(p,"contentType",contentType,true); // NOSONAR
 		
-		home = PropertiesConstants.getString(p,"home","",true);
+		home = PropertiesConstants.getString(p,"home","/com/alogic/blob/icon",true);
 		
 		String clazz = PropertiesConstants.getString(p,"bootstrap","",true); // NOSONAR
 		if (clazz != null && clazz.length() > 0){
@@ -86,17 +80,78 @@ public class ResourceBlobManager extends BlobManager.Abstract{
 				logger.error("Can not load class:" + clazz,ex);
 			}
 		}
+		
+		scanResource(home,bootstrap);
 	}
 	
-	protected void resourceFound(String h,String id) {
+	/**
+	 * 在home目录中扫描资源
+	 * @param pHome 目录
+	 * @param pBootstrap 资源引导类
+	 */
+	protected void scanResource(String pHome, Class<?> pBootstrap) {
+		URL url = pBootstrap.getResource(pHome);
+		
+		if(url.toString().startsWith("file:")){
+            File file;
+			try {
+				file = new File(url.toURI());
+			} catch (URISyntaxException e) {
+				logger.error("Can not scan home:" + pHome,e);
+				return;
+			}
+			scanFileSystem(pHome,file);
+        }
+        else{
+        	if (url.toString().startsWith("jar:")){
+	        	JarFile jfile;
+	        	try {
+	        		String jarUrl = url.toString();
+	        		jarUrl = jarUrl.substring(9, jarUrl.indexOf('!'));
+					jfile = new JarFile(jarUrl);
+				} catch (IOException e) {
+					logger.error("Can not scan home:" + pHome,e);
+					return;
+				}
+	        	scanJar(pHome,jfile);
+        	}
+        }
+	}
+	
+	/**
+	 * 扫描指定的jar
+	 * @param home 路径
+	 * @param pFile jar file
+	 */
+	protected void scanJar(String home,JarFile pFile){
+        Enumeration<JarEntry> files = pFile.entries();
+        while (files.hasMoreElements()) {
+          JarEntry entry = files.nextElement();
+          String name = entry.getName();
+          if (name.startsWith(home.substring(1)) && (name.endsWith(".png") || name.endsWith(".jpg"))){
+        	  resourceFound('/' + name);
+          }
+        } 		
+	}
+
+	protected void scanFileSystem(String pHome,File pFile){
+        File[] files = pFile.listFiles();
+        for (File item:files){
+        	if (item.getName().endsWith(".png") ||
+        			item.getName().endsWith(".jpg")){
+        		resourceFound(pHome + "/" + item.getName());
+        	}
+        }		
+	}
+	
+	protected void resourceFound(String path) {
 		InputStream in = null;
-		String path = h + "/" + id;
 		try {
 			in = bootstrap.getResourceAsStream(path);
 			if (in != null){
 				String md5 = DigestUtils.md5Hex(in);
 				ResourceBlobInfo info = new ResourceBlobInfo(id,contentType,md5,0,path);
-				blobs.put(id, info);
+				blobs.add(info);
 			}else{
 				logger.error("The resource is not valid :" + path);
 			}
@@ -130,23 +185,34 @@ public class ResourceBlobManager extends BlobManager.Abstract{
 			json.put("count", blobs.size());
 		}
 	}
-
-	@Override
-	public BlobWriter newFile(String contentType) {
-		throw new BaseException("core.not_supported","This function is not suppurted yet."); // NOSONAR	
-	}
-
+	
 	@Override
 	public BlobReader getFile(String id) {
-		ResourceBlobInfo found = blobs.get(id);
-		return found == null ? null : new ResourceBlobReader(found,bootstrap);
+		if (blobs.isEmpty()){
+			return null;
+		}
+		int index = (id.hashCode() & Integer.MAX_VALUE) % blobs.size();
+		return new ResourceBlobReader(blobs.get(index),bootstrap);
 	}
 
 	@Override
 	public boolean existFile(String id) {
-		return blobs.containsKey(id);
+		return !blobs.isEmpty();
+	}	
+	
+	@Override
+	public String list(List<String> ids, String cookies,int limit) {
+		for (ResourceBlobInfo info:blobs){
+			ids.add(info.id());
+		}
+		return cookies;
+	}		
+	
+	@Override
+	public BlobWriter newFile(String contentType) {
+		throw new BaseException("core.not_supported","This function is not suppurted yet."); // NOSONAR	
 	}
-
+	
 	@Override
 	public boolean deleteFile(String id) {
 		throw new BaseException("core.not_supported",
@@ -163,16 +229,5 @@ public class ResourceBlobManager extends BlobManager.Abstract{
 	public void cancel(BlobWriter writer) {
 		throw new BaseException("core.not_supported",
 				"This function is not suppurted yet.");	
-	}
-
-	@Override
-	public String list(List<String> ids, String cookies,int limit) {
-		Iterator<String> keys = blobs.keySet().iterator();
-		
-		while (keys.hasNext()){
-			ids.add(keys.next());
-		}
-		
-		return cookies;
 	}
 }

@@ -17,6 +17,9 @@ import com.alogic.blob.core.BlobReader;
  * 
  * @author duanyy
  * @since 1.6.3.32
+ * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public class LocalBlobReader implements BlobReader{
 	/**
@@ -35,27 +38,31 @@ public class LocalBlobReader implements BlobReader{
 	protected File file = null;
 	
 	protected String id;
-	public LocalBlobReader(String _id,File _file,BlobInfo _info){
-		id = _id;
-		info = _info;
-		file = _file;
+	
+	public LocalBlobReader(String pId,File pFile,BlobInfo pInfo){
+		id = pId;
+		info = pInfo;
+		file = pFile;
 	}
 	
+	@Override
 	public InputStream getInputStream(long offset) {
 		InputStream in = null;
 		try {
 			in = new FileInputStream(file);
 			if (offset > 0){
-				in.skip(offset);
+				in.skip(offset); // NOSONAR
 			}
 		} catch (FileNotFoundException e) {
-			logger.error("Can not find file:" + file.getPath());
+			logger.error("Can not find file:" + file.getPath(),e);
 		} catch (IOException e) {
-			logger.error("Skip is not supported");
+			logger.error("Skip is not supported",e);
 		}
 		
 		return in;
 	}
+	
+	@Override
 	public BlobInfo getBlobInfo() {
 		return info;
 	}

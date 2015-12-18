@@ -9,11 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
-
 import com.alogic.blob.core.BlobInfo;
 import com.alogic.blob.core.BlobRegister;
 import com.anysoft.util.BaseException;
@@ -31,17 +27,18 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.4.7 [duanyy 20150916] <br>
  * - 从BlobRegister.Abstract继承 <br>
+ * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public class LocalFileRegister extends BlobRegister.Abstract{
-	/**
-	 * a logger of log4j
-	 */
-	protected static final Logger logger = LogManager.getLogger(BlobRegister.class);
+	
+	protected String home = "${ketty.home}/blob/metadata/${id}";
 	
 	protected static String readString(DataInputStream in) throws IOException{
 		int length = in.readInt();
 		byte [] bytes = new byte[length];
-		in.read(bytes);
+		in.read(bytes); // NOSONAR
 		
 		return new String(bytes);
 	}
@@ -60,6 +57,7 @@ public class LocalFileRegister extends BlobRegister.Abstract{
 		out.writeLong(value);
 	}		
 	
+	@Override
 	public BlobInfo find(String id) {
 		File file = new File(getRealPath(id));
 		if (file.exists() && file.canRead() && file.isFile()){
@@ -78,7 +76,7 @@ public class LocalFileRegister extends BlobRegister.Abstract{
 		}
 		return null;
 	}
-
+	@Override
 	public void add(BlobInfo info) {
 		File file = new File(getRealPath(info.id()));
 		if (!file.exists()){
@@ -98,7 +96,7 @@ public class LocalFileRegister extends BlobRegister.Abstract{
 			}
 		}
 	}
-
+	@Override
 	public void delete(String id) {
 		File file = new File(getRealPath(id));
 		if (file.exists() && file.canWrite()){
@@ -108,19 +106,16 @@ public class LocalFileRegister extends BlobRegister.Abstract{
 	
 	@Override
 	public void configure(Properties p) throws BaseException {
-		home = PropertiesConstants.getString(p,"home.metadata",home);
-		
-		{
-			//确保目录存在
-			File homeFile = new File(home);
-			if (!homeFile.exists()){
-				homeFile.mkdirs();
-			}
-		}	
-	}	
-	
-	protected String home = "${ketty.home}/blob/metadata/${id}";
-	
+		home = PropertiesConstants.getString(p, "home.metadata", home);
+
+		// 确保目录存在
+		File homeFile = new File(home);
+		if (!homeFile.exists()) {
+			homeFile.mkdirs();
+		}
+	}
+
+	@Override
 	public void report(Element xml) {
 		if (xml != null){
 			super.report(xml);
@@ -133,7 +128,7 @@ public class LocalFileRegister extends BlobRegister.Abstract{
 			}
 		}
 	}
-
+	@Override
 	public void report(Map<String, Object> json) {
 		if (json != null){
 			super.report(json);
@@ -174,7 +169,7 @@ public class LocalFileRegister extends BlobRegister.Abstract{
 	/**
 	 * 字符表
 	 */
-	protected static final char[] Chars = {
+	protected static final char[] CHARS = {
 	      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
 	      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
 	      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
@@ -186,16 +181,16 @@ public class LocalFileRegister extends BlobRegister.Abstract{
 	
 	/**
 	 * 按照指定宽度生成随机字符串
-	 * @param _width 字符串的宽度
+	 * @param pWidth 字符串的宽度
 	 * @return 随机字符串
 	 */
-	static protected String randomString(int _width){
-		int width = _width <= 0 ? 6 : _width;
+	protected static String randomString(int pWidth){
+		int width = pWidth <= 0 ? 6 : pWidth;
 		char [] ret = new char[width];
 		Random ran = new Random();
 		for (int i = 0 ; i < width ; i ++){
 			int intValue = ran.nextInt(62) % 62;
-			ret[i] = Chars[intValue];
+			ret[i] = CHARS[intValue];
 		}
 		
 		return new String(ret);

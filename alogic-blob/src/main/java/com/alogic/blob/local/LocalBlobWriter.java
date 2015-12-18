@@ -23,6 +23,9 @@ import com.anysoft.util.IOTools;
  * 
  * @version 1.6.4.2 <br>
  * - BlobInfo增加length <br>
+ * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */ 
 public class LocalBlobWriter implements BlobWriter{
 	/**
@@ -42,23 +45,25 @@ public class LocalBlobWriter implements BlobWriter{
 	
 	protected String id;
 	
-	public LocalBlobWriter(String _id,File _file,String contentType){
-		id = _id;
-		file = _file;
+	public LocalBlobWriter(String pId,File pFile,String contentType){
+		id = pId;
+		file = pFile;
 		info = new BlobInfo.Default(id,contentType);
 	}
 	
+	@Override
 	public OutputStream getOutputStream() {
 		OutputStream out = null;
 		try {
 			out = new FileOutputStream(file);
 		} catch (FileNotFoundException e) {
-			logger.error("Can not find file:" + file.getPath());
+			logger.error("Can not find file:" + file.getPath(),e);
 		}
 		
 		return out;
 	}
 
+	@Override
 	public BlobInfo getBlobInfo() {
 		String md5 = info.md5();
 		if (md5 == null || md5.length() <= 0){
@@ -68,9 +73,9 @@ public class LocalBlobWriter implements BlobWriter{
 				info.md5(DigestUtils.md5Hex(in));
 				info.length(file.length());
 			} catch (FileNotFoundException e) {
-				logger.error("Can not find file:" + file.getPath());
+				logger.error("Can not find file:" + file.getPath(),e);
 			} catch (IOException e) {
-				logger.error("Can not read file:" + file.getPath());
+				logger.error("Can not read file:" + file.getPath(),e);
 			}finally{
 				IOTools.close(in);
 			}

@@ -20,22 +20,29 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @author duanyy
  * @since 1.6.3.28
+ * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public class BlobManagerSource extends Source<BlobManager> {
-
+	/**
+	 * Factory
+	 */
+	public static final TheFactory factory = new TheFactory();
+	
+	private static BlobManagerSource theInstance = null;	
+	
 	@Override
 	public Context<BlobManager> newInstance(Element e, Properties p,
 			String attrName) {
 		return factory.newInstance(e,p,attrName,XmlInner.class.getName());
 	}
-
+	
+	@Override
 	protected String getContextName(){
 		return "context";
 	}
-	
-	
-	public static final TheFactory factory = new TheFactory();
-	
+
 	/**
 	 * 工厂类
 	 * @author duanyy
@@ -46,11 +53,12 @@ public class BlobManagerSource extends Source<BlobManager> {
 	}
 	
 	public static Context<BlobManager> newInstance(Element doc,Properties p){
-		if (doc == null) return null;
+		if (doc == null) 
+			return null;
 		return factory.newInstance(doc, p);
 	}	
 	
-	public static BlobManagerSource theInstance = null;
+
 	public static BlobManagerSource get(){
 		if (theInstance != null){
 			return theInstance;

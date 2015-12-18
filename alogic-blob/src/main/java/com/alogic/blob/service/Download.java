@@ -27,11 +27,15 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author duanyy
  * @since 1.6.3.28
+ * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public class Download extends Servant {
 	protected byte [] buffer = null;
 	
-	public void create(ServiceDescription sd) throws ServantException{
+	@Override
+	public void create(ServiceDescription sd){
 		super.create(sd);
 		Properties p = sd.getProperties();
 		
@@ -40,11 +44,12 @@ public class Download extends Servant {
 		buffer = new byte [bufferSize];
 	}
 	
+	@Override
 	public int actionProcess(Context ctx) throws Exception{
 		ctx.asMessage(BlobMessage.class);
 		
-		String fileId = getArgument("fileId",ctx);
-		String domain = getArgument("domain","default",ctx);
+		String fileId = getArgument("fileId",ctx); // NOSONAR
+		String domain = getArgument("domain","default",ctx); // NOSONAR
 		
 		BlobManager manager = BlobTool.getBlobManager(domain);
 		if (manager == null){
@@ -84,24 +89,25 @@ public class Download extends Servant {
 	 *
 	 */
 	public static class BlobMessage implements Message {
+		@Override
 		public void finish(MessageDoc ctx, boolean closeStream) {
-			if (!ctx.getReturnCode().equals("core.ok")){
+			if (!"core.ok".equals(ctx.getReturnCode())){
 				throw new ServantException(ctx.getReturnCode(),ctx.getReason());
 			}
 			OutputStream out = null;
 			try {
 				out = ctx.getOutputStream();
 			} catch (IOException e) {
-				
+				logger.error("IO Exception",e);
 			}finally{
 				if (closeStream){
 					IOTools.close(out);
 				}
 			}
 		}
-
+		@Override
 		public void init(MessageDoc ctx) {
-
+			// Nothing to do
 		}
 	}
 	
@@ -122,6 +128,7 @@ public class Download extends Servant {
 			proxyServiceId = PropertiesConstants.getString(p, "normalizer.blob.id", proxyServiceId);
 		}
 		
+		@Override
 		public Path normalize(Context ctx, HttpServletRequest request) {
 			String path = request.getPathInfo();
 			String queryString = request.getQueryString();
@@ -131,8 +138,14 @@ public class Download extends Servant {
 			if (path != null && path.length() > 0){
 				int start = findStart(path);
 				int pos = findPos(start,path);
+				
 				domain = trimSlash(path.substring(start,pos));
-				fileId = trimSlash(path.substring(pos+1));
+				
+				if (pos >= path.length() - 1){
+					fileId = null;
+				}else{
+					fileId = trimSlash(path.substring(pos+1));
+				}
 			}
 		
 			if (isNull(fileId)){
@@ -155,11 +168,11 @@ public class Download extends Servant {
 		}
 	}	
 	
-	static private boolean isNull(String value){
+	 private static boolean isNull(String value){
 		return value == null || value.length() <= 0;
 	}
 	
-	static private int findPos(int start,String path){
+	 private static int findPos(int start,String path){
 		int length = path.length();
 		int found = -1;
 		boolean inSlash = true;
@@ -181,7 +194,7 @@ public class Download extends Servant {
 		return found;
 	}
 
-	static private int findStart(String path){
+	 private static int findStart(String path){
 		int length = path.length();
 		int found = 0;
 		for ( ; found < length ; found++){
@@ -192,7 +205,7 @@ public class Download extends Servant {
 		return found;
 	}	
 	
-	static private String trimSlash(String str){
+	 private static String trimSlash(String str){
 		int length = str.length();
 		int start = 0;
 		

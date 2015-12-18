@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
 import com.alogic.blob.core.BlobInfo;
@@ -15,7 +13,6 @@ import com.alogic.blob.core.BlobRegister;
 import com.alogic.blob.core.BlobReader;
 import com.alogic.blob.core.BlobManager;
 import com.alogic.blob.core.BlobWriter;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -34,13 +31,17 @@ import com.anysoft.util.XmlElementProperties;
  * - 变更home的参数名为home.data <br>
  * @version 1.6.4.7 [duanyy 20150916] <br>
  * - 从BlobManager.Abstract继承 <br>
+ * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public class LocalBlobManager extends BlobManager.Abstract {
-	/**
-	 * a logger of log4j
-	 */
-	protected static final Logger logger = LogManager.getLogger(BlobManager.class);
+
+	protected String home = "${ketty.home}/blob/data/${id}";
 	
+	protected BlobRegister fileRegister = null;
+	
+	@Override
 	public void report(Element xml) {
 		if (xml != null){
 			super.report(xml);
@@ -54,6 +55,7 @@ public class LocalBlobManager extends BlobManager.Abstract {
 		}
 	}
 
+	@Override
 	public void report(Map<String, Object> json) {
 		if (json != null){
 			super.report(json);
@@ -67,9 +69,10 @@ public class LocalBlobManager extends BlobManager.Abstract {
 		}
 	}
 
+	@Override
 	public BlobWriter newFile(String contentType) {
-		String id = newFileId();
-		File file = new File(getRealPath(id));
+		String fileId = newFileId();
+		File file = new File(getRealPath(fileId));
 		if (!file.exists()){
 			try {
 				File parentFile = file.getParentFile();
@@ -77,7 +80,7 @@ public class LocalBlobManager extends BlobManager.Abstract {
 					parentFile.mkdirs();
 				}
 				file.createNewFile();
-				return new LocalBlobWriter(id,file,contentType);
+				return new LocalBlobWriter(fileId,file,contentType);
 			} catch (IOException e) {
 				logger.error("Can not create new file:" + file.getPath(),e);
 			}
@@ -85,6 +88,7 @@ public class LocalBlobManager extends BlobManager.Abstract {
 		return null;
 	}
 
+	@Override
 	public BlobReader getFile(String id) {
 		BlobInfo info = fileRegister != null ? fileRegister.find(id): null;
 		
@@ -97,6 +101,7 @@ public class LocalBlobManager extends BlobManager.Abstract {
 		return null;
 	}
 
+	@Override
 	public boolean existFile(String id) {
 		BlobInfo info = fileRegister != null ? fileRegister.find(id): null;
 		if (info != null){
@@ -107,6 +112,7 @@ public class LocalBlobManager extends BlobManager.Abstract {
 		}
 	}
 
+	@Override
 	public boolean deleteFile(String id) {
 		fileRegister.delete(id);
 		
@@ -119,36 +125,29 @@ public class LocalBlobManager extends BlobManager.Abstract {
 	}
 	
 	@Override
-	public void configure(Properties p) throws BaseException {
+	public void configure(Properties p){
 		super.configure(p);
-		
-		id = PropertiesConstants.getString(p,"id",id);
-		home = PropertiesConstants.getString(p,"home.data",home);
-		
-		{
-			//确保目录存在
-			File homeFile = new File(home);
-			if (!homeFile.exists()){
-				homeFile.mkdirs();
-			}
+
+		id = PropertiesConstants.getString(p, "id", id);
+		home = PropertiesConstants.getString(p, "home.data", home);
+
+		// 确保目录存在
+		File homeFile = new File(home);
+		if (!homeFile.exists()) {
+			homeFile.mkdirs();
 		}
+
 	}
 
 	@Override
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		XmlElementProperties p = new XmlElementProperties(_e,_properties);
+	public void configure(Element e, Properties props) {
+		XmlElementProperties p = new XmlElementProperties(e,props);
 		configure(p);
 		
-		Factory<BlobRegister> factory = new Factory<BlobRegister>();
-		fileRegister = factory.newInstance(_e, _properties, "register", LocalFileRegister.class.getName());
+		Factory<BlobRegister> factory = new Factory<BlobRegister>();// NOSONAR
+		fileRegister = factory.newInstance(e, props, "register", LocalFileRegister.class.getName());
 	}
 
-	protected String home = "${ketty.home}/blob/data/${id}";
-	
-	protected String id = "default";
-	
-	protected BlobRegister fileRegister = null;
 	
 	/**
 	 * 通过文件id映射实际路径
@@ -176,7 +175,7 @@ public class LocalBlobManager extends BlobManager.Abstract {
 	/**
 	 * 字符表
 	 */
-	protected static final char[] Chars = {
+	protected static final char[] CHARS = {
 	      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
 	      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
 	      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
@@ -188,30 +187,32 @@ public class LocalBlobManager extends BlobManager.Abstract {
 	
 	/**
 	 * 按照指定宽度生成随机字符串
-	 * @param _width 字符串的宽度
+	 * @param theWidth 字符串的宽度
 	 * @return 随机字符串
 	 */
-	static protected String randomString(int _width){
-		int width = _width <= 0 ? 6 : _width;
+	protected static String randomString(int theWidth){
+		int width = theWidth <= 0 ? 6 : theWidth;
 		char [] ret = new char[width];
 		Random ran = new Random();
 		for (int i = 0 ; i < width ; i ++){
 			int intValue = ran.nextInt(62) % 62;
-			ret[i] = Chars[intValue];
+			ret[i] = CHARS[intValue];
 		}
 		
 		return new String(ret);
 	}
 
+	@Override
 	public void commit(BlobWriter writer) {
 		if (fileRegister != null){
 			fileRegister.add(writer.getBlobInfo());
 		}
 	}
 
+	@Override
 	public void cancel(BlobWriter writer) {
-		String id = writer.getBlobInfo().id();
-		File file = new File(getRealPath(id));
+		String fileId = writer.getBlobInfo().id();
+		File file = new File(getRealPath(fileId));
 		if (file.exists() && file.canWrite()){
 			file.delete();
 		}

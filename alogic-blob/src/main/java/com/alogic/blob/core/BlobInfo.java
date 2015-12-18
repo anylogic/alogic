@@ -13,6 +13,9 @@ import com.anysoft.util.Reportable;
  * 
  * @version 1.6.3.32 [duanyy 20150720] <br>
  * - 增加md5,content-type等信息 <br>
+ * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public interface BlobInfo extends Reportable{
 	
@@ -52,18 +55,19 @@ public interface BlobInfo extends Reportable{
 		protected String md5 = "";
 		protected long length = 0;
 		
-		public Default(String _id,String _contentType){
-			id = _id;
-			contentType = _contentType == null?"application/octet-stream":_contentType;
+		public Default(String theId,String cType){
+			id = theId;
+			contentType = cType == null?"application/octet-stream":cType;
 		}
 		
-		public Default(String _id,String _contentType,String _md5,long _length){
-			id = _id;
-			contentType = _contentType;
-			md5 = _md5;
-			length = _length;
+		public Default(String theId,String cType,String theMd5,long theLength){
+			id = theId;
+			contentType = cType;
+			md5 = theMd5;
+			length = theLength;
 		}
 		
+		@Override
 		public void report(Element xml) {
 			if (xml != null){
 				xml.setAttribute("id", id);
@@ -73,6 +77,7 @@ public interface BlobInfo extends Reportable{
 			}
 		}
 
+		@Override
 		public void report(Map<String, Object> json) {
 			if (json != null){
 				json.put("id", id);
@@ -81,37 +86,37 @@ public interface BlobInfo extends Reportable{
 				json.put("length", length);
 			}
 		}
-
+		@Override
 		public String id() {
 			return id;
 		}
-
+		@Override
 		public String md5() {
 			return md5;
 		}
-
+		@Override
 		public String contentType() {
 			return contentType;
 		}
-
+		@Override
 		public long length() {
 			return length;
 		}
 		
-		public void id(String _id){
-			id = _id;
+		public void id(String theId){
+			id = theId;
 		}
 		
-		public void md5(String _md5){
-			md5 = _md5;
+		public void md5(String theMd5){
+			md5 = theMd5;
 		}
 		
-		public void contentType(String _contentType){
-			contentType = _contentType;
+		public void contentType(String cType){
+			contentType = cType;
 		}
 		
-		public void length(long _length){
-			length = _length;
+		public void length(long theLength){
+			length = theLength;
 		}
 	}
 }

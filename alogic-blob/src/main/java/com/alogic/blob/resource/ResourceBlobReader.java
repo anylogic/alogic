@@ -10,14 +10,17 @@ import com.alogic.blob.core.BlobReader;
  * 
  * @author duanyy
  * @since 1.6.4.7
+ * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public class ResourceBlobReader implements BlobReader {
 	protected ResourceBlobInfo info = null;
 	protected Class<?> bootstrap = getClass();
 	
-	public ResourceBlobReader(ResourceBlobInfo _info,Class<?> _bootstrap){
-		info = _info;
-		bootstrap = _bootstrap;
+	public ResourceBlobReader(ResourceBlobInfo pInfo,Class<?> pBootstrap){
+		info = pInfo;
+		bootstrap = pBootstrap;
 	}
 	
 	@Override

@@ -9,7 +9,6 @@ import org.w3c.dom.Element;
 import com.alogic.blob.context.BlobManagerSource;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
@@ -20,21 +19,22 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  * 
  * @since 1.6.4.4
- * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public class BlobSourceReport extends AbstractServant {
 
 	@Override
 	protected void onDestroy() {
-
+		// Nothing to do
 	}
 
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
-
+	protected void onCreate(ServiceDescription sd) {
+		// Nothing to do
 	}
-
-	protected int onXml(Context ctx) throws Exception{
+	@Override
+	protected int onXml(Context ctx){
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		Document doc = msg.getDocument();
@@ -49,10 +49,11 @@ public class BlobSourceReport extends AbstractServant {
 		
 		return 0;
 	}
-	protected int onJson(Context ctx) throws Exception{
+	@Override
+	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
-		
-		Map<String,Object> map = new HashMap<String,Object>();
+		 
+		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR
 		
 		BlobManagerSource src = BlobManagerSource.get();
 		

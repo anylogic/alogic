@@ -20,11 +20,13 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author duanyy
  * @since  1.6.4.4
- * 
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */ 
 public class BlobQuery extends AbstractServant {
 
-	protected int onXml(Context ctx) throws Exception{
+	@Override
+	protected int onXml(Context ctx){
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		String id = getArgument("id",ctx);
@@ -44,8 +46,8 @@ public class BlobQuery extends AbstractServant {
 
 		return 0;
 	}
-	
-	protected int onJson(Context ctx) throws Exception{
+	@Override
+	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		String id = getArgument("id",ctx);
 		
@@ -55,7 +57,7 @@ public class BlobQuery extends AbstractServant {
 			throw new ServantException("user.data_not_found","Can not find the blob manager :" + id);
 		}
 		
-		Map<String,Object> map = new HashMap<String,Object>();
+		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR
 		found.report(map);
 		msg.getRoot().put("blob", map);
 		
@@ -64,11 +66,11 @@ public class BlobQuery extends AbstractServant {
 	
 	@Override
 	protected void onDestroy() {
-		
+		// nothing to do
 	}
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
-
+	protected void onCreate(ServiceDescription sd)  {
+		// nothing to do
 	}
 
 }

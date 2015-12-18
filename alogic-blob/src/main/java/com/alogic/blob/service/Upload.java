@@ -23,13 +23,16 @@ import com.logicbus.models.servant.ServiceDescription;
 /**
  * Blob文件上传
  * @author duanyy
- *
+ * @version 1.6.4.18 [duanyy 20151218] <br>
+ * - 增加自动图标集 <br>
  */
 public class Upload extends Servant implements FileItemHandler{
 	protected byte [] buffer = null;
 	protected String domain = "default";
 	protected BlobManager blobManager = null;
-	public void create(ServiceDescription sd) throws ServantException{
+	
+	@Override
+	public void create(ServiceDescription sd){
 		super.create(sd);
 		Properties p = sd.getProperties();
 		
@@ -45,6 +48,7 @@ public class Upload extends Servant implements FileItemHandler{
 		}
 	}
 	
+	@Override
 	public int actionProcess(Context ctx) throws Exception{
 		MultiPartForm msg = (MultiPartForm) ctx.asMessage(MultiPartForm.class);
 		
@@ -52,7 +56,7 @@ public class Upload extends Servant implements FileItemHandler{
 		
 		return 0;
 	}
-
+	@Override
 	public void handle(FileItem item, Map<String, Object> result) {
 		BlobWriter writer = blobManager.newFile(item.getContentType());
 		OutputStream out = writer.getOutputStream();
@@ -79,6 +83,7 @@ public class Upload extends Servant implements FileItemHandler{
 			
 			blobManager.commit(writer);
 		}catch (Exception ex){
+			logger.error("Error when handle file:" + item.getName(), ex);
 			result.put("sucessful", "false");		
 			blobManager.cancel(writer);
 		}
