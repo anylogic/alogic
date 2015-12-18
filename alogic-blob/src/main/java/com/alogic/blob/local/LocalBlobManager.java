@@ -34,12 +34,29 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.4.18 [duanyy 20151218] <br>
  * - 增加自动图标集 <br>
+ * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
  */
 public class LocalBlobManager extends BlobManager.Abstract {
 
 	protected String home = "${ketty.home}/blob/data/${id}";
 	
 	protected BlobRegister fileRegister = null;
+	
+	
+	/**
+	 * 字符表
+	 */
+	private static final char[] CHARS = {
+	      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+	      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+	      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
+	      'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+	      'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
+	      'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
+	      '8', '9'
+	 };	
 	
 	@Override
 	public void report(Element xml) {
@@ -171,19 +188,7 @@ public class LocalBlobManager extends BlobManager.Abstract {
 	protected String newFileId(){
 		return System.currentTimeMillis() + randomString(6);
 	}
-	
-	/**
-	 * 字符表
-	 */
-	protected static final char[] CHARS = {
-	      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-	      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-	      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
-	      'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-	      'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
-	      'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
-	      '8', '9'
-	 };
+
 	
 	/**
 	 * 按照指定宽度生成随机字符串

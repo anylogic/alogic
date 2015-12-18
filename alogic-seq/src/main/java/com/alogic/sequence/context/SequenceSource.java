@@ -15,20 +15,32 @@ import com.anysoft.util.Settings;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
 
+/**
+ * 序列号来源
+ * 
+ * @author duanyy
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
+ */
 public class SequenceSource extends Source<SequenceGenerator>{
-
+	
+	/**
+	 * Factory
+	 */
+	private static final TheFactory factory = new TheFactory();
+	
+	private static SequenceSource theInstance = null;
+	
 	@Override
 	public Context<SequenceGenerator> newInstance(Element e, Properties p,
 			String attrName) {
 		return factory.newInstance(e,p,attrName,XmlInner.class.getName());
 	}
 	
+	@Override
 	protected String getContextName(){
 		return "context";
 	}
-	
-	
-	public static final TheFactory factory = new TheFactory();
 	
 	/**
 	 * 工厂类
@@ -40,11 +52,11 @@ public class SequenceSource extends Source<SequenceGenerator>{
 	}
 	
 	public static Context<SequenceGenerator> newInstance(Element doc,Properties p){
-		if (doc == null) return null;
+		if (doc == null) 
+			return null;
 		return factory.newInstance(doc, p);
 	}	
 	
-	public static SequenceSource theInstance = null;
 	public static SequenceSource get(){
 		if (theInstance != null){
 			return theInstance;

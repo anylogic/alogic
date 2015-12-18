@@ -8,15 +8,21 @@ import com.alogic.sequence.core.SequenceGenerator;
  * 
  * @author duanyy
  * @since 1.6.3.5
+ * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
  */
 public class SeqTool {
 	
+	private SeqTool(){
+		
+	}
 	/**
 	 * 提取一个Long的全局序列号
 	 * 
 	 * @return 全局序列号
 	 */
-	static public long nextLong(){
+	public static long nextLong(){
 		return nextLong("default");
 	}	
 	
@@ -26,7 +32,7 @@ public class SeqTool {
 	 * @param id 序列号的域id
 	 * @return 全局序列号
 	 */
-	static public long nextLong(String id){
+	 public static long nextLong(String id){
 		SequenceSource src = SequenceSource.get();
 		
 		SequenceGenerator generator = src.get(id);
@@ -38,7 +44,7 @@ public class SeqTool {
 	 * 
 	 * @return 全局序列号
 	 */
-	static public String nextString(){
+	 public static String nextString(){
 		return nextString("default");
 	}
 	
@@ -48,16 +54,10 @@ public class SeqTool {
 	 * @param id 序列号的域id
 	 * @return 全局序列号
 	 */
-	static public String nextString(String id){
+	 public static String nextString(String id){
 		SequenceSource src = SequenceSource.get();
 		
 		SequenceGenerator generator = src.get(id);
 		return generator.nextString();
-	}
-	
-	public static void main(String [] args){
-		for (int i = 0 ; i < 10000; i ++){
-			System.out.println(nextLong());
-		}
 	}
 }

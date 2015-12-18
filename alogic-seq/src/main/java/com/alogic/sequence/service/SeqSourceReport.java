@@ -9,7 +9,6 @@ import org.w3c.dom.Element;
 import com.alogic.sequence.context.SequenceSource;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
@@ -19,21 +18,23 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author duanyy
  * @since 1.6.4.4
- * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
  */
 public class SeqSourceReport extends AbstractServant {
 
 	@Override
 	protected void onDestroy() {
-
+		// nothing to do
 	}
 
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
-
+	protected void onCreate(ServiceDescription sd) {
+		// nothing to do
 	}
 
-	protected int onXml(Context ctx) throws Exception{
+	@Override
+	protected int onXml(Context ctx){
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		Document doc = msg.getDocument();
@@ -48,10 +49,12 @@ public class SeqSourceReport extends AbstractServant {
 		
 		return 0;
 	}
-	protected int onJson(Context ctx) throws Exception{
+	
+	@Override
+	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
-		Map<String,Object> map = new HashMap<String,Object>();
+		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR
 		
 		SequenceSource src = SequenceSource.get();
 		

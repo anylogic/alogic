@@ -1,19 +1,14 @@
 package com.alogic.blob.resource;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.w3c.dom.Element;
+
 import com.alogic.blob.core.BlobManager;
 import com.alogic.blob.core.BlobReader;
 import com.alogic.blob.core.BlobWriter;
@@ -32,6 +27,10 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.4.18 [duanyy 20151218] <br>
  * - 增加自动图标集 <br>
+ * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
+ * 
  */
 public class ResourceBlobManager extends BlobManager.Abstract{
 	

@@ -12,7 +12,6 @@ import java.util.Random;
 import org.w3c.dom.Element;
 import com.alogic.blob.core.BlobInfo;
 import com.alogic.blob.core.BlobRegister;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -34,6 +33,20 @@ import com.anysoft.util.PropertiesConstants;
 public class LocalFileRegister extends BlobRegister.Abstract{
 	
 	protected String home = "${ketty.home}/blob/metadata/${id}";
+	
+	
+	/**
+	 * 字符表
+	 */
+	private static final char[] CHARS = {
+	      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+	      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+	      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
+	      'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+	      'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
+	      'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
+	      '8', '9'
+	 };	
 	
 	protected static String readString(DataInputStream in) throws IOException{
 		int length = in.readInt();
@@ -105,7 +118,7 @@ public class LocalFileRegister extends BlobRegister.Abstract{
 	}	
 	
 	@Override
-	public void configure(Properties p) throws BaseException {
+	public void configure(Properties p) {
 		home = PropertiesConstants.getString(p, "home.metadata", home);
 
 		// 确保目录存在
@@ -165,19 +178,7 @@ public class LocalFileRegister extends BlobRegister.Abstract{
 	protected String newFileId(){
 		return System.currentTimeMillis() + randomString(6);
 	}
-	
-	/**
-	 * 字符表
-	 */
-	protected static final char[] CHARS = {
-	      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-	      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-	      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
-	      'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-	      'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
-	      'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
-	      '8', '9'
-	 };
+
 	
 	/**
 	 * 按照指定宽度生成随机字符串

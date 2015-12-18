@@ -3,9 +3,9 @@ package com.alogic.sequence.core;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -18,7 +18,8 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @author duanyy
  * @since 1.6.3.5
- * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
  */
 public interface SequenceGenerator extends XMLConfigurable,Reportable{
 	/**
@@ -47,40 +48,12 @@ public interface SequenceGenerator extends XMLConfigurable,Reportable{
 	 * @author duanyy
 	 * @since 1.6.3.5
 	 */
-	abstract public static class Abstract implements SequenceGenerator{
-		private volatile long start = 0;
-		private volatile long end = 0;
-		private volatile long current = 0;
-		private String id = "default";
-		/**
-		 * 当前序列号容量
-		 */
-		private long capacity = 1000;
-		
-		protected void setRange(long _start,long _end){
-			start = _start;
-			current = start;
-			end = _end;
-		}
-		
-		synchronized public long nextLong() {
-			if (current<end){
-				return current ++;
-			}else{
-				onMore(current,capacity);
-				current = start;
-				return current ++;
-			}
-		}
-		
-		public String id(){return id;}
-		
-		abstract public void onMore(long current, long capacity);
-		
+	 public abstract static class Abstract implements SequenceGenerator{
+		protected static final Logger LOG = LogManager.getLogger(SequenceGenerator.class);
 		/**
 		 * 字符表
 		 */
-		protected static final char[] Chars = {
+		private static final char[] CHARS = {
 		      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
 		      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
 		      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
@@ -90,18 +63,50 @@ public interface SequenceGenerator extends XMLConfigurable,Reportable{
 		      '8', '9'
 		 };
 		
+		private volatile long start = 0;
+		private volatile long end = 0;
+		private volatile long current = 0;
+		private String id = "default";
+			
+		/**
+		 * 当前序列号容量
+		 */
+		private long capacity = 1000;
+		
+		@Override
+		public String id(){return id;}
+		
+		protected void setRange(long pStart,long pEnd){
+			start = pStart;
+			current = start;
+			end = pEnd;
+		}
+		
+		@Override
+		public synchronized long nextLong() {
+			if (current<end){
+				return current ++;
+			}else{
+				onMore(current,capacity);
+				current = start;
+				return current ++;
+			}
+		}
+			
+		public abstract void onMore(long current, long capacity);
+		
 		/**
 		 * 按照指定宽度生成随机字符串
-		 * @param _width 字符串的宽度
+		 * @param pWidth 字符串的宽度
 		 * @return 随机字符串
 		 */
-		static public String randomString(int _width){
-			int width = _width <= 0 ? 6 : _width;
+		public static String randomString(int pWidth){
+			int width = pWidth <= 0 ? 6 : pWidth;
 			char [] ret = new char[width];
 			Random ran = new Random();
 			for (int i = 0 ; i < width ; i ++){
 				int intValue = ran.nextInt(62) % 62;
-				ret[i] = Chars[intValue];
+				ret[i] = CHARS[intValue];
 			}
 			
 			return new String(ret);
@@ -111,18 +116,17 @@ public interface SequenceGenerator extends XMLConfigurable,Reportable{
 		 * 生成20位的随机字符串
 		 * @return 随机字符串
 		 */
-		static public String randomString(){
+		public static String randomString(){
 			return randomString(20);
 		}
 
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
-			Properties p = new XmlElementProperties(_e,_properties);
+		@Override
+		public void configure(Element element, Properties props){
+			Properties p = new XmlElementProperties(element,props);
 			
-			capacity = PropertiesConstants.getLong(p,"capacity",capacity);
+			capacity = PropertiesConstants.getLong(p,"capacity",capacity); // NOSONAR
 			id = PropertiesConstants.getString(p,"id",id);
-			onConfigure(_e,p);
-			
+			onConfigure(element,p);			
 			onMore(current,capacity);
 		}
 		
@@ -131,8 +135,9 @@ public interface SequenceGenerator extends XMLConfigurable,Reportable{
 		 * @param e 配置的XML节点
 		 * @param p 变量集
 		 */
-		abstract public void onConfigure(Element e,Properties p);
+		public abstract void onConfigure(Element e,Properties p);
 
+		@Override
 		public void report(Element xml) {
 			if (xml != null){
 				xml.setAttribute("module", getClass().getName());
@@ -143,6 +148,7 @@ public interface SequenceGenerator extends XMLConfigurable,Reportable{
 			}
 		}
 
+		@Override
 		public void report(Map<String, Object> json) {
 			if (json != null){
 				JsonTools.setString(json, "module", getClass().getName());
@@ -163,6 +169,7 @@ public interface SequenceGenerator extends XMLConfigurable,Reportable{
 	public static class Simple extends Abstract {
 		protected int stringWidth = 20;
 		
+		@Override
 		public String nextString() {
 			return randomString(stringWidth);
 		}

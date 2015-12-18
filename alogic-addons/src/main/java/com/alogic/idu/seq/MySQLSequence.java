@@ -16,44 +16,55 @@ import com.logicbus.dbcp.sql.DBTools;
  * 
  * @author duanyy
  * @since 1.6.4.6
- * 
+ * @version 1.6.4.19 [duanyy 20151218] <br>
+ * - 按照SONAR建议修改代码 <br>
  */
 public class MySQLSequence extends SequenceGenerator.Abstract{
-
+	protected int stringWidth = 20;
+	protected String dbcpId = "mall";
+	protected String client = "unknown";
+	
+	protected String sqlQueryCurrentValue = "select a.current_value from util_seq a where a.seq_id=? for update";
+	protected String sqlUpdateCurrentValue = "update util_seq a set a.current_value=? where a.seq_id=?";
+	protected String sqlInsertLog = "insert into util_seq_log(seq_id,start,end,update_date,client)values(?,?,?,now(),?)";
+	
+	@Override
 	public String nextString() {
 		return randomString(stringWidth);
 	}
 
+	@Override
 	public void onMore(long current, long capacity) {
-		long _current = current;
+		long currentValue = current;
 		ConnectionPool pool = getConnectionPool();
 		Connection conn = pool.getConnection();
 		try {
 			conn.setAutoCommit(false);
-			String _id = id();
+			String id = id();
 			
 			// 从数据库中查出当前值
-			_current = DBTools.selectAsLong(conn,sqlQueryCurrentValue,10000,_id);
-			DBTools.update(conn, sqlUpdateCurrentValue,String.valueOf(_current + capacity),_id);
-			DBTools.insert(conn, sqlInsertLog,_id,_current,_current + capacity,client);
+			currentValue = DBTools.selectAsLong(conn,sqlQueryCurrentValue,10000,id);
+			DBTools.update(conn, sqlUpdateCurrentValue,String.valueOf(currentValue + capacity),id);
+			DBTools.insert(conn, sqlInsertLog,id,currentValue,currentValue + capacity,client);
 
 			conn.commit();
 			conn.setAutoCommit(true);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOG.error("SQL Error:",e);
 			try {
 				conn.rollback();
 				conn.setAutoCommit(true);
 			}catch (Exception ex){
-				ex.printStackTrace();
+				LOG.error("SQL Error:",ex);
 			}
 		} finally {
 			pool.recycle(conn);
 		}
 
-		setRange(_current, _current + capacity);
+		setRange(currentValue, currentValue + capacity);
 	}
 
+	@Override
 	public void onConfigure(Element e, Properties p) {
 		stringWidth = PropertiesConstants.getInt(p,"stringWidth", stringWidth);
 		dbcpId = PropertiesConstants.getString(p,"dbcp", dbcpId);
@@ -66,12 +77,4 @@ public class MySQLSequence extends SequenceGenerator.Abstract{
 	protected ConnectionPool getConnectionPool(){
 		return DbcpSource.getPool(dbcpId);
 	}
-
-	protected int stringWidth = 20;
-	protected String dbcpId = "mall";
-	protected String client = "unknown";
-	
-	protected String sqlQueryCurrentValue = "select a.current_value from util_seq a where a.seq_id=? for update";
-	protected String sqlUpdateCurrentValue = "update util_seq a set a.current_value=? where a.seq_id=?";
-	protected String sqlInsertLog = "insert into util_seq_log(seq_id,start,end,update_date,client)values(?,?,?,now(),?)";
 }
