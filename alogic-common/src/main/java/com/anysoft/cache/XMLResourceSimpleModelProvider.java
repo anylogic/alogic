@@ -32,8 +32,17 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.3.8 [20150324 duanyy] <br>
  * -  提升XML配置文件的搜索性能 <br>
+ * 
+ * @version 1.6.4.20 [20151222 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
-abstract public class XMLResourceSimpleModelProvider<model extends Cacheable> implements Provider<model> {
+
+public abstract class XMLResourceSimpleModelProvider<M extends Cacheable> implements Provider<M> {
+	
+	protected static Logger logger = LogManager.getLogger(Provider.class);	
+	protected Document doc = null;	
+	private Set<String> allModels = new HashSet<String>();	 // NOSONAR
+	
 	public XMLResourceSimpleModelProvider(Properties props){
 		doc = loadResource(props);
 		
@@ -55,14 +64,14 @@ abstract public class XMLResourceSimpleModelProvider<model extends Cacheable> im
 	}
 	
 	
-	public model load(String id) {
+	public M load(String id) {
 		return load(id,true);
 	}
-	
-	private Set<String> allModels = new HashSet<String>();
-	
-	public model load(String id,boolean cacheAllowed) {
-		if (doc == null) return null;
+
+	@Override
+	public M load(String id,boolean cacheAllowed) {
+		if (doc == null) 
+			return null;
 		
 		/**
 		 * 当allModels没有找到该ID直接返回，不再搜索XMLDOM
@@ -73,7 +82,8 @@ abstract public class XMLResourceSimpleModelProvider<model extends Cacheable> im
 		
 		Node found = XmlTools.getNodeByPath(doc.getDocumentElement(), "model[@id='" + id + "']");
 		
-		if (found == null || found.getNodeType() != Node.ELEMENT_NODE) return null;
+		if (found == null || found.getNodeType() != Node.ELEMENT_NODE) 
+			return null;
 	
 		Element e = (Element) found;
 		
@@ -82,19 +92,18 @@ abstract public class XMLResourceSimpleModelProvider<model extends Cacheable> im
 
 	protected abstract Document loadResource(Properties props);
 	
-	protected abstract model newModel(String id,Element e);
+	protected abstract M newModel(String id,Element e);
 	
-	
-	public void addWatcher(Watcher<model> listener) {
+	@Override
+	public void addWatcher(Watcher<M> listener) {
 		// to do noting
 	}
 	
-	
-	public void removeWatcher(Watcher<model> listener) {
+	@Override
+	public void removeWatcher(Watcher<M> listener) {
 		// to do noting
 	}
-	
-	protected Document doc = null;
+
 
 	/**
 	 * 从主/备地址中装入文档
@@ -122,6 +131,5 @@ abstract public class XMLResourceSimpleModelProvider<model extends Cacheable> im
 		}		
 		return ret;
 	}	
-	
-	protected static Logger logger = LogManager.getLogger(XMLResourceSimpleModelProvider.class);
+
 }

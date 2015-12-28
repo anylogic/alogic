@@ -28,7 +28,11 @@ import com.anysoft.util.WatcherHub;
  * 
  * @version 1.5.2 [20141017 duanyy] <br>
  * - 淘汰ChangeAware机制，采用更为通用的Watcher <br>
+ * 
  * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.20 [20151222 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
  */
 public class CacheManager<D1 extends Cacheable> extends Manager<D1> 
@@ -115,7 +119,7 @@ implements Provider<D1>,Watcher<D1> {
 	 * @return data
 	 * @since 1.0.7
 	 */
-	protected D1 _get(String id){
+	protected D1 _get(String id){ // NOSONAR
 		return super.get(id);
 	}
 	
@@ -128,7 +132,7 @@ implements Provider<D1>,Watcher<D1> {
 	 * @param obj 数据对象
 	 * @since 1.0.7
 	 */
-	protected void _add(String id,D1 obj){
+	protected void _add(String id,D1 obj){ // NOSONAR
 		synchronized (lock){
 			super.add(id, obj);
 		}
@@ -159,14 +163,14 @@ implements Provider<D1>,Watcher<D1> {
 	}
 
 	@Override
-	public void changed(String id, D1 _data) {
+	public void changed(String id, D1 data) {
 		synchronized (lock){
 			logger.info("model is changed,id = " + id);
-			add(id, _data);
+			add(id, data);
 		}
 		
 		if (watchers != null){
-			watchers.changed(id, _data);
+			watchers.changed(id, data);
 		}
 	}
 

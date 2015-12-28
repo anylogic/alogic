@@ -3,8 +3,6 @@ package com.anysoft.context;
 import java.util.Map;
 
 import org.w3c.dom.Element;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.Watcher;
@@ -14,7 +12,7 @@ import com.anysoft.util.Watcher;
  * 
  * @author duanyy
  *
- * @param <object>
+ * @param <O>
  * 
  * @since 1.5.0
  * 
@@ -23,45 +21,49 @@ import com.anysoft.util.Watcher;
  * 
  * @version 1.6.0.2 [20141108 duanyy] <br>
  * - 优化Reportable实现，输出所持有的对象信息 <br>
+ * 
+ * @version 1.6.4.20 [20151222 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
-abstract public class Inner<object extends Reportable> implements Context<object> {
+public abstract class Inner<O extends Reportable> implements Context<O> {
 	
 	/**
 	 * Holder
 	 */
-	protected Holder<object> holder = null;
+	protected Holder<O> holder = null;
 	
-	
-	public void close() throws Exception {
+	@Override
+	public void close(){
 		if (holder != null){
 			holder.close();
 		}
 	}
 
-	
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		holder = new Holder<object>(getDefaultClass(),getObjectName());
-		holder.configure(_e, _properties);
+	@Override
+	public void configure(Element element, Properties props){
+		holder = new Holder<O>(getDefaultClass(),getObjectName()); // NOSONAR
+		holder.configure(element, props);
 	}
 	
-	abstract public String getObjectName();
-	abstract public String getDefaultClass();
+	public abstract String getObjectName();
+	public abstract String getDefaultClass();
 
-	
-	public object get(String id) {
+	@Override
+	public O get(String id) {
 		return holder != null ? holder.get(id) : null;
 	}
 
-	
-	public void addWatcher(Watcher<object> watcher) {
+	@Override
+	public void addWatcher(Watcher<O> watcher) {
+		// nothing to do
 	}
 
-	
-	public void removeWatcher(Watcher<object> watcher) {
+	@Override
+	public void removeWatcher(Watcher<O> watcher) {
+		// nothing to do
 	}
 
-	
+	@Override
 	public void report(Element xml){
 		if (xml != null){
 			xml.setAttribute("module", getClass().getName());
@@ -76,7 +78,7 @@ abstract public class Inner<object extends Reportable> implements Context<object
 		}
 	}
 	
-	
+	@Override
 	public void report(Map<String,Object> json){
 		if (json != null){
 			json.put("module", getClass().getName());

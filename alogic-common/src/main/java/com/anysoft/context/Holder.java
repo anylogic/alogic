@@ -8,14 +8,13 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
@@ -30,7 +29,7 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  *
- * @param <object>
+ * @param <O>
  * 
  * @since 1.5.0
  *  
@@ -42,41 +41,46 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.3.3 [20150227 duanyy] <br>
  * - 修正Report为Json时的问题 <br>
+ * 
+ * @version 1.6.4.20 [20151222 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
-public class Holder<object extends Reportable> implements XMLConfigurable, AutoCloseable,Reportable {
+public class Holder<O extends Reportable> implements XMLConfigurable, AutoCloseable,Reportable {
 	
 	/**
 	 * 对象列表
 	 */
-	protected Hashtable<String,object> pools = new Hashtable<String,object>();
+	protected Hashtable<String,O> pools = new Hashtable<String,O>(); // NOSONAR
 	
 	/**
 	 * a logger of log4j
 	 */
-	protected final static Logger logger = LogManager.getLogger(Holder.class);
+	protected static final Logger logger = LogManager.getLogger(Holder.class);
 	
 	/**
 	 * 对象在配置XML节点中的tag名
 	 */
 	protected String objName = "object";
 	
-	public Holder(String _dftClass,String name){
-		dftClass = _dftClass;
-		objName = name;
-	}
 	
 	/**
 	 * 对象的缺省类名
 	 */
-	protected String dftClass;
+	protected String dftClass;	
 	
+	public Holder(String defaultClass,String name){
+		dftClass = defaultClass;
+		objName = name;
+	}
+
 	/**
 	 * 关闭
 	 */
-	public void close() throws Exception {
-		Collection<object> values = pools.values();
+	@Override
+	public void close(){
+		Collection<O> values = pools.values();
 		
-		for (object p:values){
+		for (O p:values){
 			if (p instanceof AutoCloseable){
 				IOTools.close((AutoCloseable)p);
 			}
@@ -84,16 +88,15 @@ public class Holder<object extends Reportable> implements XMLConfigurable, AutoC
 		pools.clear();
 	}
 
-	
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		XmlElementProperties p = new XmlElementProperties(_e,_properties);
+	@Override
+	public void configure(Element root, Properties props){
+		XmlElementProperties p = new XmlElementProperties(root,props);
 		
-		NodeList rcps = XmlTools.getNodeListByPath(_e, objName);
+		NodeList rcps = XmlTools.getNodeListByPath(root, objName);
 		
-		TheFactory<object> factory = new TheFactory<object>();
+		TheFactory<O> factory = new TheFactory<O>(); // NOSONAR
 		
-		for (int i = 0 ; i < rcps.getLength() ; i ++){
+		for (int i = 0 ; i < rcps.getLength() ; i ++){ // NOSONAR
 			Node n = rcps.item(i);
 			
 			if (n.getNodeType() != Node.ELEMENT_NODE){
@@ -103,12 +106,12 @@ public class Holder<object extends Reportable> implements XMLConfigurable, AutoC
 			Element e = (Element)n;
 			
 			String id = e.getAttribute("id");
-			if (id == null || id.length() <= 0){
+			if (StringUtils.isEmpty(id)){
 				continue;
 			}
 			
 			try {
-				object obj = factory.newInstance(e, p,"module",dftClass);
+				O obj = factory.newInstance(e, p,"module",dftClass);
 				if (obj != null){
 					pools.put(id, obj);
 				}
@@ -119,7 +122,7 @@ public class Holder<object extends Reportable> implements XMLConfigurable, AutoC
 		}
 	}
 
-	public object get(String id){
+	public O get(String id){
 		return pools.get(id);
 	}
 	
@@ -127,39 +130,40 @@ public class Holder<object extends Reportable> implements XMLConfigurable, AutoC
 		return pools.size();
 	}
 	
-	public static class TheFactory<object> extends Factory<object>{
+	public static class TheFactory<O> extends Factory<O>{
 		
 	}
 
+	@Override
 	public void report(Element xml) {
 		if (xml != null){
 			Document doc = xml.getOwnerDocument();
 			
-			Enumeration<object> iterator = pools.elements();
+			Enumeration<O> iterator = pools.elements();
 			
 			while (iterator.hasMoreElements()){
-				object obj = iterator.nextElement();
-				Element _obj = doc.createElement(objName);
-				obj.report(_obj);
-				xml.appendChild(_obj);
+				O obj = iterator.nextElement();
+				Element element = doc.createElement(objName);
+				obj.report(element);
+				xml.appendChild(element);
 			}
 		}
 	}
 
-
+	@Override
 	public void report(Map<String, Object> json) {
 		if (json != null){
-			List<Object> _objs = new ArrayList<Object>(getObjectCnt());
+			List<Object> list = new ArrayList<Object>(getObjectCnt());
 			
-			Enumeration<object> iterator = pools.elements();
+			Enumeration<O> iterator = pools.elements();
 			while (iterator.hasMoreElements()){
-				object obj = iterator.nextElement();
-				Map<String,Object> _obj = new HashMap<String,Object>();
-				obj.report(_obj);
-				_objs.add(_obj);
+				O obj = iterator.nextElement();
+				Map<String,Object> map = new HashMap<String,Object>();
+				obj.report(map);
+				list.add(map);
 			}
 			
-			json.put(objName,_objs);
+			json.put(objName,list);
 		}
 	}
 }

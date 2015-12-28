@@ -19,6 +19,7 @@ import com.anysoft.util.Copyright;
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
+import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.SystemProperties;
 import com.anysoft.util.XmlTools;
@@ -42,6 +43,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * - 对于某些环境变量，设置到System的Properties中 <br>
  * 
  * @version 1.6.4.17 [20151216 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.20 [20151222 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
  */
 public class Main implements CommandHelper,Process{
@@ -211,13 +215,13 @@ public class Main implements CommandHelper,Process{
 				String value = parameter.getAttribute("value");
 				boolean system = "true".equals(e.getAttribute("system"))?true:false;
 				if (system){
-					if (id != null && value != null){
+					if (id != null && value != null){ // NOSONAR
 						System.setProperty(id, value);
 					}
 				}else{
 					// 支持final标示,如果final为true,则不覆盖原有的取值
 					boolean isFinal = "true".equals(e.getAttribute("final")) ? true	: false;
-					if (isFinal) {
+					if (isFinal) { // NOSONAR
 						String oldValue = p.GetValue(id, "", false, true);
 						if (oldValue == null || oldValue.length() <= 0) {
 							p.SetValue(id, value);
@@ -271,7 +275,7 @@ public class Main implements CommandHelper,Process{
 				String link = element.getAttribute("link");
 				if (link != null && link.length() > 0){
 					String loadable = element.getAttribute("loadable");
-					if (loadable != null){
+					if (loadable != null){ // NOSONAR
 						String load = p.transform(loadable);
 						if (load.length() > 0){
 							loadConfig(p,p.transform(link));
@@ -310,6 +314,30 @@ public class Main implements CommandHelper,Process{
 		}
 		return 0;
 	}
+	
+	protected int checkAndComputeArguments(Command cmd,Properties p){
+		// 检查参数
+		List<Argument> arguments = cmd.getArguments();
+
+		for (Argument argu : arguments) {
+			String id = argu.getId();
+			String value = argu.getValue(p);
+
+			if (value == null || value.length() <= 0) {
+				if (!argu.isNullable()) {
+					helpTopic = command;
+					helpPS.println("Can not find argument named " + id);
+					printHelp(helpPS);
+					return -1;
+				}
+			} else {
+				p.SetValue(id, value);
+			}
+		}
+		
+		return 0;
+	}
+	
 	@Override
 	public int run() {
 		if (command.equals(CMD_HELP)){
@@ -337,23 +365,8 @@ public class Main implements CommandHelper,Process{
 		
 		DefaultProperties p = commandLine;
 
-		// 检查参数
-		List<Argument> arguments = cmd.getArguments();
-
-		for (Argument argu : arguments) {
-			String id = argu.getId();
-			String value = argu.getValue(p);
-
-			if (value == null || value.length() <= 0) {
-				if (!argu.isNullable()) {
-					helpTopic = command;
-					helpPS.println("Can not find argument named " + id);
-					printHelp(helpPS);
-					return -1;
-				}
-			} else {
-				p.SetValue(id, value);
-			}
+		if (checkAndComputeArguments(cmd,p) < 0){
+			return -1;
 		}
 
 		int result = process.init(p);

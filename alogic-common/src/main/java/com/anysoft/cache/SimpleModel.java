@@ -8,6 +8,10 @@ import java.util.Map;
 
 
 
+
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -37,9 +41,14 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.4.17 [20151216 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.20 [20151222 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class SimpleModel extends Properties implements Cacheable {
 	protected String id = "";
+	protected HashMap<String,Field> fields = new HashMap<String,Field>(); // NOSONAR
+	
 	
 	public SimpleModel(String theId){
 		id = theId;
@@ -51,8 +60,8 @@ public class SimpleModel extends Properties implements Cacheable {
 		
 		NodeList nodeList = XmlTools.getNodeListByPath(root, "fields/field");
 		if (nodeList != null && nodeList.getLength() > 0){
-			
-			for (int i = 0,length = nodeList.getLength() ; i < length ; i ++){
+			int length = nodeList.getLength();
+			for (int i = 0; i < length ; i ++){
 				Node n = nodeList.item(i);
 				
 				if (n.getNodeType() != Node.ELEMENT_NODE){
@@ -62,30 +71,28 @@ public class SimpleModel extends Properties implements Cacheable {
 				Element e = (Element)n;
 				
 				String name = e.getAttribute("id");
-				String value = e.getAttribute("value");
-				String coder = e.getAttribute("coder");
-				coder = (coder == null || coder.length() <= 0) ? "Default":coder;
+				String value = e.getAttribute("value"); // NOSONAR
+				String coder = e.getAttribute("coder"); // NOSONAR
+				coder = StringUtils.isEmpty(coder) ? "Default":coder; // NOSONAR
 				
-				if (name == null || value == null){
-					continue;
+				if (StringUtils.isNotBlank(name) && StringUtils.isNotEmpty(value)){
+					Field field = new Field();
+					
+					field.name = name;
+					field.coder = coder;
+					
+					String isRaw = e.getAttribute("isRaw");
+					
+					Coder aCoder = CoderFactory.newCoder(field.coder);
+					if (aCoder == null || BooleanUtils.toBoolean(isRaw)){ // NOSONAR
+						field.value = value;
+					}else{
+						String key = e.getAttribute("key");
+						field.value = aCoder.decode(value,key);
+					}
+					
+					fields.put(field.name, field);
 				}
-				
-				Field field = new Field();
-				
-				field.name = name;
-				field.coder = coder;
-				
-				String isRaw = e.getAttribute("isRaw");
-				
-				Coder _coder = CoderFactory.newCoder(field.coder);
-				if (_coder == null || (isRaw != null && isRaw.equals("true"))){
-					field.value = value;
-				}else{
-					String key = e.getAttribute("key");
-					field.value = _coder.decode(value,key);
-				}
-				
-				fields.put(field.name, field);
 			}
 		}
 	}
@@ -94,62 +101,62 @@ public class SimpleModel extends Properties implements Cacheable {
 	public void toXML(Element root) {
 		root.setAttribute("id", id);
 		
-		Collection<Field> _fields = fields.values();
+		Collection<Field> collection = fields.values();
 		
-		if (!_fields.isEmpty()){
+		if (!collection.isEmpty()){
 			Document doc = root.getOwnerDocument();			
-			Element _fieldsElem = doc.createElement("fields");
+			Element fieldsElem = doc.createElement("fields"); // NOSONAR
 			
-			for (Field field:_fields){
-				Element _fieldElem = doc.createElement("field");				
-				_fieldElem.setAttribute("id", field.name);				
-				_fieldElem.setAttribute("coder", field.coder);				
+			for (Field field:collection){
+				Element fieldElem = doc.createElement("field");				
+				fieldElem.setAttribute("id", field.name);				
+				fieldElem.setAttribute("coder", field.coder);				
 				Coder coder = CoderFactory.newCoder(field.coder);
 				if (coder != null){
 					String key = coder.createKey();
-					_fieldElem.setAttribute("value", coder.encode(field.value,key));
-					if (key != null && key.length() > 0){
-						_fieldElem.setAttribute("key", key);
+					fieldElem.setAttribute("value", coder.encode(field.value,key));
+					if (StringUtils.isNotEmpty(key)){ // NOSONAR
+						fieldElem.setAttribute("key", key);
 					}
 				}else{
-					_fieldElem.setAttribute("value", field.value);
+					fieldElem.setAttribute("value", field.value);
 				}				
-				_fieldsElem.appendChild(_fieldElem);
+				fieldsElem.appendChild(fieldElem);
 			}
 			
-			root.appendChild(_fieldsElem);
+			root.appendChild(fieldsElem);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void fromJson(Map<String,Object> root) {
+	public void fromJson(Map<String,Object> root) { // NOSONAR
 		fields.clear();
 		
-		Object _fieldsObject = root.get("fields");
-		if (_fieldsObject != null && _fieldsObject instanceof List){
-			for (Object _fieldObject:(List<Object>)_fieldsObject){
-				if (!(_fieldObject instanceof Map)){
+		Object fieldsObject = root.get("fields");
+		if (fieldsObject != null && fieldsObject instanceof List){
+			for (Object fieldObject:(List<Object>)fieldsObject){
+				if (!(fieldObject instanceof Map)){
 					continue;
 				}
 				
-				Map<String,Object> _data = (Map<String,Object>)_fieldObject;
-				String _value = (String)_data.get("value");
-				String _coder = (String)_data.get("coder");
-				String _isRaw = (String)_data.get("isRaw");
-				String _name = (String)_data.get("id");
+				Map<String,Object> data = (Map<String,Object>)fieldObject;
+				String value = (String)data.get("value");
+				String coderId = (String)data.get("coder");
+				String isRaw = (String)data.get("isRaw");
+				String name = (String)data.get("id");
 				
-				_coder = (_coder == null || _coder.length() <= 0)?"Default":_coder;
-				if (_name != null && _name.length() > 0 && _value != null){
+				coderId = (coderId == null || coderId.length() <= 0)?"Default":coderId;
+				if (name != null && name.length() > 0 && value != null){
 					Field field = new Field();
 					
-					field.name = _name;
-					field.coder = _coder;
+					field.name = name;
+					field.coder = coderId;
 					Coder coder = CoderFactory.newCoder(field.coder);
-					if (coder == null || (_isRaw != null && _isRaw.equals("true"))){
-						field.value = _value;
+					if (coder == null || BooleanUtils.toBoolean(isRaw)){ // NOSONAR
+						field.value = value;
 					}else{
-						field.value = coder.decode(_value,(String)_data.get("key"));
+						field.value = coder.decode(value,(String)data.get("key"));
 					}
 					
 					fields.put(field.name, field);
@@ -162,31 +169,31 @@ public class SimpleModel extends Properties implements Cacheable {
 	public void toJson(Map<String,Object> root) {
 		JsonTools.setString(root, "id", id);
 		
-		Collection<Field> _fields = fields.values();
+		Collection<Field> collection = fields.values();
 		
-		if (!_fields.isEmpty()){
+		if (!collection.isEmpty()){
 			
-			List<Object> _fieldList = new ArrayList<Object>();
+			List<Object> fieldList = new ArrayList<Object>(); // NOSONAR
 			
-			for (Field field:_fields){
-				Map<String,Object> _field = new HashMap<String,Object>();				
+			for (Field field:collection){
+				Map<String,Object> fieldMap = new HashMap<String,Object>();				 // NOSONAR
 				Coder coder = CoderFactory.newCoder(field.coder);
 				if (coder != null){
 					String key = coder.createKey();			
-					_field.put("value", coder.encode(field.value,key));
-					if (key != null && key.length() > 0){
-						_field.put("key", key);
+					fieldMap.put("value", coder.encode(field.value,key));
+					if (StringUtils.isNotEmpty(key)){ // NOSONAR
+						fieldMap.put("key", key);
 					}
 				}else{
-					_field.put("value", field.value);
+					fieldMap.put("value", field.value);
 				}				
-				_field.put("coder", field.coder);
-				_field.put("id", field.name);
+				fieldMap.put("coder", field.coder);
+				fieldMap.put("id", field.name);
 				
-				_fieldList.add(_field);
+				fieldList.add(fieldMap);
 			}
 			
-			root.put("fields", _fieldList);
+			root.put("fields", fieldList);
 		}
 	}
 
@@ -209,21 +216,20 @@ public class SimpleModel extends Properties implements Cacheable {
 		protected String value;
 		protected String coder;
 	}
-	
-	protected HashMap<String,Field> fields = new HashMap<String,Field>();
+
 	
 	@Override
 	public void Clear() {
 		fields.clear();
 	}
 
-	
+	@Override
 	protected String _GetValue(String id) {
 		Field found = fields.get(id);
 		return found == null ? "" : found.value;
 	}
 
-	
+	@Override
 	protected void _SetValue(String id, String value) {
 		Field found = fields.get(id);
 		if (found == null){

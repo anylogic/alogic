@@ -6,7 +6,6 @@ import org.w3c.dom.Element;
 
 import com.anysoft.formula.DataProvider;
 import com.anysoft.selector.Selector;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XMLConfigurable;
@@ -18,6 +17,10 @@ import com.anysoft.util.XmlElementProperties;
  * @author duanyy
  * @version 1.6.4.17 [20151216 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.20 [20151222 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
+ * 
  */
 public class Argument implements XMLConfigurable,CommandHelper {
 	protected String id;
@@ -70,8 +73,7 @@ public class Argument implements XMLConfigurable,CommandHelper {
 	}
 
 	@Override
-	public void configure(Element e, Properties props)
-			throws BaseException {
+	public void configure(Element e, Properties props){
 		Properties p = new XmlElementProperties(e,props);
 		
 		id = PropertiesConstants.getString(p, "selector-id", "");

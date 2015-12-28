@@ -7,8 +7,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
@@ -22,63 +20,71 @@ import com.anysoft.util.resource.ResourceFactory;
  * 基于XML文件的配置环境
  * @author duanyy
  *
- * @param <object>
+ * @param <O>
  * 
  * @since 1.5.0
  * 
- * @version 1.5.2 [20141017 duanyy]
- * - 实现Reportable接口
+ * @version 1.5.2 [20141017 duanyy] <br>
+ * - 实现Reportable接口 <br>
+ * 
+ * @version 1.6.4.20 [20151222 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
-abstract public class XMLResource<object extends Reportable> implements Context<object> {
+public abstract class XMLResource<O extends Reportable> implements Context<O> {
+	
 	protected static final Logger logger = LogManager.getLogger(XMLResource.class);
+	
+	protected String configFile;
+	protected String secondaryConfigFile;	
+	
 	/**
 	 * Holder
 	 */
-	protected Holder<object> holder = null;
+	protected Holder<O> holder = null;
 	
-	
-	public void close() throws Exception {
+	@Override
+	public void close(){
 		if (holder != null){
 			holder.close();
 		}
 	}
 
-	
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		XmlElementProperties p = new XmlElementProperties(_e,_properties);
+	@Override
+	public void configure(Element root, Properties props){
+		XmlElementProperties p = new XmlElementProperties(root,props);
 		
 		String defaultXrc = getDefaultXrc();
 		
-		configFile = p.GetValue("xrc.master", defaultXrc);
-		secondaryConfigFile = p.GetValue("xrc.secondary",defaultXrc);
+		configFile = p.GetValue("xrc.master", defaultXrc); // NOSONAR
+		secondaryConfigFile = p.GetValue("xrc.secondary",defaultXrc); // NOSONAR
 		
 		Document doc = loadDocument(configFile,secondaryConfigFile);		
 		
 		if (doc != null && doc.getDocumentElement() != null){
-			holder = new Holder<object>(getDefaultClass(),getObjectName());
-			holder.configure(doc.getDocumentElement(), _properties);
+			holder = new Holder<O>(getDefaultClass(),getObjectName()); // NOSONAR
+			holder.configure(doc.getDocumentElement(), props);
 		}
 	}
 	
-	protected String configFile;
-	protected String secondaryConfigFile;
-	
-	abstract public String getObjectName();
-	abstract public String getDefaultClass();
-	abstract public String getDefaultXrc();
 
 	
-	public object get(String id) {
+	public abstract String getObjectName();
+	public abstract String getDefaultClass();
+	public abstract String getDefaultXrc();
+
+	@Override
+	public O get(String id) {
 		return holder != null ? holder.get(id) : null;
 	}
 
-	
-	public void addWatcher(Watcher<object> watcher) {
+	@Override
+	public void addWatcher(Watcher<O> watcher) {
+		// nothing to do
 	}
 
-	
-	public void removeWatcher(Watcher<object> watcher) {
+	@Override
+	public void removeWatcher(Watcher<O> watcher) {
+		// nothing to do
 	}
 
 	
@@ -104,7 +110,7 @@ abstract public class XMLResource<object extends Reportable> implements Context<
 		return ret;
 	}	
 	
-	
+	@Override
 	public void report(Element xml){
 		if (xml != null){
 			xml.setAttribute("module", getClass().getName());
@@ -121,7 +127,7 @@ abstract public class XMLResource<object extends Reportable> implements Context<
 		}
 	}
 	
-	
+	@Override
 	public void report(Map<String,Object> json){
 		if (json != null){
 			json.put("module", getClass().getName());

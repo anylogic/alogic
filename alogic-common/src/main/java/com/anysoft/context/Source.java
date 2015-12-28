@@ -13,8 +13,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
@@ -28,7 +26,7 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  *
- * @param <object>
+ * @param <O>
  * 
  * @since 1.5.0
  * 
@@ -38,8 +36,11 @@ import com.anysoft.util.XmlTools;
  * @version 1.6.4.4 [20150910 duanyy] <br>
  * - 增加获取当前缓存对象列表的接口 <br>
  * - Report不在输出缓存对象列表 <br>
+ * 
+ * @version 1.6.4.20 [20151222 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
-abstract public class Source<object extends Reportable> implements Context<object>,Watcher<object> {
+public abstract class Source<O extends Reportable> implements Context<O>,Watcher<O> {
 	
 	/**
 	 * logger of log4j
@@ -49,23 +50,23 @@ abstract public class Source<object extends Reportable> implements Context<objec
 	/**
 	 * Watcher Hub
 	 */
-	protected WatcherHub<object> watcherHub = new WatcherHub<object>();
+	protected WatcherHub<O> watcherHub = new WatcherHub<O>(); // NOSONAR
 	
 	/**
 	 * 缓存的对象
 	 */
-	protected Hashtable<String,object> caches = new Hashtable<String,object>();
+	protected Hashtable<String,O> caches = new Hashtable<String,O>(); // NOSONAR
 
 	/**
 	 * 配置来源
 	 */
-	protected List<Context<object>> sources = new ArrayList<Context<object>>();
+	protected List<Context<O>> sources = new ArrayList<Context<O>>(); // NOSONAR
 	
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		Properties p = new XmlElementProperties(_e,_properties);
+	@Override
+	public void configure(Element root, Properties props){
+		Properties p = new XmlElementProperties(root,props);
 		
-		NodeList children = XmlTools.getNodeListByPath(_e, getContextName());
+		NodeList children = XmlTools.getNodeListByPath(root, getContextName());
 				
 		for (int i = 0 ; i < children.getLength() ; i ++){
 			Node n = children.item(i);
@@ -76,13 +77,13 @@ abstract public class Source<object extends Reportable> implements Context<objec
 			Element e = (Element)n;
 			
 			try {
-				Context<object> source = newInstance(e, p,"module");
+				Context<O> source = newInstance(e, p,"module"); // NOSONAR
 				if (source != null){
 					source.addWatcher(this);
 					sources.add(source);
 				}
 			}catch (Exception ex){
-				logger.error("Can not create context instance,check your configuration.");
+				logger.error("Can not create context instance,check your configuration.",ex);
 			}
 		}
 	}
@@ -91,7 +92,7 @@ abstract public class Source<object extends Reportable> implements Context<objec
 	 * 获取当前的cache列表
 	 * @return cache列表
 	 */
-	public Collection<object> current(){
+	public Collection<O> current(){
 		return caches.values();
 	}
 
@@ -103,17 +104,17 @@ abstract public class Source<object extends Reportable> implements Context<objec
 	 * @param attrName XML属性名
 	 * @return Context<object>
 	 */
-	abstract public Context<object> newInstance(Element e, Properties p, String attrName);
+	public abstract Context<O> newInstance(Element e, Properties p, String attrName);
 	
 	protected String getContextName(){
 		return "context";
 	}
 
-	
-	public void close() throws Exception {
+	@Override
+	public void close(){
 		caches.clear();
 		
-		for (Context<object> s:sources){
+		for (Context<O> s:sources){
 			s.removeWatcher(this);
 			IOTools.close(s);
 		}
@@ -121,9 +122,9 @@ abstract public class Source<object extends Reportable> implements Context<objec
 		sources.clear();
 	}
 
-	
-	public object get(String id) {
-		object found = caches.get(id);
+	@Override
+	public O get(String id) {
+		O found = caches.get(id);
 		if (found == null){
 			synchronized (caches){
 				found = caches.get(id);
@@ -138,9 +139,9 @@ abstract public class Source<object extends Reportable> implements Context<objec
 		return found;
 	}
 
-	private object load(String id) {
-		for (Context<object> c:sources){
-			object found = c.get(id);
+	private O load(String id) {
+		for (Context<O> c:sources){
+			O found = c.get(id);
 			if (found != null){
 				return found;
 			}
@@ -148,40 +149,40 @@ abstract public class Source<object extends Reportable> implements Context<objec
 		return null;
 	}
 
-	
-	public void addWatcher(Watcher<object> watcher) {
+	@Override
+	public void addWatcher(Watcher<O> watcher) {
 		watcherHub.addWatcher(watcher);
 	}
 
-	
-	public void removeWatcher(Watcher<object> watcher) {
+	@Override
+	public void removeWatcher(Watcher<O> watcher) {
 		watcherHub.removeWatcher(watcher);
 	}
 
-	
-	public void added(String id, object _data) {
+	@Override
+	public void added(String id, O _data) {
 		if (watcherHub != null){
 			watcherHub.added(id, _data);
 		}
 	}
 
-	
-	public void removed(String id, object _data) {
+	@Override
+	public void removed(String id, O _data) {
 		caches.remove(id);
 		if (watcherHub != null){
 			watcherHub.removed(id, _data);
 		}
 	}
 
-	
-	public void changed(String id, object _data) {
+	@Override
+	public void changed(String id, O _data) {
 		caches.remove(id);
 		if (watcherHub != null){
 			watcherHub.changed(id, _data);
 		}
 	}
 	
-	
+	@Override
 	public void report(Element xml) {
 		if (xml != null) {
 			xml.setAttribute("module", getClass().getName());
@@ -189,36 +190,33 @@ abstract public class Source<object extends Reportable> implements Context<objec
 
 			Document doc = xml.getOwnerDocument();
 
-			for (Context<object> c : sources) {
-				Element _ctx = doc.createElement(getContextName());
+			for (Context<O> c : sources) {
+				Element context = doc.createElement(getContextName());
 
-				c.report(_ctx);
+				c.report(context);
 
-				xml.appendChild(_ctx);
+				xml.appendChild(context);
 			}
 		}
 	}
 	
-	
+	@Override
 	public void report(Map<String,Object> json){
 		if (json != null){
 			json.put("module", getClass().getName());
 			json.put("ctxName", getContextName());
 			
-			//contexts
-			{
-				List<Object> _contexts = new ArrayList<Object>();
+			List<Object> contexts = new ArrayList<Object>(); // NOSONAR
+			
+			for (Context<O> c:sources){
+				Map<String,Object> ctx = new HashMap<String,Object>(); // NOSONAR
 				
-				for (Context<object> c:sources){
-					Map<String,Object> _ctx = new HashMap<String,Object>();
-					
-					c.report(_ctx);
-					
-					_contexts.add(_ctx);
-				}
+				c.report(ctx);
 				
-				json.put(getContextName(), _contexts);
+				contexts.add(ctx);
 			}
+			
+			json.put(getContextName(), contexts);
 		}
 	}
 }

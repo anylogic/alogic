@@ -20,6 +20,9 @@ import com.anysoft.util.XmlTools;
  * @author duanyy
  * @version 1.6.4.17 [20151216 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.20 [20151222 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class Command implements XMLConfigurable,CommandHelper {
 	protected String id;
@@ -31,7 +34,7 @@ public class Command implements XMLConfigurable,CommandHelper {
 	/**
 	 *　命令行参数
 	 */
-	protected List<Argument> arguments = new ArrayList<Argument>();	//NO SONAR
+	protected List<Argument> arguments = new ArrayList<Argument>();	// NOSONAR
 	
 	/**
 	 * to get note
