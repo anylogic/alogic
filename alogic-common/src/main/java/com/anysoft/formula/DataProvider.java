@@ -27,6 +27,9 @@ package com.anysoft.formula;
  *     
  * @version 1.6.3.41 [20150820 duanyy] <br>
  * - 增加Env和SystemProperties的实现<br>
+ * 
+ * @version 1.6.4.21 [20151229 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public interface DataProvider {
 	/**
@@ -52,11 +55,12 @@ public interface DataProvider {
 	 * @since 1.6.3.41
 	 */
 	public static class SystemPropertiesDataProvider implements DataProvider{
+		@Override
 		public String getValue(String varName, Object context,
 				String defaultValue) {
 			return System.getProperty(varName, defaultValue);
 		}
-
+		@Override
 		public Object getContext(String varName) {
 			return this;
 		}
@@ -68,6 +72,7 @@ public interface DataProvider {
 	 * @since 1.6.3.41
 	 */
 	public static class EnvDataProvider implements DataProvider{
+		@Override
 		public String getValue(String varName, Object context,
 				String defaultValue) {
 			String value = System.getenv(varName);
@@ -77,6 +82,7 @@ public interface DataProvider {
 			return value;
 		}
 
+		@Override
 		public Object getContext(String varName) {
 			return this;
 		}

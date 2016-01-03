@@ -8,7 +8,8 @@ import java.util.Date;
  *  <code>ExprValue</code> supports five basic data types:long,string,double,boolean,date.
  * @author duanyy
  * @version 1.0.0 
- *
+ * @version 1.6.4.21 [20160103 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class ExprValue implements Comparable<ExprValue>{
 	/**
@@ -21,16 +22,10 @@ public class ExprValue implements Comparable<ExprValue>{
 	protected DataType dataType = DataType.Void;
 
 	/**
-	 * to get data type of the value
-	 * @return data type of the value
-	 */
-	public DataType getDataType(){return dataType;}
-	
-	/**
 	 * constructor
 	 */
 	public ExprValue(){
-		
+		// nothing to do
 	}
 	
 	/**
@@ -64,6 +59,12 @@ public class ExprValue implements Comparable<ExprValue>{
 	public ExprValue(double doubleValue){
 		setDouble(doubleValue);
 	}
+	
+	/**
+	 * to get data type of the value
+	 * @return data type of the value
+	 */
+	public DataType getDataType(){return dataType;}	
 	
 	public ExprValue setLong(long longValue){
 		value = Long.valueOf(longValue);
@@ -143,6 +144,7 @@ public class ExprValue implements Comparable<ExprValue>{
 		return value.toString();
 	}
 	
+	@Override
 	public String toString(){
 		return value.toString();
 	}
@@ -170,10 +172,8 @@ public class ExprValue implements Comparable<ExprValue>{
 	 * @throws FormulaException en excption when data type is mismatched
 	 */
 	public Date getDate(){
-		switch (dataType){
-		case Date:
+		if (dataType == DataType.Date){
 			return (Date)value;
-		default:
 		}
 		throw new FormulaException("Can not get a date value from "
 				+ dataType.toString());		
@@ -185,9 +185,9 @@ public class ExprValue implements Comparable<ExprValue>{
 	 * @return  ExprValue
 	 * @throws FormulaException en excption when data type is mismatched
 	 */
-	public ExprValue add(ExprValue other){
+	public ExprValue add(ExprValue other){ // NOSONAR
 		switch (dataType){
-		case Long:
+		case Long:// NOSONAR
 			if (other.dataType == DataType.Long){
 				setLong(getLong() + other.getLong());
 				return this;
@@ -210,7 +210,7 @@ public class ExprValue implements Comparable<ExprValue>{
 		default:
 		}
 		throw new FormulaException("Can not add value between "
-				+ dataType.toString() + " and " + other.dataType.toString());				
+				+ dataType.toString() + " and " + other.dataType.toString());				 // NOSONAR
 	}
 
 	/**
@@ -219,9 +219,9 @@ public class ExprValue implements Comparable<ExprValue>{
 	 * @return ExprValue
 	 * @throws FormulaException
 	 */
-	public ExprValue sub(ExprValue other){
+	public ExprValue sub(ExprValue other){ // NOSONAR
 		switch (dataType){
-		case Long:
+		case Long:// NOSONAR
 			if (other.dataType == DataType.Long){
 				setLong(getLong() - other.getLong());
 				return this;
@@ -250,9 +250,9 @@ public class ExprValue implements Comparable<ExprValue>{
 	 * @return ExprValue
 	 * @throws FormulaException
 	 */
-	public ExprValue mul(ExprValue other){
+	public ExprValue mul(ExprValue other){	// NOSONAR
 		switch (dataType){
-		case Long:
+		case Long: // NOSONAR
 			if (other.dataType == DataType.Long){
 				setLong(getLong() * other.getLong());
 				return this;
@@ -281,26 +281,26 @@ public class ExprValue implements Comparable<ExprValue>{
 	 * @return ExprValue
 	 * @throws FormulaException
 	 */	
-	public ExprValue div(ExprValue other){
+	public ExprValue div(ExprValue other){ // NOSONAR
 		switch (dataType){
-		case Long:
+		case Long: // NOSONAR
 			if (other.dataType == DataType.Long){
 				if (other.getLong() == 0)
-					throw new FormulaException("divided by zero");
+					throw new FormulaException("divided by zero"); // NOSONAR
 				setLong(getLong() / other.getLong());
 				return this;
 			}else{
 				if (other.dataType == DataType.Double){
-					if (other.getDouble() == 0)
+					if (other.getDouble() == 0) // NOSONAR
 						throw new FormulaException("divided by zero");
 					setDouble(getLong() / other.getDouble());
 					return this;
 				}
 			}
 			break;
-		case Double:
+		case Double: // NOSONAR
 			if (other.dataType == DataType.Long || other.dataType == DataType.Double){
-				if (other.getDouble() == 0)
+				if (other.getDouble() == 0) // NOSONAR
 					throw new FormulaException("divided by zero");
 				setDouble(getDouble() / other.getDouble());
 				return this;
@@ -319,7 +319,7 @@ public class ExprValue implements Comparable<ExprValue>{
 	 * @throws FormulaException
 	 */	
 	public ExprValue mod(ExprValue other){
-		switch (dataType){
+		switch (dataType){ // NOSONAR
 		case Long:
 			if (other.dataType == DataType.Long){
 				setLong(getLong() % other.getLong());
@@ -342,9 +342,10 @@ public class ExprValue implements Comparable<ExprValue>{
 	 * @author duanyy
 	 * @version 1.0.0
 	 */
-	public enum DataType {Long,String,Date,Boolean,Double,Void}
+	public enum DataType {Long,String,Date,Boolean,Double,Void} // NOSONAR
 	
-	public int compareTo(ExprValue other) {
+	@Override
+	public int compareTo(ExprValue other) { // NOSONAR
 		switch (dataType){
 		case String:
 			if (other.dataType == DataType.String){
@@ -361,13 +362,12 @@ public class ExprValue implements Comparable<ExprValue>{
 				return ((Date)value).compareTo((Date)other.value);
 			}
 			break;
-		case Long:
+		case Long: // NOSONAR
 			switch (other.dataType){
 			case Long:
 				return ((Long)value).compareTo((Long)other.value);
-			case Double:
-				boolean compare = getLong() > other.getDouble();
-				if (compare){
+			case Double: // NOSONAR
+				if (getLong() > other.getDouble()){
 					return 1;
 				}else{
 					return other.getDouble() > getLong() ? -1 : 0;
@@ -375,11 +375,11 @@ public class ExprValue implements Comparable<ExprValue>{
 			default:
 			}
 			break;
-		case Double:
+		case Double: // NOSONAR
 			switch (other.dataType){
 			case Double:
 				return ((Double)value).compareTo((Double)other.value);
-			case Long:
+			case Long: // NOSONAR
 				boolean compare = getDouble() > other.getLong();
 				if (compare){
 					return 1;

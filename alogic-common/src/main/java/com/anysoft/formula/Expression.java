@@ -1,19 +1,28 @@
 package com.anysoft.formula;
 
+import com.anysoft.formula.ExprValue.DataType;
+
 /**
  * Expression
  * @author duanyy
  * @version 1.0.0
+ * 
+ * @version 1.6.4.21 [20151229 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
-abstract public class Expression {
+public abstract class Expression {
 
 	/**
+	 * operator of {@code Expression}
+	 */
+	protected Operator operator;
+	/**
 	 * construction
-	 * @param _operator
+	 * @param oper
 	 *            operator of {@code Expression}
 	 */
-	public Expression(Operator _operator) {
-		operator = _operator;
+	public Expression(Operator oper) {
+		operator = oper;
 	}
 
 	/**
@@ -23,7 +32,7 @@ abstract public class Expression {
 	 *  @throws FormulaException
 	 */
 	public abstract ExprValue getValue(DataProvider provider)
-			throws FormulaException;
+			throws FormulaException; // NOSONAR
 
 	/**
 	 * to get the prototype of operator
@@ -45,35 +54,30 @@ abstract public class Expression {
 	 *
 	 */
 	public enum Operator {
-		OP_Add, // +
-		OP_Sub, // -
-		OP_Mul, // *
-		OP_Div, // /
-		OP_Mod, // %
-		OP_Greater, // >
-		OP_Greater_Equal, // >=
-		OP_Equal, // =
-		OP_Not_Equal, // !=
-		OP_Less, // <
-		OP_Less_Equal, // <=
-		OP_And, // &&
-		OP_Or, // ||
-		OP_Not, // !
-		OP_Extend, // extend ,like function
-		OP_Float_Constant, OP_Integer_Constant, OP_Boolean_Constant, OP_String_Constant, OP_Variant, OP_Negative, OP_Positive
+		OP_Add, // + // NOSONAR
+		OP_Sub, // - // NOSONAR
+		OP_Mul, // * // NOSONAR
+		OP_Div, // / // NOSONAR
+		OP_Mod, // % // NOSONAR
+		OP_Greater, // > // NOSONAR
+		OP_Greater_Equal, // >= // NOSONAR
+		OP_Equal, // = // NOSONAR
+		OP_Not_Equal, // != // NOSONAR
+		OP_Less, // < // NOSONAR
+		OP_Less_Equal, // <= // NOSONAR
+		OP_And, // && // NOSONAR
+		OP_Or, // || // NOSONAR
+		OP_Not, // ! // NOSONAR
+		OP_Extend, // extend ,like function // NOSONAR
+		OP_Float_Constant, OP_Integer_Constant, OP_Boolean_Constant, OP_String_Constant, OP_Variant, OP_Negative, OP_Positive // NOSONAR
 	}
-
-	/**
-	 * operator of {@code Expression}
-	 */
-	protected Operator operator;
 
 	/**
 	 * Binary Expression
 	 * @author duanyy
 	 * @version 1.0.0
 	 */
-	static abstract public class BinaryExpression extends Expression {
+	public abstract static class BinaryExpression extends Expression {
 		/**
 		 * the left expression
 		 */
@@ -85,15 +89,15 @@ abstract public class Expression {
 
 		/**
 		 * Constructor
-		 * @param _operator operator
- 		 * @param _left left expr
-		 * @param _right right expr
+		 * @param oper operator
+ 		 * @param leftExpr left expr
+		 * @param rightExpr right expr
 		 */
-		public BinaryExpression(Operator _operator, Expression _left,
-				Expression _right) {
-			super(_operator);
-			left = _left;
-			right = _right;
+		public BinaryExpression(Operator oper, Expression leftExpr,
+				Expression rightExpr) {
+			super(oper);
+			left = leftExpr;
+			right = rightExpr;
 		}
 
 		/**
@@ -114,6 +118,7 @@ abstract public class Expression {
 		/**
 		 * to string
 		 */
+		@Override
 		public String toString() {
 			return "(" + left.toString() + getOperatorPrototype()
 					+ right.toString() + ")";
@@ -121,24 +126,24 @@ abstract public class Expression {
 
 		/**
 		 * Create a binary expression
-		 * @param _operator
+		 * @param oper
 		 *            the operator
-		 * @param _left
+		 * @param leftExpr
 		 *            the left expression
-		 * @param _right
+		 * @param rightExpr
 		 *            the right expression
 		 * @return new binary expression
 		 * @throws FormulaException
 		 */
-		public static Expression createChild(Operator _operator,
-				Expression _left, Expression _right) throws FormulaException {
-			switch (_operator) {
+		public static Expression createChild(Operator oper, // NOSONAR
+				Expression leftExpr, Expression rightExpr) {
+			switch (oper) {
 			case OP_Add:
 			case OP_Sub:
 			case OP_Mul:
 			case OP_Div:
 			case OP_Mod:
-				return new ArithmeticExpression(_operator, _left, _right);
+				return new ArithmeticExpression(oper, leftExpr, rightExpr);
 			case OP_Greater:
 			case OP_Greater_Equal:
 			case OP_Equal:
@@ -148,10 +153,10 @@ abstract public class Expression {
 			case OP_Or:
 			case OP_And:
 			case OP_Not:
-				return new LogicalExpression(_operator, _left, _right);
+				return new LogicalExpression(oper, leftExpr, rightExpr);
 			default:
 			}
-			throw new FormulaException("Unsupport operator:" + _operator);
+			throw new FormulaException("Unsupport operator:" + oper); // NOSONAR
 		}
 
 	}
@@ -166,20 +171,20 @@ abstract public class Expression {
 		/**
 		 * constructor
 		 * 
-		 * @param _operator logical operator
-		 * @param _left left expr
-		 * @param _right right expr
+		 * @param oper logical operator
+		 * @param leftExpr left expr
+		 * @param rightExpr right expr
 		 */
-		public LogicalExpression(Operator _operator, Expression _left,
-				Expression _right) {
-			super(_operator, _left, _right);
+		public LogicalExpression(Operator oper, Expression leftExpr,
+				Expression rightExpr) {
+			super(oper, leftExpr, rightExpr);
 		}
 
 		/**
 		 * to get the prototype of operator
 		 */
-		
-		public String getOperatorPrototype() {
+		@Override
+		public String getOperatorPrototype() { // NOSONAR
 			switch (operator) {
 			case OP_Greater:
 				return ">";
@@ -208,10 +213,8 @@ abstract public class Expression {
 		 * @param provider instance of DataProvider
 		 * @return value of expr
 		 */
-		
-		public ExprValue getValue(DataProvider provider)
-				throws FormulaException {
-			// TODO Auto-generated method stub
+		@Override
+		public ExprValue getValue(DataProvider provider){ // NOSONAR
 			switch (operator) {
 			case OP_Greater:
 				return new ExprValue(left.getValue(provider).compareTo(
@@ -252,13 +255,13 @@ abstract public class Expression {
 	public static class ArithmeticExpression extends BinaryExpression {
 		/**
 		 * constructor 
-		 * @param _operator operator of expr
-		 * @param _left left expr
-		 * @param _right right expr
+		 * @param oper operator of expr
+		 * @param leftExpr left expr
+		 * @param rightExpr right expr
 		 */
-		public ArithmeticExpression(Operator _operator, Expression _left,
-				Expression _right) {
-			super(_operator, _left, _right);
+		public ArithmeticExpression(Operator oper, Expression leftExpr,
+				Expression rightExpr) {
+			super(oper, leftExpr, rightExpr);
 		}
 
 		/**
@@ -266,8 +269,8 @@ abstract public class Expression {
 		 *  @param provider instance of DataProvider
 		 *  @return value of expr
 		 */
-		public ExprValue getValue(DataProvider provider)
-				throws FormulaException {
+		@Override
+		public ExprValue getValue(DataProvider provider){ // NOSONAR
 			switch (operator) {
 			case OP_Add:
 				return left.getValue(provider).add(right.getValue(provider));
@@ -287,8 +290,8 @@ abstract public class Expression {
 		/**
 		 * to get the prototype of the operator
 		 */
-		
-		public String getOperatorPrototype() {
+		@Override
+		public String getOperatorPrototype() { // NOSONAR
 			switch (operator) {
 			case OP_Add:
 				return "+";
@@ -312,7 +315,7 @@ abstract public class Expression {
 	 * @author duanyy
 	 * 
 	 */
-	static public class UnaryExpression extends Expression {
+	public static class UnaryExpression extends Expression {
 		/**
 		 * the child 
 		 */
@@ -320,42 +323,40 @@ abstract public class Expression {
 		
 		/**
 		 * constructor
-		 * @param _operator the operator
-		 * @param _expr the child expr
+		 * @param oper the operator
+		 * @param child the child expr
 		 */
-		public UnaryExpression(Operator _operator,Expression _expr) {
-			super(_operator);
-			expr = _expr;
+		public UnaryExpression(Operator oper,Expression child) {
+			super(oper);
+			expr = child;
 		}
 		/**
 		 *  to compute the expression with {@code DataProvider}
 		 *  @param provider instance of DataProvider
 		 *  @return value of expr
 		 */
-		
-		public ExprValue getValue(DataProvider provider) throws FormulaException{
+		@Override
+		public ExprValue getValue(DataProvider provider){ // NOSONAR
 			switch (operator){
-				case OP_Negative:{
-					ExprValue _value = expr.getValue(provider);
-					switch (_value.getDataType()){
+				case OP_Negative:{ // NOSONAR
+					ExprValue value = expr.getValue(provider);
+					switch (value.getDataType()){
 						case Long:
-							return new ExprValue(-_value.getLong());
+							return new ExprValue(-value.getLong());
 						case Double:
-							return new ExprValue(-_value.getDouble());
+							return new ExprValue(-value.getDouble());
 						default:
 					}
-					throw new FormulaException("Can not get a negative value of " + _value.getDataType());
+					throw new FormulaException("Can not get a negative value of " + value.getDataType());
 				}
 				case OP_Positive:
 					return expr.getValue(provider);
-				case OP_Not:{
-					ExprValue _value = expr.getValue(provider);
-					switch (_value.getDataType()){
-						case Boolean:
-							return new ExprValue(!_value.getBoolean());
-						default:
+				case OP_Not:{ // NOSONAR
+					ExprValue value = expr.getValue(provider);
+					if (value.getDataType() == DataType.Boolean){
+						return new ExprValue(!value.getBoolean());
 					}
-					throw new FormulaException("Can not get a negative value of " + _value.getDataType());	
+					throw new FormulaException("Can not get a negative value of " + value.getDataType());	
 				}
 				default:
 			}
@@ -364,6 +365,7 @@ abstract public class Expression {
 		/**
 		 * to String
 		 */
+		@Override
 		public String toString(){
 			switch (operator){
 			case OP_Negative:return "-(" + expr.toString() + ")";
@@ -377,7 +379,7 @@ abstract public class Expression {
 		/**
 		 * to get the prototype of operator
 		 */
-		
+		@Override
 		public String getOperatorPrototype() {
 			switch (operator){
 			case OP_Negative:return "-";
@@ -394,9 +396,9 @@ abstract public class Expression {
 	 * @author duanyy
 	 *
 	 */
-	abstract public static class Constant extends Expression{
-		public Constant(Operator _operator) {
-			super(_operator);
+	public abstract static class Constant extends Expression{
+		public Constant(Operator oper) {
+			super(oper);
 		}
 	}
 	
@@ -413,20 +415,19 @@ abstract public class Expression {
 		
 		/**
 		 * constructor
-		 * @param _value value
+		 * @param v value
  		 */
-		public StringConstant(String _value) {
+		public StringConstant(String v) {
 			super(Operator.OP_String_Constant);
-			value = _value;
+			value = v;
 		}
 
-		
-		public ExprValue getValue(DataProvider provider)
-				throws FormulaException {
+		@Override
+		public ExprValue getValue(DataProvider provider){
 			return new ExprValue(value);
 		}
 
-		
+		@Override
 		public String getOperatorPrototype() {
 			return value;
 		}
@@ -434,6 +435,7 @@ abstract public class Expression {
 		/**
 		 * to String
 		 */
+		@Override
 		public String toString(){
 			return "'" + value + "'";
 		}
@@ -446,22 +448,22 @@ abstract public class Expression {
 	 */
 	public static class LongConstant extends Constant{
 		protected long value;
-		public LongConstant(long _value) {
+		public LongConstant(long v) {
 			super(Operator.OP_Integer_Constant);
-			value = _value;
+			value = v;
 		}
 
-		
-		public ExprValue getValue(DataProvider provider)
-				throws FormulaException {
+		@Override
+		public ExprValue getValue(DataProvider provider){
 			return new ExprValue(value);
 		}
 
-		
+		@Override
 		public String getOperatorPrototype() {
 			return String.valueOf(value);
 		}
 		
+		@Override
 		public String toString(){
 			return String.valueOf(value);
 		}
@@ -474,22 +476,21 @@ abstract public class Expression {
 	 */
 	public static class DoubleConstant extends Constant{
 		protected double value;
-		public DoubleConstant(double _value) {
+		public DoubleConstant(double v) {
 			super(Operator.OP_Float_Constant);
-			value = _value;
+			value = v;
 		}
 
-		
-		public ExprValue getValue(DataProvider provider)
-				throws FormulaException {
+		@Override
+		public ExprValue getValue(DataProvider provider) {
 			return new ExprValue(value);
 		}
 
-		
+		@Override
 		public String getOperatorPrototype() {
 			return String.valueOf(value);
 		}
-		
+		@Override
 		public String toString(){
 			return String.valueOf(value);
 		}
@@ -502,22 +503,21 @@ abstract public class Expression {
 	 */
 	public static class BooleanConstant extends Constant{
 		protected boolean value;
-		public BooleanConstant(boolean _value) {
+		public BooleanConstant(boolean v) {
 			super(Operator.OP_Boolean_Constant);
-			value = _value;
+			value = v;
 		}
 
-		
-		public ExprValue getValue(DataProvider provider)
-				throws FormulaException {
+		@Override
+		public ExprValue getValue(DataProvider provider){
 			return new ExprValue(value);
 		}
 
-		
+		@Override
 		public String getOperatorPrototype() {
 			return String.valueOf(value);
 		}
-		
+		@Override
 		public String toString(){
 			return String.valueOf(value);
 		}
@@ -533,14 +533,13 @@ abstract public class Expression {
 	public static class Variant extends Expression{
 		protected String varName;
 		protected Object varContext = null;
-		public Variant(String _varName) {
+		public Variant(String vName) {
 			super(Operator.OP_Variant);
-			varName = _varName;
+			varName = vName;
 		}
 
-		
-		public ExprValue getValue(DataProvider provider)
-				throws FormulaException {
+		@Override
+		public ExprValue getValue(DataProvider provider){
 			if (provider == null){
 				throw new FormulaException("Data provider is null,can not get value of " + varName);
 			}
@@ -551,11 +550,12 @@ abstract public class Expression {
 			return value != null ? new ExprValue(value): null;
 		}
 
-		
+		@Override
 		public String getOperatorPrototype() {
 			return varName;
 		}
 		
+		@Override
 		public String toString(){
 			return varName;
 		}		
