@@ -38,6 +38,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.3.10 [20140324 duanyy] <br>
  * - 增加忽略本次输出的功能 <br>
+ * 
+ * @version 1.6.4.22 [20160113 duanyy] <br>
+ * - 当发生错误时，细化错误信息的输出 <br>
  */
 
 public class HttpContext extends Context {
@@ -211,7 +214,11 @@ public class HttpContext extends Context {
 		try {
 			if (!isIgnore()){
 				if (msg == null){
-					response.sendError(404, "No message is found,check servant implemention.");
+					if (getReturnCode().equals("core.ok")){
+						response.sendError(404, "No message is found,check servant implemention.");
+					}else{
+						response.sendError(404, getReturnCode() + ":" + getReason());
+					}
 				}else{
 					response.setCharacterEncoding(encoding);
 					msg.finish(this,!cometMode());
