@@ -12,6 +12,7 @@ import org.w3c.dom.Node;
 
 import com.anysoft.cache.Cacheable;
 import com.anysoft.formula.DataProvider;
+import com.anysoft.util.BaseException;
 import com.anysoft.util.JsonTools;
 
 /**
@@ -21,6 +22,9 @@ import com.anysoft.util.JsonTools;
  * @since 1.6.3.3
  * @version 1.6.4.19 [duanyy 20151218] <br>
  * - 按照SONAR建议修改代码 <br>
+ * 
+ * @version 1.6.4.23 [duanyy 20160113] <br>
+ * - 扩展缓存模型 <br>
  */
 public interface MultiFieldObject extends Cacheable,DataProvider {
 	/**
@@ -37,6 +41,34 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 	 * @return field的值
 	 */
 	public String getField(String key,String dftValue);
+	
+	public String hGet(String id,String field,String dftValue);
+	
+	public void hSet(String id,String field,String value);
+	
+	public boolean hExist(String id,String field);
+	
+	public Map<String,String> hGetAll(String id);
+
+	public int hLen(String id);
+	
+	public String[] hKeys(String id);
+	
+	public String[] hValues(String id);
+	
+	public void sAdd(String id,String...member);
+	
+	public void sDel(String id,String...member);
+	
+	public int sSize(String id);
+	
+	public String[] sMembers(String id);
+	
+	public void del(String id);	
+	
+	public void copyTo(MultiFieldObject another);
+	
+	public long getLastVisitedTime();
 	
 	/**
 	 * 获取所有的field的key
@@ -58,6 +90,7 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 	 */
 	public static class Default implements MultiFieldObject{
 		protected String id;
+		protected long lastVisitedTime = System.currentTimeMillis();
 		protected Map<String,String> keyvalues = new HashMap<String,String>(); // NOSONAR
 		protected static Object context = new Object();
 		
@@ -162,14 +195,22 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 		
 		@Override
 		public void setField(String key, String value) {
+			lastVisitedTime = System.currentTimeMillis();
 			keyvalues.put(key, value);
 		}
 
 		@Override
 		public String getField(String key, String dftValue) {
+			lastVisitedTime = System.currentTimeMillis();
 			String found = keyvalues.get(key);
 			return found == null || found.length() <= 0 ? dftValue:found;
 		}
+		
+		@Override
+		public void del(String id) {
+			keyvalues.remove(id);
+		}		
+		
 		@Override
 		public String[] keys() {
 			return keyvalues.keySet().toArray(new String[keyvalues.size()]);
@@ -197,5 +238,78 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 			value.append(")");
 			return value.toString();
 		}
+
+		@Override
+		public String hGet(String id, String field, String dftValue) {
+			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+		}
+
+		@Override
+		public void hSet(String id, String field, String value) {
+			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+		}
+
+		@Override
+		public boolean hExist(String id, String field) {
+			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+		}
+
+		@Override
+		public Map<String, String> hGetAll(String id) {
+			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+		}
+
+		@Override
+		public int hLen(String id) {
+			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+		}
+
+		@Override
+		public String[] hKeys(String id) {
+			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+		}
+
+		@Override
+		public String[] hValues(String id) {
+			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+		}
+
+		@Override
+		public void sAdd(String id, String... member) {
+			throw new BaseException("core.not_supported","Set is not suppurted yet.");	
+		}
+
+		@Override
+		public void sDel(String id, String... member) {
+			throw new BaseException("core.not_supported","Set is not suppurted yet.");	
+		}
+
+		@Override
+		public int sSize(String id) {
+			throw new BaseException("core.not_supported","Set is not suppurted yet.");	
+		}
+
+		@Override
+		public String[] sMembers(String id) {
+			throw new BaseException("core.not_supported","Set is not suppurted yet.");	
+		}
+
+		@Override
+		public void copyTo(MultiFieldObject another) {
+			if (another != null){
+				Iterator<Entry<String,String>> iter = keyvalues.entrySet().iterator();
+				
+				while (iter.hasNext()){
+					Entry<String,String> keyvalue = iter.next();
+					another.setField(keyvalue.getKey(), keyvalue.getValue());
+				}
+			}
+		}
+
+		@Override
+		public long getLastVisitedTime() {
+			return lastVisitedTime;
+		}
+
 	}
 }

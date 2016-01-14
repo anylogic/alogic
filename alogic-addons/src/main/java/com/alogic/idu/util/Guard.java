@@ -1,6 +1,5 @@
 package com.alogic.idu.util;
 
-import java.util.List;
 import java.util.Map;
 
 import com.anysoft.util.Properties;
@@ -10,6 +9,9 @@ import com.anysoft.util.Properties;
  * 
  * @author duanyy
  * @since 1.6.4.6
+ * 
+ * @version 1.6.4.23 [20160114 duanyy] <br>
+ * - 修改权限模型 <br>
  */
 public interface Guard{
 	
@@ -33,22 +35,22 @@ public interface Guard{
 	public boolean checkPrivilege(String userId,String privilege,String objectId,DataGuard dataGuard);
 	
 	/**
-	 * 检查指定用户在指定button列表上是否具有权限
+	 * 检查指定用户在指定菜单上是否具有权限
 	 * 
 	 * @param userId
-	 * @param buttons
+	 * @param menu
 	 */
-	public void checkPrivilege(String userId,List<Map<String,Object>> buttons);
+	public void checkPrivilege(String userId,Map<String,Object> menu);
 	
 	/**
-	 * 检查指定用户在指定button列表上是否具有权限
+	 * 检查指定用户在指定菜单上是否具有权限
 	 * 
 	 * @param userId
-	 * @param buttons
+	 * @param menu
 	 * @param objectId
 	 * @param dataGuard
 	 */
-	public void checkPrivilege(String userId,List<Map<String,Object>> buttons,String objectId,DataGuard dataGuard);
+	public void checkPrivilege(String userId,Map<String,Object> menu,String objectId,DataGuard dataGuard);
 	
 	/**
 	 * 缺省实现
@@ -68,14 +70,14 @@ public interface Guard{
 			return true;
 		}
 
-		public void checkPrivilege(String userId,
-				List<Map<String, Object>> buttons) {
+		@Override
+		public void checkPrivilege(String userId, Map<String, Object> menu) {
 			
 		}
-
-		public void checkPrivilege(String userId,
-				List<Map<String, Object>> buttons, String objectId,
-				DataGuard dataGuard) {
+		@Override
+		public void checkPrivilege(String userId, Map<String, Object> menu,
+				String objectId, DataGuard dataGuard) {
+			
 		}
 		
 	}

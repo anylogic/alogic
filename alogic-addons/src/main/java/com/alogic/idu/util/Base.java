@@ -20,8 +20,11 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  *
  * @since 1.6.4.6
+ * 
+ * @version 1.6.4.23 [20160114 duanyy] <br>
+ * - 修改权限模型 <br>
  */
-abstract public class Base extends AbstractServant {
+public abstract class Base extends AbstractServant {
 	/**
 	 * 权限Guard
 	 */
@@ -175,27 +178,27 @@ abstract public class Base extends AbstractServant {
 	}	
 	
 	/**
-	 * 检查指定用户在指定button列表上是否具有权限
+	 * 检查指定用户在指定菜单上是否具有权限
 	 * 
 	 * @param userId
-	 * @param buttons
+	 * @param menu
 	 */
-	protected void checkPrivilege(String userId,List<Map<String,Object>> buttons){
+	protected void checkPrivilege(String userId,Map<String,Object> menu){
 		if (guard != null){
-			guard.checkPrivilege(userId, buttons);
+			guard.checkPrivilege(userId, menu);
 		}
 	}
 	
 	/**
-	 * 检查指定用户在指定button列表上是否具有权限
+	 * 检查指定用户在菜单上是否具有权限
 	 * 
 	 * @param userId
-	 * @param buttons
+	 * @param menu
 	 * @param objectId
 	 */
-	public void checkPrivilege(String userId,List<Map<String,Object>> buttons,String objectId){
+	public void checkPrivilege(String userId,Map<String,Object> menu,String objectId){
 		if (guard != null){
-			guard.checkPrivilege(userId, buttons,objectId,dataGuard);
+			guard.checkPrivilege(userId, menu,objectId,dataGuard);
 		}
 	}
 	

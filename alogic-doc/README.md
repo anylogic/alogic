@@ -132,3 +132,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic:根据sonar建议优化代码(1.6.4.20)
 	 + alogic:根据sonar建议优化代码(1.6.4.21)
 	 + alogic-core:HttpContext,当发生错误时，细化错误信息的输出(1.6.4.22)
+	 + alogic-cache:扩展缓存模型(1.6.4.23)
+	 + alogic-cache:修改权限模型(1.6.4.23)

@@ -14,6 +14,9 @@ import org.w3c.dom.Element;
  * @author duanyy
  *
  * @since 1.5.2
+ * 
+ * @version 1.6.4.23 [20160114 duanyy] <br>
+ * - 修正初始化的问题。 <br>
  */
 public class SimpleCounter implements Counter {
 	/**
@@ -66,12 +69,16 @@ public class SimpleCounter implements Counter {
 		lastVisitedTime = now;
 	}
 	
+	public SimpleCounter(){
+		cycle = getStatCycle(Settings.get());
+	}
+	
 	public SimpleCounter(Properties p){
 		cycle = getStatCycle(p);
 	}
 	
 	public long getStatCycle(Properties p){
-		return PropertiesConstants.getLong(p, "servant.stat.cycle", cycle);
+		return PropertiesConstants.getLong(p, "stat.cycle", cycle);
 	}
 	
 	
