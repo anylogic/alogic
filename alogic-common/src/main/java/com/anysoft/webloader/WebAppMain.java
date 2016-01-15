@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,9 +34,13 @@ import com.anysoft.util.resource.ResourceFactory;
  * @since 1.6.0.1 <br>
  * @version 1.6.4.17 [20151216 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.24 [20150115 duanyy] <br>
+ * - 增加对SessionListener的支持 <br>
  */
-public class WebAppMain extends WebAppContextListener {
+public class WebAppMain extends WebAppContextListener implements HttpSessionListener{
 	protected List<ServletContextListener> listeners = null;
+	protected List<HttpSessionListener> sessionListeners = null;
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent e) {
@@ -56,75 +62,102 @@ public class WebAppMain extends WebAppContextListener {
 		
 		Settings settings = Settings.get();
 		
-		String _addons = settings.GetValue("webcontext.addons", "");
-		if (_addons != null && _addons.length() > 0){
+		String addons = settings.GetValue("webcontext.addons", "");
+		if (addons != null && addons.length() > 0){
 			logger.info("Load addons...");
 			
 			ResourceFactory rm = Settings.getResourceFactory();
 			InputStream in = null;
 			try {
-				in = rm.load(_addons, null);
+				in = rm.load(addons, null);
 				Document doc = XmlTools.loadFromInputStream(in);	
 				if (doc != null){
 					//装入context-param
-					{
-						loadContextParams(settings,doc.getDocumentElement(),e.getServletContext());
-					}
+					loadContextParams(settings,doc.getDocumentElement(),e.getServletContext());
 					//装入listener
-					{
-						loadContextListeners(settings,doc.getDocumentElement(),e);
-					}
+					loadContextListeners(settings,doc.getDocumentElement(),e);	
+					//装入SessionListener
+					loadSessionListeners(settings,doc.getDocumentElement());
 					//在装入其他
-					{
-						WebXMLLoader loader = createXMLLoader(settings);
-						if (loader != null){
+					WebXMLLoader loader = createXMLLoader(settings);
+					if (loader != null){ // NOSONAR
 							loader.load(settings,doc.getDocumentElement(), e.getServletContext());
-						}
 					}
 				}
 			}catch (Exception ex){
-				logger.error("Error occurs when load xml file,source=" + _addons, ex);
+				logger.error("Error occurs when load xml file,source=" + addons, ex);
 			}finally {
 				IOTools.closeStream(in); 
 			}
 		}
 	}
 	
+	protected void loadSessionListeners(Settings settings,Element root) {
+		NodeList nodeList = XmlTools.getNodeListByPath(root, "session");
+		if (nodeList != null && nodeList.getLength() > 0){
+			sessionListeners = new ArrayList<HttpSessionListener>();
+			for (int i = 0 ;i < nodeList.getLength() ; i ++){
+				Node n = nodeList.item(i);
+				if (n.getNodeType() != Node.ELEMENT_NODE){
+					continue;
+				}
+				
+				Element e = (Element)n;
+				
+				String clazz = e.getAttribute("listener-class");
+				if (clazz == null || clazz.length() <= 0){
+					continue;
+				}
+				
+				Factory<HttpSessionListener> factory = new Factory<HttpSessionListener>();
+				try {
+					HttpSessionListener _listener = factory.newInstance(clazz);
+					if (_listener != null){
+						logger.info("Session listener is found,module=" + clazz);
+						sessionListeners.add(_listener);
+					}
+				}catch (Exception ex){
+					logger.error("Can not create context listener,module=" + clazz,ex);
+				}
+			}
+		}
+	}
+
 	/**
 	 * 装入ContextListener，可支持多个ContextListener
 	 * 
 	 * @param settings
 	 * @param root
-	 * @param e
+	 * @param event
 	 */
-	protected void loadContextListeners(Properties settings,Element root,ServletContextEvent e) {
-		NodeList _listeners = XmlTools.getNodeListByPath(root, "listener");
-		if (_listeners != null && _listeners.getLength() > 0){
-			listeners = new ArrayList<ServletContextListener>(_listeners.getLength());
+	protected void loadContextListeners(Properties settings,Element root,ServletContextEvent event) {
+		NodeList nodeList = XmlTools.getNodeListByPath(root, "listener");
+		if (nodeList != null && nodeList.getLength() > 0){
+			listeners = new ArrayList<ServletContextListener>(nodeList.getLength());
 			
-			for (int i = 0 ;i < _listeners.getLength() ; i ++){
-				Node n = _listeners.item(i);
+			for (int i = 0 ;i < nodeList.getLength() ; i ++){
+				Node n = nodeList.item(i);
 				if (n.getNodeType() != Node.ELEMENT_NODE){
 					continue;
 				}
 				
-				Element _e = (Element)n;
+				Element e = (Element)n;
 				
-				String _class = _e.getAttribute("listener-class");
-				if (_class == null || _class.length() <= 0){
+				String clazz = e.getAttribute("listener-class");
+				if (clazz == null || clazz.length() <= 0){
 					continue;
 				}
 				
 				Factory<ServletContextListener> factory = new Factory<ServletContextListener>();
 				try {
-					ServletContextListener _listener = factory.newInstance(_class);
-					if (_listener != null){
-						logger.info("Init context listener,module=" + _class);
-						_listener.contextInitialized(e);
-						listeners.add(_listener);
+					ServletContextListener listner = factory.newInstance(clazz);
+					if (listner != null){
+						logger.info("Init context listener,module=" + clazz);
+						listner.contextInitialized(event);
+						listeners.add(listner);
 					}
 				}catch (Exception ex){
-					logger.error("Can not create context listener,module=" + _class,ex);
+					logger.error("Can not create context listener,module=" + clazz,ex);
 				}
 			}
 		}
@@ -141,11 +174,11 @@ public class WebAppMain extends WebAppContextListener {
 	 * @return WebXMLLoader实例
 	 */
 	protected WebXMLLoader createXMLLoader(Properties settings){
-		String _loader = settings.GetValue("webcontext.xmlloader",DefaultWebXMLLoader.class.getName());
+		String loader = settings.GetValue("webcontext.xmlloader",DefaultWebXMLLoader.class.getName());
 		
 		WebXMLLoader.TheFactory factory = new WebXMLLoader.TheFactory();
 		try{
-			return factory.newInstance(_loader, settings);
+			return factory.newInstance(loader, settings);
 		}catch (Exception ex){
 			logger.error("Can not create a webxml loader.",ex);
 			return null;
@@ -160,11 +193,11 @@ public class WebAppMain extends WebAppContextListener {
 	 * @param sc
 	 */
 	protected void loadContextParams(Properties settings,Element root, ServletContext sc) {
-		NodeList _params = XmlTools.getNodeListByPath(root, "context-param");
+		NodeList params = XmlTools.getNodeListByPath(root, "context-param");
 		
-		if (_params != null && _params.getLength() > 0){
-			for (int i = 0 ; i < _params.getLength() ; i ++){
-				Node n = _params.item(i);
+		if (params != null && params.getLength() > 0){
+			for (int i = 0 ; i < params.getLength() ; i ++){
+				Node n = params.item(i);
 				if (n.getNodeType() != Node.ELEMENT_NODE){
 					continue;
 				}
@@ -172,11 +205,33 @@ public class WebAppMain extends WebAppContextListener {
 				Element e = (Element)n;
 				
 				String name = e.getAttribute("param-name");
-				String value = e.getAttribute("param-value");
-				if (name != null && value != null && name.length() > 0 && value.length() > 0){
-					String _value = settings.transform(value);
-					logger.info("Init parameter:" + name + "=" + _value);
-					sc.setInitParameter(name, _value);
+				String pattern = e.getAttribute("param-value");
+				if (name != null && pattern != null && name.length() > 0 && pattern.length() > 0){
+					String value = settings.transform(pattern);
+					logger.info("Init parameter:" + name + "=" + value);
+					sc.setInitParameter(name, value);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void sessionCreated(HttpSessionEvent se) {
+		if (sessionListeners != null){
+			for (HttpSessionListener l:sessionListeners){
+				if (l != null){
+					l.sessionCreated(se);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void sessionDestroyed(HttpSessionEvent se) {
+		if (sessionListeners != null){
+			for (HttpSessionListener l:sessionListeners){
+				if (l != null){
+					l.sessionDestroyed(se);
 				}
 			}
 		}
