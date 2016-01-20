@@ -411,6 +411,9 @@ public class Parser {
 	
 	private void lookAhead(){
 		for (;;){
+			if (get(current) <= 0){
+				break;
+			}
 			if (inString){
 				if (get(current) != STRING){
 					identifier += get(current);

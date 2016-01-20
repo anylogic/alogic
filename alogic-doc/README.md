@@ -135,3 +135,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-cache:扩展缓存模型(1.6.4.23)
 	 + alogic-cache:修改权限模型(1.6.4.23)
 	 + alogic-common:web.addons文件中增加对SessionListener的支持(1.6.4.24)
+	 + alogic-common:修正公式解析器的死循环问题(1.6.4.25)
