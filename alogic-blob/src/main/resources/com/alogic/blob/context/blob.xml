@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <source>
 	<context>
-		<blob id="default">
-		</blob>
+		<blob 
+			id="default"
+			home="/com/alogic/blob/icon"
+			bootstrap="com.alogic.blob.resource.AutoIconSet"
+			module="com.alogic.blob.resource.AutoIconSet"
+			contentType="image/png"
+	      />
 	</context>
 </source>

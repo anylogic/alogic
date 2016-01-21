@@ -569,7 +569,7 @@
 				id = "Download" 
 				name="Download" 
 				note="下载Blob文件" 
-				visible="protected"
+				visible="public"
 				log = "brief" 
 				module="com.alogic.blob.service.Download">
 				<properties>
