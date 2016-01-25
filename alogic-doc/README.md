@@ -137,3 +137,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-common:web.addons文件中增加对SessionListener的支持(1.6.4.24)
 	 + alogic-common:修正公式解析器的死循环问题(1.6.4.25)
 	 + alogic-blob:增加缺省的图标资源(1.6.4.26)
+	 + alogic:根据sonar建议优化代码(1.6.4.27)

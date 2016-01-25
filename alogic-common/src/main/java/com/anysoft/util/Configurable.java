@@ -13,5 +13,5 @@ public interface Configurable {
 	 * @param p 环境变量
 	 * @throws BaseException
 	 */
-	public void configure(Properties p) throws BaseException;
+	public void configure(Properties p);
 }

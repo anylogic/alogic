@@ -7,6 +7,8 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 
 /**
  * Properties工具
@@ -25,8 +27,14 @@ import java.util.Date;
  * - 增加getDouble和setDouble方法
  * @version 1.6.4.16 [duanyy 20151110] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.27 [20160125 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class PropertiesConstants {
+	public static final String DEFAULT_DATE_PATTERN = "yyyyMMddHHmmss";
+	public static final String BOOL_TRUE = "true";
+	public static final String BOOL_FALSE = "false";
 	
 	private PropertiesConstants(){
 		
@@ -39,7 +47,9 @@ public class PropertiesConstants {
 	 * @param value 变量值
 	 */
 	public static void setString(Properties props,String name,String value){
-		props.SetValue(name, value);
+		if (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(value)){
+			props.SetValue(name, value);
+		}
 	}
 	
 	/**
@@ -67,7 +77,6 @@ public class PropertiesConstants {
 		return props.GetValue(name, defaultValue,true,noParent);
 	}
 	
-	
 	/**
 	 * 向Properties设置int值
 	 * @param props Properties实例
@@ -77,10 +86,10 @@ public class PropertiesConstants {
 	 * @since 1.0
 	 */
 	public static void setInt(Properties props,String name,int value){
-		props.SetValue(name, String.valueOf(value));
+		if (StringUtils.isNotEmpty(name)){
+			props.SetValue(name, String.valueOf(value));
+		}
 	}
-	
-	public static final String DEFAULT_DATE_PATTERN = "yyyyMMddHHmmss";
 	
 	/**
 	 * 向Properties设置Date值，格式:yyyyMMddHHmmss
@@ -89,8 +98,10 @@ public class PropertiesConstants {
 	 * @param date 变量值
 	 */
 	public static void setDate(Properties props,String name,Date date){
-		String value = DateUtil.formatDate(date, DEFAULT_DATE_PATTERN);
-		props.SetValue(name,value);
+		if (StringUtils.isNotEmpty(name) && date != null){
+			String value = DateUtil.formatDate(date, DEFAULT_DATE_PATTERN);
+			props.SetValue(name,value);
+		}
 	}
 	
 	/**
@@ -140,7 +151,7 @@ public class PropertiesConstants {
 		}
 		try {
 			return Integer.parseInt(sInt);
-		}catch (Exception ex){
+		}catch (NumberFormatException ex){
 			return defaultValue;
 		}		
 	}
@@ -176,7 +187,9 @@ public class PropertiesConstants {
 	 * @param value 变量值
 	 */
 	public static void setLong(Properties props,String name,long value){
-		props.SetValue(name, String.valueOf(value));
+		if (StringUtils.isNotEmpty(name)){
+			props.SetValue(name, String.valueOf(value));
+		}
 	}	
 	/**
 	 * 从Properties中读取long值
@@ -232,7 +245,9 @@ public class PropertiesConstants {
 	 * @since 1.4.3
 	 */
 	public static void setDouble(Properties props,String name,double value){
-		props.SetValue(name, String.valueOf(value));
+		if (StringUtils.isNotEmpty(name)){
+			props.SetValue(name, String.valueOf(value));
+		}
 	}	
 	/**
 	 * 从Properties中读取double值
@@ -295,13 +310,9 @@ public class PropertiesConstants {
 		String sBoolean = props.GetValue(name,"",true,false);
 		if (sBoolean.length() <= 0)
 			return defaultValue;
-		if (sBoolean.equals("true")){
-			return true;
-		}
-		return false;
+		return defaultValue ? BOOL_FALSE.equalsIgnoreCase(sBoolean):BOOL_TRUE.equalsIgnoreCase(sBoolean);
 	}
-	public static final String BOOL_TRUE = "true";
-	public static final String BOOL_FALSE = "false";
+
 	/**
 	 *  从Properties中获取boolean值
 	 * @param props Properties实例
@@ -329,10 +340,12 @@ public class PropertiesConstants {
 	 * @since 1.0
 	 */
 	public static void setBoolean(Properties props,String name,boolean value){
-		if (value){
-			props.SetValue(name, BOOL_TRUE);
-		}else{
-			props.SetValue(name, BOOL_FALSE);
+		if (StringUtils.isNotEmpty(name)){
+			if (value){
+				props.SetValue(name, BOOL_TRUE);
+			}else{
+				props.SetValue(name, BOOL_FALSE);
+			}
 		}
 	}
 	
@@ -356,7 +369,7 @@ public class PropertiesConstants {
 		Font f = null;
 		try{
 			f = Font.decode(sFont);
-		}catch (Exception t){
+		}catch (NumberFormatException t){
 			f = defaultValue;
 		}
 		return f;
@@ -380,7 +393,7 @@ public class PropertiesConstants {
 		Font f = null;
 		try{
 			f = Font.decode(sFont);
-		}catch (Exception t){
+		}catch (NumberFormatException t){
 			f = defaultValue;
 		}
 		return f;
@@ -395,25 +408,27 @@ public class PropertiesConstants {
 	 * @see #getFont(Properties, String, Font)
 	 */
 	public static void setFont(Properties props,String name,Font f){
-		String fontName = f.getFamily();
-		int style = f.getStyle();
-		String styleName;
-		switch (style) {
-		case Font.BOLD:
-			styleName = "BOLD";
-			break;
-		case Font.ITALIC:
-			styleName = "ITALIC";
-			break;
-		case Font.BOLD | Font.ITALIC:
-			styleName = "BOLDITALIC";
-			break;
-		default:
-			styleName = "PLAIN";
+		if (StringUtils.isNotEmpty(name) && f != null){
+			String fontName = f.getFamily();
+			int style = f.getStyle();
+			String styleName;
+			switch (style) {
+			case Font.BOLD:
+				styleName = "BOLD";
+				break;
+			case Font.ITALIC:
+				styleName = "ITALIC";
+				break;
+			case Font.BOLD | Font.ITALIC:
+				styleName = "BOLDITALIC";
+				break;
+			default:
+				styleName = "PLAIN";
+			}
+			int size = f.getSize();
+			
+			props.SetValue(name,fontName + "-" + styleName + "-" + size);
 		}
-		int size = f.getSize();
-		
-		props.SetValue(name,fontName + "-" + styleName + "-" + size);
 	}
 	
 	/**
@@ -475,22 +490,24 @@ public class PropertiesConstants {
 	 * @see #getColor(Properties, String, Color)
 	 */
 	public static void setColor(Properties props,String name,Color value){
-		String r = Integer.toHexString(value.getRed());
-		String g = Integer.toHexString(value.getGreen());
-		String b = Integer.toHexString(value.getBlue());
-		
-		if (r.length() == 1){
-			r = "0" + r;
+		if (StringUtils.isNotEmpty(name) && value != null){
+			String r = Integer.toHexString(value.getRed());
+			String g = Integer.toHexString(value.getGreen());
+			String b = Integer.toHexString(value.getBlue());
+			
+			if (r.length() == 1){
+				r = "0" + r;
+			}
+			if (g.length() == 1){
+				g = "0" + g;
+			}
+			if (b.length() == 1){
+				b = "0" + b;
+			}
+			
+			String sColor =  "#" + r + g + b;
+			props.SetValue(name, sColor);
 		}
-		if (g.length() == 1){
-			g = "0" + g;
-		}
-		if (b.length() == 1){
-			b = "0" + b;
-		}
-		
-		String sColor =  "#" + r + g + b;
-		props.SetValue(name, sColor);
 	}
 	
 	/**
@@ -520,7 +537,7 @@ public class PropertiesConstants {
 			int width = Integer.parseInt(bound[2]);
 			int height = Integer.parseInt(bound[3]);
 			return new Rectangle(x, y, width, height);
-		} catch (Exception t) {
+		} catch (NumberFormatException t) {
 			return defaultValue;
 		}
 	}
@@ -551,7 +568,7 @@ public class PropertiesConstants {
 			int width = Integer.parseInt(bound[2]);
 			int height = Integer.parseInt(bound[3]);
 			return new Rectangle(x, y, width, height);
-		} catch (Exception t) {
+		} catch (NumberFormatException t) {
 			return defaultValue;
 		}
 	}	
@@ -565,8 +582,10 @@ public class PropertiesConstants {
 	 * @since 1.0
 	 */
 	public static void setRectangle(Properties props,String name,Rectangle rect){
-		String value = rect.x + "," + rect.y + "," + rect.width + "," + rect.height;
-		props.SetValue(name, value);
+		if (StringUtils.isNotEmpty(name) && rect != null){
+			String value = rect.x + "," + rect.y + "," + rect.width + "," + rect.height;
+			props.SetValue(name, value);
+		}
 	}
 	
 	/**
@@ -594,7 +613,7 @@ public class PropertiesConstants {
 			int width = Integer.parseInt(bound[0]);
 			int height = Integer.parseInt(bound[1]);
 			return new Dimension(width, height);
-		} catch (Exception t) {
+		} catch (NumberFormatException t) {
 			return defaultValue;			
 		}
 	}
@@ -623,7 +642,7 @@ public class PropertiesConstants {
 			int width = Integer.parseInt(bound[0]);
 			int height = Integer.parseInt(bound[1]);
 			return new Dimension(width, height);
-		} catch (Exception t) {
+		} catch (NumberFormatException t) {
 			return defaultValue;			
 		}
 	}
@@ -638,8 +657,10 @@ public class PropertiesConstants {
 	 * @since 1.0
 	 */
 	public static void setDimension(Properties props,String name,Dimension dim){
-		String value = dim.width + "," + dim.height;
-		props.SetValue(name, value);
+		if (StringUtils.isNotEmpty(name) && dim != null){
+			String value = dim.width + "," + dim.height;
+			props.SetValue(name, value);
+		}
 	}
 	
 	/**
@@ -670,7 +691,7 @@ public class PropertiesConstants {
 			int bottom = Integer.parseInt(inset[2]);
 			int right = Integer.parseInt(inset[3]);
 			return new Insets(top,left,bottom,right);
-		}catch (Exception t){
+		}catch (NumberFormatException t){
 			return defaultValue;			
 		}
 	}
@@ -703,7 +724,7 @@ public class PropertiesConstants {
 			int bottom = Integer.parseInt(inset[2]);
 			int right = Integer.parseInt(inset[3]);
 			return new Insets(top,left,bottom,right);
-		}catch (Exception t){
+		}catch (NumberFormatException t){
 			return defaultValue;			
 		}
 	}	
@@ -717,8 +738,10 @@ public class PropertiesConstants {
 	 * @see #getInsets(Properties, String, Insets)
 	 */
 	public static void setInsets(Properties props,String name,Insets insets){
-		String value = insets.top + "," + insets.left + "," + insets.bottom + "," + insets.right;
-		props.SetValue(name, value);
+		if (StringUtils.isNotEmpty(name) && insets != null){
+			String value = insets.top + "," + insets.left + "," + insets.bottom + "," + insets.right;
+			props.SetValue(name, value);
+		}
 	}
 
 	public static String getAttribute(Properties props,String name,String defaultValue){
@@ -726,6 +749,8 @@ public class PropertiesConstants {
 	}
 	
 	public static void setAttribute(Properties props,String name,String value){
-		props.SetValue(name,value);
+		if (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(value)){
+			props.SetValue(name,value);
+		}
 	}	
 }

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -35,10 +37,16 @@ import org.w3c.dom.NodeList;
  * + 修正getDouble和getLong的类型转换bug
  * 
  * @version 1.4.4 [20140912 duanyy] <br>
- * + 将Map参数进行参数化
+ * + 将Map参数进行参数化 <br>
  * 
+ * @version 1.6.4.27 [20160125 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class JsonTools {
+	
+	private JsonTools(){
+		
+	}
 	
 	/**
 	 * 从Json对象中获取指定的属性值
@@ -69,7 +77,9 @@ public class JsonTools {
 	 * @since 1.0.8
 	 */
 	public static void setString(Map<String,Object> json,String name,String value){
-		json.put(name, value);
+		if (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(value)){
+			json.put(name, value);
+		}
 	}
 	
 	/**
@@ -91,7 +101,7 @@ public class JsonTools {
 		
 		try {
 			return Integer.parseInt(found.toString());
-		}catch (Exception ex){
+		}catch (NumberFormatException ex){
 			return defaultValue;
 		}
 	}
@@ -105,7 +115,9 @@ public class JsonTools {
 	 * @since 1.4.1
 	 */
 	public static void setDouble(Map<String,Object> json,String name,double value){
-		json.put(name, value);
+		if (StringUtils.isNotEmpty(name)){
+			json.put(name, value);
+		}
 	}
 	
 	/**
@@ -129,7 +141,7 @@ public class JsonTools {
 		
 		try {
 			return Double.parseDouble(found.toString());
-		}catch (Exception ex){
+		}catch (NumberFormatException ex){
 			return dftValue;
 		}
 	}
@@ -141,7 +153,9 @@ public class JsonTools {
 	 * @param value 属性值
 	 */
 	public static void setInt(Map<String,Object> json,String name,int value){
-		json.put(name,value);
+		if (StringUtils.isNotEmpty(name)){
+			json.put(name,value);
+		}
 	}
 
 	/**
@@ -165,7 +179,7 @@ public class JsonTools {
 		
 		try {
 			return Long.parseLong(found.toString());
-		}catch (Exception ex){
+		}catch (NumberFormatException ex){
 			return defaultValue;
 		}
 	}
@@ -179,7 +193,9 @@ public class JsonTools {
 	 * @since 1.0.14
 	 */
 	public static void setLong(Map<String,Object> json,String name,long value){
-		json.put(name,value);
+		if (StringUtils.isNotEmpty(name)){
+			json.put(name,value);
+		}
 	}
 	
 	
@@ -202,7 +218,7 @@ public class JsonTools {
 			return (Boolean)found;
 		}
 		
-		return found.toString().equals("true")?true:false;
+		return BooleanUtils.toBoolean(found.toString());
 	}
 	
 	/**
@@ -212,7 +228,9 @@ public class JsonTools {
 	 * @param value 属性值
 	 */
 	public static void setBoolean(Map<String,Object> json,String name,boolean value){
-		json.put(name,value?"true":"false");
+		if (StringUtils.isNotEmpty(name)){
+			json.put(name,value);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -222,12 +240,7 @@ public class JsonTools {
 		for (int i = 0, length = children.getLength(); i < length; i++) {
 			Node n = children.item(i);
 			int nodeType = n.getNodeType();
-
-			switch (nodeType) {
-			case Node.TEXT_NODE:
-				// JSON模式下放弃Text节点
-				break;
-			case Node.ELEMENT_NODE:
+			if (nodeType == Node.ELEMENT_NODE){
 				Element e = (Element) n;
 				String key = e.getNodeName();
 				List<Object> array = null;
@@ -260,8 +273,7 @@ public class JsonTools {
 					array.add(map);		
 				}else{
 					json.put(key, map);		
-				}
-				break;
+				}				
 			}
 		}
 	}
@@ -292,21 +304,22 @@ public class JsonTools {
 		Iterator<String> iter = keys.iterator();
 		Document doc = e.getOwnerDocument();
 		
-		while (iter.hasNext()){
+		while (iter.hasNext()) {
 			String key = iter.next();
 			Object data = json.get(key);
-			if (data instanceof List){
-				List<Object> list = (List<Object>)data;
-				json2Xml(list,e,key);
-				continue;
+			if (data instanceof List) {
+				List<Object> list = (List<Object>) data;
+				json2Xml(list, e, key);
+			} else {
+				if (data instanceof Map) {
+					Element newElem = doc.createElement(key);
+					json2Xml((Map<String, Object>) data, newElem);
+					e.appendChild(newElem);
+					continue;
+				} else {
+					e.setAttribute(key, data.toString());
+				}
 			}
-			if (data instanceof Map){
-				Element newElem = doc.createElement(key);
-				json2Xml((Map<String,Object>)data,newElem);
-				e.appendChild(newElem);
-				continue;
-			}
-			e.setAttribute(key, data.toString());
 		}
 	}
 
@@ -314,12 +327,12 @@ public class JsonTools {
 	public static void clone(List<Object> src,List<Object> dest){
 		for (Object item:src){
 			if (item instanceof Map){
-				Map<String,Object> newData = new HashMap<String,Object>();
+				Map<String,Object> newData = new HashMap<String,Object>(); // NOSONAR
 				clone((Map<String,Object>)item,newData);
 				dest.add(newData);
 			}else{
 				if (item instanceof List){
-					List<Object> newList = new ArrayList<Object>();
+					List<Object> newList = new ArrayList<Object>();  // NOSONAR
 					clone((List<Object>)item,newList);
 				}else{
 					dest.add(item.toString());
@@ -333,23 +346,24 @@ public class JsonTools {
 		Set<String> keys = src.keySet();
 		Iterator<String> iter = keys.iterator();
 		
-		while (iter.hasNext()){
-			String key = iter.next().toString();
+		while (iter.hasNext()) {
+			String key = iter.next();
 			Object data = src.get(key);
-			if (data instanceof List){
-				List<Object> list = (List<Object>)data;
-				List<Object> newList = new ArrayList<Object>();
-				clone(list,newList);
+			if (data instanceof List) {
+				List<Object> list = (List<Object>) data;
+				List<Object> newList = new ArrayList<Object>(); // NOSONAR
+				clone(list, newList);
 				dest.put(key, newList);
-				continue;
+			} else {
+				if (data instanceof Map) {
+					Map<String, Object> newData = new HashMap<String, Object>(); // NOSONAR
+					clone((Map<String, Object>) data, newData);
+					dest.put(key, newData);
+					continue;
+				} else {
+					dest.put(key, data.toString());
+				}
 			}
-			if (data instanceof Map){
-				Map<String,Object> newData = new HashMap<String,Object>();
-				clone((Map<String,Object>)data,newData);
-				dest.put(key, newData);
-				continue;
-			}
-			dest.put(key, data.toString());
 		}
 	}	
 }
