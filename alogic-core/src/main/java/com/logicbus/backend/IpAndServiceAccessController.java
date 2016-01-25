@@ -19,8 +19,7 @@ import com.logicbus.models.servant.ServiceDescription;
  * - {@link com.logicbus.backend.AccessController AccessController}有更新
  * 
  * @version 1.6.3.18 [20150414 duanyy] <br>
- * - 方法{@link #getClientPriority(Path, ServiceDescription, Context, AccessStat) getClientPriority}
- * 增加参数sessionId <br>
+ * - 方法getClientPriority增加参数sessionId <br>
  */
 public class IpAndServiceAccessController extends AbstractAccessController {
 	
