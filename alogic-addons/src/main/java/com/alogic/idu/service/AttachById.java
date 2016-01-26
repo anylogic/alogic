@@ -73,8 +73,8 @@ public class AttachById extends IDUBase {
 	}
 	
 	public int actionProcess(Context ctx) throws Exception {
-		String json = getArgument("json",jsonDefault,ctx);
-		if (json != null && json.equals("true")){
+		boolean json = getArgument("json",jsonDefault,ctx);
+		if (json){
 			MultiPartForm msg = (MultiPartForm) ctx.asMessage(MultiPartForm.class);
 			ConnectionPool pool = getConnectionPool();
 			Connection conn = pool.getConnection();
@@ -89,7 +89,7 @@ public class AttachById extends IDUBase {
 					conn.commit();
 				}
 			} catch (BaseException ex){
-				if (ex.getCode().equals("core.sql_error")){
+				if ("core.sql_error".equals(ex.getCode())){
 					hasError = true;
 				}
 				if (transactionSupport){

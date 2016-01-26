@@ -4,16 +4,15 @@ import com.anysoft.util.Properties;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.Servant;
 import com.logicbus.backend.ServantException;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.RawMessage;
 import com.logicbus.models.servant.ServiceDescription;
 
 public class Helloworld2 extends Servant {
 	
 	
-	public int actionProcess(MessageDoc msgDoc, Context ctx) throws Exception {
+	public int actionProcess(Context ctx) throws Exception {
 		//获取服务调用消息
-		RawMessage msg = (RawMessage)msgDoc.asMessage(RawMessage.class);
+		RawMessage msg = (RawMessage)ctx.asMessage(RawMessage.class);
 		
 		//获取输入输出缓冲区
 		StringBuffer buf = msg.getBuffer();

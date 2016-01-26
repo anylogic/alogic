@@ -1,7 +1,8 @@
 package com.alogic.idu.util;
 
-import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.alogic.cache.context.CacheSource;
 import com.alogic.cache.core.CacheStore;
@@ -51,7 +52,7 @@ public abstract class Base extends AbstractServant {
 	}
 
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
+	protected void onCreate(ServiceDescription sd){
 		Properties p = sd.getProperties();
 
 		privilege = PropertiesConstants.getString(p, "privilege", "",true);
@@ -64,7 +65,7 @@ public abstract class Base extends AbstractServant {
 				guard = createGuard(p);
 				dataGuard = createDataGuard(p);
 			}catch (Exception ex){
-				logger.error("Can not create guard or dataguard instance");
+				logger.error("Can not create guard or dataguard instance",ex);
 			}
 		}
 		onCreate(sd,p);
@@ -76,8 +77,7 @@ public abstract class Base extends AbstractServant {
 	 * @param p 服务属性
 	 * @throws ServantException
 	 */
-	abstract protected void onCreate(ServiceDescription sd, Properties p)
-			throws ServantException;	
+	 protected abstract void onCreate(ServiceDescription sd, Properties p) throws ServantException;	// NOSONAR
 	
 	@Override
 	protected int onXml(Context ctx) throws Exception{
@@ -97,8 +97,7 @@ public abstract class Base extends AbstractServant {
 	 * @param msg 消息
 	 * @throws Exception
 	 */
-	abstract protected int onJson(Context ctx, JsonMessage msg)
-			throws Exception;	
+	abstract protected int onJson(Context ctx, JsonMessage msg)	throws Exception;// NOSONAR
 	
 	/**
 	 * 指定的id是否为空
@@ -106,7 +105,7 @@ public abstract class Base extends AbstractServant {
 	 * @return true|false
 	 */
 	protected boolean isNull(String id) {
-		return id == null || id.length() <= 0;
+		return StringUtils.isEmpty(id);
 	}
 	
 	/**
@@ -129,7 +128,7 @@ public abstract class Base extends AbstractServant {
 	 * 获取相关的缓存
 	 * @return 缓存
 	 */
-	protected CacheStore getCacheStore() throws ServantException{
+	protected CacheStore getCacheStore(){
 		if (isNull(cacheId)){
 			throw new ServantException("core.cache_not_defined","The relational cache is not defined");
 		}
@@ -208,7 +207,7 @@ public abstract class Base extends AbstractServant {
 	 * @return Guard
 	 * @throws ServantException
 	 */
-	protected Guard createGuard(Properties p) throws ServantException{
+	protected Guard createGuard(Properties p){
 		Factory<Guard> factory = new Factory<Guard>();
 		return factory.newInstance(
 				PropertiesConstants.getString(p,"guard.module",Guard.Default.class.getName()), 
@@ -221,7 +220,7 @@ public abstract class Base extends AbstractServant {
 	 * @return DataGuard
 	 * @throws ServantException
 	 */
-	protected DataGuard createDataGuard(Properties p)throws ServantException{
+	protected DataGuard createDataGuard(Properties p){
 		Factory<DataGuard> factory = new Factory<DataGuard>();
 		return factory.newInstance(
 				PropertiesConstants.getString(p,"dataGuard.module",DataGuard.Default.class.getName()), 

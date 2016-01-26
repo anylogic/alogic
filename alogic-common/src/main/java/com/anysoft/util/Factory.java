@@ -24,6 +24,9 @@ import org.w3c.dom.Element;
  * 
  * @version 1.6.4.27 [20160125 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.29 [20160126 duanyy] <br>
+ * - 修正取构造器时的异常 <br>
  */
 public class Factory<OBJECT> {
 	
@@ -159,7 +162,7 @@ public class Factory<OBJECT> {
 				classLoader = Settings.getClassLoader();
 			}
 			Class<?> clazz = classLoader.loadClass(className);
-			Constructor<?> constructor = clazz.getConstructor(new Class[]{Properties.class});
+			Constructor<?> constructor = getConstructor(clazz);
 			if (constructor != null){
 				return (OBJECT)constructor.newInstance(new Object[]{props});
 			}else{
@@ -174,6 +177,14 @@ public class Factory<OBJECT> {
 		} catch (Exception ex){
 			throw new BaseException(Factory.class.getName(),
 					"Can not create instance of " + className,ex);
+		}
+	}
+	
+	private Constructor<?> getConstructor(Class<?> clazz){
+		try {
+			return clazz.getConstructor(new Class[]{Properties.class});
+		}catch (NoSuchMethodException ex){ // NOSONAR
+			return null;
 		}
 	}
 	

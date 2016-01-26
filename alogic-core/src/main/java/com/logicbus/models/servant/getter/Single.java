@@ -4,7 +4,6 @@ import com.anysoft.util.Properties;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.Message;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.models.servant.Argument;
 import com.logicbus.models.servant.Getter;
 
@@ -26,7 +25,7 @@ public class Single implements Getter{
 			field = props.GetValue("id","");
 	}
 	
-	public String getValue(Argument argu, MessageDoc msg, Context ctx) throws ServantException {
+	public String getValue(Argument argu, Message msg, Context ctx){
 		String id = field == null || field.length() <= 0 ? argu.getId() : field;
 		String value;
 		if (argu.isOption()){
@@ -41,24 +40,7 @@ public class Single implements Getter{
 		return value;
 	}
 
-	
-	public String getValue(Argument argu, Message msg, Context ctx)
-			throws ServantException {
-		String id = field == null || field.length() <= 0 ? argu.getId() : field;
-		String value;
-		if (argu.isOption()){
-			value = ctx.GetValue(id, argu.getDefaultValue());
-		}else{
-			value = ctx.GetValue(id, "");
-			if (value == null || value.length() <= 0){
-				throw new ServantException("client.args_not_found",
-						"Can not find parameter:" + id);
-			}
-		}
-		return value;
-	}
-
-	public String getValue(Argument argu, Context ctx) throws ServantException {
+	public String getValue(Argument argu, Context ctx) {
 		String id = field == null || field.length() <= 0 ? argu.getId() : field;
 		String value;
 		if (argu.isOption()){

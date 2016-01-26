@@ -29,6 +29,9 @@ import com.logicbus.backend.message.MessageDoc;
  * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 抛弃MessageDoc <br>
+ * 
+ * @version 1.6.4.29 [20160126 duanyy] <br>
+ * - 清除Servant体系中处于deprecated的方法 <br>
  */
 public class DefaultArgument implements Argument{
 	/**
@@ -133,7 +136,7 @@ public class DefaultArgument implements Argument{
 	 * 
 	 * @since 1.4.0
 	 */
-	public String getValue(Context ctx) throws ServantException {
+	public String getValue(Context ctx) {
 		if (theGetter == null){
 			Settings settings = Settings.get();
 			ClassLoader cl = (ClassLoader)settings.get("classLoader");
@@ -143,23 +146,6 @@ public class DefaultArgument implements Argument{
 		return theGetter.getValue(this, ctx);
 	}
 	
-	/**
-	 * 获取参数值
-	 * @param msg 服务接口文档
-	 * @param ctx 上下文
-	 * @return 参数值
-	 * 
-	 * @deprecated from 1.4.0
-	 */
-	public String getValue(MessageDoc msg,Context ctx)throws ServantException{
-		if (theGetter == null){
-			Settings settings = Settings.get();
-			ClassLoader cl = (ClassLoader)settings.get("classLoader");
-			TheFactory factory = new TheFactory(cl);
-			theGetter = factory.newInstance(getter,getParameter());
-		}
-		return theGetter.getValue(this, msg, ctx);
-	}
 	
 	/**
 	 * 获取参数值
@@ -169,7 +155,6 @@ public class DefaultArgument implements Argument{
 	 * 
 	 * @since 1.0.8
 	 * 
-	 * @deprecated from 1.4.0
 	 */
 	public String getValue(Message msg,Context ctx)throws ServantException{
 		if (theGetter == null){

@@ -12,7 +12,6 @@ import com.anysoft.util.XmlTools;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.Servant;
 import com.logicbus.backend.ServantException;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.dbcp.core.ConnectionPool;
 import com.logicbus.dbcp.context.DbcpSource;
@@ -23,9 +22,8 @@ public class SqlQuery extends Servant {
 	
 	protected int m_max_count;
 	
-	
-	public int actionProcess(MessageDoc msgDoc, Context ctx) throws Exception{
-		XMLMessage msg = (XMLMessage)msgDoc.asMessage(XMLMessage.class);	
+	public int actionProcess(Context ctx) throws Exception{
+		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);	
 		Element root = msg.getRoot();
 		Element query = XmlTools.getFirstElementByPath(root, "query");
 		if (query == null )	{

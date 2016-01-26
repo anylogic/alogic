@@ -55,18 +55,6 @@ abstract public class ACMAccessController implements AccessController {
 	 */
 	protected ACMCacheManager acmCache = null;
 	
-	/**
-	 * 是否启用TokenCenter模式
-	 */
-	protected boolean tcMode = false;
-		
-	/**
-	 * Token Holder
-	 */
-	protected TokenHolder tokenHolder = null;
-	
-	protected TokenCenterConnector tcc = null;
-	
 	protected String appField = "a";
 	
 	protected String defaultAcmId = "default";
@@ -80,18 +68,10 @@ abstract public class ACMAccessController implements AccessController {
 	
 	public ACMAccessController(Properties props){
 		acmCache = getCacheManager();
-		tcMode = PropertiesConstants.getBoolean(props, "acm.tcMode", false);
 		defaultAcmId = PropertiesConstants.getString(props, "acm.default", defaultAcmId);
 		defaultAcm = acmCache.get(defaultAcmId);
-		if (tcMode){
-			tokenHolder = new TokenHolder(props);
-		}
 		appField = props.GetValue("acm.appArguName", appField);		
 		metricsId = PropertiesConstants.getString(props, "acm.metrics.id", metricsId);
-	}
-	
-	public TokenHolder getTokenHolder(){
-		return tokenHolder;
 	}
 	
 	/**
@@ -107,7 +87,7 @@ abstract public class ACMAccessController implements AccessController {
 		return sessionId + ":" + serviceId.getPath();
 	}
 	
-	
+	@Override
 	public int accessStart(String sessionId,Path serviceId, ServiceDescription servant,
 			Context ctx) {
 		AccessControlModel acm = acmCache.get(sessionId);
@@ -116,34 +96,6 @@ abstract public class ACMAccessController implements AccessController {
 			if (acm == null)
 				return -2;
 		}
-		
-		if (!servant.getVisible().equals("public")){
-			//仅对非public服务进行控制
-			if (tcMode){
-				//从参数中获取Token
-				String t = ctx.GetValue("token", "");
-				if (t == null || t.length() <= 0){
-					//没有按照协议要求传递token参数
-					return -1;
-				}
-				//看看TokenHolder中有没有缓存该Token
-				boolean found = tokenHolder.exist(t);
-				if (!found){
-					//调用TokenCenter查询Token是否有效
-					String app = ctx.GetValue(appField, "Default");
-					if (tcc == null){
-						tcc = new TokenCenterConnector(Settings.get());
-					}
-					boolean valid = tcc.tokenIsValid(app, t);
-					if (!valid){
-						//连TokenCenter都说是非法
-						return -3;
-					}
-					tokenHolder.add(t);
-				}
-			}
-		}
-		
 		lock.lock();
 		try{
 			String acmObject = getACMObject(sessionId,serviceId,servant,ctx);
@@ -172,7 +124,7 @@ abstract public class ACMAccessController implements AccessController {
 		}
 	}
 
-	
+	@Override
 	public int accessEnd(String sessionId,Path serviceId, ServiceDescription servant, Context ctx) {
 		lock.lock();
 		try{
@@ -187,7 +139,7 @@ abstract public class ACMAccessController implements AccessController {
 		return 0;
 	}
 
-	
+	@Override
 	public void report(Element root) {
 		if (root != null){
 			Document doc = root.getOwnerDocument();
@@ -211,7 +163,7 @@ abstract public class ACMAccessController implements AccessController {
 		}
 	}
 
-	
+	@Override
 	public void report(Map<String,Object> json) {
 		if (json != null){
 			List<Object> acls = new ArrayList<Object>();
@@ -236,6 +188,7 @@ abstract public class ACMAccessController implements AccessController {
 		}
 	}
 	
+	@Override
 	public void report(MetricsCollector collector) {
 		if (collector != null){
 			Enumeration<String> keys = acl.keys();

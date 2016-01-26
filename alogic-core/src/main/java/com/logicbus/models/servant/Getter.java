@@ -17,6 +17,9 @@ import com.logicbus.backend.message.MessageDoc;
  * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 抛弃MessageDoc <br>
+ * 
+ * @version 1.6.4.29 [20160126 duanyy] <br>
+ * - 清除Servant体系中处于deprecated的方法 <br>
  */
 public interface Getter {
 	/**
@@ -24,24 +27,10 @@ public interface Getter {
 	 * @param argu 参数定义
 	 * @param ctx 上下文
 	 * @return 参数值
-	 * @throws ServantException
 	 * 
 	 * @since 1.4.0
 	 */
-	public String getValue(Argument argu,Context ctx)throws ServantException;
-	
-	/**
-	 * 获取参数值
-	 * @param argu 参数定义
-	 * @param msg 消息文档
-	 * @param ctx 上下文
-	 * @return 参数值
-	 * @throws ServantException
-	 * 
-	 * @deprecated from 1.4.0
-	 */
-	public String getValue(Argument argu,MessageDoc msg,Context ctx)throws ServantException;
-	
+	public String getValue(Argument argu,Context ctx);
 	
 	/**
 	 * 获取参数值
@@ -49,12 +38,10 @@ public interface Getter {
 	 * @param msg 消息
 	 * @param ctx 上下文
 	 * @return 参数值
-	 * @throws ServantException
 	 * 
 	 * @since 1.0.8
 	 * 
-	 * @deprecated from 1.4.0
 	 */
-	public String getValue(Argument argu,Message msg,Context ctx) throws ServantException;
+	public String getValue(Argument argu,Message msg,Context ctx);
 	
 }

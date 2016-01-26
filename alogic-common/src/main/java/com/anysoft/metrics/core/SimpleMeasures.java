@@ -9,6 +9,9 @@ import org.w3c.dom.Element;
  * 
  * @author duanyy
  * @since 1.2.8
+ * 
+ * @version 1.6.4.29 [20160126 duanyy] <br>
+ * - 指标序列化的间隔符修改为$
  */
 public class SimpleMeasures implements Measures {
 
@@ -31,7 +34,7 @@ public class SimpleMeasures implements Measures {
 			
 			String _v = e.getAttribute("v");
 			if (_v != null && _v.length() > 0){
-				String [] _values = _v.split("[:]");
+				String [] _values = _v.split("[$]");
 				values = new Object[_values.length];
 				for (int i = 0 ;i < _values.length ; i ++){
 					values[i] = parse(_values[i]);
@@ -62,7 +65,7 @@ public class SimpleMeasures implements Measures {
 			Object _v = json.get("v");
 			if (_v != null && _v instanceof String){
 				String v = (String)_v;
-				String [] _values = v.split("[:]");
+				String [] _values = v.split("[$]");
 				values = new Object[_values.length];
 				for (int i = 0 ;i < _values.length ; i ++){
 					values[i] = parse(_values[i]);
@@ -201,7 +204,7 @@ public class SimpleMeasures implements Measures {
 		if (values != null){
 			for (int i = 0 ; i < values.length ; i ++){
 				if (i != 0){
-					buffer.append(":");
+					buffer.append("$");
 				}
 				if (values[i] == null){
 					buffer.append('N');

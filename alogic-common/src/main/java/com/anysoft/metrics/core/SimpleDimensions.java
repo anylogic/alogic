@@ -12,7 +12,8 @@ import org.w3c.dom.Element;
  * @author duanyy
  * 
  * @since 1.2.8
- *
+ * @version 1.6.4.29 [20160126 duanyy] <br>
+ * - 指标序列化的间隔符修改为$
  */
 public class SimpleDimensions implements Dimensions {
 	protected String [] dims = null;
@@ -37,7 +38,7 @@ public class SimpleDimensions implements Dimensions {
 		if (e != null){
 			String _dims = e.getAttribute("d");
 			if (_dims != null && _dims.length() > 0){
-				dims = _dims.split("[:]");
+				dims = _dims.split("[$]");
 			}
 		}
 	}
@@ -54,7 +55,7 @@ public class SimpleDimensions implements Dimensions {
 		if (json != null){
 			Object _dims = (Object) json.get("d");
 			if (_dims != null && _dims instanceof String){
-				dims = ((String)_dims).split("[:]");
+				dims = ((String)_dims).split("[$]");
 			}
 		}
 	}
@@ -72,7 +73,7 @@ public class SimpleDimensions implements Dimensions {
 		if (dims != null){
 			for (int i = 0 ; i < dims.length ; i ++){
 				if (i != 0){
-					buffer.append(":");
+					buffer.append("$");
 				}
 				buffer.append(dims[i]);
 			}

@@ -141,3 +141,6 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-core:增加基于会话的访问控制器实现(1.6.4.28)
 	 + alogic-cache:增加基于缓存的会话管理器实现(1.6.4.28)
 	 + alogic-cache:增加基于KValue的缓存实现(1.6.4.28)
+	 + alogic-common:修正取构造器时的异常(1.6.4.29)
+	 + alogic-core:清除Servant体系中处于deprecated的方法(1.6.4.29)
+	 + alogic-core:指标序列化的间隔符修改为$(1.6.4.29)

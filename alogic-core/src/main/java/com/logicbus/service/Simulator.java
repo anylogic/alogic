@@ -8,7 +8,6 @@ import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
@@ -29,25 +28,31 @@ import com.logicbus.models.servant.ServiceDescription;
  */
 public class Simulator extends AbstractServant {
 	
+	/**
+	 * 平均耗时,缺省100ms
+	 */
+	protected int dftAvg = 100;
+	
+	@Override
 	protected void onDestroy() {
 
 	}
 
-	
-	protected void onCreate(ServiceDescription sd) throws ServantException {
+	@Override
+	protected void onCreate(ServiceDescription sd){
 		Properties props = sd.getProperties();
 		
-		avg = PropertiesConstants.getInt(props, "avg", avg);
+		dftAvg = PropertiesConstants.getInt(props, "avg", dftAvg);
 	}
 
-	
-	protected int onXml(Context ctx) throws Exception {
+	@Override
+	protected int onXml(Context ctx) throws Exception{
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 		
-		int _avg = getArgument("avg",avg,ctx);
+		int avg = getArgument("avg",dftAvg,ctx);
 		Random r = new Random();
 		
-		int duration = (int)((r.nextGaussian()/4 + 1) * _avg);
+		int duration = (int)((r.nextGaussian()/4 + 1) * avg);
 		
 		TimeUnit.MILLISECONDS.sleep(duration);
 		
@@ -59,13 +64,14 @@ public class Simulator extends AbstractServant {
 		return 0;
 	}	
 	
-	protected int onJson(Context ctx) throws Exception {
+	@Override
+	protected int onJson(Context ctx) throws Exception{
 		JsonMessage msg = (JsonMessage) ctx.asMessage(JsonMessage.class);
 		
-		int _avg = getArgument("avg",avg,ctx);
+		int avg = getArgument("avg",dftAvg,ctx);
 		Random r = new Random();
 		
-		int duration = (int)((r.nextGaussian()/4 + 1) * _avg);
+		int duration = (int)((r.nextGaussian()/4 + 1) * avg);
 		
 		TimeUnit.MILLISECONDS.sleep(duration);
 		
@@ -73,25 +79,6 @@ public class Simulator extends AbstractServant {
 		
 		return 0;		
 	}
-	
-	/**
-	 * 获取Int型的参数
-	 */	
-	protected int getArgument(String id,int defaultValue,Context ctx) throws ServantException{
-		String value = getArgument(id,"",ctx);
-		if (value == null || value.length() <= 0){
-			return defaultValue;
-		}
-		try {
-			return Integer.parseInt(value);
-		}catch (Exception ex){
-			return defaultValue;
-		}
-	}
-	
-	/**
-	 * 平均耗时,缺省100ms
-	 */
-	protected int avg = 100;
+
 
 }

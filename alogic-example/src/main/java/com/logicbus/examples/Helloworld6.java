@@ -5,14 +5,13 @@ import org.w3c.dom.Element;
 
 import com.logicbus.backend.Context;
 import com.logicbus.backend.Servant;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.backend.message.XMLMessage;
 
 public class Helloworld6 extends Servant {
 
 	
-	public int actionProcess(MessageDoc msgDoc, Context ctx) throws Exception{
-		XMLMessage msg = (XMLMessage)msgDoc.asMessage(XMLMessage.class);		
+	public int actionProcess(Context ctx) throws Exception{
+		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);		
 		Element root = msg.getRoot();
 		Document doc = root.getOwnerDocument();
 		

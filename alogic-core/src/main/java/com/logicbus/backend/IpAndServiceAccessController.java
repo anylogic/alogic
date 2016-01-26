@@ -39,12 +39,13 @@ public class IpAndServiceAccessController extends AbstractAccessController {
 		maxtimesPerMin = PropertiesConstants.getInt(props, "acm.maxTimesPerMin", maxtimesPerMin);
 	}
 
-	
+	@Override
 	public String createSessionId(Path serviceId, ServiceDescription servant,
 			Context ctx){
 		return ctx.getClientIp() + ":" + serviceId.getPath();
 	}
 	
+	@Override
 	protected int getClientPriority(String sessionId,Path serviceId,ServiceDescription servant,
 			Context ctx,AccessStat stat){
 		if (stat.thread > maxThread || stat.timesOneMin > maxtimesPerMin){

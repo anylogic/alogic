@@ -5,8 +5,8 @@ import com.anysoft.metrics.core.Fragment;
 import com.anysoft.metrics.core.Measures;
 import com.anysoft.metrics.core.MetricsCollector;
 import com.anysoft.metrics.core.MetricsHandler;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.models.servant.ServiceDescription;
 
 /**
@@ -23,26 +23,31 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - Servant体系抛弃MessageDoc <br>
+ * 
+ * @version 1.6.4.29 [20160126 duanyy] <br>
+ * - 清除Servant体系中处于deprecated的方法 <br>
  */
-abstract public class AbstractServant extends Servant implements MetricsCollector {
+public abstract class AbstractServant extends Servant implements MetricsCollector {
+
+	protected boolean jsonDefault = true;	
 	
+	protected static MetricsHandler metricsHandler = null;
 	
-	public int actionProcess(Context ctx) throws Exception {
-		String json = getArgument("json",jsonDefault,ctx);
-		if (json != null && json.equals("true")){
+	@Override
+	public int actionProcess(Context ctx) throws Exception{
+		boolean json = getArgument("json",jsonDefault,ctx);
+		if (json){
 			return onJson(ctx);
 		}else{
 			return onXml(ctx);
 		}
 	}
 
-	protected String jsonDefault = "true";
-	
-	public void create(ServiceDescription sd) throws ServantException{
+	public void create(ServiceDescription sd){
 		super.create(sd);
 		
 		if (metricsHandler == null){
-			synchronized (lock){
+			synchronized (AbstractServant.class){
 				if (metricsHandler == null){
 					Settings settings = Settings.get();
 					metricsHandler = (MetricsHandler) settings.get("metricsHandler");
@@ -50,7 +55,7 @@ abstract public class AbstractServant extends Servant implements MetricsCollecto
 			}
 		}
 		
-		jsonDefault = sd.getProperties().GetValue("jsonDefault",jsonDefault);
+		jsonDefault = PropertiesConstants.getBoolean(sd.getProperties(),"jsonDefault",jsonDefault);
 		onCreate(sd);
 	}
 	
@@ -59,22 +64,9 @@ abstract public class AbstractServant extends Servant implements MetricsCollecto
 		onDestroy();
 	}
 	
-	abstract protected void onDestroy();
+	protected abstract void onDestroy();
 
-	abstract protected void onCreate(ServiceDescription sd) throws ServantException;
-
-	/**
-	 * 以XML协议进行服务处理
-	 * 
-	 * @param msgDoc 消息文档
-	 * @param ctx 上下文
-	 * @return 结果
-	 * @throws Exception
-	 * @deprecated from 1.4.0
-	 */
-	protected int onXml(MessageDoc msgDoc, Context ctx) throws Exception{
-		return 0;
-	}
+	protected abstract void onCreate(ServiceDescription sd);
 	
 	/**
 	 * 以XML协议进行服务处理
@@ -84,22 +76,9 @@ abstract public class AbstractServant extends Servant implements MetricsCollecto
 	 * 
 	 * @since 1.4.0
 	 */
-	protected int onXml(Context ctx) throws Exception{
-		return onXml(ctx,ctx);
-	}
-
-	/**
-	 * 以JSON协议进行服务处理
-	 * 
-	 * @param msgDoc 消息文档
-	 * @param ctx 上下文
-	 * @return 结果
-	 * @throws Exception
-	 * 
-	 * @deprecated from 1.4.0
-	 */
-	protected int onJson(MessageDoc msgDoc, Context ctx) throws Exception{
-		return 0;
+	protected int onXml(Context ctx) throws Exception{ // NOSONAR
+		throw new ServantException("core.not_supported",
+				"Protocol XML is not suppurted.");		
 	}
 	
 	/**
@@ -109,10 +88,9 @@ abstract public class AbstractServant extends Servant implements MetricsCollecto
 	 * @throws Exception
 	 * @since 1.4.0
 	 */
-	protected int onJson(Context ctx) throws Exception{
-		return onJson(ctx,ctx);
-	}
+	protected abstract int onJson(Context ctx) throws Exception; // NOSONAR
 	
+	@Override
 	public void metricsIncr(Fragment fragment){
 		if (metricsHandler != null){
 			Dimensions dims = fragment.getDimensions();
@@ -123,78 +101,76 @@ abstract public class AbstractServant extends Servant implements MetricsCollecto
 		}
 	}
 	
-	public void metricsIncr(String _id,String [] _dims,Object..._values){
-		Fragment f = new Fragment(_id);
+	public void metricsIncr(String id,String [] sDims,Object...values){
+		Fragment f = new Fragment(id);
 		
 		Dimensions dims = f.getDimensions();
 		if (dims != null)
-			dims.lpush(_dims);
+			dims.lpush(sDims);
 		
 		Measures meas = f.getMeasures();
 		if (meas != null)
-			meas.lpush(_values);
+			meas.lpush(values);
 		
 		metricsIncr(f);
 	}
 	
-	public void metricsIncr(String _id,String [] _dims,Double..._values){
-		Fragment f = new Fragment(_id);
+	public void metricsIncr(String id,String [] sDims,Double...values){
+		Fragment f = new Fragment(id);
 		
 		Dimensions dims = f.getDimensions();
 		if (dims != null)
-			dims.lpush(_dims);
+			dims.lpush(sDims);
 		
 		Measures meas = f.getMeasures();
 		if (meas != null)
-			meas.lpush(_values);
+			meas.lpush(values);
 		
 		metricsIncr(f);
 	}
 	
-	public void metricsIncr(String _id,String [] _dims,Long..._values){
-		Fragment f = new Fragment(_id);
+	public void metricsIncr(String id,String [] sDims,Long...values){
+		Fragment f = new Fragment(id);
 		
 		Dimensions dims = f.getDimensions();
 		if (dims != null)
-			dims.lpush(_dims);
+			dims.lpush(sDims);
 		
 		Measures meas = f.getMeasures();
 		if (meas != null)
-			meas.lpush(_values);
+			meas.lpush(values);
 		
 		metricsIncr(f);		
 	}
 	
-	public void metricsIncr(String _id,Double..._values){
-		Fragment f = new Fragment(_id);
+	public void metricsIncr(String id,Double...values){
+		Fragment f = new Fragment(id);
 		
 		Measures meas = f.getMeasures();
 		if (meas != null)
-			meas.lpush(_values);
+			meas.lpush(values);
 		
 		metricsIncr(f);		
 	}
 	
-	public void metricsIncr(String _id,Long ..._values){
-		Fragment f = new Fragment(_id);
+	public void metricsIncr(String id,Long ...values){
+		Fragment f = new Fragment(id);
 		
 		Measures meas = f.getMeasures();
 		if (meas != null)
-			meas.lpush(_values);
+			meas.lpush(values);
 		
 		metricsIncr(f);	
 	}
 	
-	public void metricsIncr(String _id,Object ..._values){
-		Fragment f = new Fragment(_id);
+	public void metricsIncr(String id,Object ...values){
+		Fragment f = new Fragment(id);
 		
 		Measures meas = f.getMeasures();
 		if (meas != null)
-			meas.lpush(_values);
+			meas.lpush(values);
 		
 		metricsIncr(f);	
 	}	
-	
-	protected static Object lock = new Object();
-	protected static MetricsHandler metricsHandler = null;
+
 }
