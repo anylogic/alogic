@@ -144,3 +144,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-common:修正取构造器时的异常(1.6.4.29)
 	 + alogic-core:清除Servant体系中处于deprecated的方法(1.6.4.29)
 	 + alogic-core:指标序列化的间隔符修改为$(1.6.4.29)
+	 + alogic-core:文件上传消息处理透传Context对象(1.6.4.30)

@@ -28,36 +28,32 @@ import com.logicbus.models.servant.ServiceDescription;
  */
 public class Upload extends Servant implements FileItemHandler{
 	protected byte [] buffer = null;
-	protected String domain = "default";
-	protected BlobManager blobManager = null;
 	
 	@Override
 	public void create(ServiceDescription sd){
 		super.create(sd);
 		Properties p = sd.getProperties();
-		
 		int bufferSize = PropertiesConstants.getInt(p, "bufferSize", 10240,true);
-		
 		buffer = new byte [bufferSize];
-		
-		domain = PropertiesConstants.getString(p,"blob.domain",domain);
-		
-		blobManager = BlobTool.getBlobManager(domain);
-		if (blobManager == null){
-			throw new ServantException("core.blob_not_found","Can not find a blob manager named: " + domain);
-		}
 	}
 	
 	@Override
 	public int actionProcess(Context ctx) throws Exception{
 		MultiPartForm msg = (MultiPartForm) ctx.asMessage(MultiPartForm.class);
+		String domain = getArgument("domain","default",ctx);
 		
-		msg.handle(this);
+		BlobManager blobManager = BlobTool.getBlobManager(domain);
+		if (blobManager == null){
+			throw new ServantException("core.blob_not_found","Can not find a blob manager named: " + domain);
+		}		
+		msg.handle(ctx,blobManager,this);
 		
 		return 0;
 	}
+	
 	@Override
-	public void handle(FileItem item, Map<String, Object> result) {
+	public void handle(Context ctx,Object cookies,FileItem item, Map<String, Object> result) {
+		BlobManager blobManager = (BlobManager)cookies;
 		BlobWriter writer = blobManager.newFile(item.getContentType());
 		OutputStream out = writer.getOutputStream();
 		InputStream in = null;
