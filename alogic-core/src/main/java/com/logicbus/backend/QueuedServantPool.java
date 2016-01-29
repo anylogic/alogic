@@ -31,33 +31,35 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  * @since 1.2.4
  * 
- * @version 1.2.6 [20140807 duanyy]
- *  - 实现ServantPool接口
+ * @version 1.2.6 [20140807 duanyy] <br>
+ *  - 实现ServantPool接口 <br>
  * 
- * @version 1.2.6.3 [20140815 duanyy]
- *  - 配合基础类库Pool修改
- * 
- * @version 1.2.8.2 [20141014 duanyy]
- *  - ServantStat变更
- *  - 实现Reportable和MetricsReportable
- * 
- * @version 1.2.9.2 [20141017 duanyy]
- *  - 修改ServantStat模型
+ * @version 1.2.6.3 [20140815 duanyy] <br>
+ *  - 配合基础类库Pool修改 <br>
  *  
- * @version 1.3.0.3 [20141102 duanyy]
- *  - 修正bug:服务统计的统计口径问题
+ * @version 1.2.8.2 [20141014 duanyy] <br>
+ *  - ServantStat变更 <br>
+ *  - 实现Reportable和MetricsReportable <br>
+ * 
+ * @version 1.2.9.2 [20141017 duanyy] <br>
+ *  - 修改ServantStat模型 <br>
  *  
+ * @version 1.3.0.3 [20141102 duanyy] <br>
+ *  - 修正bug:服务统计的统计口径问题 <br>
+ *  
+ * @version 1.6.4.31 [20160129 duanyy] <br>
+ * - 改造计数器体系 <br>
  */
 public class QueuedServantPool extends QueuedPool<Servant> implements ServantPool{
 	/**
 	 * 服务描述
 	 */
-	private ServiceDescription m_desc;
+	private ServiceDescription desc;
 	
 	/**
 	 * 服务统计
 	 */
-	private Counter m_stat;
+	private Counter statCounter;
 	
 	/**
 	 * 指标ID
@@ -67,65 +69,22 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 	/**
 	 * 运行状态
 	 */
-	protected String status = "running";
+	protected String status = "running"; // NOSONAR
 	
-	/**
-	 * 获取服务描述
-	 * @return ServiceDescription
-	 */
-	public ServiceDescription getDescription(){return m_desc;}
-	
-	/**
-	 * 获取服务统计
-	 * @return 服务统计
-	 */
-	public Counter getStat(){return m_stat;}
-	
-	/**
-	 * 设置资源池为暂停
-	 */
-	public void pause(){
-		status = "pause";
-	}
-	/**
-	 * 恢复资源池为运行
-	 */
-	public void resume(){
-		status = "running";
-	}
-	/**
-	 * 判断资源池是否运行状态
-	 * @return 资源池是否运行状态
-	 */
-	public boolean isRunning(){
-		return status.equals("running");
-	}
-	
-	
-	protected String getIdOfMaxQueueLength() {
-		return "servant.maxActive";
-	}
-
-	
-	protected String getIdOfIdleQueueLength() {
-		return "servant.maxIdle";
-	}
-	
-	
-	protected Servant createObject() throws BaseException {
-		return createServant(m_desc);
-	}
 	protected int queueTimeout = 0;
+	
+	protected ReentrantLock lockStat = new ReentrantLock();		
+	
 	/**
 	 * 通过服务描述构造资源池
 	 * @param sd 服务描述
 	 */
 	public QueuedServantPool(ServiceDescription sd){
-		m_desc = sd;
+		desc = sd;
 		
-		Properties props = m_desc.getProperties();
-		
-		m_stat = createCounter(props);
+		Properties props = desc.getProperties();
+		props.SetValue("counter.id", desc.getPath());
+		statCounter = createCounter(props);
 
 		queueTimeout = PropertiesConstants.getInt(props, "servant.queueTimeout", 10);
 		
@@ -134,19 +93,70 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 		create(props);
 		
 		logger.info("Initialize the servant pool..");
-		logger.info("Id:" + m_desc.getServiceID());
-		logger.info("Name:" + m_desc.getName());
-		logger.info("Module:" + m_desc.getModule());
+		logger.info("Id:" + desc.getServiceID());
+		logger.info("Name:" + desc.getName());
+		logger.info("Module:" + desc.getModule());
 		logger.info("MaxActive:" + getMaxActive());
 		logger.info("MaxIdle:" + getMaxIdle());
 	}	
+	
+	/**
+	 * 获取服务描述
+	 * @return ServiceDescription
+	 */
+	@Override
+	public ServiceDescription getDescription(){return desc;}
+	
+	/**
+	 * 获取服务统计
+	 * @return 服务统计
+	 */
+	public Counter getStat(){return statCounter;}
+	
+	/**
+	 * 设置资源池为暂停
+	 */
+	@Override
+	public void pause(){
+		status = "pause";
+	}
+	/**
+	 * 恢复资源池为运行
+	 */
+	@Override
+	public void resume(){
+		status = "running";
+	}
+	/**
+	 * 判断资源池是否运行状态
+	 * @return 资源池是否运行状态
+	 */
+	@Override
+	public boolean isRunning(){
+		return status.equals("running");
+	}
+	
+	@Override
+	protected String getIdOfMaxQueueLength() {
+		return "servant.maxActive";
+	}
+
+	@Override
+	protected String getIdOfIdleQueueLength() {
+		return "servant.maxIdle";
+	}
+	
+	@Override
+	protected Servant createObject(){
+		return createServant(desc);
+	}
 	
 	protected Counter createCounter(Properties p){
 		String module = PropertiesConstants.getString(p,"servant.stat.module", ServantStat.class.getName());
 		try {
 			return Counter.TheFactory.getCounter(module, p);
 		}catch (Exception ex){
-			logger.warn("Can not create servant counter:" + module + ",default counter is instead.");
+			logger.warn("Can not create servant counter:" + module + ",default counter is instead.",ex);
 			return new ServantStat(p);
 		}
 	}
@@ -158,8 +168,9 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 	 * 
 	 * @param sd 服务描述
 	 */
+	@Override
 	public void reload(ServiceDescription sd){
-		m_desc = sd;
+		desc = sd;
 		close();
 	}	
 	
@@ -168,20 +179,20 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 	 * @param duration 本次访问的时长
 	 * @param code 本次访问的错误代码
 	 */
+	@Override
 	public void visited(long duration,String code){
 		lockStat.lock();
 		try{
-			m_stat.count(duration,!code.equals("core.ok"));
+			statCounter.count(duration,!code.equals("core.ok"));
 		}finally{
 			lockStat.unlock();
 		}
 	}
 	
-	public Servant borrowObject(int priority) throws BaseException{
+	@Override
+	public Servant borrowObject(int priority){
 		return borrowObject(priority,queueTimeout);
 	}
-	
-	protected ReentrantLock lockStat = new ReentrantLock();	
 	
 	/**
 	 * 根据服务描述创建服务员
@@ -189,8 +200,8 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 	 * @return 服务员
 	 * @throws ServantException
 	 */
-	protected Servant createServant(ServiceDescription desc) throws ServantException{
-		String class_name = desc.getModule();
+	protected Servant createServant(ServiceDescription desc){
+		String className = desc.getModule();
 		Servant temp = null;
 		try {			
 			//ClassLoader采用当前ClassLoader
@@ -215,42 +226,38 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 				}
 				URLClassLoader classLoader = new URLClassLoader(urls,cl);
 				try {
-					temp = (Servant)classLoader.loadClass(class_name).newInstance();
+					temp = (Servant)classLoader.loadClass(className).newInstance();
 				}finally{
 					if (classLoader != null){
 						IOTools.closeStream(classLoader);
 					}
 				}
 			}else{
-				temp = (Servant)(cl.loadClass(class_name).newInstance());
+				temp = (Servant)(cl.loadClass(className).newInstance());
 			}
 			temp.create(desc);			
 			return temp;
 		}catch (ServantException e){
 			throw e;
 		} catch (InstantiationException e) {
-			e.printStackTrace();
 			throw new ServantException("core.error_module",e.getMessage());
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
 			throw new ServantException("core.error_module",e.getMessage());
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 			throw new ServantException("core.error_module",e.getMessage());
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
 			throw new ServantException("core.error_remote_module",e.getMessage());
 		}
 	}
 
-	
+	@Override
 	public void report(MetricsCollector collector) {
 		if (collector != null){
 			Fragment f = new Fragment(metricsId);
 			
 			Dimensions dims = f.getDimensions();
 			if (dims != null)
-				dims.lpush(m_desc.getPath());
+				dims.lpush(desc.getPath());
 			
 			Measures meas = f.getMeasures();
 			if (meas != null)
@@ -267,7 +274,7 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 		}
 	}
 	
-	
+	@Override
 	public void report(Element xml){
 		if (xml != null){
 			Document doc = xml.getOwnerDocument();
@@ -277,7 +284,7 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 			runtime.setAttribute("status", status);
 			
 			Element stat = doc.createElement("stat");
-			m_stat.report(stat);
+			statCounter.report(stat);
 			runtime.appendChild(stat);
 			
 			Element pool = doc.createElement("pool");
@@ -288,14 +295,14 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 		}
 	}
 	
-	
+	@Override
 	public void report(Map<String,Object> json){
 		if (json != null){
 			Map<String,Object> runtime = new HashMap<String,Object>();
 			runtime.put("status", status);
 			
 			Map<String,Object> stat = new HashMap<String,Object>();
-			m_stat.report(stat);
+			statCounter.report(stat);
 			runtime.put("stat", stat);
 			
 			Map<String,Object> pool = new HashMap<String,Object>();
@@ -304,5 +311,15 @@ public class QueuedServantPool extends QueuedPool<Servant> implements ServantPoo
 			
 			json.put("runtime", runtime);
 		}
+	}
+
+	@Override
+	public int getHealthScore() {
+		return statCounter.getHealthScore();
+	}
+
+	@Override
+	public int getActiveScore() {
+		return statCounter.getActiveScore();
 	}
 }

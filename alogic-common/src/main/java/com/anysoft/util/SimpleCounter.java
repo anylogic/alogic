@@ -17,32 +17,32 @@ import org.w3c.dom.Element;
  * 
  * @version 1.6.4.23 [20160114 duanyy] <br>
  * - 修正初始化的问题。 <br>
+ * 
+ * @version 1.6.4.31 [20160128 duanyy] <br>
+ * - 增加活跃度和健康度接口 <br>
+ * - 增加可配置性 <br>
  */
 public class SimpleCounter implements Counter {
 	/**
 	 * 启动时间
 	 */
 	private long startTime = System.currentTimeMillis();
-		
+	
+	/**
+	 * 上次访问时间
+	 */
+	private long lastVisitedTime = 0;
+	
 	/**
 	 * 全部统计数据（自服务器启动开始）
 	 */
 	private CounterUnit total = new CounterUnit();
 	
-	public CounterUnit getTotal(){return total;}
-	
 	/**
 	 * 当前统计数据（当前周期）
 	 */
 	private CounterUnit current = new CounterUnit();
-	
-	public CounterUnit getCurrent(){return current;}
-	
-	/**
-	 * 上次访问时间
-	 */
-	public long lastVisitedTime = System.currentTimeMillis();
-		
+
 	/**
 	 * 周期开始时间
 	 */
@@ -53,35 +53,68 @@ public class SimpleCounter implements Counter {
 	 */
 	private long cycle = 5 * 60 * 1000L;
 	
+	public SimpleCounter(){
+		// Nothing to do
+	}
 	
-	public void count(long _duration, boolean error) {
-		total.visited(_duration, error);
+	public SimpleCounter(Properties p){
+		configure(p);
+	}
+	
+	public CounterUnit getTotal(){return total;}	
+	public CounterUnit getCurrent(){return current;}
+
+	@Override
+	public void configure(Element e, Properties p) {
+		XmlElementProperties props = new XmlElementProperties(e,p);
+		configure(props);
+	}
+
+	@Override
+	public void configure(Properties p) {
+		cycle = getStatCycle(p);
+	}
+
+	protected long getStatCycle(Properties p){
+		return PropertiesConstants.getLong(p, "counter.cycle", 5 * 60 * 1000L);
+	}	
+	
+	@Override
+	public int getActiveScore() {
+		if (lastVisitedTime <= 0){
+			return 0;
+		}
+		
+		long duration = System.currentTimeMillis() - lastVisitedTime;
+		if (duration < cycle){
+			return 100;
+		}
+		
+		return Math.round(cycle * 100.0f / duration);
+	}
+
+	@Override
+	public int getHealthScore() {
+		return -1;
+	}	
+	
+	@Override
+	public void count(long duration, boolean error) {
+		total.visited(duration, error);
 		
 		long now = System.currentTimeMillis();
 
 		if (now / cycle - lastVisitedTime / cycle == 0){
 			//和上次记录处于同一个周期
-			current.visited(_duration, error);
+			current.visited(duration, error);
 		}else{
-			current.first(_duration, error);
+			current.first(duration, error);
 			currentCycleStart = (now / cycle) * cycle;
 		}
 		lastVisitedTime = now;
 	}
 	
-	public SimpleCounter(){
-		cycle = getStatCycle(Settings.get());
-	}
-	
-	public SimpleCounter(Properties p){
-		cycle = getStatCycle(p);
-	}
-	
-	public long getStatCycle(Properties p){
-		return PropertiesConstants.getLong(p, "stat.cycle", cycle);
-	}
-	
-	
+	@Override
 	public void report(Element root) {
 		if (root != null){
 			Document doc = root.getOwnerDocument();
@@ -90,6 +123,8 @@ public class SimpleCounter implements Counter {
 			root.setAttribute("start", String.valueOf(startTime));
 			root.setAttribute("lastVistiedTime", String.valueOf(lastVisitedTime));
 			root.setAttribute("cycleStart", String.valueOf(currentCycleStart));
+			root.setAttribute("activeScore", String.valueOf(getActiveScore()));
+			root.setAttribute("healthScore", String.valueOf(getHealthScore()));
 			
 			if (total != null){
 				Element stat = doc.createElement("total");
@@ -109,16 +144,18 @@ public class SimpleCounter implements Counter {
 		}
 	}
 
-	
+	@Override
 	public void report(Map<String, Object> json) {
 		if (json != null){
 			json.put("module", getClass().getName());
 			json.put("start", startTime);
 			json.put("lastVisitedTime", lastVisitedTime);
 			json.put("cycleStart", currentCycleStart);
+			json.put("activeScore", getActiveScore());
+			json.put("healthScore", getHealthScore());
 			
 			if (total != null){
-				Map<String,Object> stat = new HashMap<String,Object>();
+				Map<String,Object> stat = new HashMap<String,Object>(); // NOSONAR
 				
 				total.report(stat);
 				
@@ -126,7 +163,7 @@ public class SimpleCounter implements Counter {
 			}
 			
 			if (current != null){
-				Map<String,Object> stat = new HashMap<String,Object>();
+				Map<String,Object> stat = new HashMap<String,Object>(); // NOSONAR
 				
 				current.report(stat);
 				
@@ -139,52 +176,57 @@ public class SimpleCounter implements Counter {
 		/**
 		 * 服务次数（当前周期）
 		 */
-		public volatile long times = 0;
+		protected volatile long times = 0;
 		
 		/**
 		 * 错误次数（当前周期）
 		 */
-		public volatile long errorTimes = 0;
+		protected volatile long errorTimes = 0;
 		
 		/**
 		 * 最大时长
 		 */
-		public volatile long max = 0;
+		protected volatile long max = 0;
 		
 		/**
 		 * 最小时长
 		 */
-		public volatile long min = 100000;
+		protected volatile long min = 100000;
 		
 		/**
 		 * 平均时长（当期周期）
 		 */
-		public volatile double avg = 0;
+		protected volatile double avg = 0;
+		
+		/**
+		 * double数值格式化器
+		 */
+		private static DecimalFormat df = new DecimalFormat("#.00"); 		
 		
 		/**
 		 * 访问
-		 * @param _duration 时长
+		 * @param duration 时长
 		 * @param error 是否错误
 		 */
-		public void visited(long _duration,boolean error){
+		public void visited(long duration,boolean error){
 			//计算平均值
 			if (times <= 0){
-				avg =  _duration;
+				avg =  duration;
 			}else{
-				avg = (avg * times + _duration) / (times + 1);
+				avg = (avg * times + duration) / (times + 1);
 			}
 				
 			//计算次数
 			times += 1;
 				
 			//计算最小值
-			if (min > _duration){
-				min = _duration;
+			if (min > duration){
+				min = duration;
 			}
 			
 			//计算最大值
-			if (max < _duration){
-				max = _duration;
+			if (max < duration){
+				max = duration;
 			}
 			
 			errorTimes += (error?1:0);
@@ -192,26 +234,26 @@ public class SimpleCounter implements Counter {
 		
 		/**
 		 * 首次访问
-		 * @param _duration 时长
+		 * @param duration 时长
 		 * @param error 是否错误
 		 */
-		public void first(long _duration,boolean error){
+		public void first(long duration,boolean error){
 			//计算平均值
-			avg =  _duration;
+			avg =  duration;
 				
 			//计算次数
 			times = 1;
 				
 			//计算最小值
-			min = _duration;
+			min = duration;
 			
 			//计算最大值
-			max = _duration;
+			max = duration;
 			
-			errorTimes = (error?1:0);
+			errorTimes = error?1:0;
 		}		
 		
-		
+		@Override
 		public void report(Element xml) {
 			if (xml != null){
 				xml.setAttribute("times", String.valueOf(times));
@@ -222,7 +264,7 @@ public class SimpleCounter implements Counter {
 			}
 		}
 
-		
+		@Override
 		public void report(Map<String, Object> json) {
 			if (json != null){
 				json.put("times", String.valueOf(times));
@@ -232,9 +274,5 @@ public class SimpleCounter implements Counter {
 				json.put("avg", df.format(avg));
 			}
 		}
-		/**
-		 * double数值格式化器
-		 */
-		private static DecimalFormat df = new DecimalFormat("#.00"); 
 	}
 }

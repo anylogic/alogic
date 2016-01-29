@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.util.Date;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -307,10 +308,8 @@ public class PropertiesConstants {
 	 * - 修改为可从父节点取变量 <br>
 	 */
 	public static boolean getBoolean(Properties props,String name,boolean defaultValue){
-		String sBoolean = props.GetValue(name,"",true,false);
-		if (sBoolean.length() <= 0)
-			return defaultValue;
-		return defaultValue ? BOOL_FALSE.equalsIgnoreCase(sBoolean):BOOL_TRUE.equalsIgnoreCase(sBoolean);
+		String sBoolean = props.GetValue(name,BooleanUtils.toStringTrueFalse(defaultValue),true,false);
+		return BooleanUtils.toBoolean(sBoolean);
 	}
 
 	/**
@@ -324,11 +323,8 @@ public class PropertiesConstants {
 	 * @since 1.0.6 
 	 */	
 	public static boolean getBoolean(Properties props,String name,boolean defaultValue,boolean noParent){
-		String sBoolean = props.GetValue(name,"",true,noParent);
-		if (sBoolean.length() <= 0)
-			return defaultValue;
-		
-		return defaultValue ? BOOL_FALSE.equalsIgnoreCase(sBoolean):BOOL_TRUE.equalsIgnoreCase(sBoolean);
+		String sBoolean = props.GetValue(name,BooleanUtils.toStringTrueFalse(defaultValue),true,noParent);
+		return BooleanUtils.toBoolean(sBoolean);
 	}
 	
 	/**

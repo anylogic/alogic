@@ -15,8 +15,6 @@ import com.anysoft.util.XmlElementProperties;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.Message;
-import com.logicbus.backend.message.MessageDoc;
-
 /**
  * Argument的缺省实现
  * 

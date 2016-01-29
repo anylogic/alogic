@@ -7,6 +7,7 @@ import org.w3c.dom.Element;
 
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.XmlElementProperties;
 
 /**
  * 缺省的LoadCounter
@@ -14,16 +15,17 @@ import com.anysoft.util.PropertiesConstants;
  * @author duanyy
  * 
  * @since 1.5.3
- * 
+ * @version 1.6.4.31 [20160128 duanyy] <br>
+ * - 增加活跃度和健康度接口 <br>
+ * - 增加可配置性 <br>
  */
 public class DefaultCounter implements LoadCounter {
 
-	public DefaultCounter(Properties p){
-		cycle = PropertiesConstants.getLong(p,"loadbalance.cycle",cycle);
-		maxErrorTimes = PropertiesConstants.getInt(p,"loadbalance.maxtimes",maxErrorTimes);
-		retryInterval = PropertiesConstants.getInt(p,"loadbalance.retryinterval",retryInterval);
-	}
-	
+	/**
+	 * double数值格式化器
+	 */
+	private static DecimalFormat df = new DecimalFormat("#.00");
+
 	/**
 	 * 数据统计周期，30分钟
 	 */
@@ -64,18 +66,56 @@ public class DefaultCounter implements LoadCounter {
 	 */
 	protected volatile long lastErrorTime = 0;
 
+
+	public DefaultCounter(Properties p){
+		configure(p);
+	}
 	
+
+	@Override
+	public int getActiveScore() {
+		if (lastVisitedTime <= 0){
+			return 0;
+		}
+		
+		long d = System.currentTimeMillis() - lastVisitedTime;
+		if (d < cycle){
+			return 1000;
+		}
+		
+		return Math.round(cycle * 100.0f / d);
+	}
+
+
+	@Override
+	public int getHealthScore() {
+		return -1;
+	}
+
+	@Override
+	public void configure(Element e, Properties p) {
+		XmlElementProperties props = new XmlElementProperties(e,p);
+		configure(props);
+	}
+
+	@Override
+	public void configure(Properties p) {
+		cycle = PropertiesConstants.getLong(p,"loadbalance.cycle",cycle);
+		maxErrorTimes = PropertiesConstants.getInt(p,"loadbalance.maxtimes",maxErrorTimes);
+		retryInterval = PropertiesConstants.getInt(p,"loadbalance.retryinterval",retryInterval);
+	} 	
 	
-	public void count(long _duration, boolean error) {
+	@Override
+	public void count(long dur, boolean error) {
 		long now = System.currentTimeMillis();
 
 		if (now / cycle - lastVisitedTime / cycle == 0){
 			//和上次记录处于同一个周期
-			duration = (duration * times + _duration) / (times + 1);
+			duration = (duration * times + dur) / (times + 1);
 			
 			times ++;
 		}else{
-			duration = _duration;
+			duration = dur;
 			
 			times = 1;
 		}
@@ -90,7 +130,7 @@ public class DefaultCounter implements LoadCounter {
 		}
 	}
 
-	
+	@Override
 	public void report(Element xml) {
 		if (xml != null){
 			xml.setAttribute("module", getClass().getName());
@@ -103,7 +143,7 @@ public class DefaultCounter implements LoadCounter {
 		}
 	}
 
-	
+	@Override
 	public void report(Map<String, Object> json) {
 		if (json != null){
 			json.put("module", getClass().getName());
@@ -116,17 +156,17 @@ public class DefaultCounter implements LoadCounter {
 		}
 	}
 
-	
+	@Override
 	public long getTimes() {
 		return times;
 	}
 
-	
+	@Override
 	public double getDuration() {
 		return duration;
 	}
 
-	
+	@Override
 	public boolean isValid() {
 		long now = System.currentTimeMillis();
 		//下列条件下，认为该load是有效的：
@@ -135,9 +175,4 @@ public class DefaultCounter implements LoadCounter {
 		//已经到了重试的时间
 		return errorTimes < maxErrorTimes || now - lastErrorTime > retryInterval;
 	}
-
-	/**
-	 * double数值格式化器
-	 */
-	private static DecimalFormat df = new DecimalFormat("#.00"); 
 }

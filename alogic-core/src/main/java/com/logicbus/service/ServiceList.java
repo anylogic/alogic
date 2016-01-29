@@ -10,7 +10,6 @@ import org.w3c.dom.Element;
 
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.catalog.CatalogNode;
@@ -24,25 +23,26 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author duanyy
  * @since 1.6.4.4
+ * 
  */
 public class ServiceList extends AbstractServant {
 	@Override
 	protected void onDestroy() {
-
+		// nothing to do
 	}
 
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
-
+	protected void onCreate(ServiceDescription sd){
+		// nothing to do
 	}
 	
-	protected int onXml(Context ctx) throws Exception {
+	protected int onXml(Context ctx){
 		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
 		Element root = msg.getRoot();
 		Document doc = root.getOwnerDocument();
 		ServantManager sm = ServantManager.get();
-		ServantCatalog catalog[] = sm.getServantCatalog();
-		Element services = doc.createElement("service");	
+		ServantCatalog [] catalog = sm.getServantCatalog();
+		Element services = doc.createElement("service");	// NOSONAR
 		for (int i = 0 ; i < catalog.length ; i ++){
 			ServantCatalogNode node = (ServantCatalogNode) catalog[i].getRoot();
 			if (node != null){
@@ -54,13 +54,13 @@ public class ServiceList extends AbstractServant {
 	}
 
 	
-	protected int onJson(Context ctx) throws Exception {
+	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		ServantManager sm = ServantManager.get();
-		ServantCatalog catalog[] = sm.getServantCatalog();
+		ServantCatalog [] catalog = sm.getServantCatalog();
 		
-		List<Object> services = new ArrayList<Object>();
+		List<Object> services = new ArrayList<Object>(); // NOSONAR
 		for (int i = 0 ; i < catalog.length ; i ++){
 			ServantCatalogNode node = (ServantCatalogNode) catalog[i].getRoot();
 			if (node != null){
@@ -84,25 +84,25 @@ public class ServiceList extends AbstractServant {
 		ServiceDescription [] services = root.getServices();
 		
 		for (ServiceDescription sd:services){
-			Element _service = doc.createElement("service");
+			Element svc = doc.createElement("service");
 			
 			//仅仅输出简要信息
 			//id
-			_service.setAttribute("id",sd.getServiceID());
+			svc.setAttribute("id",sd.getServiceID());
 			//name
-			_service.setAttribute("name", sd.getName());
+			svc.setAttribute("name", sd.getName());
 			//note
-			_service.setAttribute("note", sd.getNote());
+			svc.setAttribute("note", sd.getNote());
 			//module
-			_service.setAttribute("module",sd.getModule());
+			svc.setAttribute("module",sd.getModule());
 			//visible
-			_service.setAttribute("visible",sd.getVisible());
+			svc.setAttribute("visible",sd.getVisible());
 			//path
-			_service.setAttribute("path",sd.getPath());
+			svc.setAttribute("path",sd.getPath());
 			//Properties
-			_service.setAttribute("log", sd.getLogType().toString());
+			svc.setAttribute("log", sd.getLogType().toString());
 			
-			e.appendChild(_service);
+			e.appendChild(svc);
 		}
 		
 		//迭代子节点
@@ -118,7 +118,7 @@ public class ServiceList extends AbstractServant {
 		ServiceDescription [] services = root.getServices();
 		
 		for (ServiceDescription sd:services){
-			Map<String,Object> map = new HashMap<String,Object>();
+			Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR
 			
 			//仅仅输出简要信息
 			//id

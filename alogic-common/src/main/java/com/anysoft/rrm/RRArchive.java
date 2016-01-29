@@ -22,10 +22,36 @@ import com.anysoft.util.XmlElementProperties;
  * 环形数据归档
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.4.31 [20160128 duanyy] <br>
+ * - 增加前序查询方法 <br>
  */
-public class RRArchive<data extends RRData> implements Reportable,Configurable,XMLConfigurable {
+public class RRArchive<D extends RRData> implements Reportable,Configurable,XMLConfigurable {
+	
+	/**
+	 * 数据归档中的数据
+	 */
+	protected RRData [] rrds = null;
 
+	/**
+	 * id
+	 */
+	protected String id;
+	
+	/**
+	 * 数据个数，缺省30个
+	 */
+	protected int rows = 30;
+
+	/**
+	 * 每条数据的时间区域,60秒
+	 */
+	protected long step = 60 * 1000L;
+	
+	public RRArchive(String rraId){
+		id = rraId;
+	}	
+	
 	/**
 	 * 获取ID
 	 * @return id
@@ -45,17 +71,13 @@ public class RRArchive<data extends RRData> implements Reportable,Configurable,X
 	 * @return 时间区域
 	 */
 	public long getStep(){return step;}	
-	
-	public RRArchive(String _id){
-		id = _id;
-	}
-	
+
 	/**
 	 * 更新RRA的数据
 	 * @param fragment
 	 */
-	public synchronized void update(long timestamp,data fragment){
-		timestamp = (timestamp / step)*step;
+	public synchronized void update(long t,D fragment){
+		long timestamp = (t / step)*step;
 		
 		int index = (int)(timestamp/step) % rows;
 		if (rrds[index] == null){
@@ -79,7 +101,7 @@ public class RRArchive<data extends RRData> implements Reportable,Configurable,X
 	 * 获取迭代器，用于遍历数据
 	 * @return 迭代器
 	 */
-	public Iterator<data> iterator(){
+	public Iterator<D> iterator(){
 		return new MyIterator();
 	}
 	
@@ -88,35 +110,44 @@ public class RRArchive<data extends RRData> implements Reportable,Configurable,X
 	 * @return data
 	 */
 	public RRData current(){
-		int current = (int)(now() / step) % rows;
-		return rrds[current];
+		return get(System.currentTimeMillis());
+	}
+	
+	/**
+	 * 获取指定时间所对应的数据
+	 * @param t 时间戳
+	 * @return RRD数据
+	 */
+	public RRData get(long t){
+		long timestamp = (t / step)*step;
+		int index = (int)(timestamp/step) % rows;
+		if (rrds[index] == null){
+			//对应的槽位是空的
+			return null;
+		}else{
+			//对应槽位不是空的
+			if (rrds[index].timestamp() < timestamp){
+				return null;
+			}else{
+				return rrds[index];
+			}			
+		}
+	}
+	
+	/**
+	 * 获取当前周期之前n个周期的数据
+	 * @param n 周期数
+	 * @return RRData数据
+	 */
+	public RRData previous(int n){
+		long now = System.currentTimeMillis();
+		return get(now - n * step);
 	}
 	
 	public long now(){
 		return (System.currentTimeMillis() / step) * step; 
 	}
-	
-	/**
-	 * 数据归档中的数据
-	 */
-	protected RRData [] rrds = null;
 
-	/**
-	 * id
-	 */
-	protected String id;
-	
-	/**
-	 * 数据个数，缺省30个
-	 */
-	protected int rows = 30;
-
-	/**
-	 * 每条数据的时间区域,60秒
-	 */
-	protected long step = 60 * 1000;
-
-	
 	@Override
 	public void report(Element xml) {
 		if (xml != null){
@@ -124,36 +155,36 @@ public class RRArchive<data extends RRData> implements Reportable,Configurable,X
 			xml.setAttribute("rows", String.valueOf(rows));
 			xml.setAttribute("step", String.valueOf(step));
 			String detail = xml.getAttribute("hist");
-			if (detail != null && detail.equals("true")){
+			if (detail != null && detail.equals("true")){ // NOSONAR
 				Document doc = xml.getOwnerDocument();
 				
-				Iterator<data> iter = iterator();
+				Iterator<D> iter = iterator();
 				long now = now();
 				while (iter.hasNext()){
-					Element _d = doc.createElement("d");
-					data _data = iter.next();
-					if (_data != null){
-						now = _data.timestamp();
-						_data.report(_d);
+					Element dElem = doc.createElement("d");
+					D d = iter.next();
+					if (d != null){ // NOSONAR
+						now = d.timestamp();
+						d.report(dElem);
 					}else{
 						now = now - step;
 					}
-					_d.setAttribute("t", String.valueOf(now));
-					xml.appendChild(_d);
+					dElem.setAttribute("t", String.valueOf(now));
+					xml.appendChild(dElem);
 				}
 			}else{
 				//输出当前
 				Document doc = xml.getOwnerDocument();
 				
-				Element _current = doc.createElement("current");
+				Element curElem = doc.createElement("current");
 				
 				long now = now();
 				RRData current = rrds[(int)(now() / step) % rows];
 				if (current != null){
-					current.report(_current);
+					current.report(curElem);
 				}
-				_current.setAttribute("t", String.valueOf(now));
-				xml.appendChild(_current);
+				curElem.setAttribute("t", String.valueOf(now));
+				xml.appendChild(curElem);
 			}
 		}
 	}
@@ -168,16 +199,16 @@ public class RRArchive<data extends RRData> implements Reportable,Configurable,X
 			boolean detail = JsonTools.getBoolean(json, "hist", false);
 			
 			if (detail){
-				List<Object> _d = new ArrayList<Object>();
+				List<Object> _d = new ArrayList<Object>(); // NOSONAR
 				
-				Iterator<data> iter = iterator();
+				Iterator<D> iter = iterator();
 				long now = now();
 				while (iter.hasNext()){
-					data _data = iter.next();
-					Map<String,Object> map = new HashMap<String,Object>();
-					if (_data != null){
-						now = _data.timestamp();
-						_data.report(map);
+					D d = iter.next();
+					Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR
+					if (d != null){ // NOSONAR
+						now = d.timestamp();
+						d.report(map);
 					}else{
 						now = now - step;
 					}
@@ -188,7 +219,7 @@ public class RRArchive<data extends RRData> implements Reportable,Configurable,X
 				json.put("d", _d);
 			}else{
 				//输出当前
-				Map<String,Object> _current = new HashMap<String,Object>();
+				Map<String,Object> _current = new HashMap<String,Object>(); // NOSONAR
 				
 				long now = now();
 				RRData current = rrds[(int)(now() / step) % rows];
@@ -203,27 +234,26 @@ public class RRArchive<data extends RRData> implements Reportable,Configurable,X
 	}
 
 	@Override
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		XmlElementProperties p = new XmlElementProperties(_e,_properties);		
+	public void configure(Element e, Properties props){
+		XmlElementProperties p = new XmlElementProperties(e,props);		
 		configure(p);
 	}
 	
 	@Override
-	public void configure(Properties p) throws BaseException {
+	public void configure(Properties p) {
 		
 		//先从环境变量rrm.${id}.rows中获取
 		rows = PropertiesConstants.getInt(p, String.format("rrm.%s.rows",id), 0);
 		if (rows <= 0){
 			//如果没有获取到，从rrm.rows中获取
-			rows = PropertiesConstants.getInt(p, String.format("rrm.rows",id), 30);
+			rows = PropertiesConstants.getInt(p, "rrm.rows", 30);
 			rows = rows <= 0 ? 30 : rows;
 		}
 		
 		step = PropertiesConstants.getLong(p, String.format("rrm.%s.step",id), 0);
 		if (step <= 0){
 			//如果没有获取到，从rrm.rows中获取
-			step = PropertiesConstants.getLong(p, String.format("rrm.step",id), 60 * 1000);
+			step = PropertiesConstants.getLong(p, "rrm.step", 60 * 1000L);
 			step = step <= 0 ? 60 * 1000 : step;
 		}
 		rrds = new RRData[rows];
@@ -234,7 +264,7 @@ public class RRArchive<data extends RRData> implements Reportable,Configurable,X
 	 * @author duanyy
 	 *
 	 */
-	public class MyIterator implements Iterator<data>{
+	public class MyIterator implements Iterator<D>{
 		protected int current = 0;
 		protected int count = 0;
 		protected long now = 0;
@@ -248,9 +278,9 @@ public class RRArchive<data extends RRData> implements Reportable,Configurable,X
 		}
 
 		@Override
-		public data next() {
+		public D next() { // NOSONAR
 			@SuppressWarnings("unchecked")
-			data value = (data) RRArchive.this.rrds[current];
+			D value = (D) RRArchive.this.rrds[current];
 			current --;
 			count ++;
 			if (current < 0){

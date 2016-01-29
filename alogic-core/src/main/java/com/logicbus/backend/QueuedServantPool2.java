@@ -29,15 +29,18 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  * @since 1.2.4
  * 
- * @version 1.2.6 [20140807 duanyy]
- * - 实现ServantPool接口
+ * @version 1.2.6 [20140807 duanyy] <br>
+ * - 实现ServantPool接口 <br>
  * 
- * @version 1.2.6.3 [20140815 duanyy]
- * - 配合基础类库Pool修改
+ * @version 1.2.6.3 [20140815 duanyy] <br>
+ * - 配合基础类库Pool修改 <br>
  * 
  * @since 1.2.8.2
- * @version 1.3.0.3 [20141102 duanyy]
- *  - 修正bug:服务统计的统计口径问题
+ * @version 1.3.0.3 [20141102 duanyy] <br>
+ *  - 修正bug:服务统计的统计口径问题 <br>
+ *  
+ * @version 1.6.4.31 [20160129 duanyy] <br>
+ * - 改造计数器体系 <br>
  */
 public class QueuedServantPool2 extends QueuedPool2<Servant> implements ServantPool{
 	/**
@@ -114,6 +117,7 @@ public class QueuedServantPool2 extends QueuedPool2<Servant> implements ServantP
 		m_desc = sd;
 
 		Properties props = m_desc.getProperties();
+		props.SetValue("counter.id", m_desc.getPath());
 		m_stat = createCounter(props);
 
 		queueTimeout = PropertiesConstants.getInt(props, "servant.queueTimeout", 10);
@@ -131,6 +135,7 @@ public class QueuedServantPool2 extends QueuedPool2<Servant> implements ServantP
 	protected Counter createCounter(Properties p){
 		String module = PropertiesConstants.getString(p,"servant.stat.module", ServantStat.class.getName());
 		try {
+			p.SetValue("counter.id", m_desc.getPath());
 			return Counter.TheFactory.getCounter(module, p);
 		}catch (Exception ex){
 			logger.warn("Can not create servant counter:" + module + ",default counter is instead.");
@@ -289,5 +294,15 @@ public class QueuedServantPool2 extends QueuedPool2<Servant> implements ServantP
 			
 			json.put("runtime", runtime);
 		}
+	}
+
+	@Override
+	public int getHealthScore() {
+		return m_stat.getHealthScore();
+	}
+
+	@Override
+	public int getActiveScore() {
+		return m_stat.getActiveScore();
 	}	
 }

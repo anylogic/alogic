@@ -73,7 +73,35 @@
 				<parameter id="servant.maxIdle" value="1"/>
 			</properties>			
 		</service>	
-			
+		<service 
+			id="ServiceList" 
+			name="ServiceList" 
+			note="查询系统中所部署的所有服务列表(以列表形式输出)"
+			visible="system"
+			log = "none" 
+			module="com.logicbus.service.ServiceList"
+		>
+			<properties>
+				<parameter id="jsonDefault" value="true"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>			
+		</service>	
+		
+		<service 
+			id="PooledServiceList" 
+			name="PooledServiceList" 
+			note="查询当前缓冲池中服务列表"
+			visible="system"
+			log = "none" 
+			module="com.logicbus.service.PooledServiceList"
+		>
+			<properties>
+				<parameter id="jsonDefault" value="true"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>			
+		</service>				
 		<service 
 			id="AclQuery" 
 			name="AclQuery" 
