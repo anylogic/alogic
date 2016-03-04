@@ -7,7 +7,6 @@ import org.w3c.dom.Element;
 import com.anysoft.stream.AbstractHandler;
 import com.anysoft.stream.Handler;
 import com.anysoft.stream.HubHandler;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
 
@@ -16,7 +15,8 @@ import com.anysoft.util.Properties;
  * 
  * @author duanyy
  * @since 1.6.3.25
- * 
+ * @version 1.6.4.33 [20160304 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public interface ScriptLogger extends Handler<ScriptLogInfo>{
 	/**
@@ -126,7 +126,7 @@ public interface ScriptLogger extends Handler<ScriptLogInfo>{
 			return false;
 		}
 
-		public int onExecute(Properties p,ExecuteWatcher watcher) throws BaseException{
+		public int onExecute(Properties p,ExecuteWatcher watcher){
 			return 0;
 		}
 		

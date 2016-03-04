@@ -22,33 +22,37 @@ import com.anysoft.util.XmlElementProperties;
  * - 优化编译模式 <br>
  * @version 1.6.3.25 <br>
  * - 统一脚本的日志处理机制 <br>
+ * 
+ * @version 1.6.4.33 [20160304 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
-abstract public class Block extends AbstractStatement {
+public abstract class Block extends AbstractStatement {
 	/**
 	 * 子节点
 	 */
-	protected List<Statement> children = new ArrayList<Statement>();
+	protected List<Statement> children = new ArrayList<Statement>(); // NOSONAR
 	
 	/**
 	 * 异常处理器
 	 */
-	protected Hashtable<String,Statement> exceptionAndFinallyHandlers = new Hashtable<String,Statement>();
+	protected Hashtable<String,Statement> exceptionAndFinallyHandlers = new Hashtable<String,Statement>(); // NOSONAR
 	
 	/**
 	 * 日志处理器（只支持一个）
 	 */
 	protected ScriptLogger scriptLogger = null;
 	
-	public Block(String xmlTag,Statement _parent) {
-		super(xmlTag,_parent);
+	public Block(String xmlTag,Statement parent) {
+		super(xmlTag,parent);
 	}
 
-	protected int compiling(Element _e, Properties _properties,CompileWatcher watcher){
-		XmlElementProperties p = new XmlElementProperties(_e, _properties);
-		NodeList _children = _e.getChildNodes();
+	@Override
+	protected int compiling(Element element, Properties props,CompileWatcher watcher){
+		XmlElementProperties p = new XmlElementProperties(element, props);
+		NodeList nodeList = element.getChildNodes();
 		
-		for (int i = 0 ; i < _children.getLength() ; i ++){
-			Node n = _children.item(i);
+		for (int i = 0 ; i < nodeList.getLength() ; i ++){
+			Node n = nodeList.item(i);
 			
 			if (n.getNodeType() != Node.ELEMENT_NODE){
 				//只处理Element节点
@@ -70,12 +74,13 @@ abstract public class Block extends AbstractStatement {
 				}
 			}
 		}
-		return onCompiling(_e,p,watcher);
+		return onCompiling(element,p,watcher);
 	}
 	
-	abstract protected int onCompiling(Element _e, Properties p,CompileWatcher watcher);
+	protected abstract int onCompiling(Element e, Properties p,CompileWatcher watcher);
 	
-	public int execute(Properties p,ExecuteWatcher watcher) throws BaseException{
+	@Override
+	public int execute(Properties p,ExecuteWatcher watcher){
 		long start = System.currentTimeMillis();
 		try {
 			return onExecute(p,watcher);
@@ -102,14 +107,17 @@ abstract public class Block extends AbstractStatement {
 		}
 	}
 	
+	@Override
 	public void registerExceptionHandler(String id,Statement exceptionHandler){
 		exceptionAndFinallyHandlers.put(id, exceptionHandler);
 	}
 	
-	public void registerLogger(ScriptLogger _logger){
-		scriptLogger = _logger;
+	@Override
+	public void registerLogger(ScriptLogger logger){
+		scriptLogger = logger;
 	}
 	
+	@Override
 	public void log(ScriptLogInfo logInfo){
 		if (scriptLogger == null){
 			Statement parent = parent();

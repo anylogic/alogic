@@ -17,27 +17,32 @@ import com.anysoft.util.PropertiesConstants;
  * @since 1.6.3.22
  * @version 1.6.3.23 [20150513 duanyy] <br>
  * - 优化编译模式 <br>
+ * 
+ * @version 1.6.4.33 [20160304 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class Asynchronized extends Block {
 	protected long timeout = 30*60*60*1000L;
-	public Asynchronized(String xmlTag,Statement _parent) {
-		super(xmlTag,_parent);
+	public Asynchronized(String xmlTag,Statement parent) {
+		super(xmlTag,parent);
 	}
 
-	protected int onCompiling(Element _e, Properties p,CompileWatcher watcher){
+	@Override
+	protected int onCompiling(Element e, Properties p,CompileWatcher watcher){
 		timeout = PropertiesConstants.getLong(p, "timeout", timeout);
 		return 0;
 	}
 
+	@Override
 	public int onExecute(Properties p,ExecuteWatcher watcher) {
-		List<Statement> _children = children;
+		List<Statement> list = children;
 		
-		CountDownLatch latch = new CountDownLatch(_children.size());
+		CountDownLatch latch = new CountDownLatch(list.size());
 		
 		Properties variables = getLocalVariables(p);
 		
-		for (int i = 0 ; i < _children.size(); i ++){
-			Statement statement = _children.get(i);
+		for (int i = 0 ; i < list.size(); i ++){
+			Statement statement = list.get(i);
 			
 			WorkThread thread = new WorkThread(statement,variables,latch,watcher);
 			thread.start();
@@ -70,7 +75,7 @@ public class Asynchronized extends Block {
 			properties = p;
 			latch = l;
 		}
-		
+		@Override
 		public void run(){
 			try {
 				if (statement != null){

@@ -4,7 +4,6 @@ import org.w3c.dom.Element;
 
 import com.anysoft.selector.Selector;
 import com.anysoft.selector.impl.Constants;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 
 /**
@@ -14,36 +13,40 @@ import com.anysoft.util.Properties;
  * @since 1.6.3.22
  * @version 1.6.3.23 [20150513 duanyy] <br>
  * - 优化编译模式 <br>
+ * 
+ * @version 1.6.4.33 [20160304 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public class Choose extends Block {
 	protected Selector selector = null;
-	public Choose(String _tag, Statement _parent) {
-		super(_tag, _parent);
+	public Choose(String tag, Statement parent) {
+		super(tag, parent);
 	}
 
-	public int compiling(Element _e, Properties _properties,CompileWatcher watcher){
-		selector = Selector.newInstanceWithDefault(_e, _properties, Constants.class.getName());
-		if (selector == null){
-			if (watcher != null){
-				watcher.message(this, "error", "Can not create selector.tag=" + getXmlTag());
-			}
+	@Override
+	public int compiling(Element element, Properties props,CompileWatcher watcher){
+		selector = Selector.newInstanceWithDefault(element, props, Constants.class.getName());
+		if (selector == null && watcher != null){
+			watcher.message(this, "error", "Can not create selector.tag=" + getXmlTag());
 		}
-		return super.compiling(_e, _properties,watcher);
+		return super.compiling(element, props,watcher);
 	}
 
-	protected int onCompiling(Element _e, Properties p, CompileWatcher watcher) {
+	@Override
+	protected int onCompiling(Element elem, Properties p, CompileWatcher watcher) {
 		return 0;
 	}	
 	
-	protected int onExecute(Properties p, ExecuteWatcher watcher) throws BaseException {
-		if (children.size() <= 0){
+	@Override
+	protected int onExecute(Properties p, ExecuteWatcher watcher){
+		if (children.isEmpty()){
 			return -1;
 		}
 		
 		boolean result = true;
 		if (selector != null){
 			String value = selector.select(p);
-			result = !value.equals("false");
+			result = !"false".equals(value);
 		}
 		
 		if (result){

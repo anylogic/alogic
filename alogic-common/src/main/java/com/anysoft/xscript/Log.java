@@ -25,7 +25,7 @@ public class Log extends AbstractStatement {
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
 		
 		pattern = p.GetValue("msg", "", false, true);
-		level = p.GetValue("msg", "info", false, true);
+		level = p.GetValue("level", "info", false, true);
 		progress = PropertiesConstants.getInt(p,"progress", -2);
 		return 0;
 	}

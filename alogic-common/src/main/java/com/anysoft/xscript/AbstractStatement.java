@@ -7,8 +7,6 @@ import java.util.Map;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 
 /**
@@ -22,27 +20,23 @@ import com.anysoft.util.Properties;
  * - 统一脚本的日志处理机制 <br>
  * @version 1.6.3.29 <br>
  * - 增加inlcude语句<br>
+ * @version 1.6.4.33 [20160304 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
+ * 
  */
-abstract public class AbstractStatement implements Statement{
+
+public abstract class AbstractStatement implements Statement{
 	/**
 	 * a logger of log4j
 	 */
 	public static final Logger logger = LogManager.getLogger(Statement.class);
-	
+		
 	/**
 	 * 父节点
 	 */
 	private Statement parent = null;
 	private String xmlTag = null;
 	private String activity;
-	
-	public String getXmlTag(){
-		return xmlTag;
-	}
-	
-	public Statement parent() {
-		return parent;
-	}
 	
 	/**
 	 * 静态注册表（全局有效）
@@ -54,152 +48,7 @@ abstract public class AbstractStatement implements Statement{
 	 * 注册表（实例有效）
 	 */
 	private Hashtable<String,Class<? extends Statement>> modules = 
-			new Hashtable<String,Class<? extends Statement>>();
-	
-	public void registerModule(String xmltag,Class<?extends Statement> clazz){
-		modules.put(xmltag, clazz);
-	}
-	
-	/**
-	 * 根据Class来创建Statement实例
-	 * @param clazz Class
-	 * @param _parent 父节点
-	 * @return Segment实例
-	 */
-	protected Statement createStatement(Class<? extends Statement> clazz,String _xmlTag,Statement _parent){
-		try {
-			Constructor<? extends Statement> constructor = clazz.getConstructor(String.class,Statement.class);
-			return constructor.newInstance(new Object[]{_xmlTag,_parent});
-		} catch (Exception e) {
-			logger.error("Can not create segment instance:" + clazz.getName());
-			return null;
-		}
-	}
-	
-	public Statement createStatement(String xmlTag,Statement _parent){
-		Statement found = null;
-		
-		//首先到staticModules中查找
-		Class<? extends Statement> clazz = staticModules.get(xmlTag);
-		if (clazz != null){
-			found = createStatement(clazz,xmlTag,_parent);
-		}
-		
-		if (found == null){
-			found = onCreateStatement(xmlTag,_parent);
-		}
-		
-		if (found == null){
-			Statement p = parent();
-			if (p != null){
-				found = p.createStatement(xmlTag, _parent);
-			}
-		}
-		
-		return found;
-	}
-	
-	/**
-	 * 通过xml tag创建Statement实例
-	 * 
-	 * <p>提供给子类从自己的注册表中创建Statement
-	 * 
-	 * @param xmlTag xml tag
-	 * @return Segment实例
-	 */
-	protected Statement onCreateStatement(String xmlTag,Statement _parent){
-		Class<? extends Statement> clazz = modules.get(xmlTag);
-		return clazz == null ? null : createStatement(clazz,xmlTag,_parent);
-	}
-	
-	public AbstractStatement(String _tag,Statement _parent){
-		xmlTag = _tag;
-		parent = _parent;
-	}
-
-	public void report(Element xml) {
-		if (xml != null){
-			xml.setAttribute("module", getClass().getName());
-		}
-	}
-
-	public void report(Map<String, Object> json) {
-		if (json != null){
-			json.put("module", getClass().getName());
-		}
-	}
-
-	public int execute(Properties p,ExecuteWatcher watcher) throws BaseException{
-		long start = System.currentTimeMillis();
-		try {
-			return onExecute(p,watcher);
-		}finally{
-			if (watcher != null){
-				watcher.executed(this, p, start, System.currentTimeMillis() - start);
-			}
-		}
-	}
-	
-	public void log(ScriptLogInfo logInfo){
-		if (parent != null){
-			parent.log(logInfo);
-		}
-	}
-	
-	public void log(String message,String level,int progress){
-		log(new ScriptLogInfo(activity,message,level,progress));
-	}
-	
-	public void log(String message,String level){
-		log(message,"info",-2);
-	}
-	
-	public void log(String message,int progress){
-		log(message,"info",progress);
-	}
-	
-	public void log(String message){
-		log(message,-2);
-	}
-	
-	public int compile(Element e,Properties p,CompileWatcher watcher){
-		long start = System.currentTimeMillis();
-		if (watcher != null){
-			watcher.begin(this, start);
-		}
-		try {
-			activity = e.getAttribute("id");
-			activity = activity == null || activity.length() <= 0 ? this.xmlTag:this.activity;
-			return compiling(e,p,watcher);
-		}catch (Exception ex){
-			if (watcher != null){
-				watcher.message(this, "error", ex.getMessage());
-			}
-			return -1;
-		}
-		finally{
-			if (watcher != null){
-				long now = System.currentTimeMillis();
-				watcher.end(this,now,now - start);
-			}
-		}
-	}
-	
-	protected abstract int compiling(Element e,Properties p,CompileWatcher watcher);
-	
-	protected abstract int onExecute(Properties p,ExecuteWatcher watcher) throws BaseException;
-	
-	public boolean isExecutable(){
-		return true;
-	}
-	
-	public void registerExceptionHandler(String id,Statement exceptionHandler){
-		logger.warn("Exception handler is not supported,Ignored.");
-	}
-	
-	public void registerLogger(ScriptLogger _logger){
-		logger.warn("ScriptLogger is not supported,Ignored.");
-	}
+			new Hashtable<String,Class<? extends Statement>>();	
 	
 	public static final String STMT_FINALLY = "finally";
 	public static final String STMT_EXCEPTION = "except";
@@ -235,4 +84,172 @@ abstract public class AbstractStatement implements Statement{
 		staticModules.put(STMT_LOGGER, ScriptLogger.Plugin.class);
 		staticModules.put(STMT_INCLUDE,Include.class);
 	}
+	
+	public AbstractStatement(String tag,Statement p){
+		xmlTag = tag;
+		parent = p;
+	}	
+	
+	@Override
+	public String getXmlTag(){
+		return xmlTag;
+	}
+	
+	@Override
+	public Statement parent() {
+		return parent;
+	}
+
+	@Override
+	public void registerModule(String xmltag,Class<?extends Statement> clazz){
+		modules.put(xmltag, clazz);
+	}
+	
+	/**
+	 * 根据Class来创建Statement实例
+	 * @param clazz Class
+	 * @param parent 父节点
+	 * @return Segment实例
+	 */
+	protected Statement createStatement(Class<? extends Statement> clazz,String xmlTag,Statement parent){
+		try {
+			Constructor<? extends Statement> constructor = clazz.getConstructor(String.class,Statement.class);
+			return constructor.newInstance(new Object[]{xmlTag,parent});
+		} catch (Exception e) {
+			logger.error("Can not create segment instance:" + clazz.getName(),e);
+			return null;
+		}
+	}
+	
+	@Override
+	public Statement createStatement(String xmlTag,Statement parent){
+		Statement found = null;
+		
+		//首先到staticModules中查找
+		Class<? extends Statement> clazz = staticModules.get(xmlTag);
+		if (clazz != null){
+			found = createStatement(clazz,xmlTag,parent);
+		}
+		
+		if (found == null){
+			found = onCreateStatement(xmlTag,parent);
+		}
+		
+		if (found == null){
+			Statement p = parent();
+			if (p != null){
+				found = p.createStatement(xmlTag, parent);
+			}
+		}
+		
+		return found;
+	}
+	
+	/**
+	 * 通过xml tag创建Statement实例
+	 * 
+	 * <p>提供给子类从自己的注册表中创建Statement
+	 * 
+	 * @param xmlTag xml tag
+	 * @return Segment实例
+	 */
+	protected Statement onCreateStatement(String xmlTag,Statement parent){
+		Class<? extends Statement> clazz = modules.get(xmlTag);
+		return clazz == null ? null : createStatement(clazz,xmlTag,parent);
+	}
+
+	@Override
+	public void report(Element xml) {
+		if (xml != null){
+			xml.setAttribute("module", getClass().getName());
+		}
+	}
+
+	@Override
+	public void report(Map<String, Object> json) {
+		if (json != null){
+			json.put("module", getClass().getName());
+		}
+	}
+
+	@Override
+	public int execute(Properties p,ExecuteWatcher watcher){
+		long start = System.currentTimeMillis();
+		try {
+			return onExecute(p,watcher);
+		}finally{
+			if (watcher != null){
+				watcher.executed(this, p, start, System.currentTimeMillis() - start);
+			}
+		}
+	}
+	
+	@Override
+	public void log(ScriptLogInfo logInfo){
+		if (parent != null){
+			parent.log(logInfo);
+		}
+	}
+	
+	public void log(String message,String level,int progress){
+		log(new ScriptLogInfo(activity,message,level,progress));
+	}
+	
+	public void log(String message,String level){
+		log(message,level,-2);
+	}
+	
+	public void log(String message,int progress){
+		log(message,"info",progress);
+	}
+	
+	public void log(String message){
+		log(message,-2);
+	}
+	
+	@Override
+	public int compile(Element e,Properties p,CompileWatcher watcher){
+		long start = System.currentTimeMillis();
+		if (watcher != null){
+			watcher.begin(this, start);
+		}
+		try {
+			activity = e.getAttribute("id");
+			activity = activity == null || activity.length() <= 0 ? this.xmlTag:this.activity;
+			return compiling(e,p,watcher);
+		}catch (Exception ex){
+			logger.error(ex);
+			if (watcher != null){
+				watcher.message(this, "error", ex.getMessage());
+			}
+			return -1;
+		}
+		finally{
+			if (watcher != null){
+				long now = System.currentTimeMillis();
+				watcher.end(this,now,now - start);
+			}
+		}
+	}
+	
+	protected abstract int compiling(Element e,Properties p,CompileWatcher watcher);
+	
+	protected abstract int onExecute(Properties p,ExecuteWatcher watcher);
+	
+	@Override
+	public boolean isExecutable(){
+		return true;
+	}
+	
+	@Override
+	public void registerExceptionHandler(String id,Statement exceptionHandler){
+		logger.warn("Exception handler is not supported,Ignored.");
+	}
+	
+	@Override
+	public void registerLogger(ScriptLogger log){
+		logger.warn("ScriptLogger is not supported,Ignored.");
+	}
+	
+
 }

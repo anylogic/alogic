@@ -28,6 +28,7 @@ public class Script extends Segment {
 				}
 			}
 		}
+		
 		scriptLogger.handle(logInfo, System.currentTimeMillis());
 	}
 }

@@ -1,8 +1,6 @@
 package com.anysoft.xscript;
 
 import org.w3c.dom.Element;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
 
@@ -15,7 +13,8 @@ import com.anysoft.util.Reportable;
  * - 优化编译模式 <br>
  * @version 1.6.3.25 <br>
  * - 统一脚本的日志处理机制 <br>
- * 
+ * @version 1.6.4.33 [20160304 duanyy] <br>
+ * - 根据sonar建议优化代码 <br>
  */
 public interface Statement extends Reportable{
 	
@@ -36,7 +35,7 @@ public interface Statement extends Reportable{
 	 * @param watcher 执行监控器
 	 * @return 执行结果
 	 */
-	public int execute(Properties p,ExecuteWatcher watcher) throws BaseException;
+	public int execute(Properties p,ExecuteWatcher watcher);
 	
 	/**
 	 * 写出日志
