@@ -41,7 +41,7 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	
 	/**
 	 * 获取Doer状态
-	 * @return
+	 * @return 状态
 	 */
 	public State getState();
 	

@@ -148,3 +148,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic:改造计数器体系(1.6.4.31)
 	 + alogic-common:增加RSA加密/解密基础类库(1.6.4.32)
 	 + alogic-common:根据sonar建议优化代码(1.6.4.33)
+	 + alogic-common:xscript完善日志输出(1.6.4.34)
+	 + alogic-doer:增加LinkedScriptDoer(1.6.4.34)

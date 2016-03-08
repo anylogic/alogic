@@ -11,7 +11,7 @@ public interface DateItemParser {
 	 * 根据字符串解析出日期集
 	 * 
 	 * @param item 字符串型的日期集
-	 * @return
+	 * @return 日期集
 	 */
 	public int [] parseItem(String item);
 	

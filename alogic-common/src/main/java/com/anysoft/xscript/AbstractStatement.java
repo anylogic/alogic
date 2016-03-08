@@ -22,6 +22,8 @@ import com.anysoft.util.Properties;
  * - 增加inlcude语句<br>
  * @version 1.6.4.33 [20160304 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * @version 1.6.4.34 [20160308 duanyy] <br>
+ * - 完善异常日志的输出 <br>
  * 
  */
 
@@ -218,7 +220,7 @@ public abstract class AbstractStatement implements Statement{
 			activity = activity == null || activity.length() <= 0 ? this.xmlTag:this.activity;
 			return compiling(e,p,watcher);
 		}catch (Exception ex){
-			logger.error(ex);
+			logger.error("Error when compiling.",ex);
 			if (watcher != null){
 				watcher.message(this, "error", ex.getMessage());
 			}
