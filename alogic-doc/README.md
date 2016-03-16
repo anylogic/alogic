@@ -150,3 +150,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-common:根据sonar建议优化代码(1.6.4.33)
 	 + alogic-common:xscript完善日志输出(1.6.4.34)
 	 + alogic-doer:增加LinkedScriptDoer(1.6.4.34)
+	 + alogic-common:AbstractStatement调整activity的取值(1.6.4.35)
+	 + alogic-core:AccessController实现XMLConfigurable和Configurable接口(1.6.4.35)

@@ -16,15 +16,12 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.0.1 [20140402 duanyy] <br>
  * - {@link com.logicbus.backend.AccessController AccessController}有更新
- * 
+ * @version 1.6.4.35 [20160315 duanyy] <br>
+ * - 实现XMLConfigurable和Configurable接口 <br>
  */
 public class ServiceAccessController extends IpAndServiceAccessController {
 	
-	public ServiceAccessController(Properties props) {
-		super(props);
-	}
-
-	
+	@Override
 	public String createSessionId(Path serviceId, ServiceDescription servant,
 			Context ctx){
 		return serviceId.getPath();

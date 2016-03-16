@@ -17,6 +17,7 @@ import com.anysoft.metrics.core.Measures;
 import com.anysoft.metrics.core.MetricsCollector;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.XmlElementProperties;
 import com.logicbus.models.catalog.Path;
 import com.logicbus.models.servant.ServiceDescription;
 
@@ -43,8 +44,11 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.3.18 [20150414 duanyy] <br>
  * - 方法getClientPriority增加参数sessionId <br>
+ * 
+ * @version 1.6.4.35 [20160315 duanyy] <br>
+ * - 实现XMLConfigurable和Configurable接口 <br>
  */
-abstract public class AbstractAccessController implements AccessController {
+public abstract class AbstractAccessController implements AccessController {
 	/**
 	 * 访问列表
 	 */
@@ -59,11 +63,21 @@ abstract public class AbstractAccessController implements AccessController {
 	 */
 	protected String metricsId = "acm.stat";
 	
-	public AbstractAccessController(Properties props){
-		metricsId = PropertiesConstants.getString(props, "acm.metrics.id", metricsId);
+	public AbstractAccessController(){
 	}
 	
+	@Override
+	public void configure(Element e, Properties props) {
+		XmlElementProperties p = new XmlElementProperties(e,props);
+		configure(p);
+	}
 	
+	@Override
+	public void configure(Properties p) {
+		metricsId = PropertiesConstants.getString(p, "acm.metrics.id", metricsId);
+	}	
+	
+	@Override
 	public int accessEnd(String sessionId,Path serviceId, ServiceDescription servant,
 			Context ctx) {
 		lock.lock();
@@ -78,7 +92,7 @@ abstract public class AbstractAccessController implements AccessController {
 		return 0;
 	}
 
-	
+	@Override
 	public int accessStart(String sessionId,Path serviceId, ServiceDescription servant,
 			Context ctx) {
 		lock.lock();
@@ -118,10 +132,10 @@ abstract public class AbstractAccessController implements AccessController {
 	 * @param stat 当前Session的访问统计
 	 * @return 优先级
 	 */
-	abstract protected int getClientPriority(String sessionId,Path serviceId,ServiceDescription servant,
+	protected abstract int getClientPriority(String sessionId,Path serviceId,ServiceDescription servant,
 			Context ctx,AccessStat stat);
 	
-	
+	@Override
 	public void report(Element root) {
 		if (root != null){
 			Document doc = root.getOwnerDocument();
@@ -145,7 +159,7 @@ abstract public class AbstractAccessController implements AccessController {
 		}
 	}
 
-	
+	@Override
 	public void report(Map<String,Object> json) {
 		if (json != null){
 			List<Object> acls = new ArrayList<Object>();
@@ -170,6 +184,7 @@ abstract public class AbstractAccessController implements AccessController {
 		}
 	}
 	
+	@Override
 	public void report(MetricsCollector collector) {
 		if (collector != null){
 			Enumeration<String> keys = acl.keys();

@@ -244,7 +244,7 @@ public class AccessControlModel implements Cacheable {
 	 * 查找匹配的ACL
 	 * @param ip 
 	 * @param service
-	 * @return
+	 * @return ACL
 	 */
 	protected ACL findACL(String ip,String service){
 		for (ACL acl:acls){
@@ -278,7 +278,7 @@ public class AccessControlModel implements Cacheable {
 		 * 是否和指定的IP和服务匹配
 		 * @param _ip IP地址，支持*通配符
 		 * @param _service 服务，支持*通配符
-		 * @return 
+		 * @return 是否匹配
 		 */
 		public boolean match(String _ip,String _service){
 			if (ipMatcher == null){

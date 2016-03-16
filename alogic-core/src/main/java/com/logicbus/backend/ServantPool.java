@@ -1,7 +1,6 @@
 package com.logicbus.backend;
 
 import com.anysoft.metrics.core.MetricsReportable;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Reportable;
 import com.logicbus.models.servant.ServiceDescription;
 

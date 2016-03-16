@@ -20,6 +20,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.3.18 [20150414 duanyy] <br>
  * - 方法getClientPriority增加参数sessionId <br>
+ * 
+ * @version 1.6.4.35 [20160315 duanyy] <br>
+ * - 实现XMLConfigurable和Configurable接口 <br>
  */
 public class IpAndServiceAccessController extends AbstractAccessController {
 	
@@ -33,12 +36,15 @@ public class IpAndServiceAccessController extends AbstractAccessController {
 	 */
 	protected int maxtimesPerMin = 1000;
 	
-	public IpAndServiceAccessController(Properties props){
-		super(props);
-		maxThread = PropertiesConstants.getInt(props, "acm.maxThread", maxThread);
-		maxtimesPerMin = PropertiesConstants.getInt(props, "acm.maxTimesPerMin", maxtimesPerMin);
+	public IpAndServiceAccessController(){
 	}
 
+	@Override
+	public void configure(Properties props) {
+		maxThread = PropertiesConstants.getInt(props, "acm.maxThread", maxThread);
+		maxtimesPerMin = PropertiesConstants.getInt(props, "acm.maxTimesPerMin", maxtimesPerMin);
+	}		
+	
 	@Override
 	public String createSessionId(Path serviceId, ServiceDescription servant,
 			Context ctx){

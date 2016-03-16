@@ -16,7 +16,6 @@ import com.anysoft.metrics.core.Fragment;
 import com.anysoft.metrics.core.Measures;
 import com.anysoft.metrics.core.MetricsCollector;
 import com.anysoft.pool.QueuedPool;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Counter;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;

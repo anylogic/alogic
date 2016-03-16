@@ -12,7 +12,8 @@ import com.logicbus.models.servant.ServiceDescription;
 /**
  * 基于登录会话的访问控制器
  * @author duanyy
- *
+ * @version 1.6.4.35 [20160315 duanyy] <br>
+ * - 实现XMLConfigurable和Configurable接口 <br>
  */
 public class SessionAccessController extends AbstractAccessController {
 	/**
@@ -30,16 +31,15 @@ public class SessionAccessController extends AbstractAccessController {
 	 */
 	protected String anonymousUser = "anonymous";
 	
-	/**
-	 * 通过Properties构造
-	 * @param props 环境变量
-	 */
-	public SessionAccessController(Properties props) {
-		super(props);
+	public SessionAccessController() {
+	}
+	
+	@Override
+	public void configure(Properties props) {
 		maxThread = PropertiesConstants.getInt(props, "acm.maxThread", maxThread);
 		maxtimesPerMin = PropertiesConstants.getInt(props, "acm.maxTimesPerMin", maxtimesPerMin);
 		anonymousUser = PropertiesConstants.getString(props,"acm.anonymous",anonymousUser);
-	}
+	}	
 	
 	@Override
 	public String createSessionId(Path serviceId, ServiceDescription servant,
@@ -57,7 +57,7 @@ public class SessionAccessController extends AbstractAccessController {
 	protected String getLoginIdFromSession(Session session){
 		//如果没有登录，当前用户设置为匿名用户
 		//如果已经登录，从登录Session获取用户id		
-		return session == null ? (anonymousUser):session.hGet("user", "id", "anonymous");
+		return session == null ? anonymousUser:session.hGet("user", "id", "anonymous");
 	}
 	
 	@Override

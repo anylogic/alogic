@@ -1,9 +1,24 @@
 package com.logicbus.backend;
 
+import java.io.InputStream;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import com.anysoft.metrics.core.MetricsReportable;
 import com.anysoft.util.BaseException;
+import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
+import com.anysoft.util.IOTools;
+import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
+import com.anysoft.util.Settings;
+import com.anysoft.util.XMLConfigurable;
+import com.anysoft.util.XmlTools;
+import com.anysoft.util.resource.ResourceFactory;
+import com.logicbus.backend.bizlog.BizLogger;
 import com.logicbus.models.catalog.Path;
 import com.logicbus.models.servant.ServiceDescription;
 
@@ -26,9 +41,13 @@ import com.logicbus.models.servant.ServiceDescription;
  * - 增加{@link #createSessionId(Path, ServiceDescription, Context) createSessionId}函数以避免多次计算SessionId <br>
  * 
  * @version 1.2.8.2 [20141015 duanyy] <br>
- * - 扩展Reportable,MetricsReportable
+ * - 扩展Reportable,MetricsReportable <br>
+ * 
+ * @version 1.6.4.35 [20160315 duanyy] <br>
+ * - 实现XMLConfigurable和Configurable接口 <br>
+ * 
  */
-public interface AccessController extends Reportable,MetricsReportable{
+public interface AccessController extends Reportable,MetricsReportable,XMLConfigurable,Configurable{
 	
 	/**
 	 * 针对当前会话创建会话ID
@@ -70,17 +89,56 @@ public interface AccessController extends Reportable,MetricsReportable{
 	 *
 	 */
 	public static class TheFactory extends Factory<AccessController>{
-		public TheFactory(ClassLoader cl){
-			super(cl);
-		}
+		/**
+		 * 缺省配置文件
+		 */
+		public static final String DEFAULT = 
+				"java:///com/logicbus/backend/ac.default.xml#com.logicbus.backend.AccessController";
+		
+		/**
+		 * a logger of log4j
+		 */
+		protected static final Logger LOG = LogManager.getLogger(AccessController.class);
+		
 		/**
 		 * 根据module映射类名
 		 */
-		public String getClassName(String _module) throws BaseException{
-			if (_module.indexOf(".") < 0){
-				return "com.logicbus.backend." + _module;
+		@Override
+		public String getClassName(String module){
+			if (module.indexOf(".") < 0){
+				return "com.logicbus.backend." + module;
 			}
-			return _module;
-		}		
+			return module;
+		}
+		
+		public static AccessController get(){
+			return get(Settings.get());
+		}
+		
+		public static AccessController get(Properties props){
+			String master = props.GetValue("acm.master",DEFAULT);
+			String secondary = props.GetValue("acm.secondary",DEFAULT);
+			
+			ResourceFactory rf = Settings.getResourceFactory();
+			
+			InputStream in = null;
+			try {
+				in = rf.load(master,secondary, null);
+				Document doc = XmlTools.loadFromInputStream(in);		
+				if (doc != null){
+					return getAccessController(doc.getDocumentElement(),props);
+				}
+			}catch (Exception ex){
+				LOG.error("Error occurs when load xml file,source=" + master, ex);
+			}finally {
+				IOTools.closeStream(in);
+			}
+			return null;			
+		}
+		
+		public static AccessController getAccessController(Element e,Properties p){
+			TheFactory factory = new TheFactory();
+			return factory.newInstance(e, p);
+		}
 	}
 }

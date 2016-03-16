@@ -81,7 +81,7 @@ public abstract class Servant implements Pooled{
 	
 	/**
 	 * 设置服务者的工作状态
-	 * @param state 工作状态
+	 * @param iState 工作状态
 	 */
 	public void setState(int iState){state = iState;}
 	

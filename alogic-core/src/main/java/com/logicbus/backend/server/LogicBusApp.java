@@ -50,6 +50,9 @@ import com.logicbus.backend.bizlog.BizLogger;
  * 
  * @version 1.6.3.37 [20140806 duanyy] <br>
  * - 淘汰旧的timer框架，采用新的timer框架 <br>
+ * 
+ * @version 1.6.4.35 [20160315 duanyy] <br>
+ * - AccessController接口变动  <br>
  */
 public class LogicBusApp implements WebApp {
 	/**
@@ -58,23 +61,23 @@ public class LogicBusApp implements WebApp {
 	protected static Logger logger = LogManager.getLogger(LogicBusApp.class);
 		
 	protected void onInit(Settings settings){	
-		ClassLoader classLoader = Settings.getClassLoader();
-		
 		XmlTools.setDefaultEncoding(settings.GetValue("http.encoding","utf-8"));
 		
 		//初始化AccessController
 		{
-			String acClass = settings.GetValue("acm.module", 
-					"com.logicbus.backend.IpAndServiceAccessController");
-			
-			logger.info("AccessController is initializing,module:" + acClass);
 			AccessController ac = null;
+			
 			try {
-				AccessController.TheFactory acf = new AccessController.TheFactory(classLoader);
-				ac = acf.newInstance(acClass,settings);
-			}catch (Throwable t){
-				ac = new IpAndServiceAccessController(settings);
-				logger.error("Failed to initialize AccessController.Using default:" + IpAndServiceAccessController.class.getName());
+				ac = AccessController.TheFactory.get(settings);
+				logger.info("AccessController is initialized,module:" + ac.getClass().getName());
+			}catch (Exception ex){
+				logger.error("Failed to create an AccessController.",ex);
+			}
+			
+			if (ac == null){
+				ac = new IpAndServiceAccessController();
+				ac.configure(settings);
+				logger.error("Using default:" + IpAndServiceAccessController.class.getName());
 			}
 			settings.registerObject("accessController", ac);
 		}
@@ -115,7 +118,7 @@ public class LogicBusApp implements WebApp {
 			try {
 				ServantFactory.TheFactory sfFactory = new ServantFactory.TheFactory();
 				sf = sfFactory.newInstance(sfClass, settings);
-			}catch (Throwable t){
+			}catch (Exception ex){
 				sf = new QueuedServantFactory(settings);
 				logger.error("Failed to initialize servantFactory.Using default:" + QueuedServantFactory.class.getName());
 			}

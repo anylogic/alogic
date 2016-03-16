@@ -8,8 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.anysoft.metrics.core.Dimensions;
 import com.anysoft.metrics.core.Fragment;
@@ -17,7 +20,8 @@ import com.anysoft.metrics.core.Measures;
 import com.anysoft.metrics.core.MetricsCollector;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-import com.anysoft.util.Settings;
+import com.anysoft.util.XmlElementProperties;
+import com.anysoft.util.XmlTools;
 import com.logicbus.backend.AccessController;
 import com.logicbus.backend.Context;
 import com.logicbus.models.catalog.Path;
@@ -38,8 +42,11 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.2.8.2 [20141011 duanyy] <br>
  * - AccessStat变更可见性为public
  * - 实现Reportable和MetricsReportable
+ * 
+ * @version 1.6.4.35 [20160315 duanyy] <br>
+ * - 实现XMLConfigurable和Configurable接口 <br>
  */
-abstract public class ACMAccessController implements AccessController {
+public abstract class ACMAccessController implements AccessController {
 	/**
 	 * 访问列表
 	 */
@@ -53,7 +60,7 @@ abstract public class ACMAccessController implements AccessController {
 	/**
 	 * ACM缓存管理器
 	 */
-	protected ACMCacheManager acmCache = null;
+	protected Hashtable<String,AccessControlModel> acmCache = null;
 	
 	protected String appField = "a";
 	
@@ -66,21 +73,45 @@ abstract public class ACMAccessController implements AccessController {
 	
 	protected AccessControlModel defaultAcm = null;
 	
-	public ACMAccessController(Properties props){
-		acmCache = getCacheManager();
+	public ACMAccessController(){
+
+	}
+	
+	@Override
+	public void configure(Element e, Properties props) {
+		XmlElementProperties p = new XmlElementProperties(e,props);
+		
+		acmCache = new Hashtable<String,AccessControlModel>();		
+		NodeList modules = XmlTools.getNodeListByPath(e, "model");
+
+		for (int i = 0 ;i < modules.getLength() ; i ++){
+			Node node = modules.item(i);
+			
+			if (Node.ELEMENT_NODE != node.getNodeType()){
+				continue;
+			}
+			
+			Element element = (Element)node;
+			String id = element.getAttribute("id");
+			if (StringUtils.isEmpty(id)){
+				continue;
+			}
+			
+			AccessControlModel acm = new AccessControlModel(id,element);
+			acmCache.put(id, acm);
+		}
+		
+		configure(p);
+	}
+	
+	@Override
+	public void configure(Properties props) {
+		
 		defaultAcmId = PropertiesConstants.getString(props, "acm.default", defaultAcmId);
 		defaultAcm = acmCache.get(defaultAcmId);
 		appField = props.GetValue("acm.appArguName", appField);		
 		metricsId = PropertiesConstants.getString(props, "acm.metrics.id", metricsId);
-	}
-	
-	/**
-	 * 创建CacheManager
-	 * @return
-	 */
-	protected ACMCacheManager getCacheManager(){
-		return ACMCacheManager.get();
-	}
+	}		
 	
 	protected String getACMObject(String sessionId,Path serviceId, ServiceDescription servant,
 			Context ctx){
