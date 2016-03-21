@@ -1,8 +1,11 @@
 package com.logicbus.backend.server;
 
 import javax.servlet.ServletContext;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+
 import com.anysoft.metrics.core.Fragment;
 import com.anysoft.metrics.core.MetricsHandler;
 import com.anysoft.stream.Handler;
@@ -53,6 +56,9 @@ import com.logicbus.backend.bizlog.BizLogger;
  * 
  * @version 1.6.4.35 [20160315 duanyy] <br>
  * - AccessController接口变动  <br>
+ * 
+ * @version 1.6.4.36 [20160321 duanyy] <br>
+ * - 增加ketty.web.xml文件，用于替代web.xml中的部分内容 <br>
  */
 public class LogicBusApp implements WebApp {
 	/**
@@ -64,69 +70,74 @@ public class LogicBusApp implements WebApp {
 		XmlTools.setDefaultEncoding(settings.GetValue("http.encoding","utf-8"));
 		
 		//初始化AccessController
-		{
-			AccessController ac = null;
-			
-			try {
-				ac = AccessController.TheFactory.get(settings);
-				logger.info("AccessController is initialized,module:" + ac.getClass().getName());
-			}catch (Exception ex){
-				logger.error("Failed to create an AccessController.",ex);
-			}
-			
-			if (ac == null){
-				ac = new IpAndServiceAccessController();
-				ac.configure(settings);
-				logger.error("Using default:" + IpAndServiceAccessController.class.getName());
-			}
-			settings.registerObject("accessController", ac);
+		
+		AccessController ac = null;
+
+		try {
+			ac = AccessController.TheFactory.get(settings);
+			logger.info("AccessController is initialized,module:"
+					+ ac.getClass().getName());
+		} catch (Exception ex) {
+			logger.error("Failed to create an AccessController.", ex);
 		}
 
+		if (ac == null) {
+			ac = new IpAndServiceAccessController();
+			ac.configure(settings);
+			logger.error("Using default:"
+					+ IpAndServiceAccessController.class.getName());
+		}
+		settings.registerObject("accessController", ac);
+		
+
 		//初始化BizLogger
-		{
-			String bizLogHome = PropertiesConstants.getString(settings, "bizlog.home", "");
-			if (bizLogHome == null || bizLogHome.length() <= 0){
-				logger.info("bizlog.home is not set.Set it to /var/log/bizlog");
-				settings.SetValue("bizlog.home","var/log/bizlog");
-			}
-			BizLogger bizLogger = BizLogger.TheFactory.getLogger(settings);
-			if (bizLogger != null){
-				logger.info("BizLogger is initialized,module:" + bizLogger.getClass().getName());
-				settings.registerObject("bizLogger", bizLogger);
-			}else{
-				logger.error("Can not create a bizlogger instance..");
-			}
+		
+		String bizLogHome = PropertiesConstants.getString(settings,
+				"bizlog.home", "");
+		if (bizLogHome == null || bizLogHome.length() <= 0) {
+			logger.info("bizlog.home is not set.Set it to /var/log/bizlog");
+			settings.SetValue("bizlog.home", "var/log/bizlog");
+		}
+		BizLogger bizLogger = BizLogger.TheFactory.getLogger(settings);
+		if (bizLogger != null) {
+			logger.info("BizLogger is initialized,module:"
+					+ bizLogger.getClass().getName());
+			settings.registerObject("bizLogger", bizLogger);
+		} else {
+			logger.error("Can not create a bizlogger instance..");
 		}
 		
 		//初始化MetricsHandler
 		// since 1.2.8
-		{
-			Handler<Fragment> handler = MetricsHandler.TheFactory.getClientInstance(settings);
-			if (handler != null){
-				logger.info("MetricsHandler is initalized,module:" + handler.getClass().getName());
-				settings.registerObject("metricsHandler", handler);
-			}else{
-				logger.error("Can not create a metrics handler instance.");
-			}
+		
+		Handler<Fragment> handler = MetricsHandler.TheFactory
+				.getClientInstance(settings);
+		if (handler != null) {
+			logger.info("MetricsHandler is initalized,module:"
+					+ handler.getClass().getName());
+			settings.registerObject("metricsHandler", handler);
+		} else {
+			logger.error("Can not create a metrics handler instance.");
 		}
 
-		//初始化servantFactory
-		{
-			String sfClass = PropertiesConstants.getString(settings, "servant.factory", "com.logicbus.backend.QueuedServantFactory");
-			logger.info("Servant Factory is initializing,module:" + sfClass);
-			ServantFactory sf = null;
-			try {
-				ServantFactory.TheFactory sfFactory = new ServantFactory.TheFactory();
-				sf = sfFactory.newInstance(sfClass, settings);
-			}catch (Exception ex){
-				sf = new QueuedServantFactory(settings);
-				logger.error("Failed to initialize servantFactory.Using default:" + QueuedServantFactory.class.getName());
-			}
-			settings.registerObject("servantFactory", sf);
+		//初始化servantFactory		
+		String sfClass = PropertiesConstants.getString(settings,
+				"servant.factory", "com.logicbus.backend.QueuedServantFactory");
+		logger.info("Servant Factory is initializing,module:" + sfClass);
+		ServantFactory sf = null;
+		try {
+			ServantFactory.TheFactory sfFactory = new ServantFactory.TheFactory();
+			sf = sfFactory.newInstance(sfClass, settings);
+		} catch (Exception ex) {
+			sf = new QueuedServantFactory(settings);
+			logger.error("Failed to initialize servantFactory.Using default:"
+					+ QueuedServantFactory.class.getName(), ex);
 		}
+		settings.registerObject("servantFactory", sf);
+		
 	}
 	
-	
+	@Override
 	public void init(DefaultProperties props,ServletContext sc) {
 		Settings settings = Settings.get();
 		settings.addSettings(props);
@@ -138,6 +149,15 @@ public class LogicBusApp implements WebApp {
 		}
 		settings.registerObject("classLoader", classLoader);
 		
+		//装入ketty.web.xml
+		String webXml = settings.GetValue("ketty.web", "file:///${ketty.home}/conf/ketty.web.xml");
+		if (!StringUtils.isEmpty(webXml)){
+			logger.info("load ketty web xml settings.");
+			logger.info("Url = " + webXml);
+			settings.addSettings(webXml, null, null);
+			logger.info("Load ketty web xml settings..OK!");
+		}
+		
 		//resourceFactory
 		String rf = settings.GetValue("resource.factory","com.anysoft.util.resource.ResourceFactory");
 		ResourceFactory resourceFactory = null;
@@ -145,7 +165,7 @@ public class LogicBusApp implements WebApp {
 			logger.info("Use resource factory:" + rf);
 			resourceFactory = (ResourceFactory) classLoader.loadClass(rf).newInstance();
 		} catch (Exception e) {
-			logger.error("Can not create instance of :" + rf);
+			logger.error("Can not create instance of :" + rf,e);
 		}
 		if (resourceFactory == null){
 			resourceFactory = new ResourceFactory();
@@ -176,12 +196,12 @@ public class LogicBusApp implements WebApp {
 		// 装入配置文件
 		String profile = settings.GetValue("settings.master",
 				"java:///com/logicbus/backend/server/profile.default.xml#com.logicbus.backend.server.LogicBusApp");	
-		String secondary_profile = settings.GetValue("settings.secondary",
+		String secodaryProfile = settings.GetValue("settings.secondary",
 				"java:///com/logicbus/backend/server/profile.default.xml#com.logicbus.backend.server.LogicBusApp");
 		
 		logger.info("Load xml settings..");
 		logger.info("Url = " + profile);
-		settings.addSettings(profile,secondary_profile,resourceFactory);
+		settings.addSettings(profile,secodaryProfile,resourceFactory);
 		logger.info("Load xml settings..OK!");
 
 		onInit(settings);
@@ -208,6 +228,7 @@ public class LogicBusApp implements WebApp {
 		}
 	}
 	
+	@Override
 	public void destroy(ServletContext sc) {
 		onDestroy(Settings.get());
 	}
