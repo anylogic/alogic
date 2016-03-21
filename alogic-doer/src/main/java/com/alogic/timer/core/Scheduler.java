@@ -36,6 +36,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.3.38 [duanyy 20150812] <br>
  * - 增加集群功能 <br>
+ * 
+ * @version 1.6.4.37 [duanyy 20160321] <br>
+ * - 优化锁被打断的时的处理 <br>
  */
 public interface Scheduler extends Timer,Runnable {
 	/**
@@ -247,7 +250,7 @@ public interface Scheduler extends Timer,Runnable {
 				
 				if (lock != null){
 					logger.info("Getting the lock....[" + state.toString() + "]");
-					lock.lock();
+					lock.lockInterruptibly();
 				}
 				//取的lock之后，状态为Running
 				state = State.Running;
@@ -257,10 +260,12 @@ public interface Scheduler extends Timer,Runnable {
 					try {
 						Thread.sleep(interval);
 					} catch (InterruptedException e) {
-						logger.info("Schdule thread has been interrupted,exit");
+						logger.info("Schdule thread has been interrupted,exit",e);
 						break;
 					}
 				}
+			}catch (InterruptedException ex){
+				logger.info("Schdule thread has been interrupted,exit",ex);
 			}finally {
 				//最后，为Stopped
 				state = State.Stopped;
