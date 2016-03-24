@@ -59,6 +59,9 @@ import com.logicbus.backend.bizlog.BizLogger;
  * 
  * @version 1.6.4.36 [20160321 duanyy] <br>
  * - 增加ketty.web.xml文件，用于替代web.xml中的部分内容 <br>
+ * 
+ * @version 1.6.4.38 [20160324 duanyy] <br>
+ * - 优化WEB退出时的清理工作(1.6.4.38) <br>
  */
 public class LogicBusApp implements WebApp {
 	/**
@@ -211,12 +214,14 @@ public class LogicBusApp implements WebApp {
 		ServantFactory sf = (ServantFactory)settings.get("servantFactory");
 		if (sf != null){
 			logger.info("The servantFactory is closing..");
+			settings.unregisterObject("servantFactory");
 			IOTools.close(sf);
 		}
 
 		BizLogger bizLogger = (BizLogger)settings.get("bizLogger");
 		if (bizLogger != null){
 			logger.info("The bizLogger is closing..");
+			settings.unregisterObject("bizLogger");
 			IOTools.close(bizLogger);
 		}
 		
@@ -224,12 +229,19 @@ public class LogicBusApp implements WebApp {
 		MetricsHandler metricsHandler = (MetricsHandler)settings.get("metricsHandler");
 		if (metricsHandler != null){
 			logger.info("The metrics handler is closing..");
+			settings.unregisterObject("metricsHandler");
 			IOTools.close(metricsHandler);
 		}
+		
+		settings.unregisterObject("accessController");
 	}
 	
 	@Override
 	public void destroy(ServletContext sc) {
-		onDestroy(Settings.get());
+		Settings settings = Settings.get();
+		onDestroy(settings);
+		
+		settings.unregisterObject("classLoader");
+		settings.unregisterObject("ResourceFactory");
 	}
 }
