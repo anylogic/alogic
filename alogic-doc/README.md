@@ -155,3 +155,6 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-core:增加ketty.web.xml文件，用于替代web.xml中的部分内容(1.6.4.36)
 	 + alogic-doer:优化锁被打断的时的处理(1.6.4.37)
 	 + alogic-core:优化WEB退出时的清理工作(1.6.4.38)
+	 + alogic-doer:采用concurrent包来调度定时器(1.6.4.38)
+	 + alogic-vfs:增加vfs模块(1.6.4.38)
+	 

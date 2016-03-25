@@ -593,6 +593,26 @@
 				</properties>
 			</service>									
 		</catalog>	
+		<catalog name="vfs">
+				<service id="FileList" name="List" note="文件列表" visible="public"
+					log="brief" module="com.alogic.vfs.service.FileList">
+				</service>	
+				<service id="Download" name="Download" note="下载文件" visible="public"
+					log="brief" module="com.alogic.vfs.service.Download">
+				</service>		
+				<service id="Upload" name="Upload" note="下载文件" visible="public"
+					log="brief" module="com.alogic.vfs.service.Upload">
+				</service>	
+				<service id="Source" name="Report" note="来源报告" visible="public"
+					log="brief" module="com.alogic.vfs.service.VFSSourceReport">
+				</service>	
+				<service id="Query" name="Query" note="查询指定的vfs" visible="public"
+					log="brief" module="com.alogic.vfs.service.VFSQuery">
+				</service>	
+				<service id="List" name="List" note="查询活跃的vfs" visible="public"
+					log="brief" module="com.alogic.vfs.service.VFSList">
+				</service>											
+		</catalog>		
 		<catalog name="scheduler">
 			<catalog name="tc">
 				<service 

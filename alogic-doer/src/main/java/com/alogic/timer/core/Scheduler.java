@@ -9,6 +9,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import org.apache.log4j.LogManager;
@@ -39,6 +43,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.4.37 [duanyy 20160321] <br>
  * - 优化锁被打断的时的处理 <br>
+ * 
+ * @version 1.6.4.39 [duanyy 20160325] <br>
+ * - 采用concurrent包来调度定时器 <br>
  */
 public interface Scheduler extends Timer,Runnable {
 	/**
@@ -113,25 +120,29 @@ public interface Scheduler extends Timer,Runnable {
 		protected DoerCommitter comitter = null;
 		protected long interval = 1000;
 		protected Lock lock = null;
-		protected Thread thread = null;
+		protected Future<?> future = null;
+		
+		protected String id;
 		
 		public void setTaskCommitter(DoerCommitter _committer){
 			comitter = _committer;
 		}
 		
-		public void configure(Properties p) throws BaseException {
+		public void configure(Properties p){
 			interval = PropertiesConstants.getLong(p,"interval",interval,true);
+			id = PropertiesConstants.getString(p, "id", "root");
 			lock = getLock(p);
 		}
 
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		public void configure(Element _e, Properties _properties){
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);
 		}
 
 		public void report(Element xml) {
 			if (xml != null){
+				xml.setAttribute("id", getId());
+				xml.setAttribute("type", "Scheduler");
 				xml.setAttribute("module", getClass().getName());
 				
 				Timer[] timers = getTimers();
@@ -160,7 +171,8 @@ public interface Scheduler extends Timer,Runnable {
 		public void report(Map<String, Object> json) {
 			if (json != null){
 				json.put("module", getClass().getName());
-				
+				json.put("id",getId());
+				json.put("type","Scheduler");
 				Timer[] timers = getTimers();
 				if (timers.length > 0){
 					List<Object> _timer = new ArrayList<Object>();
@@ -195,7 +207,7 @@ public interface Scheduler extends Timer,Runnable {
 		}
 
 		public String getId() {
-			return "root";
+			return id;
 		}
 
 		public State getState() {
@@ -217,25 +229,49 @@ public interface Scheduler extends Timer,Runnable {
 		}
 		
 		public void schedule(DoerCommitter committer) {
-			// do noting
+			setTaskCommitter(committer);
+			start();
 		}
 		
 		public void start() {
-			thread = new Thread(this);
-			thread.setDaemon(true);
-			thread.start();
+			final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+			final Runnable self = this;
+			service.schedule(
+					new Runnable(){
+						@Override
+						public void run() {
+							try {
+								//首先，scheduler的状态为idle
+								state = State.Idle;
+								logger.info(String.format("Start scheduler[%s]....",getId()));
+								
+								if (lock != null){
+									logger.info("Getting the lock....[" + state.toString() + "]");
+									lock.lockInterruptibly();
+								}
+								//取的lock之后，状态为Running
+								state = State.Running;
+								logger.info(String.format("Scheduler[%s] is working now....[%s]", getId(),state.toString()));
+								
+								future = service.scheduleAtFixedRate(self, 0, interval, TimeUnit.MILLISECONDS);				
+							}catch (InterruptedException ex){
+								state = State.Stopped;
+								logger.info("Schdule thread has been interrupted,exit",ex);
+							}
+						}}, 
+					0, TimeUnit.MILLISECONDS);
 		}		
 		
 		public void stop(){
 			state = State.Stopping;
-			logger.info("Try to stop the scheduler....[" + state.toString() + "]");
-			if (thread != null){
+			logger.info(String.format("Try to stop the scheduler[%s]....[%s]",getId(),state.toString()));
+			if (future != null){
 				//等待2秒钟，再打断线程
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(2*interval);
 				} catch (InterruptedException e) {
 				}
-				thread.interrupt();
+				future.cancel(true);
 			}			
 			if (lock != null){
 				lock.unlock();
@@ -243,43 +279,19 @@ public interface Scheduler extends Timer,Runnable {
 		}
 		
 		public void run(){
-			try {
-				//首先，scheduler的状态为idle
-				state = State.Idle;
-				logger.info("Start scheduler....");
-				
-				if (lock != null){
-					logger.info("Getting the lock....[" + state.toString() + "]");
-					lock.lockInterruptibly();
-				}
-				//取的lock之后，状态为Running
-				state = State.Running;
-				logger.info("Scheduler is working now....[" + state.toString() + "]");
-				while (state != State.Stopping){
-					scheduleOnce();				
-					try {
-						Thread.sleep(interval);
-					} catch (InterruptedException e) {
-						logger.info("Schdule thread has been interrupted,exit",e);
-						break;
-					}
-				}
-			}catch (InterruptedException ex){
-				logger.info("Schdule thread has been interrupted,exit",ex);
-			}finally {
-				//最后，为Stopped
-				state = State.Stopped;
-				logger.info("Scheduler has stopped.[" + state.toString() + "]");
+			if (state == State.Running){
+				scheduleOnce();
 			}
 		}
 		
 		abstract protected void scheduleOnce();
 		
 		public void join(long timeout){
-			if (thread != null){
+			if (future != null){
 				try {
-					thread.join(timeout);
-				} catch (InterruptedException e) {
+					future.get(timeout, TimeUnit.MILLISECONDS);
+				} catch (Exception e) {
+					// nothing to do
 				}
 			}
 		}
@@ -411,11 +423,7 @@ public interface Scheduler extends Timer,Runnable {
 			configure(p);
 			
 			Element _committer = XmlTools.getFirstElementByPath(_e, "committer");
-			if (_committer == null){
-				comitter = new ThreadPoolTaskCommitter();
-				comitter.configure(_e, _properties);
-				logger.warn("Can not find committer element,Use default:" + comitter.getClass().getName());
-			}else{
+			if (_committer != null){
 				Factory<DoerCommitter> factory = new Factory<DoerCommitter>();
 				comitter = factory.newInstance(_committer, p, "module", ThreadPoolTaskCommitter.class.getName());
 			}
