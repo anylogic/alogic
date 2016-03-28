@@ -46,6 +46,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.4.39 [duanyy 20160325] <br>
  * - 采用concurrent包来调度定时器 <br>
+ * - scheduler可以作为一个一次性的timer运行 <br>
+ * 
+ * @version 
  */
 public interface Scheduler extends Timer,Runnable {
 	/**
@@ -116,7 +119,7 @@ public interface Scheduler extends Timer,Runnable {
 	 */
 	abstract public static class Abstract implements Scheduler{
 		protected static final Logger logger = LogManager.getLogger(Timer.class);
-		protected State state = State.Running;
+		protected State state = State.Init;
 		protected DoerCommitter comitter = null;
 		protected long interval = 1000;
 		protected Lock lock = null;
@@ -229,8 +232,11 @@ public interface Scheduler extends Timer,Runnable {
 		}
 		
 		public void schedule(DoerCommitter committer) {
-			setTaskCommitter(committer);
-			start();
+				//scheduler只能启动一次，所以只能状态为Init时启动
+			if (state == State.Init){
+				setTaskCommitter(committer);
+				start();
+			}
 		}
 		
 		public void start() {
@@ -300,7 +306,7 @@ public interface Scheduler extends Timer,Runnable {
 			return new Date();
 		}
 		
-		public boolean isTimeToClear(){return false;}
+		public boolean isTimeToClear(){return true;}
 		
 		private Lock getLock(Properties p) {
 			Lock lock = null;
@@ -392,7 +398,7 @@ public interface Scheduler extends Timer,Runnable {
 					timers.remove(id);
 				}
 			}catch (Exception ex){
-				ex.printStackTrace();
+				logger.error("Erro when scheduling..",ex);
 			}
 		}
 		

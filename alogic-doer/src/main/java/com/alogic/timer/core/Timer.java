@@ -44,7 +44,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	 *
 	 */
 	public enum State {
-		Running,Paused,Stopping,Stopped,Idle
+		Init,Running,Paused,Stopping,Stopped,Idle
 	}
 	/**
 	 * 获取定时器ID
