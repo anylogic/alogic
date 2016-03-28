@@ -102,6 +102,7 @@ public class LocalFileSystem extends VirtualFileSystem.Abstract {
 				if (current >= offset && current < offset + limit){
 					Map<String,Object> map = new HashMap<String,Object>();
 					getFileInfo(file,map);
+					map.put("path", path + File.separator + filename);
 					result.add(map);
 				}
 				current ++;	
@@ -152,8 +153,10 @@ public class LocalFileSystem extends VirtualFileSystem.Abstract {
 	public void getFileInfo(String path, Map<String, Object> json) {
 		String realPath = getRealPath(path);
 		File file = new File(realPath);
-		
-		getFileInfo(file,json);
+		if (file.exists()){
+			getFileInfo(file,json);
+			json.put("path", path);
+		}
 	}
 	
 	@Override
