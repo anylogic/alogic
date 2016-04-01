@@ -50,6 +50,10 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.4.35 [20160315 duanyy] <br>
  * - 实现XMLConfigurable和Configurable接口 <br>
+ * 
+ * @version 1.6.4.41 [20160401 duanyy] <br>
+ * - Report增加分页功能 <br>
+ * 
  */
 public abstract class AbstractAccessController implements AccessController {
 	/**
