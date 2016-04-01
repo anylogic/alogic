@@ -6,7 +6,9 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.anysoft.util.JsonTools;
 import com.anysoft.util.Settings;
+import com.anysoft.util.XmlTools;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.AccessController;
 import com.logicbus.backend.Context;
@@ -58,6 +60,9 @@ public class AclQuery extends AbstractServant {
 	
 	protected int onXml(Context ctx) throws Exception {
 		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
+		int offset = getArgument("offset", 0, ctx);
+		int limit = getArgument("limit", 30, ctx);	
+		String keyword = getArgument("keyword","",ctx);
 		
 		Document doc = msg.getDocument();
 		Element root = msg.getRoot();
@@ -66,6 +71,9 @@ public class AclQuery extends AbstractServant {
 		AccessController ac = (AccessController) settings.get("accessController");
 		if (ac != null){
 			Element acls = doc.createElement("acls");
+			XmlTools.setInt(acls, "offset", offset);
+			XmlTools.setInt(acls, "limit", limit);
+			XmlTools.setString(acls, "keyword",keyword);
 			
 			ac.report(acls);
 			
@@ -78,6 +86,9 @@ public class AclQuery extends AbstractServant {
 	
 	protected int onJson(Context ctx) throws Exception {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
+		int offset = getArgument("offset", 0, ctx);
+		int limit = getArgument("limit", 30, ctx);
+		String keyword = getArgument("keyword","",ctx);
 		
 		Map<String,Object> root = msg.getRoot();
 		
@@ -85,6 +96,11 @@ public class AclQuery extends AbstractServant {
 		AccessController ac = (AccessController) settings.get("accessController");
 		if (ac != null){
 			Map<String,Object> acls = new HashMap<String,Object>();
+			
+			JsonTools.setInt(acls, "offset", offset);
+			JsonTools.setInt(acls, "limit", limit);
+			JsonTools.setString(acls,"keyword",keyword);
+
 			ac.report(acls);
 			
 			root.put("acls", acls);

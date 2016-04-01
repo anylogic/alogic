@@ -12,15 +12,234 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
 /**
  * XML的工具
  * @author duanyy
- *
+ * @version 1.6.4.41 [20160401 duanyy] <br>
+ * - 增加XML属性操作方法 <br>
  */
 public class XmlTools {
+	private XmlTools(){
+		
+	}
+	
+	/**
+	 * 获取指定属性的整型值
+	 * @param e XML节点
+	 * @param attr 属性名
+	 * @param dftValue 缺省值
+	 * @return 整型值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static int getInt(Element e,String attr,int dftValue){
+		String value = e.getAttribute(attr);
+		
+		if (StringUtils.isEmpty(value)){
+			return dftValue;
+		}
+		
+		try {
+			return Integer.parseInt(value);
+		}catch(NumberFormatException ex){
+			return dftValue;
+		}
+	}
+	
+	/**
+	 * 设置指定属性的整型值
+	 * @param e XML节点
+	 * @param attr 属性名
+	 * @param value 属性值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static void setInt(Element e,String attr,int value){
+		if (StringUtils.isNotEmpty(attr)){
+			e.setAttribute(attr, String.valueOf(value));
+		}
+	}
+	
+	/**
+	 * 获取指定属性的long值
+	 * @param e XML节点
+	 * @param attr 属性名
+	 * @param dftValue 缺省值
+	 * @return long型值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static long getLong(Element e,String attr,long dftValue){
+		String value = e.getAttribute(attr);
+		
+		if (StringUtils.isEmpty(value)){
+			return dftValue;
+		}
+		
+		try {
+			return Long.parseLong(value);
+		}catch(NumberFormatException ex){
+			return dftValue;
+		}		
+	}
+	
+	/**
+	 * 设置指定属性的long值
+	 * @param e XML节点
+	 * @param attr 属性名
+	 * @param value 属性值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static void setLong(Element e,String attr,long value){
+		if (StringUtils.isNotEmpty(attr)){
+			e.setAttribute(attr, String.valueOf(value));
+		}
+	}
+	
+	/**
+	 * 获取指定属性的String值
+	 * @param e XML节点
+	 * @param attr 
+	 * @param dftValue
+	 * @return String值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static String getString(Element e,String attr,String dftValue){
+		String value = e.getAttribute(attr);
+		if (StringUtils.isEmpty(value)){
+			return dftValue;
+		}
+		return value;
+	}
+	
+	/**
+	 * 设置指定属性的String值
+	 * @param e XML节点
+	 * @param attr 属性名
+	 * @param value String值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static void setString(Element e,String attr,String value){
+		if (StringUtils.isNotEmpty(attr) && StringUtils.isNotEmpty(value)){
+			e.setAttribute(attr, value);
+		}
+	}
+	
+	/**
+	 * 获取指定属性的float值
+	 * @param e XML节点
+	 * @param attr 属性名
+	 * @param dftValue 缺省值
+	 * @return float值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static float getFloat(Element e,String attr,float dftValue){
+		String value = e.getAttribute(attr);
+		
+		if (StringUtils.isEmpty(value)){
+			return dftValue;
+		}
+		
+		try {
+			return Float.parseFloat(value);
+		}catch(NumberFormatException ex){
+			return dftValue;
+		}		
+	}
+	
+	/**
+	 * 设置指定属性的float值
+	 * @param e XML节点
+	 * @param attr 属性名
+	 * @param value 缺省值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static void setFloat(Element e,String attr,float value){
+		if (StringUtils.isNotEmpty(attr)){
+			e.setAttribute(attr, String.valueOf(value));
+		}
+	}
+	
+	/**
+	 * 获取指定属性的double值
+	 * @param e XML节点
+	 * @param attr 属性名
+	 * @param dftValue 缺省值
+	 * @return double值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static double getDouble(Element e,String attr,double dftValue){
+		String value = e.getAttribute(attr);
+		
+		if (StringUtils.isEmpty(value)){
+			return dftValue;
+		}
+		
+		try {
+			return Double.parseDouble(value);
+		}catch (NumberFormatException ex){
+			return dftValue;
+		}
+	}
+	
+	/**
+	 * 设置指定属性的double值
+	 * @param e XML节点
+	 * @param attr 属性名
+	 * @param value 属性值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static void setDouble(Element e,String attr,double value){
+		if (StringUtils.isNotEmpty(attr)){
+			e.setAttribute(attr, String.valueOf(value));
+		}
+	}
+	
+	/**
+	 * 获取指定属性的boolean值 
+	 * @param e XML节点
+	 * @param attr 属性名
+	 * @param dftValue 属性值
+	 * @return boolean值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static boolean getBoolean(Element e,String attr,boolean dftValue){
+		String value = e.getAttribute(attr);
+		
+		if (StringUtils.isEmpty(value)){
+			return dftValue;
+		}
+		
+		return BooleanUtils.toBoolean(value);
+	}
+	
+	/**
+	 * 设置指定属性的boolean值
+	 * @param e XML节点
+	 * @param attr 属性名
+	 * @param value 属性值
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static void setBoolean(Element e,String attr,boolean value){
+		if (StringUtils.isNotEmpty(attr)){
+			e.setAttribute(attr, BooleanUtils.toString(value, "true", "false"));
+		}
+	}
+	
 	/**
 	 * 创建一个新XML文档，并创建根目录
 	 * @return XML文档实例

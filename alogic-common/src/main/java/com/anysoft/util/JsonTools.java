@@ -41,6 +41,9 @@ import org.w3c.dom.NodeList;
  * 
  * @version 1.6.4.27 [20160125 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.41 [20160401 duanyy] <br>
+ * - 增加float操作方法 <br>
  */
 public class JsonTools {
 	
@@ -106,6 +109,8 @@ public class JsonTools {
 		}
 	}
 	
+	
+	
 	/**
 	 * 向Json对象中设置指定属性值
 	 * @param json
@@ -141,6 +146,44 @@ public class JsonTools {
 		
 		try {
 			return Double.parseDouble(found.toString());
+		}catch (NumberFormatException ex){
+			return dftValue;
+		}
+	}
+	
+	/**
+	 * 向Json对象中设置指定值
+	 * @param json Json对象
+	 * @param name 属性名
+	 * @param value float值
+	 */
+	public static void setFloat(Map<String,Object> json,String name,float value){
+		if (StringUtils.isNotEmpty(name)){
+			json.put(name, value);
+		}
+	}
+	
+	/**
+	 * 从Json对象中获取属性值
+	 * @param json Json对象
+	 * @param name 属性名
+	 * @param dftValue 缺省值
+	 * @return float value
+	 * 
+	 * @since 1.6.4.41
+	 */
+	public static float getFloat(Map<String,Object> json,String name,float dftValue){
+		Object found = json.get(name);
+		if (found == null){
+			return dftValue;
+		}
+		
+		if (found instanceof Float){
+			return (Float)found;
+		}
+		
+		try {
+			return Float.parseFloat(found.toString());
 		}catch (NumberFormatException ex){
 			return dftValue;
 		}

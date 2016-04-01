@@ -159,4 +159,7 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-vfs:增加vfs模块(1.6.4.38)
 	 + alogic-doer:scheduler可以作为一个一次性的timer运行 (1.6.4.39)
 	 + alogic-vfs:文件信息增加属性path(1.6.4.40)
+	 + alogic-common:增加XMLElement节点的属性操作工具(1.6.4.41)
+	 + alogic-core:AclQuery增加分页功能(1.6.4.41)
+	 
 	 

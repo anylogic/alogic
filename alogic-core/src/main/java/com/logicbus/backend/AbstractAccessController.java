@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -15,9 +16,11 @@ import com.anysoft.metrics.core.Dimensions;
 import com.anysoft.metrics.core.Fragment;
 import com.anysoft.metrics.core.Measures;
 import com.anysoft.metrics.core.MetricsCollector;
+import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;
+import com.anysoft.util.XmlTools;
 import com.logicbus.models.catalog.Path;
 import com.logicbus.models.servant.ServiceDescription;
 
@@ -135,51 +138,87 @@ public abstract class AbstractAccessController implements AccessController {
 	protected abstract int getClientPriority(String sessionId,Path serviceId,ServiceDescription servant,
 			Context ctx,AccessStat stat);
 	
+	
 	@Override
 	public void report(Element root) {
 		if (root != null){
+			int offset = XmlTools.getInt(root, "offset", 0);
+			int limit = XmlTools.getInt(root,"limit",30);
+			String keyword = XmlTools.getString(root, "keyword", "");
+
+			
 			Document doc = root.getOwnerDocument();
 			
 			Enumeration<String> keys = acl.keys();
+			
+			int current = 0;
+			
 			while (keys.hasMoreElements()){
 				String key = keys.nextElement();
-				AccessStat value = acl.get(key);
-				Element eAcl = doc.createElement("acl");
 				
-				eAcl.setAttribute("session", key);
-				eAcl.setAttribute("currentThread", String.valueOf(value.thread));
-				eAcl.setAttribute("timesTotal", String.valueOf(value.timesTotal));
-				eAcl.setAttribute("timesOneMin",String.valueOf(value.timesOneMin));
-				eAcl.setAttribute("waitCnt", String.valueOf(value.waitCnt));
+				boolean match = StringUtils.isEmpty(keyword) || key.contains(keyword);
 				
-				root.appendChild(eAcl);
+				if (match){
+					if (current >= offset && current < offset + limit){
+						AccessStat value = acl.get(key);
+						Element eAcl = doc.createElement("acl");
+						
+						eAcl.setAttribute("session", key);
+						eAcl.setAttribute("currentThread", String.valueOf(value.thread));
+						eAcl.setAttribute("timesTotal", String.valueOf(value.timesTotal));
+						eAcl.setAttribute("timesOneMin",String.valueOf(value.timesOneMin));
+						eAcl.setAttribute("waitCnt", String.valueOf(value.waitCnt));
+						
+						root.appendChild(eAcl);						
+					}
+					current ++;
+				}
 			}
-			
-			root.setAttribute("module", getClass().getName());
+
+			XmlTools.setInt(root, "total", current);
+			XmlTools.setInt(root, "all", acl.size());
+			XmlTools.setString(root,"module",getClass().getName());
 		}
 	}
 
 	@Override
 	public void report(Map<String,Object> json) {
 		if (json != null){
+			int offset = JsonTools.getInt(json, "offset", 0);
+			int limit = JsonTools.getInt(json, "limit", 30);
+			String keyword = JsonTools.getString(json,"keyword","");
+			
 			List<Object> acls = new ArrayList<Object>();
 			
 			Enumeration<String> keys = acl.keys();
+			
+			int current = 0;
+			
 			while (keys.hasMoreElements()){
 				String key = keys.nextElement();
-				AccessStat value = acl.get(key);
 				
-				Map<String,Object> mAcl = new HashMap<String,Object>();
+				boolean match = StringUtils.isEmpty(keyword) || key.contains(keyword);
+				if (match){
+						if (current >= offset && current < offset + limit){
+							AccessStat value = acl.get(key);
+							
+							Map<String,Object> mAcl = new HashMap<String,Object>();
 
-				mAcl.put("session", key);
-				mAcl.put("currentThread", String.valueOf(value.thread));
-				mAcl.put("timesTotal", String.valueOf(value.timesTotal));
-				mAcl.put("timesOneMin",String.valueOf(value.timesOneMin));
-				mAcl.put("waitCnt", String.valueOf(value.waitCnt));
-				
-				acls.add(mAcl);
+							mAcl.put("session", key);
+							mAcl.put("currentThread", String.valueOf(value.thread));
+							mAcl.put("timesTotal", String.valueOf(value.timesTotal));
+							mAcl.put("timesOneMin",String.valueOf(value.timesOneMin));
+							mAcl.put("waitCnt", String.valueOf(value.waitCnt));
+							
+							acls.add(mAcl);							
+						}
+						current ++;
+				}
 			}
-			json.put("module", getClass().getName());
+			
+			JsonTools.setInt(json, "total", current);
+			JsonTools.setInt(json,"all",acl.size());
+			JsonTools.setString(json, "module", getClass().getName());
 			json.put("acl", acls);
 		}
 	}

@@ -1,6 +1,5 @@
 package com.logicbus.backend;
 
-import com.anysoft.util.Properties;
 import com.logicbus.models.catalog.Path;
 import com.logicbus.models.servant.ServiceDescription;
 
