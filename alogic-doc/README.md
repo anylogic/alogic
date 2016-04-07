@@ -161,5 +161,7 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-vfs:文件信息增加属性path(1.6.4.40)
 	 + alogic-common:增加XMLElement节点的属性操作工具(1.6.4.41)
 	 + alogic-core:AclQuery增加分页功能(1.6.4.41)
+	 + alogic-doer:Scheduler增加Linked实现(1.6.4.42)
+	 + alogic-common:rrm直接对接指标处理器(1.6.4.42)
 	 
 	 

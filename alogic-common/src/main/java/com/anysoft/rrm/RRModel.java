@@ -8,22 +8,26 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
+import com.anysoft.metrics.core.Fragment;
+import com.anysoft.metrics.core.MetricsCollector;
+import com.anysoft.metrics.core.MetricsHandler;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
+import com.anysoft.util.Settings;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
 
 /**
  * Round Robin Model
  * @author duanyy
- *
+ * @version 1.6.4.42 [duanyy 20160407] <br>
+ * - 对接指标处理器 <br>
  */
-public class RRModel<data extends RRData> implements XMLConfigurable,Configurable,Reportable{
+public class RRModel<data extends RRData> implements XMLConfigurable,Configurable,Reportable,MetricsCollector{
 
 	/**
 	 * id
@@ -34,6 +38,11 @@ public class RRModel<data extends RRData> implements XMLConfigurable,Configurabl
 	 * 模型下的多个RRA
 	 */
 	private Map<String,RRArchive<data>> rras = new HashMap<String,RRArchive<data>>();
+	
+	/**
+	 * 指标处理器
+	 */
+	private MetricsHandler metricsHandler = null;
 	
 	/**
 	 * 获取id
@@ -68,6 +77,8 @@ public class RRModel<data extends RRData> implements XMLConfigurable,Configurabl
 			RRArchive<data> rra = iterator.next();
 			rra.update(timestamp, fragment);
 		}
+		
+		fragment.report(this);
 	}
 	
 	@Override
@@ -153,6 +164,16 @@ public class RRModel<data extends RRData> implements XMLConfigurable,Configurabl
 				newRRA.configure(p);
 				rras.put(id, newRRA);
 			}
+		}
+		
+		Settings settings = Settings.get();
+		metricsHandler = (MetricsHandler) settings.get("metricsHandler");	
+	}
+
+	@Override
+	public void metricsIncr(Fragment fragment) {
+		if (metricsHandler != null){
+			metricsHandler.handle(fragment,System.currentTimeMillis());
 		}
 	}
 }

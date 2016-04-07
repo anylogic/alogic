@@ -1,15 +1,18 @@
 package com.anysoft.rrm;
 
 
+import com.anysoft.metrics.core.MetricsReportable;
 import com.anysoft.util.Reportable;
 
 /**
  * Round Robin Data,可以放在RRM中的数据
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.4.42 [duanyy 20160407] <br>
+ * - 对接指标处理器 <br>
  */
-public interface RRData extends Reportable {
+public interface RRData extends Reportable,MetricsReportable {
 	
 	/**
 	 * 在现有数据上做加法
@@ -37,11 +40,27 @@ public interface RRData extends Reportable {
 	public void timestamp(long t);
 	
 	/**
+	 * 获取指标id
+	 * @return 指标id
+	 */
+	public String id();
+	
+	/**
 	 * 虚基类
 	 * @author duanyy
 	 *
 	 */
-	abstract public static class Abstract implements RRData{
+	public abstract static class Abstract implements RRData{
+		protected String id = "unknown";
+		
+		public Abstract(String metricsId){
+			id = metricsId;
+		}
+		
+		public String id(){
+			return id;
+		}
+		
 		@Override
 		public long timestamp() {
 			return timestamp;

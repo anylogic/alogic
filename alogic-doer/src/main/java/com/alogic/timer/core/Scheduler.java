@@ -15,6 +15,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -48,7 +49,8 @@ import com.anysoft.util.resource.ResourceFactory;
  * - 采用concurrent包来调度定时器 <br>
  * - scheduler可以作为一个一次性的timer运行 <br>
  * 
- * @version 
+ * @version 1.6.4.42 [duanyy 20160407] <br>
+ * - 增加Linked实现 <br>
  */
 public interface Scheduler extends Timer,Runnable {
 	/**
@@ -125,7 +127,7 @@ public interface Scheduler extends Timer,Runnable {
 		protected Lock lock = null;
 		protected Future<?> future = null;
 		
-		protected String id;
+		protected String id = "root";
 		
 		public void setTaskCommitter(DoerCommitter _committer){
 			comitter = _committer;
@@ -510,5 +512,30 @@ public interface Scheduler extends Timer,Runnable {
 			return ret;
 		}
 	}
+	
+	/**
+	 * 外部连接配置文件
+	 * 
+	 * @author duanyy
+	 *
+	 */
+	public static class Linked extends XMLed{
+		public void configure(Element _e, Properties _properties){
+			Properties p = new XmlElementProperties(_e,_properties);
+			
+			String src = PropertiesConstants.getString(p,"src","");
+			if (StringUtils.isNotEmpty(src)){
+				Document doc = loadDocument(src,null);
+				if (doc != null){
+					super.configure(doc.getDocumentElement(),p);
+				}else{
+					super.configure(_e, _properties);
+				}
+			}else{
+				logger.error("Can not find src attr in Linked module");
+				super.configure(_e, _properties);
+			}
+		}		
+	}	
 
 }
