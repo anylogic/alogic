@@ -31,6 +31,9 @@ import com.logicbus.together.LogicletFactory;
  * @since 1.1.0
  * 
  * @version 1.2.0 增加对JSON支持
+ * 
+ * @version 1.6.4.43 [20160411 duanyy] <br>
+ * - DataProvider增加获取原始值接口 <br>
  */
 public class Selector extends AbstractLogiclet{
 
@@ -94,7 +97,7 @@ public class Selector extends AbstractLogiclet{
 		
 		String value = conditionExpression.getValue(new DataProvider(){
 
-			
+			@Override
 			public String getValue(String varName, Object context,
 					String defaultValue) {
 				try {
@@ -104,7 +107,12 @@ public class Selector extends AbstractLogiclet{
 				}
 			}
 
+			@Override
+			public String getRawValue(String varName, Object context, String dftValue) {
+				return getValue(varName,context,dftValue);
+			}	
 			
+			@Override
 			public Object getContext(String varName) {
 				return null;
 			}
@@ -149,7 +157,7 @@ public class Selector extends AbstractLogiclet{
 		
 		String value = conditionExpression.getValue(new DataProvider(){
 
-			
+			@Override
 			public String getValue(String varName, Object context,
 					String defaultValue) {
 				try {
@@ -159,7 +167,12 @@ public class Selector extends AbstractLogiclet{
 				}
 			}
 
+			@Override
+			public String getRawValue(String varName, Object context, String dftValue) {
+				return getValue(varName,context,dftValue);
+			}				
 			
+			@Override
 			public Object getContext(String varName) {
 				return null;
 			}

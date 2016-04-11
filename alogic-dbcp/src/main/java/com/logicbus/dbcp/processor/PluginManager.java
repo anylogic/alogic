@@ -26,6 +26,14 @@ public class PluginManager implements FunctionHelper {
 			return new Plugin.Bind(funcName,bindedListener);
 		}
 		
+		if (funcName.equals("bind_raw")){
+			return new Plugin.BindRaw(funcName, bindedListener);
+		}
+		
+		if (funcName.equals("uuid")){
+			return new Plugin.UUId(funcName, bindedListener);
+		}
+		
 		return null;
 	}
 

@@ -14,6 +14,9 @@ import com.anysoft.util.XmlSerializer;
  * 
  * @author duanyy
  * @since 1.2.8
+ * 
+ * @version 1.6.4.43 [20160411 duanyy] <br>
+ * - DataProvider增加获取原始值接口 <br>
  */
 public class Fragment implements XmlSerializer,JsonSerializer,Flowable{
 
@@ -205,6 +208,10 @@ public class Fragment implements XmlSerializer,JsonSerializer,Flowable{
 		return null;
 	}
 
+	@Override
+	public String getRawValue(String varName, Object context, String dftValue) {
+		return getValue(varName,context,dftValue);
+	}		
 	
 	public Object getContext(String varName) {
 		return this;

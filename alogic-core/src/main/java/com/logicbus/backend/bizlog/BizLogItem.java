@@ -23,6 +23,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.4.11 [20151116 duanyy] <br>
  * - 增加logType属性 <br>
+ * 
+ * @version 1.6.4.43 [20160411 duanyy] <br>
+ * - DataProvider增加获取原始值接口 <br>
  */
 public class BizLogItem implements Comparable<BizLogItem>,Flowable {
 	
@@ -102,6 +105,10 @@ public class BizLogItem implements Comparable<BizLogItem>,Flowable {
 		}
 	}
 
+	@Override
+	public String getRawValue(String varName, Object context, String dftValue) {
+		return getValue(varName,context,dftValue);
+	}		
 	
 	public Object getContext(String varName) {
 		return null;

@@ -16,6 +16,9 @@ import com.anysoft.formula.DataProvider;
  * 
  * @version 1.6.3.30 [20150714 duanyy] <br>
  * - 修正缺省值为null的空指针问题 <br>
+ * 
+ * @version 1.6.4.43 [20160411 duanyy] <br>
+ * - DataProvider增加获取原始值接口 <br>
  */
 abstract public class Properties implements DataProvider{
 	/**
@@ -268,6 +271,11 @@ abstract public class Properties implements DataProvider{
 
 	public Object getContext(String varName) {
 		return cookies;
+	}	
+	
+	@Override
+	public String getRawValue(String varName, Object context, String dftValue) {
+		return GetValue(varName,dftValue,false,false);
 	}	
 	
 	protected static Object cookies = new Object();

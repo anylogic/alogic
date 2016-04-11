@@ -30,6 +30,9 @@ package com.anysoft.formula;
  * 
  * @version 1.6.4.21 [20151229 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.43 [20160411 duanyy] <br>
+ * - 加获取原始值的接口 <br>
  */
 public interface DataProvider {
 	/**
@@ -41,6 +44,17 @@ public interface DataProvider {
 	 * @return 变量值
 	 */
 	public String getValue(String varName,Object context,String defaultValue);
+	
+	/**
+	 * 获取指定变量的原始值
+	 * @param varName 变量名
+	 * @param context 上下文
+	 * @param dftValue 缺省值
+	 * @return 变量的原始值
+	 * 
+	 * @since 1.6.4.43
+	 */
+	public String getRawValue(String varName,Object context,String dftValue);
 	
 	/**
 	 * 创建变量的上下文
@@ -64,6 +78,11 @@ public interface DataProvider {
 		public Object getContext(String varName) {
 			return this;
 		}
+		
+		@Override
+		public String getRawValue(String varName, Object context, String dftValue) {
+			return getValue(varName,context,dftValue);
+		}
 	}
 	
 	/**
@@ -81,7 +100,12 @@ public interface DataProvider {
 			}
 			return value;
 		}
-
+		
+		@Override
+		public String getRawValue(String varName, Object context, String dftValue) {
+			return getValue(varName,context,dftValue);
+		}
+		
 		@Override
 		public Object getContext(String varName) {
 			return this;

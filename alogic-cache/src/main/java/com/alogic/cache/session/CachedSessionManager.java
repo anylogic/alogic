@@ -27,7 +27,8 @@ import com.logicbus.backend.server.http.HttpContext;
  * 基于缓存的会话管理器
  * 
  * @author duanyy
- *
+ * @version 1.6.4.43 [20160411 duanyy] <br>
+ * - DataProvider增加获取原始值接口 <br>
  */
 public class CachedSessionManager extends SessionManager{
 	protected String cacheId = "sessions";
@@ -214,6 +215,11 @@ public class CachedSessionManager extends SessionManager{
 			return found == null || found.length() <= 0 ? defaultValue:found;
 		}
 
+		@Override
+		public String getRawValue(String varName, Object context, String dftValue) {
+			return getValue(varName,context,dftValue);
+		}		
+		
 		@Override
 		public Object getContext(String varName) {
 			return context;

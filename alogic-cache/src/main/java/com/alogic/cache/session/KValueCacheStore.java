@@ -183,7 +183,8 @@ public class KValueCacheStore extends AbstractCacheStore {
 	 * 基于KValue的缓存对象
 	 * 
 	 * @author duanyy
-	 *
+	 * @version 1.6.4.43 [20160411 duanyy] <br>
+	 * - DataProvider增加获取原始值接口 <br>
 	 */
 	public static class KValueMultiFieldObject implements MultiFieldObject {
 		protected String id;
@@ -342,6 +343,11 @@ public class KValueCacheStore extends AbstractCacheStore {
 			return value == null ? defaultValue : value;
 		}
 
+		@Override
+		public String getRawValue(String varName, Object context, String dftValue) {
+			return getValue(varName,context,dftValue);
+		}		
+		
 		@Override
 		public Object getContext(String varName) {
 			return this;

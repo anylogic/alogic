@@ -7,6 +7,9 @@ import com.anysoft.stream.Flowable;
  * 
  * @author duanyy
  * @since 1.6.3.25
+ * 
+ * @version 1.6.4.43 [20160411 duanyy] <br>
+ * - DataProvider增加获取原始值接口 <br>
  */
 public class ScriptLogInfo implements Flowable{
 	/**
@@ -92,6 +95,11 @@ public class ScriptLogInfo implements Flowable{
 		return this;
 	}
 
+	@Override
+	public String getRawValue(String varName, Object context, String dftValue) {
+		return getValue(varName,context,dftValue);
+	}		
+	
 	public String getStatsDimesion() {
 		return level;
 	}

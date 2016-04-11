@@ -87,6 +87,9 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 	 * @author duanyy
 	 * @version 1.6.3.24 [20150526 duanyy] <br>
 	 * - 现在可以通过构造函数来设置id <br>
+	 * 
+	 * @version 1.6.4.43 [20160411 duanyy] <br>
+	 * - DataProvider增加获取原始值接口 <br>
 	 */
 	public static class Default implements MultiFieldObject{
 		protected String id;
@@ -188,6 +191,11 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 			return found == null || found.length() <= 0 ? defaultValue:found;
 		}
 
+		@Override
+		public String getRawValue(String varName, Object context, String dftValue) {
+			return getValue(varName,context,dftValue);
+		}		
+		
 		@Override
 		public Object getContext(String varName) {
 			return context;
