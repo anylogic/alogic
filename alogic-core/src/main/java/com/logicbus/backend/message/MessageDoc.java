@@ -31,6 +31,9 @@ import com.logicbus.backend.ServantException;
  * 
  * @version 1.6.2.1 [20141218 duanyy] <br>
  * - 增加对Comet技术的支持<br>
+ * 
+ * @version 1.6.4.44 [20160414 duanyy] <br>
+ * - 增加toString()以便输出协议内容 <br>
  */
 abstract public class MessageDoc extends DefaultProperties{
 
@@ -171,6 +174,11 @@ abstract public class MessageDoc extends DefaultProperties{
 					"Can not create instance of " + clazz.getName() + ":" + e.getMessage());
 		}
 		return msg;
+	}
+	
+	@Override
+	public String toString(){
+		return msg == null ? null:msg.toString();
 	}
 
 	/**
