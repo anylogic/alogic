@@ -220,6 +220,7 @@ public class LogicBusApp implements WebApp {
 
 		BizLogger bizLogger = (BizLogger)settings.get("bizLogger");
 		if (bizLogger != null){
+			bizLogger.flush(System.currentTimeMillis());
 			logger.info("The bizLogger is closing..");
 			settings.unregisterObject("bizLogger");
 			IOTools.close(bizLogger);
@@ -228,6 +229,7 @@ public class LogicBusApp implements WebApp {
 		// since 1.2.8
 		MetricsHandler metricsHandler = (MetricsHandler)settings.get("metricsHandler");
 		if (metricsHandler != null){
+			metricsHandler.flush(System.currentTimeMillis());
 			logger.info("The metrics handler is closing..");
 			settings.unregisterObject("metricsHandler");
 			IOTools.close(metricsHandler);
