@@ -9,16 +9,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.BaseException;
+import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XmlElementProperties;
+import com.anysoft.util.XmlTools;
 
 /**
  * 数据处理器基类 
@@ -37,9 +40,16 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.4.17 [20151216 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.44 [20160414 duanyy] <br>
+ * - 修正Report输出的bug，并增加统计数据的分页功能 <br>
+ * - 不再保存全部数据，只保存当前周期数据 <br>
  */
-abstract public class AbstractHandler<data extends Flowable> implements Handler<data> {
+public abstract class AbstractHandler<data extends Flowable> implements Handler<data> {
 	
+	/**
+	 * a logger of log4j
+	 */
 	protected static final Logger LOG = LogManager.getLogger(AbstractHandler.class);
 	
 	/**
@@ -56,11 +66,6 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 	 * 是否开启Report
 	 */
 	protected boolean enableReport = false;
-	
-	/**
-	 * 全部的Report数据
-	 */
-	protected Hashtable<String,Measure> total_items = null;
 	
 	/**
 	 * 当前周期之内的Report数据
@@ -94,7 +99,6 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 		enableReport = PropertiesConstants.getBoolean(p, "report.enable", enableReport,false);
 		if (enableReport){
 			currentCycle = PropertiesConstants.getLong(p, "report.cycle", currentCycle,false);
-			total_items = new Hashtable<String,Measure>();
 			current_items = new Hashtable<String,Measure>();
 		}
 		
@@ -130,77 +134,107 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 	
 	public void report(Element xml) {
 		if (xml == null) return;
-		if (enableReport){
-			Document doc = xml.getOwnerDocument();
-			Element current = doc.createElement("current");
-			report(current_items,current);
-			xml.appendChild(current);
-			
-			Element total = doc.createElement("total");
-			report(total_items,total);
-			xml.appendChild(total);
-			
-			xml.setAttribute("module", getClass().getName());
-		}
+		xml.setAttribute("module", getClass().getName());
 		xml.setAttribute("async", Boolean.toString(async));
+		xml.setAttribute("isRunning", Boolean.toString(isRunning));
+		
+		if (enableReport){
+			report(current_items,xml,"stat");
+		}
+
 		if (async && asyncWorker != null){
 			asyncWorker.report(xml);
 		}
-		
-		xml.setAttribute("isRunning", Boolean.toString(isRunning));
 	}
 	
-	private void report(Hashtable<String,Measure> _items,Element root){
+	private void report(Hashtable<String,Measure> _items,Element root,String name){
 		Document doc = root.getOwnerDocument();
+		Element child = doc.createElement(name);
 		long total = 0;
+		
+		int current = 0;
+		int offset = XmlTools.getInt(root, "offset", 0);
+		int limit = XmlTools.getInt(root,"limit",30);
+		String keyword = XmlTools.getString(root, "keyword", "");
 		
 		Iterator<Entry<String,Measure>> iterator = _items.entrySet().iterator();
 		
 		while (iterator.hasNext()){
 			Entry<String,Measure> entry = iterator.next();
-			Element dimElem = doc.createElement("group");
-			dimElem.setAttribute("dim",entry.getKey());
-			dimElem.setAttribute("amount", String.valueOf(entry.getValue().value()));
-			total += entry.getValue().value();
-			root.appendChild(dimElem);
+			
+			String dim = entry.getKey();
+			boolean match = StringUtils.isEmpty(keyword) || dim.contains(keyword);
+			if (match){
+				if (current >= offset && current < offset + limit){
+					
+					Element dimElem = doc.createElement("group");
+					dimElem.setAttribute("dim",dim);
+					dimElem.setAttribute("amount", String.valueOf(entry.getValue().value()));
+					total += entry.getValue().value();
+					child.appendChild(dimElem);
+					
+				}
+				current ++;
+			}
 		}
-		root.setAttribute("total", String.valueOf(total));
+		XmlTools.setLong(child, "times",total);
+		XmlTools.setInt(child, "total", current);
+		XmlTools.setInt(child, "all", _items.size());
+		XmlTools.setLong(child, "lastVisitedTime", lastVisitedTime);
+		XmlTools.setLong(child, "cycle", currentCycle);		
+		root.appendChild(child);
 	}	
 
 	
 	public void report(Map<String, Object> json) {
 		if (json == null) return ;
+		json.put("module", getClass().getName());
+		json.put("async", async);
+		json.put("isRunning",isRunning);
+		
 		if (enableReport){
-			report(current_items,json,"current");
-			report(total_items,json,"total");
-			json.put("module", getClass().getName());
+			report(current_items,json,"stat");
 		}
 		
-		json.put("async", async);
 		if (async && asyncWorker != null){
 			asyncWorker.report(json);
 		}
-		
-		json.put("isRunning",isRunning);
 	}
 	
 	private void report(Hashtable<String,Measure> _items,Map<String,Object> json,String name){
+		Map<String,Object> child = new HashMap<String,Object>();
 		long total = 0;
+		int current = 0;
+		int offset = JsonTools.getInt(json, "offset", 0);
+		int limit = JsonTools.getInt(json, "limit", 30);
+		String keyword = JsonTools.getString(json,"keyword","");
+		
 		List<Object> items = new ArrayList<Object>(_items.size());
 		
 		Iterator<Entry<String,Measure>> iterator = _items.entrySet().iterator();
 		while (iterator.hasNext()){
 			Entry<String,Measure> entry = iterator.next();
-			Map<String,Object> itemObj = new HashMap<String,Object>(2);
 			
-			itemObj.put("dim", entry.getKey());
-			itemObj.put("amount", entry.getValue().value());
-			
-			items.add(itemObj);
-			total += entry.getValue().value();
+			String dim = entry.getKey();
+			boolean match = StringUtils.isEmpty(keyword) || dim.contains(keyword);
+			if (match){
+				if (current >= offset && current < offset + limit){
+					Map<String,Object> itemObj = new HashMap<String,Object>(2);			
+					itemObj.put("dim", entry.getKey());
+					itemObj.put("amount", entry.getValue().value());			
+					items.add(itemObj);
+					total += entry.getValue().value();
+				}
+				current ++;
+			}
 		}
-		json.put("item", items);
-		json.put("total", total);
+		JsonTools.setLong(child, "times",total);
+		JsonTools.setInt(child, "total", current);
+		JsonTools.setInt(child, "all", _items.size());
+		JsonTools.setLong(child, "lastVisitedTime", lastVisitedTime);
+		JsonTools.setLong(child, "cycle", currentCycle);
+		child.put("item", items);
+		json.put(name, child);
 	}	
 
 	
@@ -209,14 +243,13 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 			String group = _data.getStatsDimesion();
 			//当前时间
 			long current = System.currentTimeMillis();
-			if (current / currentCycle - lastVisitedTime / currentCycle != 0){
+			if (current / currentCycle - lastVisitedTime / currentCycle > 0){
 				//新的周期
 				synchronized(current_items){
 					current_items.clear();
 				}
 			}
 			stat(group,current_items,_data);
-			stat(group,total_items,_data);
 			lastVisitedTime = current;
 		}
 		if (isRunning){

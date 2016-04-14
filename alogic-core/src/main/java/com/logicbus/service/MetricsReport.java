@@ -7,7 +7,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.anysoft.metrics.core.MetricsHandler;
+import com.anysoft.util.JsonTools;
 import com.anysoft.util.Settings;
+import com.anysoft.util.XmlTools;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.ServantException;
@@ -36,7 +38,9 @@ public class MetricsReport extends AbstractServant{
 	
 	protected int onXml(Context ctx) throws Exception{
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
-		
+		int offset = getArgument("offset", 0, ctx);
+		int limit = getArgument("limit", 30, ctx);	
+		String keyword = getArgument("keyword","",ctx);		
 		Settings settings = Settings.get();
 		
 		MetricsHandler handler = (MetricsHandler) settings.get("metricsHandler");
@@ -46,7 +50,9 @@ public class MetricsReport extends AbstractServant{
 			Document doc = root.getOwnerDocument();
 			
 			Element logger = doc.createElement(handler.getHandlerType());
-			
+			XmlTools.setInt(logger, "offset", offset);
+			XmlTools.setInt(logger, "limit", limit);
+			XmlTools.setString(logger, "keyword",keyword);			
 			handler.report(logger);
 			
 			root.appendChild(logger);
@@ -57,7 +63,9 @@ public class MetricsReport extends AbstractServant{
 	
 	protected int onJson(Context ctx) throws Exception{
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
-		
+		int offset = getArgument("offset", 0, ctx);
+		int limit = getArgument("limit", 30, ctx);	
+		String keyword = getArgument("keyword","",ctx);		
 		Settings settings = Settings.get();
 		
 		MetricsHandler handler = (MetricsHandler) settings.get("metricsHandler");
@@ -65,7 +73,9 @@ public class MetricsReport extends AbstractServant{
 			Map<String,Object> root = msg.getRoot();
 		
 			Map<String,Object> logger = new HashMap<String,Object>();
-			
+			JsonTools.setInt(logger, "offset", offset);
+			JsonTools.setInt(logger, "limit", limit);
+			JsonTools.setString(logger, "keyword",keyword);				
 			handler.report(logger);
 			
 			root.put(handler.getHandlerType(), logger);
