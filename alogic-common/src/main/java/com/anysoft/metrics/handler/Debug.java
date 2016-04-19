@@ -27,6 +27,11 @@ public class Debug extends SummaryWriter{
 	protected String host;
 	
 	/**
+	 * 端口
+	 */
+	protected String port;
+	
+	/**
 	 * 应用
 	 */
 	protected String app;
@@ -35,10 +40,13 @@ public class Debug extends SummaryWriter{
 	protected void write(Map<String, Fragment> data, long t) {
 		Settings settings = Settings.get();
 		if (StringUtils.isEmpty(host)){
-			host = PropertiesConstants.getString(settings,"host", "${server.ip}:${server.port}");
+			host = PropertiesConstants.getString(settings,"server.ip", "unknown");
+		}
+		if (StringUtils.isEmpty(port)){
+			port = PropertiesConstants.getString(settings,"server.port","unknown");
 		}
 		if (StringUtils.isEmpty(app)){
-			app = PropertiesConstants.getString(settings,"app","${server.app}");
+			app = PropertiesConstants.getString(settings,"server.app","unknown");
 		}
 		
 		Collection<Fragment> values = data.values();
@@ -47,7 +55,7 @@ public class Debug extends SummaryWriter{
 			LOG.info(f.getId());
 			Dimensions dims = f.getDimensions();
 			if (dims != null){
-				dims.lpush(host,app);
+				dims.lpush(host,port,app);
 				LOG.info(dims.toString());
 			}
 			

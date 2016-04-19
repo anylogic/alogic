@@ -15,12 +15,13 @@ import org.w3c.dom.Element;
  */
 public class SimpleMeasures implements Measures {
 
+	protected Method[] methods = sum;
 	
 	public void toXML(Element e) {
 		if (e != null){
 			String _values = toString();
 			e.setAttribute("v", _values);
-			e.setAttribute("m", method.name());
+			e.setAttribute("m", methods2string(methods));
 		}
 	}
 
@@ -29,7 +30,7 @@ public class SimpleMeasures implements Measures {
 		if (e != null){
 			String _m = e.getAttribute("m");
 			if (_m != null && _m.length() > 0){
-				method = Method.valueOf(_m);
+				methods = string2methods(_m);
 			}
 			
 			String _v = e.getAttribute("v");
@@ -49,7 +50,7 @@ public class SimpleMeasures implements Measures {
 			String _values = toString();
 			json.put("v", _values);
 			
-			json.put("m", method.name());
+			json.put("m", methods2string(methods));
 		}
 	}
 
@@ -59,7 +60,7 @@ public class SimpleMeasures implements Measures {
 			Object _m = json.get("m");
 			if (_m != null && _m instanceof String){
 				String m = (String)_m;
-				method = Method.valueOf(m);
+				methods = string2methods(m);
 			}
 			
 			Object _v = json.get("v");
@@ -89,16 +90,20 @@ public class SimpleMeasures implements Measures {
 							values[i] = value;
 						}
 					}else{
+						Method [] otherMethods = other.method();
+						Method m = (otherMethods == null || otherMethods.length <= 0) ? 
+								Method.sum :i < otherMethods.length ? otherMethods[i] : otherMethods[otherMethods.length - 1];
+
 						if (o instanceof Long){
 							Long value = other.asLong(i);
 							if (value != null){
-								values[i] = incr((Long)values[i],value,other.method());
+								values[i] = incr((Long)values[i],value,m);
 							}
 						}else{
 							if (o instanceof Double){
 								Double value = other.asDouble(i);
 								if (value != null){
-									values[i] = incr((Double)values[i],value,other.method());
+									values[i] = incr((Double)values[i],value,m);
 								}
 							}
 						}
@@ -149,19 +154,18 @@ public class SimpleMeasures implements Measures {
 		return value;
 	}	
 
-	
-	public Method method() {
-		return method;
+
+
+	@Override
+	public Method[] method() {
+		return methods;
 	}
 
-	
-	public Measures method(Method _method) {
-		method = _method;
+	@Override
+	public Measures method(Method[] method) {
+		methods = method;
 		return this;
-	}
-
-	protected Method method = Method.sum;
-	
+	}	
 	
 	public Measures lpush(Object[] _values) {
 		values = combine(values,_values);		
@@ -216,7 +220,35 @@ public class SimpleMeasures implements Measures {
 		
 		return buffer.toString();
 	}
+	
+	public String methods2string(Method [] m){
+		StringBuffer buffer = new StringBuffer();
+		
+		if (m != null){
+			for (int i = 0 ; i < m.length ; i ++){
+				if (i != 0){
+					buffer.append("$");
+				}
+				buffer.append(m[i].name());
+			}
+		}
+		
+		return buffer.toString();		
+	}
 
+	public Method[] string2methods(String m){
+		String [] _methods = m.split("[$]");
+		Method [] result = new Method[_methods.length];
+		for (int i = 0 ;i < _methods.length ; i ++){
+			try {
+				result[i] = Method.valueOf(_methods[i]);
+			}catch (Exception ex){
+				result[i] = Method.sum;
+			}
+		}		
+		return result;
+	}
+	
 	
 	public int count() {
 		return values.length;
@@ -348,4 +380,5 @@ public class SimpleMeasures implements Measures {
 	}
 	
 	protected Object[] values = null;
+
 }

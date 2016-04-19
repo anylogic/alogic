@@ -422,7 +422,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		 * <br>
 		 * 定时器必须在有效期之内才会被调度，可以通过config中toDate变量进行设置，缺省情况下，取当前时间之后的50年。
 		 */
-		protected Date toDate = new Date(System.currentTimeMillis() + 50 * 365 * 24 * 60 * 60 * 1000);				
+		protected Date toDate = new Date(System.currentTimeMillis() + 50 * 365 * 24 * 60 * 60 * 1000L);				
 		
 		/**
 		 * 队列

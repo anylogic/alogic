@@ -168,5 +168,6 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-core:LogicBusApp在销毁的时候flush bizLogger和metricsHandler(1.6.4.44)
 	 + alogic-core:Context增加toString()以便输出协议内容(1.6.4.44)
 	 + alogic-common:AbstractHandler修正Report输出的bug，并增加统计数据的分页功能(1.6.4.44)
-	 
+	 + alogic-common:指标量度Measures支持多个方法(1.6.4.45)
+	 + alogic-dore:修正定时器有效期的bug(1.6.4.45)
 	 

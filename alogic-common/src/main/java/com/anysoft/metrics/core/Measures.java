@@ -9,6 +9,9 @@ import com.anysoft.util.XmlSerializer;
  * 
  * @author duanyy
  * @since 1.2.8
+ * 
+ * @version 1.6.4.45 [20160418 duanyy] <br>
+ * - 支持多个方法 <br>
  */
 public interface Measures extends XmlSerializer,JsonSerializer{
 	
@@ -21,17 +24,52 @@ public interface Measures extends XmlSerializer,JsonSerializer{
 	}
 	
 	/**
+	 * 预定义的方法组：last
+	 */
+	public static final Method[] last = new Method[]{
+		Method.lst
+	};	
+	
+	/**
+	 * 预定义的方法组: avg
+	 */
+	public static final Method[] avg = new Method[]{
+		Method.avg
+	};
+	
+	/**
+	 * 预定义的方法组: max
+	 */
+	public static final Method[] max = new Method[]{
+		Method.max
+	};
+	
+	/**
+	 * 预定义的方法组：min
+	 */
+	public static final Method[] min = new Method[]{
+		Method.min
+	};
+	
+	/**
+	 * 预定义的方法组:sum
+	 */
+	public static final Method[] sum = new Method[]{
+		Method.sum	
+	};
+	
+	/**
 	 * 获取量度的叠加方法
 	 * @return Method
 	 */
-	public Method method();
+	public Method[] method();
 	
 	/**
 	 * 设置量度的叠加方法
 	 * @param method
 	 * @return Measures
 	 */
-	public Measures method(Method method);
+	public Measures method(Method method[]);
 	
 	/**
 	 * 量度的叠加

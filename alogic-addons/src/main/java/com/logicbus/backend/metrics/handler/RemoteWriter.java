@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import com.anysoft.context.Context;
@@ -36,7 +37,12 @@ import com.logicbus.remote.core.Parameters;
  * - 修正编译警告 <br>
  */
 public class RemoteWriter extends SummaryWriter {
-
+	
+	protected Call theCall = null;
+	
+	protected String host;
+	protected String app;
+	protected String port;
 	
 	protected void write(Map<String, Fragment> _data,long t) {
 		if (theCall != null){
@@ -49,11 +55,14 @@ public class RemoteWriter extends SummaryWriter {
 					Collection<Fragment> values = _data.values();
 				
 					Settings settings = Settings.get();
-					if (host == null){
-						host = settings.GetValue("host", "${server.ip}:${server.port}");
+					if (StringUtils.isEmpty(host)){
+						host = PropertiesConstants.getString(settings,"server.ip", "unknown");
 					}
-					if (app == null){
-						app = settings.GetValue("app", "${server.app}");
+					if (StringUtils.isEmpty(port)){
+						port = PropertiesConstants.getString(settings,"server.port","unknown");
+					}
+					if (StringUtils.isEmpty(app)){
+						app = PropertiesConstants.getString(settings,"server.app","unknown");
 					}
 					for (Fragment item:values){
 						Map<String,Object> map = new HashMap<String,Object>(5);
@@ -61,7 +70,7 @@ public class RemoteWriter extends SummaryWriter {
 						Dimensions dims = item.getDimensions();
 						
 						if (dims != null){
-							dims.lpush(host,app);
+							dims.lpush(host,port,app);
 						}
 						
 						item.toJson(map);
@@ -93,9 +102,5 @@ public class RemoteWriter extends SummaryWriter {
 			IOTools.close(context);
 		}
 	}
-	
-	protected Call theCall = null;
-	
-	protected String host;
-	protected String app;
+
 }
