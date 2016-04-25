@@ -9,6 +9,8 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.anysoft.util.JsonTools;
+import com.anysoft.util.XmlTools;
 import com.logicbus.models.catalog.Path;
 import com.logicbus.models.servant.ServantCatalogNode;
 import com.logicbus.models.servant.ServiceDescription;
@@ -22,8 +24,24 @@ import com.logicbus.models.servant.ServiceDescription;
  * - 增加JSON序列化支持 <br>
  * @version 1.6.4.4 [20150910 duanyy] <br>
  * - 不再输出服务的详细信息 <br>
+ * @version 1.6.4.46 [20160425 duanyy] <br>
+ * - 实现Reportable接口 <br>
  */
 public class ServantCatalogNodeImpl implements ServantCatalogNode {
+	/**
+	 * 服务列表
+	 */
+	protected Hashtable<String, ServiceDescription> services;
+	
+	/**
+	 * 路径
+	 */
+	protected Path path;
+	
+	/**
+	 * 附加数据
+	 */
+	protected Object data;
 
 	/**
 	 * Constructor
@@ -44,7 +62,19 @@ public class ServantCatalogNodeImpl implements ServantCatalogNode {
 		path = new Path(_path,_name);
 		data = _data;
 		services = new Hashtable<String, ServiceDescription>();
-	}	
+	}		
+	
+	@Override
+	public void report(Element xml) {
+		boolean detail = XmlTools.getBoolean(xml, "detail", true);
+		toXML(xml,detail);
+	}
+
+	@Override
+	public void report(Map<String, Object> json) {
+		boolean detail = JsonTools.getBoolean(json, "detail", true);
+		toJson(json,detail);
+	}
 
 	/**
 	 * 查找该目录节点所包含的指定ID的服务
@@ -196,20 +226,5 @@ public class ServantCatalogNodeImpl implements ServantCatalogNode {
 	public void removeService(String id){
 		services.remove(id);
 	}
-	
-	/**
-	 * 服务列表
-	 */
-	protected Hashtable<String, ServiceDescription> services;
-	
-	/**
-	 * 路径
-	 */
-	protected Path path;
-	
-	/**
-	 * 附加数据
-	 */
-	protected Object data;
 
 }

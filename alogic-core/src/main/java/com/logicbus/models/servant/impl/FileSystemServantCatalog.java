@@ -3,6 +3,7 @@ package com.logicbus.models.servant.impl;
 import java.io.File;
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -44,24 +45,40 @@ import com.logicbus.models.servant.ServiceDescriptionWatcher;
  * @version 1.2.6 [20140801 duanyy]<br>
  * - ServiceDescription变更为interface,采用DefaultServiceDescription
  * 
+ * @version 1.6.4.46 [20160425 duanyy] <br>
+ * - 从ServantCatalog.Abstract上进行继承。 <br>
+ * 
  */
-public class FileSystemServantCatalog implements ServantCatalog {
+public class FileSystemServantCatalog extends ServantCatalog.Abstract {
 	/**
 	 * a logger of log4j
 	 */
 	protected static Logger logger = LogManager.getLogger(FileSystemServantCatalog.class);
+
 	/**
-	 * @param _properties
+	 * 路径
 	 */
-	public FileSystemServantCatalog(Properties _properties){
-		String __path = _properties.GetValue("home", "");
-		if (__path.length() <= 0){
-			rootPath = _properties.GetValue("local.servant.home", "${local.home}/servants");
+	protected String rootPath;
+	
+	/**
+	 * 目录名
+	 */
+	protected String domain;	
+	
+	public FileSystemServantCatalog(){
+
+	}
+
+	@Override
+	public void configure(Properties p) {
+		String path = p.GetValue("home", "");
+		if (StringUtils.isEmpty(path)){
+			rootPath = p.GetValue("local.servant.home", "${local.home}/servants");
 		}else{
-			rootPath = __path;
+			rootPath = path;
 		}
 	}
-	
+
 	/**
 	 * 在当前目录下查找服务定义信息
 	 * @param id 服务的Id
@@ -76,8 +93,6 @@ public class FileSystemServantCatalog implements ServantCatalog {
 		
 		return node.findService(serviceId);
 	}
-
-
 	
 	
 	public CatalogNode getChildByPath(CatalogNode parent, Path _path) {
@@ -101,7 +116,6 @@ public class FileSystemServantCatalog implements ServantCatalog {
 		
 		return createCatalogNode(childPath);
 	}
-
 	
 	public CatalogNode[] getChildren(CatalogNode parent) {
 		String __path = rootPath + parent.getPath();
@@ -218,18 +232,8 @@ public class FileSystemServantCatalog implements ServantCatalog {
 		
 		return sd;
 	}
-	
-	/**
-	 * 路径
-	 */
-	protected String rootPath;
-	
-	/**
-	 * 目录名
-	 */
-	protected String domain;
 
-	
+	@Override
 	public void addWatcher(ServiceDescriptionWatcher watcher) {
 		// do nothing
 	}
@@ -239,7 +243,8 @@ public class FileSystemServantCatalog implements ServantCatalog {
 		settings.SetValue("home", "D:\\ecloud\\logicbus\\servants");
 		settings.addSettings(new CommandLine(args));
 		
-		ServantCatalog catalog = new FileSystemServantCatalog(settings);
+		ServantCatalog catalog = new FileSystemServantCatalog();
+		catalog.configure(settings);
 		ServantCatalogNode root = (ServantCatalogNode) catalog.getRoot();
 		
 		scanCatalog(catalog,root);				
@@ -273,4 +278,5 @@ public class FileSystemServantCatalog implements ServantCatalog {
 			scanCatalog(sc, child);
 		}
 	}
+
 }

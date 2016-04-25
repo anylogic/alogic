@@ -30,14 +30,13 @@ import com.logicbus.models.servant.ServiceDescription;
  * - class:xrc所在的jar之中的class,通过该class来找到jar的URLLoader,缺省为:com.logicbus.models.servant.impl.XMLResourceServantCatalog <br>
  * 
  * @author duanyy
- *
+ * @version 1.6.4.46 [20160425 duanyy] <br>
+ * - 从ServantCatalog.Abstract上进行继承。 <br>
  */
 public class XMLResourceServantCatalog extends XMLDocumentServantCatalog {
 
-	public XMLResourceServantCatalog(Properties _properties) {
-		super(_properties);
+	public XMLResourceServantCatalog() {
 	}
-	
 	
 	public void loadDocument(Properties _properties){
 		String className = _properties.GetValue("class", 
@@ -64,7 +63,8 @@ public class XMLResourceServantCatalog extends XMLDocumentServantCatalog {
 		
 		settings.addSettings(new CommandLine(args));
 		
-		ServantCatalog catalog = new XMLResourceServantCatalog(settings);
+		ServantCatalog catalog = new XMLResourceServantCatalog();
+		catalog.configure(settings);
 		ServantCatalogNode root = (ServantCatalogNode) catalog.getRoot();
 		
 		scanCatalog(catalog,root);				

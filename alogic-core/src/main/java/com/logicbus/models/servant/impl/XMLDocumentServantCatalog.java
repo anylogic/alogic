@@ -48,9 +48,10 @@ import com.logicbus.models.servant.ServiceDescriptionWatcher;
  * - xrc.secondary:备用文件地址,支持file,http等协议,缺省为:${secondary.home}/servant.xml
  * 
  * @author duanyy
- * 
+ * @version 1.6.4.46 [20160425 duanyy] <br>
+ * - 从ServantCatalog.Abstract上进行继承。 <br>
  */
-public class XMLDocumentServantCatalog implements ServantCatalog {
+public class XMLDocumentServantCatalog extends ServantCatalog.Abstract {
 	
 	/**
 	 * a logger of log4j
@@ -62,12 +63,12 @@ public class XMLDocumentServantCatalog implements ServantCatalog {
 	 */
 	protected Document doc = null;
 	
-	/**
-	 * Constructor
-	 * @param _properties 环境变量 
-	 */
-	public XMLDocumentServantCatalog(Properties _properties){
-		loadDocument(_properties);
+	public XMLDocumentServantCatalog(){
+	}	
+	
+	@Override
+	public void configure(Properties p) {
+		loadDocument(p);
 	}	
 	
 	/**
@@ -297,4 +298,6 @@ public class XMLDocumentServantCatalog implements ServantCatalog {
 	public void addWatcher(ServiceDescriptionWatcher watcher) {
 		//do nothing
 	}
+
+
 }

@@ -1,7 +1,6 @@
 package com.logicbus.models.servant;
 
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.util.Vector;
 
 import org.apache.log4j.LogManager;
@@ -11,10 +10,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
-import com.anysoft.util.Properties;
 import com.anysoft.util.Settings;
-import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
 import com.logicbus.models.catalog.CatalogNode;
@@ -162,6 +160,8 @@ public class ServantManager {
 		
 		Element root = doc.getDocumentElement();
 		
+		Factory<ServantCatalog> factory = new Factory<ServantCatalog>();
+		
 		NodeList children = root.getChildNodes();
 		for (int i = 0; i < children.getLength() ; i++){
 			Node item = children.item(i);
@@ -172,33 +172,17 @@ public class ServantManager {
 			if (!e.getNodeName().equals("catalog")){
 				continue;
 			}
-			XmlElementProperties props = new XmlElementProperties(e,Settings.get());
-			String className = props.GetValue("module", "com.logicbus.models.servant.impl.FileSystemServantCatalog");
-			ServantCatalog servantCatalog = createCatalogInstance(className,props);
-			if (servantCatalog != null){
-				catalogs.add(servantCatalog);
+			
+			try {
+				ServantCatalog servantCatalog = factory.newInstance(e, Settings.get(), "module");
+				if (servantCatalog != null){
+					catalogs.add(servantCatalog);
+				}
+			}catch (Exception ex){
+				logger.error("Can not create instance of ServantCatalog.", ex);
 			}
 		}
 		
-	}
-
-	/**
-	 * 生成服务目录实例
-	 * 
-	 * @param _className 类名
-	 * @param _props 环境变量
-	 * @return 服务目录实例
-	 */
-	protected ServantCatalog createCatalogInstance(String _className,Properties _props){
-		try {
-			Constructor<?> constructor = 
-					classLoader.loadClass(_className).getConstructor(new Class<?>[]{Properties.class});
-			return (ServantCatalog)constructor.newInstance(
-							new Object[]{_props});
-		} catch (Exception ex) {
-			logger.error("Can not create instance of ServantCatalog:" + _className, ex);
-		}		
-		return null;
 	}
 	
 	/**

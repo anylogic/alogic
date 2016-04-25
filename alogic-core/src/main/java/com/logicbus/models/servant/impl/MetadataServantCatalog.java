@@ -32,7 +32,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * - xrc:文件地址，仅支持当前classLoader下的xml文件,缺省为:/com/logicbus/service/servant.xml
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.4.46 [20160425 duanyy] <br>
+ * - 从ServantCatalog.Abstract上进行继承。 <br>
  */
 public class MetadataServantCatalog extends XMLDocumentServantCatalog {
 	protected String catalogXrcMaster = "${master.home}/services/core/manager/GetCatalogServices";
@@ -40,17 +42,18 @@ public class MetadataServantCatalog extends XMLDocumentServantCatalog {
 	protected String serviceXrcMaster = "${master.home}/services/core/manager/GetServiceDesc";
 	protected String serviceXrcSecondary = "${secondary.home}/services/core/manager/GetServiceDesc";
 	
-	public MetadataServantCatalog(Properties _properties) {
-
-		super(_properties);
-		
-		catalogXrcMaster = _properties.GetValue("xrc.catalog.master", catalogXrcMaster);
-		catalogXrcSecondary = _properties.GetValue("xrc.catalog.secondary", catalogXrcSecondary);
-		
-		serviceXrcMaster = _properties.GetValue("xrc.service.master", serviceXrcMaster);
-		serviceXrcSecondary = _properties.GetValue("xrc.service.secondary", serviceXrcSecondary);
-		
+	public MetadataServantCatalog() {
 	}
+	
+	@Override
+	public void configure(Properties p) {
+		super.configure(p);
+		catalogXrcMaster = p.GetValue("xrc.catalog.master", catalogXrcMaster);
+		catalogXrcSecondary = p.GetValue("xrc.catalog.secondary", catalogXrcSecondary);
+		
+		serviceXrcMaster = p.GetValue("xrc.service.master", serviceXrcMaster);
+		serviceXrcSecondary = p.GetValue("xrc.service.secondary", serviceXrcSecondary);		
+	}		
 
 	public void loadDocument(Properties _properties) {
 		String xrc = _properties.GetValue("xrc.master",
