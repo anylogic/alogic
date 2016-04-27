@@ -172,4 +172,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-dore:修正定时器有效期的bug(1.6.4.45)
 	 + alogic-core:ServantCatalog实现Configurable和XMLConfigurable(1.6.4.46)
 	 + 1.6.4 封版，发布release版本(1.6.4)
-	 
+ - 1.6.5 [20150427 duanyy]
+ 	 + 创建1.6.5-SNAPSHOT版本，开始1.6.5版本开发
