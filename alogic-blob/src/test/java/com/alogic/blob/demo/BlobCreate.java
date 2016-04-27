@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import com.alogic.blob.client.BlobTool;
 import com.alogic.blob.core.BlobManager;
 import com.alogic.blob.core.BlobWriter;
-import com.alogic.blob.service.Download;
 import com.anysoft.util.Settings;
 
 public class BlobCreate {

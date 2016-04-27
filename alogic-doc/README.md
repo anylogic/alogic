@@ -171,4 +171,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
 	 + alogic-common:指标量度Measures支持多个方法(1.6.4.45)
 	 + alogic-dore:修正定时器有效期的bug(1.6.4.45)
 	 + alogic-core:ServantCatalog实现Configurable和XMLConfigurable(1.6.4.46)
+	 + 1.6.4 封版，发布release版本(1.6.4)
 	 
