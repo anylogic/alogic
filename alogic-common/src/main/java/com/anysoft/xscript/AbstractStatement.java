@@ -3,13 +3,12 @@ package com.anysoft.xscript;
 import java.lang.reflect.Constructor;
 import java.util.Hashtable;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.Properties;
+import com.anysoft.util.XmlTools;
 
 /**
  * Segment的虚基类
@@ -28,6 +27,8 @@ import com.anysoft.util.Properties;
  * - 完善异常日志的输出 <br>
  * @version 1.6.4.35 [20160314 duanyy] <br>
  * - 调整activity的取值 <br>
+ * @version 1.6.5.1 [20160428 duanyy] <br>
+ * - activity可以通过变量计算 <br>
  */
 
 public abstract class AbstractStatement implements Statement{
@@ -219,8 +220,7 @@ public abstract class AbstractStatement implements Statement{
 			watcher.begin(this, start);
 		}
 		try {
-			activity = e.getAttribute("activity");
-			activity = StringUtils.isEmpty(activity) ? "default":activity;
+			activity = p.transform(XmlTools.getString(e,"activity","default"));
 			return compiling(e,p,watcher);
 		}catch (Exception ex){
 			logger.error("Error when compiling.",ex);
