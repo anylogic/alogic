@@ -8,7 +8,8 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.Properties;
-import com.anysoft.util.XmlTools;
+import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.XmlElementProperties;
 
 /**
  * Segment的虚基类
@@ -29,6 +30,8 @@ import com.anysoft.util.XmlTools;
  * - 调整activity的取值 <br>
  * @version 1.6.5.1 [20160428 duanyy] <br>
  * - activity可以通过变量计算 <br>
+ * @version 1.6.5.2 [20160503 duanyy] <br>
+ * - 修正bug<br>
  */
 
 public abstract class AbstractStatement implements Statement{
@@ -220,7 +223,8 @@ public abstract class AbstractStatement implements Statement{
 			watcher.begin(this, start);
 		}
 		try {
-			activity = p.transform(XmlTools.getString(e,"activity","default"));
+			Properties props = new XmlElementProperties(e,p);
+			activity = PropertiesConstants.getString(props,"activity",activity);
 			return compiling(e,p,watcher);
 		}catch (Exception ex){
 			logger.error("Error when compiling.",ex);
