@@ -176,3 +176,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + 创建1.6.5-SNAPSHOT版本，开始1.6.5版本开发
  	 + alogic-common:xscript语句中的activity可以通过变量计算(1.6.5.1)
  	 + alogic-common:修正xscript中activity取值的问题(1.6.5.2)
+ 	 + alogic-common:增加trace框架，提供方法级别的trace日志输出(1.6.5.3)

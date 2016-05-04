@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<tracer module="com.alogic.tracer.StackTracer">
+	<logger module="com.alogic.tracer.log.TraceLogger$Default"></logger>
+</tracer>
