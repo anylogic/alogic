@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,6 +47,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.4.17 [20151216 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.5.4 [20160515 duanyy] <br>
+ * - XML配置文件的变量可以写入到SystemProperties之中 <br>
  */
 public class Settings extends DefaultProperties implements XmlSerializer,Reportable{
 	/**
@@ -290,17 +294,30 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 			}
 			if ("parameter".equals(node.getNodeName())){
 				Element e = (Element)node;
-				String id = e.getAttribute("id");
-				String value = e.getAttribute("value");
+				String id = XmlTools.getString(e,"id","");
+				String value = XmlTools.getString(e,"value","");
+				if (StringUtils.isEmpty(id) || StringUtils.isEmpty(value)){
+					continue;
+				}
 				//支持final标示,如果final为true,则不覆盖原有的取值
-				boolean isFinal = "true".equals(e.getAttribute("final"))?true:false;
+				boolean isFinal = XmlTools.getBoolean(e, "final", false);
 				if (isFinal){
-					String oldValue = this._GetValue(id);
-					if (oldValue == null || oldValue.length() <= 0){
+					String oldValue = GetValue(id, "", false,false);
+					if (StringUtils.isEmpty(oldValue)){
 						SetValue(id,value);
+						boolean system = XmlTools.getBoolean(e, "system", false);
+						if (system){
+							System.setProperty(id, value);
+							logger.info(String.format("Set system property:%s=%s", id,value));
+						}
 					}
 				}else{
 					SetValue(id,value);
+					boolean system = XmlTools.getBoolean(e, "system", false);
+					if (system){
+						System.setProperty(id, value);
+						logger.info(String.format("Set system property:%s=%s", id,value));
+					}					
 				}
 			}
 		}		
