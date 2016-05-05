@@ -224,7 +224,7 @@ public abstract class AbstractStatement implements Statement{
 		}
 		try {
 			Properties props = new XmlElementProperties(e,p);
-			activity = PropertiesConstants.getString(props,"activity",activity);
+			activity = PropertiesConstants.getString(props,"activity",e.getTagName());
 			return compiling(e,p,watcher);
 		}catch (Exception ex){
 			logger.error("Error when compiling.",ex);
