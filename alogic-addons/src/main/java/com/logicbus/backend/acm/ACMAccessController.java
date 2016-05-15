@@ -49,6 +49,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.4.41 [20160401 duanyy] <br>
  * - Report增加分页功能 <br>
+ * 
+ * - 增加reload接口 <br>
  */
 public abstract class ACMAccessController implements AccessController {
 	/**
@@ -109,8 +111,7 @@ public abstract class ACMAccessController implements AccessController {
 	}
 	
 	@Override
-	public void configure(Properties props) {
-		
+	public void configure(Properties props) {		
 		defaultAcmId = PropertiesConstants.getString(props, "acm.default", defaultAcmId);
 		defaultAcm = acmCache.get(defaultAcmId);
 		appField = props.GetValue("acm.appArguName", appField);		
@@ -122,15 +123,38 @@ public abstract class ACMAccessController implements AccessController {
 		return sessionId + ":" + serviceId.getPath();
 	}
 	
+	protected AccessControlModel getACM(String sessionId,Path serviceId, ServiceDescription servant,
+			Context ctx){
+		return acmCache.get(sessionId);
+	}
+	
+	protected int verify(AccessControlModel acm,Context ctx){
+		return 0;
+	}
+
+	@Override
+	public void reload(String id){
+		// nothing to do
+	}	
+	
 	@Override
 	public int accessStart(String sessionId,Path serviceId, ServiceDescription servant,
 			Context ctx) {
-		AccessControlModel acm = acmCache.get(sessionId);
+		AccessControlModel acm = getACM(sessionId,serviceId,servant,ctx);
 		if (acm == null){
 			acm = defaultAcm;
 			if (acm == null)
 				return -2;
 		}
+		
+		/**
+		 * 验证身份
+		 */
+		int verified = verify(acm,ctx);
+		if (verified < 0){
+			return verified;
+		}
+		
 		lock.lock();
 		try{
 			String acmObject = getACMObject(sessionId,serviceId,servant,ctx);

@@ -44,8 +44,15 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.6.4.35 [20160315 duanyy] <br>
  * - 实现XMLConfigurable和Configurable接口 <br>
  * 
+ * - 增加reload接口 <br>
  */
 public interface AccessController extends Reportable,MetricsReportable,XMLConfigurable,Configurable{
+	
+	/**
+	 * 重新装入配置
+	 * @param id 指定对象
+	 */
+	public void reload(String id);
 	
 	/**
 	 * 针对当前会话创建会话ID

@@ -116,6 +116,20 @@
 				<parameter id="servant.maxIdle" value="1"/>
 			</properties>			
 		</service>
+		<service 
+			id="AclReload" 
+			name="AclReload" 
+			note="重新装入当前的访问控制列表"
+			visible="system"
+			log = "none" 
+			module="com.logicbus.service.AclReload"
+		>
+			<properties>
+				<parameter id="jsonDefault" value="true"/>
+				<parameter id="servant.maxActive" value="10"/>
+				<parameter id="servant.maxIdle" value="1"/>
+			</properties>			
+		</service>		
 		
 		<catalog name="util">
 			<service 

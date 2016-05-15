@@ -21,8 +21,14 @@ import com.logicbus.models.servant.ServiceDescription;
  * - 修正NothingAccessController无法实例化问题
  * @version 1.6.4.35 [20160315 duanyy] <br>
  * - 实现XMLConfigurable和Configurable接口 <br>
+ * 
+ * - 增加reload接口 <br>
  */
 public class NothingAccessController implements AccessController {
+	@Override
+	public void reload(String id){
+		// nothing to do
+	}
 	
 	public String createSessionId(Path serviceId, ServiceDescription servant,
 			Context ctx) {

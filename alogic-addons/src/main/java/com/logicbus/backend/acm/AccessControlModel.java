@@ -36,6 +36,7 @@ import com.anysoft.util.XmlTools;
  * @version 1.6.3.2 [20150213 duanyy] <br>
  * - 接口{@link com.anysoft.cache.Cacheable Cacheable}增加了{@link com.anysoft.cache.Cacheable#expire() Cacheable.expire}方法 <br>
  * 
+ * - 增加credentials和verifier属性 <br>
  */
 
 public class AccessControlModel implements Cacheable {
@@ -59,6 +60,16 @@ public class AccessControlModel implements Cacheable {
 	 * 一分钟之内的最大访问次数
 	 */
 	protected int maxTimesPerMin = 10;
+	
+	/**
+	 * 证书
+	 */
+	protected String credentials = "";
+	
+	/**
+	 * 验证器
+	 */
+	protected String verifier = "None";
 	
 	/**
 	 * 优先级
@@ -87,6 +98,25 @@ public class AccessControlModel implements Cacheable {
 		return id;
 	}
 
+	public String getPassword(){
+		return pwd;
+	}
+	
+	public String getVerifier(){
+		return verifier;
+	}
+	
+	public String getCredentials(){
+		return credentials;
+	}
+	
+	public int getMaxThread(){
+		return maxThread;
+	}
+	
+	public int getMaxTimesPerMin(){
+		return maxTimesPerMin;
+	}
 	
 	public boolean isExpired() {
 		//永不过期
@@ -103,6 +133,8 @@ public class AccessControlModel implements Cacheable {
 		root.setAttribute("maxThread", String.valueOf(maxThread));
 		root.setAttribute("maxTimesPerMin", String.valueOf(maxTimesPerMin));
 		root.setAttribute("priority", String.valueOf(priority));
+		root.setAttribute("verifier", verifier);
+		root.setAttribute("credentials", credentials);
 		
 		if (acls != null && acls.size() > 0){
 			Document doc = root.getOwnerDocument();
@@ -133,6 +165,8 @@ public class AccessControlModel implements Cacheable {
 		json.put("maxThread",String.valueOf(maxThread));
 		json.put("maxTimesPerMin", String.valueOf(maxTimesPerMin));
 		json.put("priority", String.valueOf(priority));
+		json.put("verifier", verifier);
+		json.put("credentials", credentials);
 		
 		if (acls != null && acls.size() > 0){
 			ArrayList<Object> list = new ArrayList<Object>();
@@ -160,6 +194,8 @@ public class AccessControlModel implements Cacheable {
 		maxThread = PropertiesConstants.getInt(props, "maxThread", maxThread);
 		maxTimesPerMin = PropertiesConstants.getInt(props, "maxTimesPerMin", maxTimesPerMin);
 		priority = PropertiesConstants.getInt(props, "priority", priority);
+		verifier = PropertiesConstants.getString(props, "verifier", verifier);
+		credentials = PropertiesConstants.getString(props, "credentials", credentials);
 
 		NodeList aclsNodeList = XmlTools.getNodeListByPath(root, "acls/acl");
 		
@@ -193,6 +229,8 @@ public class AccessControlModel implements Cacheable {
 		maxThread = JsonTools.getInt(json, "maxThread", maxThread);
 		maxTimesPerMin = JsonTools.getInt(json, "maxTimesPerMin", maxTimesPerMin);
 		priority = JsonTools.getInt(json, "priority", priority);
+		verifier = JsonTools.getString(json, "verifier", verifier);
+		credentials = JsonTools.getString(json, "credentials", credentials);
 		
 		Object _acls = json.get("acls");
 		if (_acls != null && _acls instanceof List){

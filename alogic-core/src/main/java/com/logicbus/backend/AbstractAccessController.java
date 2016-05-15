@@ -54,6 +54,7 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.6.4.41 [20160401 duanyy] <br>
  * - Report增加分页功能 <br>
  * 
+ * - 增加reload接口 <br>
  */
 public abstract class AbstractAccessController implements AccessController {
 	/**
@@ -71,6 +72,11 @@ public abstract class AbstractAccessController implements AccessController {
 	protected String metricsId = "acm.stat";
 	
 	public AbstractAccessController(){
+	}
+	
+	@Override
+	public void reload(String id){
+		// nothing to do
 	}
 	
 	@Override
