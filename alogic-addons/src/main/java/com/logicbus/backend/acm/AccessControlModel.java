@@ -36,6 +36,7 @@ import com.anysoft.util.XmlTools;
  * @version 1.6.3.2 [20150213 duanyy] <br>
  * - 接口{@link com.anysoft.cache.Cacheable Cacheable}增加了{@link com.anysoft.cache.Cacheable#expire() Cacheable.expire}方法 <br>
  * 
+ * @version 1.6.5.5 [20160515 duanyy] <br>
  * - 增加credentials和verifier属性 <br>
  */
 

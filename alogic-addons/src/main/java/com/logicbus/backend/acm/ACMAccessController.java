@@ -50,6 +50,7 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.6.4.41 [20160401 duanyy] <br>
  * - Report增加分页功能 <br>
  * 
+ * @version 1.6.5.5 [20160515 duanyy] <br>
  * - 增加reload接口 <br>
  */
 public abstract class ACMAccessController implements AccessController {
