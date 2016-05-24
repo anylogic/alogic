@@ -53,6 +53,9 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.6.4.8 [20151013 duanyy] <br>
  * - CORS成了可选配置 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 在MessageRouter中提前写出报文 <br>
  */
 public class MessageRouterServletHandler implements ServletHandler {
 	/**
@@ -160,22 +163,8 @@ public class MessageRouterServletHandler implements ServletHandler {
 		}
 		
 		HttpContext ctx = new HttpContext(request,response,encoding,interceptMode);
-		try{
-			//规范化ID
-			Path id = normalizer.normalize(ctx, request);
-			MessageRouter.action(id,ctx,ac);
-		}catch (Exception ex){
-			ex.printStackTrace();
-			if (ctx != null){
-				ctx.setReturn("core.fatalerror",ex.getMessage());
-				logger.error("core.fatalerror:" + ex.getMessage());
-			}
-		}	
-		finally {
-			if (ctx != null){
-				ctx.finish();
-			}
-		}
+		Path id = normalizer.normalize(ctx, request);
+		MessageRouter.action(id,ctx,ac);
 	}
 
 	public void destroy() {

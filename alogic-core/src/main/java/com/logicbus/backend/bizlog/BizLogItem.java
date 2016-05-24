@@ -26,6 +26,12 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.4.43 [20160411 duanyy] <br>
  * - DataProvider增加获取原始值接口 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 增加报文长度 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 增加id()接口
  */
 public class BizLogItem implements Comparable<BizLogItem>,Flowable {
 	
@@ -84,6 +90,15 @@ public class BizLogItem implements Comparable<BizLogItem>,Flowable {
 	 */
 	public String content;
 	
+	/**
+	 * 报文长度
+	 */
+	public long contentLength;
+	
+	@Override
+	public String id(){
+		return sn;
+	}
 	
 	public int compareTo(BizLogItem other) {		
 		return sn.compareTo(other.sn);

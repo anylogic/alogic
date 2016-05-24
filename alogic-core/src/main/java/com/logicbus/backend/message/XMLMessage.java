@@ -4,8 +4,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -40,16 +38,20 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.3.14 [20150409 duanyy] <br>
  * - 修正formContentType所取的参数名问题，笔误 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 淘汰MessageDoc，采用Context替代 <br>
+ * 
  */
 public class XMLMessage implements Message {
 	protected static final Logger logger = LogManager.getLogger(XMLMessage.class);		
 	protected Document xmlDoc = null;
 	protected Element root = null;
-
+	protected String contentType = "text/xml;charset=utf-8";
 	public Document getDocument(){return xmlDoc;}
 	public Element getRoot(){return root;}
-
-	public void init(MessageDoc ctx) {
+	
+	public void init(Context ctx) {
 		String data = null;
 		{
 			byte [] inputData = ctx.getRequestRaw();
@@ -64,7 +66,7 @@ public class XMLMessage implements Message {
 		
 		if (data == null){
 			//当客户端通过form来post的时候，Message不去读取输入流。
-			String _contentType = ctx.getReqestContentType();
+			String _contentType = ctx.getRequestContentType();
 			if (_contentType == null || !_contentType.startsWith(formContentType)){		
 				InputStream in = null;
 				try {
@@ -94,8 +96,9 @@ public class XMLMessage implements Message {
 		}
 		
 		root = xmlDoc.getDocumentElement();
+		contentType = "text/xml;charset=" + ctx.getEncoding();
 	}
-	public void finish(MessageDoc ctx,boolean closeStream) {
+	public void finish(Context ctx,boolean closeStream) {
 		root.setAttribute("code",ctx.getReturnCode());
 		root.setAttribute("reason", ctx.getReason());
 		root.setAttribute("duration", String.valueOf(ctx.getDuration()));
@@ -104,7 +107,7 @@ public class XMLMessage implements Message {
 		
 		OutputStream out = null;
 		try {
-			ctx.setResponseContentType("text/xml;charset=" + ctx.getEncoding());
+			ctx.setResponseContentType(contentType);
 			out = ctx.getOutputStream();
 			XmlTools.saveToOutputStream(xmlDoc, out);
 			out.flush();
@@ -117,17 +120,21 @@ public class XMLMessage implements Message {
 	}
 	
 	public String toString(){
-		try {
-			return XmlTools.node2String(xmlDoc);
-		} catch (TransformerException e) {
-			return xmlDoc.toString();
-		}
+		return XmlTools.node2String(xmlDoc);
 	}
 	
 	protected static String formContentType = "application/x-www-form-urlencoded";
 	static {
 		formContentType = Settings.get().GetValue("http.formContentType",
 				"application/x-www-form-urlencoded");
+	}
+	@Override
+	public String getContentType() {
+		return contentType;
+	}
+	@Override
+	public long getContentLength() {
+		return 0;
 	}
 	
 }

@@ -13,7 +13,6 @@ import com.logicbus.backend.Context;
 import com.logicbus.backend.Servant;
 import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.Message;
-import com.logicbus.backend.message.MessageDoc;
 import com.logicbus.models.servant.ServiceDescription;
 
 /**
@@ -76,7 +75,7 @@ public class Download extends Servant {
 	 */
 	public static class FileMessage implements Message {
 		@Override
-		public void finish(MessageDoc ctx, boolean closeStream) {
+		public void finish(Context ctx, boolean closeStream) {
 			if (!"core.ok".equals(ctx.getReturnCode())){
 				throw new ServantException(ctx.getReturnCode(),ctx.getReason());
 			}
@@ -92,8 +91,16 @@ public class Download extends Servant {
 			}
 		}
 		@Override
-		public void init(MessageDoc ctx) {
+		public void init(Context ctx) {
 			// Nothing to do
+		}
+		@Override
+		public String getContentType() {
+			return "unknown";
+		}
+		@Override
+		public long getContentLength() {
+			return 0;
 		}
 	}
 }

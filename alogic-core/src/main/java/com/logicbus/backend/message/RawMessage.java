@@ -28,6 +28,11 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.2.1 [20141223 duanyy] <br>
  * - 增加对Comet的支持 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 淘汰MessageDoc，采用Context替代 <br>
+ * - 增加getContentType和getContentLength <br>
+ * 
  */
 public class RawMessage implements Message {
 	protected static final Logger logger = LogManager.getLogger(RawMessage.class);	
@@ -35,6 +40,8 @@ public class RawMessage implements Message {
 	 * 消息文本
 	 */
 	protected StringBuffer buf = new StringBuffer();
+	
+	private long contentLength = 0;
 	
 	/**
 	 * 获取消息文本
@@ -51,7 +58,7 @@ public class RawMessage implements Message {
 		return buf.toString();
 	}
 
-	public void init(MessageDoc ctx) {
+	public void init(Context ctx) {
 		String data = null;
 		{
 			byte [] inputData = ctx.getRequestRaw();
@@ -76,18 +83,21 @@ public class RawMessage implements Message {
 		}
 		
 		if (data != null){
+			contentLength += data.getBytes().length;
 			buf.append(data);
 		}
 		
 		contentType = "text/plain;charset=" + ctx.getEncoding();
 	}
 
-	public void finish(MessageDoc ctx,boolean closeStream) {
+	public void finish(Context ctx,boolean closeStream) {
 		OutputStream out = null;
 		try {
 			ctx.setResponseContentType(contentType);
 			out = ctx.getOutputStream();
-			Context.writeToOutpuStream(out, buf.toString(), ctx.getEncoding());
+			byte [] bytes = buf.toString().getBytes(ctx.getEncoding());
+			contentLength += bytes.length;
+			Context.writeToOutpuStream(out, bytes);
 			out.flush();
 		}catch (Exception ex){
 			logger.error("Error when writing data to outputstream",ex);
@@ -101,6 +111,16 @@ public class RawMessage implements Message {
 	
 	public void setContentType(String _contentType){
 		contentType = _contentType;
+	}
+
+	@Override
+	public String getContentType() {
+		return contentType;
+	}
+
+	@Override
+	public long getContentLength() {
+		return contentLength;
 	}
 
 }

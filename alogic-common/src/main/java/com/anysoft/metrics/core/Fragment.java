@@ -17,6 +17,9 @@ import com.anysoft.util.XmlSerializer;
  * 
  * @version 1.6.4.43 [20160411 duanyy] <br>
  * - DataProvider增加获取原始值接口 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 增加id()接口
  */
 public class Fragment implements XmlSerializer,JsonSerializer,Flowable{
 
@@ -133,6 +136,11 @@ public class Fragment implements XmlSerializer,JsonSerializer,Flowable{
 	protected String id;
 	
 	public String getId(){
+		return id;
+	}
+	
+	@Override
+	public String id(){
 		return id;
 	}
 

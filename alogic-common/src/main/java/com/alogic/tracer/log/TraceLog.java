@@ -8,6 +8,9 @@ import com.anysoft.stream.Flowable;
  * 
  * @author duanyy
  * @since 1.6.5.3
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 增加id()接口
  */
 public class TraceLog implements Comparable<TraceLog>,Flowable{
 	/**
@@ -49,6 +52,11 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 	 * 内容长度
 	 */
 	protected long contentLength;
+	
+	@Override
+	public String id(){
+		return sn;
+	}	
 	
 	@Override
 	public String getValue(String varName, Object context, String defaultValue) {

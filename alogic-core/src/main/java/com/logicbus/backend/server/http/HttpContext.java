@@ -9,10 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.anysoft.util.IOTools;
+import com.anysoft.util.KeyGen;
 import com.anysoft.util.Settings;
 import com.logicbus.backend.Context;
 
@@ -41,6 +43,12 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.4.22 [20160113 duanyy] <br>
  * - 当发生错误时，细化错误信息的输出 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 不再从MessageDoc上继承 <br>
+ * - 增加报文长度 <br>
+ * - 增加全局调用次序 <br>
+ * 
  */
 
 public class HttpContext extends Context {
@@ -55,21 +63,19 @@ public class HttpContext extends Context {
 	protected HttpServletRequest request = null;
 	
 	/**
-	 * to get request
-	 * @return HttpServletRequest
+	 * 全局序列号
 	 */
-	public HttpServletRequest getRequest(){ return request;}
+	private String globalSerial = null;	
+	
+	/**
+	 * 调用次序
+	 */
+	private long globalSerialOrder = -1;
 	
 	/**
 	 * response
 	 */
 	protected HttpServletResponse response = null;
-	
-	/**
-	 * to get response
-	 * @return HttpServletResponse
-	 */
-	public HttpServletResponse getResponse(){return response;}
 	
 	/**
 	 * constructor
@@ -106,6 +112,18 @@ public class HttpContext extends Context {
 		}
 	}
 	
+	/**
+	 * to get request
+	 * @return HttpServletRequest
+	 */
+	public HttpServletRequest getRequest(){ return request;}	
+	
+	/**
+	 * to get response
+	 * @return HttpServletResponse
+	 */
+	public HttpServletResponse getResponse(){return response;}	
+	
 	@Override
 	public String _GetValue(String _name) {
 		String found = super._GetValue(_name);
@@ -132,7 +150,12 @@ public class HttpContext extends Context {
 		 * 支持负载均衡器的X-Forwarded-For
 		 */
 		String ip = request.getHeader(ForwardedHeader);
-		return (ip == null || ip.length() <= 0) ? request.getRemoteHost() : ip;
+		return (StringUtils.isEmpty(ip)) ? request.getRemoteHost() : ip;
+	}
+	
+	@Override
+	public String getClientRealIp(){
+		return request.getRemoteHost();
 	}
 
 	@Override
@@ -150,18 +173,58 @@ public class HttpContext extends Context {
 			return request.getRequestURL().toString();
 		}
 	}
-
-	private String globalSerial = null;
 	
 	@Override
 	public String getGlobalSerial() {
-		if (globalSerial == null || globalSerial.length() <= 0){
+		if (StringUtils.isEmpty(globalSerial)){
 			globalSerial = request.getHeader("GlobalSerial");
-			if (globalSerial == null || globalSerial.length() <= 0){
-				globalSerial = createGlobalSerial();
+			if (StringUtils.isEmpty(globalSerial)){
+				String sample = request.getParameter("sample");
+				globalSerial = createGlobalSerial(StringUtils.isNotEmpty(sample) && Boolean.parseBoolean(sample));
 			}
 		}
 		return globalSerial;
+	}
+	
+	@Override
+	public long getGlobalSerialOrder() {
+		if (globalSerialOrder < 0){
+			String value = request.getHeader("GlobalSerialOrder");
+			if (StringUtils.isNotEmpty(value)){
+				try {
+					globalSerialOrder = Long.parseLong(value);
+				}catch (NumberFormatException ex){
+					globalSerialOrder = 1;
+				}
+			}else{
+				globalSerialOrder = 1;
+			}
+		}
+		return globalSerialOrder;
+	}	
+			
+	/**
+	 * 生成全局序列号
+	 * <p>
+	 * 根据简单的算法生成一个全部不重复的序列号。
+	 * 
+	 * @param sample 是否采样
+	 * @return 全局序列号
+	 * 
+	 * @since 1.0.7
+	 * 
+	 */
+	public static String createGlobalSerial(boolean sample){
+		if (sample){
+			return "s" + KeyGen.uuid(9,36);
+		}else{
+			return KeyGen.uuid(10, 36);
+		}
+	}	
+	
+	@Override
+	public long getContentLength() {
+		return msg == null ? 0 : msg.getContentLength();
 	}
 
 	@Override
@@ -175,13 +238,18 @@ public class HttpContext extends Context {
 	}
 
 	@Override
-	public String getReqestContentType() {
+	public String getRequestContentType() {
 		return request.getContentType();
 	}
 	
 	@Override
 	public String getMethod() {
 		return request.getMethod();
+	}
+	
+	@Override
+	public String getQueryString(){
+		return request.getQueryString();
 	}
 	
 	@Override

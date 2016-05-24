@@ -21,6 +21,10 @@ import com.logicbus.backend.Context;
  * - 支持MessageDoc的Raw数据功能 <br>
  * @version 1.6.2.1 [20141223 duanyy] <br>
  * - 增加对Comet的支持 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 淘汰MessageDoc，采用Context替代 <br>
+ * - 增加getContentType和getContentLength <br>
  */
 public class ByteMessage implements Message {
 	/**
@@ -33,15 +37,20 @@ public class ByteMessage implements Message {
 	protected byte [] input = null;
 	
 	/**
+	 * 输出的字节流
+	 */
+	protected byte [] output = null;
+	
+	/**
+	 * content-type
+	 */
+	protected String contentType = "text/plain";	
+	
+	/**
 	 * 获取输入的字节流
 	 * @return 输入字节流
 	 */
 	public byte [] getInput(){return input;}
-	
-	/**
-	 * 输出的字节流
-	 */
-	protected byte [] output = null;
 	
 	/**
 	 * 设置待输出的字节流数据
@@ -51,7 +60,21 @@ public class ByteMessage implements Message {
 		output = _output;
 	}
 	
-	public void init(MessageDoc ctx) {
+	public void setContentType(String _contentType){
+		contentType = _contentType;
+	}
+	
+	@Override
+	public String getContentType() {
+		return contentType;
+	}
+
+	@Override
+	public long getContentLength() {
+		return (input == null ? 0:input.length) + (output == null ? 0:output.length);
+	}
+	
+	public void init(Context ctx) {
 		input = ctx.getRequestRaw();
 		if (input == null){
 			InputStream in = null;
@@ -66,7 +89,7 @@ public class ByteMessage implements Message {
 		}
 	}
 
-	public void finish(MessageDoc ctx,boolean closeStream) {
+	public void finish(Context ctx,boolean closeStream) {
 		OutputStream out = null;
 		try {
 			ctx.setResponseContentType(contentType);
@@ -84,15 +107,6 @@ public class ByteMessage implements Message {
 		}
 	}
 
-	public String getContentType(Context doc) {
-		return contentType;
-	}
-
-	protected String contentType = "text/plain";
-	
-	public void setContentType(String _contentType){
-		contentType = _contentType;
-	}
 
 	/**
 	 * 从输入流中读取字节
@@ -124,5 +138,4 @@ public class ByteMessage implements Message {
 	public static void writeBytes(OutputStream out,byte [] data) throws IOException {
 		out.write(data);
 	}
-
 }

@@ -91,11 +91,15 @@ public class Log4jTraceLogger extends AbstractHandler<TraceLog> implements Trace
 		}		
 		buf.setLength(0);
 
-		String reason=StringUtils.replacePattern(item.reason(), "\r\n", " "); //windows
-		reason=StringUtils.replacePattern(reason, "\n", " ");//linux
-		reason=StringUtils.replacePattern(reason, "\r", " ");//unix
-		reason=StringUtils.replacePattern(reason, "\\|", "&brvbar;");
-		
+		String reason= item.reason();
+		if (StringUtils.isEmpty(reason)){
+			reason = "";
+		}else{
+			reason = StringUtils.replacePattern(reason, "\r\n", " "); //windows
+			reason = StringUtils.replacePattern(reason, "\n", " ");//linux
+			reason = StringUtils.replacePattern(reason, "\r", " ");//unix
+			reason = StringUtils.replacePattern(reason, "\\|", "&brvbar;");
+		}
 		buf.append(item.sn()).append(delimeter)
 		.append(item.order()).append(delimeter)
 		.append(app).append(delimeter)

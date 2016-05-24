@@ -36,6 +36,10 @@ import com.logicbus.backend.server.http.HttpContext;
  * 
  * @version 1.6.4.30 [20160126 duanyy] <br>
  * - 文件上传消息处理透传Context对象 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 淘汰MessageDoc，采用Context替代 <br>
+ * - 增加getContentType和getContentLength <br>
  */
 public class MultiPartForm implements Message {
 	/**
@@ -61,6 +65,8 @@ public class MultiPartForm implements Message {
 	 * Json结构的根节点
 	 */
 	protected Map<String,Object> root = null;	
+	
+	private long contentLength = 0;
 	
 	/**
 	 * 获取FileItemFactory
@@ -102,8 +108,20 @@ public class MultiPartForm implements Message {
 		return fileItems;
 	}
 	
+
 	@Override
-	public void init(MessageDoc ctx) {
+	public String getContentType() {
+		return "application/json;charset=utf-8";
+	}
+
+
+	@Override
+	public long getContentLength() {
+		return contentLength;
+	}	
+	
+	@Override
+	public void init(Context ctx) {
 		if (!(ctx instanceof HttpContext)){
 			throw new ServantException("core.unsupported_context",
 					"The context's class must be HttpContext when using UploadFiles");
@@ -124,7 +142,7 @@ public class MultiPartForm implements Message {
 	}
 
 	@Override
-	public void finish(MessageDoc ctx, boolean closeStream) {
+	public void finish(Context ctx, boolean closeStream) {
 		Map<String,Object> theRoot = getRoot();
 		JsonTools.setString(theRoot, "code", ctx.getReturnCode());
 		JsonTools.setString(theRoot, "reason", ctx.getReason());
@@ -142,8 +160,10 @@ public class MultiPartForm implements Message {
 			}
 			
 			out = ctx.getOutputStream();
-			ctx.setResponseContentType("application/json;charset=" + ctx.getEncoding());
-			Context.writeToOutpuStream(out, data, ctx.getEncoding());
+			ctx.setResponseContentType(getContentType());
+			byte[] bytes = data.getBytes();
+			contentLength += bytes.length;
+			Context.writeToOutpuStream(out, bytes);
 			out.flush();
 		}catch (Exception ex){
 			logger.error("Error when writing data to outputstream",ex);
@@ -165,6 +185,7 @@ public class MultiPartForm implements Message {
 			
 			for (FileItem item:fileItems){
 				if (item != null && !item.isFormField()){
+					contentLength += item.getSize();
 					Map<String,Object> fileResult = new HashMap<String,Object>(); // NOSONAR
 
 					fileResult.put("field", item.getFieldName());
@@ -226,4 +247,5 @@ public class MultiPartForm implements Message {
 		}
 		
 	}
+
 }

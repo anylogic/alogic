@@ -180,3 +180,8 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:配置文件中的变量可以写入SystemProperties中(1.6.5.4)
  	 + alogic-core:AccessController增加reload接口(1.6.5.5)
  	 + alogic-addons:AccessControlModel增加key和verifier配置(1.6.5.5)
+ 	 + alogic-core:Context增加调用次序(1.6.5.6)
+ 	 + alogic-core:Context增加报文长度(1.6.5.6)
+ 	 + alogic-core:淘汰MessageDoc(1.6.5.6)
+ 	 + alogic-core:核心框架增加tracelog(1.6.5.6)
+ 	 + alogic-common:Handler增加采样功能(1.6.5.6)

@@ -7,6 +7,8 @@ import com.anysoft.stream.AbstractHandler;
 import com.anysoft.stream.DispatchHandler;
 import com.anysoft.stream.Handler;
 import com.anysoft.stream.HubHandler;
+import com.anysoft.stream.MatcherFilter;
+import com.anysoft.stream.RateFilter;
 import com.anysoft.util.Properties;
 
 /**
@@ -14,6 +16,9 @@ import com.anysoft.util.Properties;
  * 
  * @author duanyy
  * @since 1.6.5.3
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 增加过滤器插件 <br>
  */
 public interface TraceLogger extends Handler<TraceLog>{
 	public static class Dispatch extends DispatchHandler<TraceLog> implements TraceLogger{
@@ -80,4 +85,16 @@ public interface TraceLogger extends Handler<TraceLog>{
 			// nothing to do
 		}		
 	}
+	
+	public static class Matcher extends MatcherFilter<TraceLog> implements TraceLogger{
+		public String getHandlerType(){
+			return "logger";
+		}		
+	}
+	
+	public static class Rate extends RateFilter<TraceLog> implements TraceLogger{
+		public String getHandlerType(){
+			return "logger";
+		}		
+	}	
 }

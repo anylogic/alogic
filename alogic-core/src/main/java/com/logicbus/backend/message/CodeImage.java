@@ -13,6 +13,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.anysoft.util.IOTools;
+import com.logicbus.backend.Context;
 
 /**
  * 验证码图片
@@ -20,6 +21,10 @@ import com.anysoft.util.IOTools;
  * 用于验证码图片服务.
  * @author duanyy
  * @since 1.2.6.5
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 淘汰MessageDoc，采用Context替代 <br>
+ * - 增加getContentType和getContentLength <br>
  */
 public class CodeImage implements Message {
 	protected static final Logger logger = LogManager.getLogger(Message.class);
@@ -28,6 +33,36 @@ public class CodeImage implements Message {
 	 */
 	private int width = 80;// 图片宽
 	
+	/**
+	 * 随机数发生器
+	 */
+    private Random random = new Random();	
+
+	/**
+	 * 输出图片的高度
+	 */
+	private int height = 26;// 图片高    
+    
+	/**
+	 * 字体
+	 */
+	private Font font = null;	
+	
+	/**
+	 * 干扰线的数量
+	 */
+	private int disturbanceLines = 40;	
+    
+	/**
+	 * 待输出的验证码
+	 */
+	private String code = "1234";	
+	
+	/**
+	 * content-type
+	 */
+	private static String contentType = "image/jpeg";
+
 	public int width(){
 		return width;
 	}
@@ -35,12 +70,7 @@ public class CodeImage implements Message {
 	public void width(int _width){
 		width = _width;
 	}
-	
-	/**
-	 * 输出图片的高度
-	 */
-	private int height = 26;// 图片高
-	
+
 	public int height(){
 		return height;
 	}
@@ -48,19 +78,15 @@ public class CodeImage implements Message {
 	public void height(int _height){
 		height = _height;
 	}
-	
-	private Font font = null;
+
 	public Font font(){
 		return font;
 	}
+	
 	public void font(Font _font){
 		font = _font;
 	}
 	
-	/**
-	 * 干扰线的数量
-	 */
-	private int disturbanceLines = 40;
 	public int disturbanceLines(){
 		return disturbanceLines;
 	}
@@ -69,10 +95,6 @@ public class CodeImage implements Message {
 		disturbanceLines = _lines;
 	}
 
-	/**
-	 * 待输出的验证码
-	 */
-	private String code = "1234";
 	public String code(){
 		return code;
 	}
@@ -80,11 +102,11 @@ public class CodeImage implements Message {
 		code = _code;
 	}
 	
-	public void init(MessageDoc ctx) {
+	public void init(Context ctx) {
 		// nothing to do
 	}
 
-	public void finish(MessageDoc ctx, boolean closeStream) {
+	public void finish(Context ctx, boolean closeStream) {
 		OutputStream out = null;
 		try {
 			out = ctx.getOutputStream();
@@ -143,5 +165,14 @@ public class CodeImage implements Message {
         return new Color(r,g,b);
     }
 
-    private Random random = new Random();
+	@Override
+	public String getContentType() {
+		return contentType;
+	}
+
+	@Override
+	public long getContentLength() {
+		return 0;
+	}
+
 }

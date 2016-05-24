@@ -2,7 +2,8 @@ package com.logicbus.backend;
 
 import java.util.concurrent.CountDownLatch;
 
-import com.logicbus.backend.message.MessageDoc;
+import com.alogic.tracer.Tool;
+import com.alogic.tracer.TraceContext;
 
 /**
  * 服务员工作线程
@@ -13,37 +14,20 @@ import com.logicbus.backend.message.MessageDoc;
  * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - Servant体系抛弃MessageDoc <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 淘汰MessageDoc，采用Context替代 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - bizlog增加报文长度 <br>
+ * - 在action中提前写出报文 <br>
+ * - 增加trace日志 <br>
  */
 public class ServantWorkerThread extends Thread {
 	/**
 	 * 当前工作的服务员
 	 */
 	private Servant m_servant = null;
-	
-	/**
-	 * 构造函数
-	 * @param _servant 当前工作服务员
-	 * @param _doc 本次调用消息文档
-	 * @param _ctx 本次调用上下文
-	 * @deprecated from 1.4.0
-	 */
-	public ServantWorkerThread(Servant _servant,MessageDoc _doc,Context _ctx,CountDownLatch _latch){
-		m_servant = _servant;
-		m_ctx = _ctx;
-		latch = _latch;
-	}
-	
-	/**
-	 * 构造函数
-	 * @param _servant 当前工作服务员
-	 * @param _ctx 本次调用上下文
-	 * @since 1.4.0
-	 */
-	public ServantWorkerThread(Servant _servant,Context _ctx,CountDownLatch _latch){
-		m_servant = _servant;
-		m_ctx = _ctx;
-		latch = _latch;
-	}
 	
 	/**
 	 * Count Down Latch
@@ -55,23 +39,41 @@ public class ServantWorkerThread extends Thread {
 	 */
 	private Context m_ctx = null;
 	
+	private String sn;
+	
+	private long order;
+	
+	public ServantWorkerThread(Servant _servant,Context _ctx,CountDownLatch _latch,String s,long o){
+		m_servant = _servant;
+		m_ctx = _ctx;
+		latch = _latch;
+		sn = s;
+		order = o;
+	}
+
+	
 	/**
 	 * 线程运行主函数
 	 */
 	public void run(){
+		TraceContext tc = Tool.start(sn, order);
+		boolean error = false;
 		try
 		{
 			m_servant.actionBefore(m_ctx);
 			m_servant.actionProcess(m_ctx);
 			m_servant.actionAfter(m_ctx);
 		}catch (ServantException ex){
+			error = true;
 			ex.printStackTrace();
 			m_servant.actionException(m_ctx ,ex);
 		}catch (Exception ex){
+			error = true;
 			ex.printStackTrace();
 			m_servant.actionException( m_ctx, 
 					new ServantException("core.fatalerror",ex.getMessage()));
 		}catch (Throwable t){
+			error = true;
 			t.printStackTrace();
 			m_servant.actionException( m_ctx, 
 					new ServantException("core.fatalerror",t.getMessage()));
@@ -80,6 +82,7 @@ public class ServantWorkerThread extends Thread {
 				//告知，事情已经做完
 				latch.countDown();
 			}
+			Tool.end(tc, "ALOGIC", "SyncCall", error?"FAILED":"OK", "");
 		}
 	}
 }

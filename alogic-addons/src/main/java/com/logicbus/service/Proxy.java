@@ -68,7 +68,7 @@ public class Proxy extends Servant {
 				if (forwarded){
 					conn.addRequestProperty(forwardedHeader, ctx.getClientIp());
 				}
-				String contentType = ctx.getReqestContentType();
+				String contentType = ctx.getRequestContentType();
 				if (contentType != null && contentType.length() > 0){
 					conn.addRequestProperty("Content-Type", contentType);
 				}

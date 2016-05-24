@@ -10,6 +10,9 @@ import com.anysoft.stream.Flowable;
  * 
  * @version 1.6.4.43 [20160411 duanyy] <br>
  * - DataProvider增加获取原始值接口 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 增加id()接口
  */
 public class ScriptLogInfo implements Flowable{
 	/**
@@ -24,12 +27,17 @@ public class ScriptLogInfo implements Flowable{
 	/**
 	 * 日志级别(warn,error,info)
 	 */
-	protected String level="info";
+	protected String level="info";	
 	
 	/**
 	 * 进度(-2至10001,-2代表非进度,-1代表还没开始,10001 代表已经完成,0-10000 代表以10000为基数的百分比)
 	 */
 	protected int progress = -2;
+	
+	@Override
+	public String id(){
+		return activity;
+	}	
 	
 	public ScriptLogInfo(String _activity,String _message,String _level,int _progress){
 		activity = _activity;

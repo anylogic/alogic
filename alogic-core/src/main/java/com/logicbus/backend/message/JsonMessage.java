@@ -37,12 +37,35 @@ import com.logicbus.backend.message.Message;
  * 
  * @version 1.6.3.14 [20150409 duanyy] <br>
  * - 修正formContentType所取的参数名问题，笔误 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 淘汰MessageDoc，采用Context替代 <br>
+ * - 增加getContentType和getContentLength <br>
  */
 public class JsonMessage implements Message {
 	protected static final Logger logger = LogManager.getLogger(JsonMessage.class);
+	protected static JsonProvider provider = null;	
+	static {
+		provider = JsonProviderFactory.createProvider();
+	}
+	
+	protected static String formContentType = "application/x-www-form-urlencoded";
+	static {
+		formContentType = Settings.get().GetValue("http.formContentType",
+				"application/x-www-form-urlencoded");
+	}
+	
+	private String contentType = "application/json;charset=utf-8";
+	
+	/**
+	 * Json结构的根节点
+	 */
+	protected Map<String,Object> root = null;	
+	
+	private long contentLength = 0;
 	
 	@SuppressWarnings("unchecked")
-	public void init(MessageDoc ctx) {
+	public void init(Context ctx) {
 		String data = null;
 		
 		{
@@ -58,12 +81,12 @@ public class JsonMessage implements Message {
 		
 		if (data == null){
 			//当客户端通过form来post的时候，Message不去读取输入流。
-			String _contentType = ctx.getReqestContentType();
+			String _contentType = ctx.getRequestContentType();
 			if (_contentType == null || !_contentType.startsWith(formContentType)){
 				InputStream in = null;
 				try {
 					in = ctx.getInputStream();
-					data = Context.readFromInputStream(in, ctx.getEncoding());
+					data = Context.readFromInputStream(in, ctx.getEncoding());					
 				}catch (Exception ex){
 					logger.error("Error when reading data from inputstream",ex);
 				}finally{
@@ -73,6 +96,7 @@ public class JsonMessage implements Message {
 		}
 		
 		if (data != null && data.length() > 0){
+			contentLength += data.getBytes().length;
 			JsonProvider provider = JsonProviderFactory.createProvider();
 			Object rootObj = provider.parse(data);
 			if (rootObj instanceof Map){
@@ -82,9 +106,11 @@ public class JsonMessage implements Message {
 		if (root == null){
 			root = new HashMap<String,Object>();
 		}
+		
+		contentType = "application/json;charset=" + ctx.getEncoding();
 	}
 
-	public void finish(MessageDoc ctx,boolean closeStream) {
+	public void finish(Context ctx,boolean closeStream) {
 		Map<String,Object> _root = getRoot();
 		JsonTools.setString(_root, "code", ctx.getReturnCode());
 		JsonTools.setString(_root, "reason", ctx.getReason());
@@ -103,8 +129,10 @@ public class JsonMessage implements Message {
 			}
 			
 			out = ctx.getOutputStream();
-			ctx.setResponseContentType("application/json;charset=" + ctx.getEncoding());
-			Context.writeToOutpuStream(out, data, ctx.getEncoding());
+			ctx.setResponseContentType(contentType);
+			byte [] bytes = data.getBytes(ctx.getEncoding());
+			contentLength += bytes.length;
+			Context.writeToOutpuStream(out, bytes);
 			out.flush();
 		}catch (Exception ex){
 			logger.error("Error when writing data to outputstream",ex);
@@ -114,12 +142,6 @@ public class JsonMessage implements Message {
 		}
 	}	
 
-	
-	/**
-	 * Json结构的根节点
-	 */
-	protected Map<String,Object> root = null;
-	
 	/**
 	 * 获取JSON结构的根节点
 	 * 
@@ -132,17 +154,15 @@ public class JsonMessage implements Message {
 	public String toString(){
 		return provider.toJson(root);
 	}
-	
-	protected static JsonProvider provider = null;
-	
-	static {
-		provider = JsonProviderFactory.createProvider();
+		
+	@Override
+	public String getContentType() {
+		return contentType;
 	}
-	
-	protected static String formContentType = "application/x-www-form-urlencoded";
-	static {
-		formContentType = Settings.get().GetValue("http.formContentType",
-				"application/x-www-form-urlencoded");
+
+	@Override
+	public long getContentLength() {
+		return contentLength;
 	}
 
 }

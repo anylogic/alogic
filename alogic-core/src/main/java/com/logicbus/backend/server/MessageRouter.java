@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.alogic.tracer.Tool;
+import com.alogic.tracer.TraceContext;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
 import com.logicbus.backend.AccessController;
@@ -67,6 +69,11 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.4.11 [20151116 duanyy] <br>
  * - 日志类型为none的服务日志也将输出到bizlog
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - bizlog增加报文长度 <br>
+ * - 在action中提前写出报文 <br>
+ * - 增加trace日志 <br>
  */
 public class MessageRouter {
 	
@@ -82,14 +89,17 @@ public class MessageRouter {
 	 * @param ac 访问控制器
 	 * @return 调用结果
 	 */
-	static public int action(Path id,Context ctx,AccessController ac){
-		ctx.setStartTime(System.currentTimeMillis());
-		
+	static public int action(Path id,Context ctx,AccessController ac){		
 		ServantPool pool = null;
 		Servant servant = null;		
 		String sessionId = "";
 		
+		TraceContext tc = Tool.start(ctx.getGlobalSerial(), ctx.getGlobalSerialOrder());
 		try{
+			//访问开始
+			ctx.setStartTime(System.currentTimeMillis());
+			
+			//获取服务实例池
 			ServantFactory factory = servantFactory;
 			pool = factory.getPool(id);		
 			if (!pool.isRunning()){
@@ -97,8 +107,8 @@ public class MessageRouter {
 						"The Service is paused:service id:" + id);
 			}
 
-			int priority = 0;
-			
+			//通过访问控制器获取访问优先级
+			int priority = 0;			
 			if (null != ac){
 				sessionId = ac.createSessionId(id, pool.getDescription(), ctx);
 				priority = ac.accessStart(sessionId,id, pool.getDescription(), ctx);
@@ -109,6 +119,7 @@ public class MessageRouter {
 				}
 			}
 
+			//从服务实例池中拿服务实例，并执行
 			servant = pool.borrowObject(priority);
 			if (servant == null){
 				logger.warn("Can not get a servant from pool in the limited time,check servant.queueTimeout variable.");
@@ -119,7 +130,7 @@ public class MessageRouter {
 					execute(servant,ctx);
 				}else{
 					CountDownLatch latch = new CountDownLatch(1);
-					ServantWorkerThread thread = new ServantWorkerThread(servant,ctx,latch);
+					ServantWorkerThread thread = new ServantWorkerThread(servant,ctx,latch,tc.sn(),tc.order());
 					thread.start();
 					if (!latch.await(servant.getTimeOutValue(), TimeUnit.MILLISECONDS)){
 						ctx.setReturn("core.time_out","Time out or interrupted.");
@@ -138,6 +149,10 @@ public class MessageRouter {
 			logger.error("core.fatalerror:" + t.getMessage(),t);			
 		}
 		finally {
+			ctx.setEndTime(System.currentTimeMillis());
+			if (ctx != null){
+				ctx.finish();
+			}
 			if (pool != null){
 				if (servant != null){
 					pool.returnObject(servant);		
@@ -146,12 +161,12 @@ public class MessageRouter {
 				if (ac != null){
 					ac.accessEnd(sessionId,id, pool.getDescription(), ctx);
 				}				
-			}			
-			ctx.setEndTime(System.currentTimeMillis());
+			}						
 			if (bizLogger != null){				
 				//需要记录日志
 				log(id,sessionId,pool == null ? null : pool.getDescription(),ctx);
 			}
+			Tool.end(tc, "ALOGIC", "MessageRouter", ctx.getReturnCode().equals("core.ok")?"OK":"FAILED", ctx.getReason(), ctx.getContentLength());
 		}
 		return 0;
 	}	
@@ -174,6 +189,7 @@ public class MessageRouter {
 		item.duration = ctx.getDuration();
 		item.url = ctx.getRequestURI();
 		item.content = logType == ServiceDescription.LogType.detail ? ctx.toString() : null;
+		item.contentLength = ctx.getContentLength();
 		
 		bizLogger.handle(item,System.currentTimeMillis());
 				

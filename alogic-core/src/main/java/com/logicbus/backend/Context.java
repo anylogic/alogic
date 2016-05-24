@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.Random;
-
+import java.sql.Connection;
 import com.anysoft.formula.DataProvider;
-import com.logicbus.backend.message.MessageDoc;
+import com.anysoft.util.DefaultProperties;
+import com.logicbus.backend.message.Message;
 
 /**
  * 服务访问的上下文
@@ -36,66 +36,299 @@ import com.logicbus.backend.message.MessageDoc;
  * 
  * @version 1.6.3.30 [20150714 duanyy] <br>
  * - 全局序列号只包含数字和字母 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 不再从MessageDoc上继承 <br>
+ * - 增加报文长度 <br>
+ * - 增加全局调用次序 <br>
  */
-abstract public class Context extends MessageDoc implements DataProvider{
+public abstract class Context extends DefaultProperties implements DataProvider{
+	/**
+	 * 文档编码
+	 */
+	protected String encoding = "utf-8";
 
-	protected Context(String _encoding) {
-		super(_encoding);
+	/**
+	 * a db connection
+	 */
+	private Connection m_conn;	
+
+	/**
+	 * 结果代码
+	 */
+	protected String returnCode = "core.ok";
+	
+	/**
+	 * 原因
+	 */
+	protected String reason = "It is ok.";
+	
+	/**
+	 * 时长
+	 */
+	protected long duration = 0;
+
+	/**
+	 * the start time
+	 */
+	private long m_start_time;
+	
+	/**
+	 * the end time
+	 */
+	private long m_end_time;	
+	
+	/**
+	 * 消息实例
+	 */
+	protected Message msg = null;	
+	
+	protected boolean ignored = false;	
+	
+	/**
+	 * 构造上下文
+	 * 
+	 * @param _encoding
+	 */
+	protected Context(String _encoding){
+		encoding = _encoding;
+	}	
+	
+	/**
+	 * 获取文档编码
+	 * @return 编码
+	 */
+	public String getEncoding(){return encoding;}
+
+	/**
+	 * to get the db connection
+	 * @return db connection
+	 */
+	public Connection getConnection(){return m_conn;}
+	
+	/**
+	 * to set the db connection
+	 * @param conn connection
+	 */
+	public void setConnection(Connection conn){m_conn = conn;}
+	
+	/**
+	 * to get the start time
+	 * @return start time
+	 */
+	public long getStartTime(){return m_start_time;}
+	
+	/**
+	 * to set the start time
+	 * @param start_time start time
+	 */
+	public void setStartTime(long start_time){m_start_time = start_time;}
+	
+	/**
+	 * to get the end time
+	 * @return end time
+	 */
+	public long getEndTime(){return m_end_time;}
+
+	/**
+	 * to set the end time
+	 * @param end_time end time
+	 */
+	public void setEndTime(long end_time){m_end_time = end_time;}	
+	
+	/**
+	 * 获取结果代码
+	 * @return 结果代码
+	 */
+	public String getReturnCode(){return returnCode;}
+	
+	/**
+	 * 获取原因
+	 * @return 原因
+	 */
+	public String getReason(){return reason;}
+	
+	/**
+	 * 获取时长
+	 * @return 时长
+	 */
+	public long getDuration(){return m_end_time - m_start_time;}
+	
+	/**
+	 * 设置调用结果
+	 * 
+	 * @param _code 结果代码
+	 * @param _reason 原因
+	 */	
+	public void setReturn(String _code,String _reason){
+		returnCode = _code;
+		reason = _reason;
 	}
 
+	/**
+	 * 作为消息处理
+	 * 
+	 * @param clazz Message实现类
+	 * @throws ServantException 当创建Message实例发生异常的时候，抛出异常代码为:core.instance_create_error
+	 */
+	public <message extends Message> Message asMessage(Class<message> clazz) throws ServantException{
+		if (msg != null)
+			return msg;
+		try {
+			msg = (Message)clazz.newInstance();
+			msg.init(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ServantException("core.instance_create_error",
+					"Can not create instance of " + clazz.getName() + ":" + e.getMessage());
+		}
+		return msg;
+	}
+	
+	@Override
+	public String toString(){
+		return msg == null ? null:msg.toString();
+	}
+
+	/**
+	 * 完成服务，写出结果
+	 */
+	abstract public void finish();
+	
+	/**
+	 * to get the client ip
+	 * @return client ip
+	 */
+	abstract public String getClientIp();
+	
+	/**
+	 * to get the client ip
+	 * @return client ip
+	 */
+	abstract public String getClientRealIp();
+	
+	/**
+	 * 获取主机信息
+	 * @return 主机信息
+	 */
+	abstract public String getHost();
+	
+	/**
+	 * 获取请求路径
+	 * @return request路径
+	 */
+	abstract public String getRequestURI();
+	
+	/**
+	 * 获取请求的方法
+	 * 
+	 * @return 请求的方法,POST,GET等
+	 * 
+	 * @since 1.6.1.1
+	 */
+	abstract public String getMethod();
+	
+	/**
+	 * 获取报文大小
+	 * @return 报文大小
+	 */
+	abstract public long getContentLength();
+	
+	/**
+	 * 获取全局序列号
+	 * @return 全局序列号
+	 * 
+	 * @since 1.0.7
+	 */
+	abstract public String getGlobalSerial();
+	
+	/**
+	 * 获取全局序列号的调用次序
+	 * @return 调用次序
+	 * 
+	 * @since 1.6.5.6
+	 */
+	abstract public long getGlobalSerialOrder();
+	
+	/**
+	 * 获取请求的Content-Type
+	 * 
+	 * @return Content-Type
+	 */
+	abstract public String getRequestContentType();
+	
+	/**
+	 * 获取请求头信息
+	 * @param id 信息ID
+	 * @return 信息值
+	 */
+	abstract public String getRequestHeader(String id);
+	
+	/**
+	 * 设置响应头的信息
+	 * @param id 信息
+	 * @param value 信息值
+	 */
+	abstract public void setResponseHeader(String id,String value);
+
+	/**
+	 * 设置响应的Content-Type
+	 * @param contentType
+	 */
+	abstract public void setResponseContentType(String contentType);
+	
+	abstract public String getQueryString();
+	
+	/**
+	 * 获取InputStream
+	 * @return InputStream
+	 * @since 1.6.1.1
+	 */
+	abstract public InputStream getInputStream() throws IOException;
+	
+	/**
+	 * 获取OutputStram
+	 * @return OutputStram
+	 * @since 1.6.1.1
+	 */
+	abstract public OutputStream getOutputStream() throws IOException;
+	
+	/**
+	 * 获取请求的输入数据
+	 * 
+	 * <p>
+	 * 如果有必要，MessageDoc将提前截取请求数据，以byte数组的形式放在RequestRaw中。
+	 * 
+	 * @return byte[]形式的输入数据
+	 */
+	abstract public byte [] getRequestRaw();
+	
+	/**
+	 * whether Comet is supported
+	 * @return true if supported , false or not
+	 * @since 1.6.2.1
+	 */
+	public boolean supportedComet(){
+		return false;
+	}
+	
+	public Comet getComet(){
+		return null;
+	}
+	
+	public boolean cometMode(){
+		return false;
+	}
+
+	@Override
 	public String getValue(String varName, Object context, String defaultValue) {
 		return GetValue(varName, defaultValue);
 	}
 
+	@Override
 	public Object getContext(String varName) {
-		return cookies;
-	}	
-	
-	protected static Object cookies = new Object();
-	
-	/**
-	 * 生成全局序列号
-	 * <p>
-	 * 根据简单的算法生成一个全部不重复的序列号。
-	 * 
-	 * @return 全局序列号
-	 * 
-	 * @since 1.0.7
-	 * 
-	 */
-	public static String createGlobalSerial(){
-		return String.valueOf(System.currentTimeMillis()) + randomString(7);
+		return this;
 	}
-	
-	/**
-	 * 字符表
-	 */
-	protected static final char[] Chars = {
-	      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-	      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-	      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
-	      'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-	      'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
-	      'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
-	      '8', '9'
-	 };
-	
-	/**
-	 * 按照指定宽度生成随机字符串
-	 * @param _width 字符串的宽度
-	 * @return 随机字符串
-	 */
-	static protected String randomString(int _width){
-		int width = _width <= 0 ? 6 : _width;
-		char [] ret = new char[width];
-		Random ran = new Random();
-		for (int i = 0 ; i < width ; i ++){
-			int intValue = ran.nextInt(62) % 62;
-			ret[i] = Chars[intValue];
-		}
-		
-		return new String(ret);
-	}	
 	
 	/**
 	 * 从输入流中读入文本
@@ -126,9 +359,17 @@ abstract public class Context extends MessageDoc implements DataProvider{
 	 * @param _doc 输出文档
 	 * @param _encoding 编码
 	 */
-	public static void writeToOutpuStream(OutputStream _out,String _doc,String _encoding){
+	public static void writeToOutpuStream(OutputStream out,String doc,String encoding){
 		try {
-			_out.write(_doc.getBytes(_encoding));
+			out.write(doc.getBytes(encoding));
+		}catch (Exception ex){
+			ex.printStackTrace();
+		}
+	}	
+	
+	public static void writeToOutpuStream(OutputStream _out,byte[] bytes){
+		try {
+			_out.write(bytes);
 		}catch (Exception ex){
 			ex.printStackTrace();
 		}
@@ -144,6 +385,4 @@ abstract public class Context extends MessageDoc implements DataProvider{
 	protected boolean isIgnore(){
 		return ignored;
 	}
-	
-	protected boolean ignored = false;
 }

@@ -10,6 +10,8 @@ import org.w3c.dom.Element;
 import com.anysoft.stream.AbstractHandler;
 import com.anysoft.stream.DispatchHandler;
 import com.anysoft.stream.HubHandler;
+import com.anysoft.stream.RateFilter;
+import com.anysoft.stream.MatcherFilter;
 import com.anysoft.stream.Handler;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
@@ -32,6 +34,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.3.16 [20150509 duanyy] <br>
  * - 修正备用bizlog.secondary变量名，笔误<br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 增加过滤器插件 <br>
  */
 public interface BizLogger extends Handler<BizLogItem>{	
 	
@@ -65,6 +70,18 @@ public interface BizLogger extends Handler<BizLogItem>{
 		}
 		
 	}
+	
+	public static class Rate extends RateFilter<BizLogItem> implements BizLogger{
+		public String getHandlerType(){
+			return "logger";
+		}		
+	}
+	
+	public static class IdMatcher extends MatcherFilter<BizLogItem> implements BizLogger{
+		public String getHandlerType(){
+			return "logger";
+		}		
+	}	
 	
 	/**
 	 * 工厂类

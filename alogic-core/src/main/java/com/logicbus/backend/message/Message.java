@@ -1,5 +1,7 @@
 package com.logicbus.backend.message;
 
+import com.logicbus.backend.Context;
+
 /**
  * 消息
  * @author duanyy
@@ -17,18 +19,34 @@ package com.logicbus.backend.message;
  * 
  * @version 1.6.2.1 [20141223 duanyy] <br>
  * - 增加对Comet的支持 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - 淘汰MessageDoc，采用Context替代 <br>
+ * - 增加getContentType和getContentLength <br>
  */
 public interface Message {
 	/**
 	 * 初始化
 	 * @param ctx 上下文
 	 */
-	public void init(MessageDoc ctx);
+	public void init(Context ctx);
 	
 	/**
 	 * 完成
 	 * @param ctx 上下文身上
 	 * @param closeStream 是否关闭链接
 	 */
-	public void finish(MessageDoc ctx,boolean closeStream);
+	public void finish(Context ctx,boolean closeStream);
+	
+	/**
+	 * 获取内容类型
+	 * @return Content Type
+	 */
+	public String getContentType();
+	
+	/**
+	 * 获取内容长度
+	 * @return 内容长度
+	 */
+	public long getContentLength();
 }

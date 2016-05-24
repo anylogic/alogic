@@ -22,6 +22,10 @@ import org.xml.sax.*;
  * @author duanyy
  * @version 1.6.4.41 [20160401 duanyy] <br>
  * - 增加XML属性操作方法 <br>
+ * 
+ * @version 1.6.5.6 [20160523 duanyy] <br>
+ * - node2string不再抛出异常，以便使用 <br>
+ * 
  */
 public class XmlTools {
 	private XmlTools(){
@@ -361,16 +365,20 @@ public class XmlTools {
 	 * @return String
 	 * @throws TransformerException
 	 */
-	public static String node2String(Node _node) throws TransformerException{
-		TransformerFactory __factory = TransformerFactory.newInstance();
-		Transformer __transformer = __factory.newTransformer();
-		__transformer.setOutputProperty("omit-xml-declaration","yes");
-		__transformer.setOutputProperty("encoding",encoding);
-		Source __source = new DOMSource(_node);
-		StringWriter writer = new StringWriter(1024);
-		Result __result = new StreamResult(writer);
-		__transformer.transform(__source,__result);		
-		return writer.toString();
+	public static String node2String(Node _node){
+		try {
+			TransformerFactory __factory = TransformerFactory.newInstance();
+			Transformer __transformer = __factory.newTransformer();
+			__transformer.setOutputProperty("omit-xml-declaration","yes");
+			__transformer.setOutputProperty("encoding",encoding);
+			Source __source = new DOMSource(_node);
+			StringWriter writer = new StringWriter(1024);
+			Result __result = new StreamResult(writer);
+			__transformer.transform(__source,__result);		
+			return writer.toString();
+		}catch (Exception ex){
+			return "error";
+		}
 	}
 	/**
 	 * 通过XSL格式化XML
