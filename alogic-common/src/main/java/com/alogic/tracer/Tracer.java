@@ -12,6 +12,7 @@ import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
@@ -22,8 +23,18 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  * @since 1.6.5.3
+ * 
+ * @version 1.6.5.7 [20160525 duanyy] <br>
+ * - 增加enable方法，以便可以选择关闭tracer <br>
+ * 
  */
 public interface Tracer extends Reportable,Configurable,XMLConfigurable{
+	
+	/**
+	 * 是否启用Tracer
+	 * @return 是否
+	 */
+	public boolean enable();
 	
 	/**
 	 * 开始过程
@@ -64,9 +75,21 @@ public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 		protected TraceLogger logger=null;
 		
 		/**
+		 * 是否开放
+		 */
+		protected boolean enable = false;
+		
+		/**
 		 * a logger of log4j
 		 */
 		protected static final Logger LOG = LogManager.getLogger(Tracer.class);
+		
+		/**
+		 * 是否开放
+		 */
+		public boolean enable(){
+			return enable;
+		}
 		
 		@Override
 		public void report(Element xml) {
@@ -86,6 +109,8 @@ public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 		public void configure(Element e, Properties p) {
 			Properties props = new XmlElementProperties(e,p);
 			configure(props);
+			
+			enable = PropertiesConstants.getBoolean(props, "enable", enable);
 			
 			Element elem = XmlTools.getFirstElementByPath(e, "logger");
 			

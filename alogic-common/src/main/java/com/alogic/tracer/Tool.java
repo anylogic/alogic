@@ -19,6 +19,10 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @author duanyy
  * @since 1.6.5.3
+ * 
+ * @version 1.6.5.7 [20160525 duanyy] <br>
+ * - 当tracer的enable()为true的时候，才会开启tracer <br>
+ * 
  */
 public class Tool {
 	
@@ -76,7 +80,7 @@ public class Tool {
 	 */
 	public static TraceContext start(){
 		Tracer tracer = get();
-		return tracer == null ? null : tracer.startProcedure();
+		return tracer != null && tracer.enable() ? tracer.startProcedure() : null;
 	}
 	
 	/**
@@ -87,7 +91,7 @@ public class Tool {
 	 */
 	public static TraceContext start(String sn,long order){
 		Tracer tracer = get();
-		return tracer == null ? null : tracer.startProcedure(sn, order);
+		return tracer != null && tracer.enable() ? tracer.startProcedure(sn,order) : null;
 	}
 	
 	/**
@@ -101,7 +105,7 @@ public class Tool {
 	 */
 	public static void end(TraceContext ctx,String type,String name,String result,String note,long contentLength){
 		Tracer tracer = get();
-		if (tracer != null){
+		if (tracer != null && tracer.enable()){
 			tracer.endProcedure(ctx, type, name, result, note, contentLength);
 		}
 	}
@@ -116,7 +120,7 @@ public class Tool {
 	 */	
 	public static void end(TraceContext ctx,String type,String name,String result,String note){
 		Tracer tracer = get();
-		if (tracer != null){
+		if (tracer != null && tracer.enable()){
 			tracer.endProcedure(ctx, type, name, result, note, 0);
 		}
 	}	

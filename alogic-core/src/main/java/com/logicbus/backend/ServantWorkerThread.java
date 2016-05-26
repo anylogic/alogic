@@ -22,6 +22,9 @@ import com.alogic.tracer.TraceContext;
  * - bizlog增加报文长度 <br>
  * - 在action中提前写出报文 <br>
  * - 增加trace日志 <br>
+ * 
+ * @version 1.6.5.7 [20160525 duanyy] <br>
+ * - trace可选择关闭 <br>
  */
 public class ServantWorkerThread extends Thread {
 	/**
@@ -39,16 +42,13 @@ public class ServantWorkerThread extends Thread {
 	 */
 	private Context m_ctx = null;
 	
-	private String sn;
+	private TraceContext traceCtx = null;
 	
-	private long order;
-	
-	public ServantWorkerThread(Servant _servant,Context _ctx,CountDownLatch _latch,String s,long o){
+	public ServantWorkerThread(Servant _servant,Context _ctx,CountDownLatch _latch,TraceContext trace){
 		m_servant = _servant;
 		m_ctx = _ctx;
 		latch = _latch;
-		sn = s;
-		order = o;
+		traceCtx = trace;
 	}
 
 	
@@ -56,7 +56,10 @@ public class ServantWorkerThread extends Thread {
 	 * 线程运行主函数
 	 */
 	public void run(){
-		TraceContext tc = Tool.start(sn, order);
+		TraceContext tc = null;
+		if (traceCtx != null){
+			tc = Tool.start(traceCtx.sn(), traceCtx.order());
+		}
 		boolean error = false;
 		try
 		{
@@ -82,7 +85,9 @@ public class ServantWorkerThread extends Thread {
 				//告知，事情已经做完
 				latch.countDown();
 			}
-			Tool.end(tc, "ALOGIC", "SyncCall", error?"FAILED":"OK", "");
+			if (traceCtx != null){
+				Tool.end(tc, "ALOGIC", "SyncCall", error?"FAILED":"OK", "");
+			}
 		}
 	}
 }

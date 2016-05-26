@@ -185,3 +185,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-core:淘汰MessageDoc(1.6.5.6)
  	 + alogic-core:核心框架增加tracelog(1.6.5.6)
  	 + alogic-common:Handler增加采样功能(1.6.5.6)
+ 	 + alogic-common:Tracer可以选择关闭(1.6.5.7)

@@ -94,7 +94,10 @@ public class MessageRouter {
 		Servant servant = null;		
 		String sessionId = "";
 		
-		TraceContext tc = Tool.start(ctx.getGlobalSerial(), ctx.getGlobalSerialOrder());
+		TraceContext tc = null;
+		if (tracerEnable){
+			tc = Tool.start(ctx.getGlobalSerial(), ctx.getGlobalSerialOrder());
+		}
 		try{
 			//访问开始
 			ctx.setStartTime(System.currentTimeMillis());
@@ -130,7 +133,7 @@ public class MessageRouter {
 					execute(servant,ctx);
 				}else{
 					CountDownLatch latch = new CountDownLatch(1);
-					ServantWorkerThread thread = new ServantWorkerThread(servant,ctx,latch,tc.sn(),tc.order());
+					ServantWorkerThread thread = new ServantWorkerThread(servant,ctx,latch,tc != null ? tc.newChild() : null);
 					thread.start();
 					if (!latch.await(servant.getTimeOutValue(), TimeUnit.MILLISECONDS)){
 						ctx.setReturn("core.time_out","Time out or interrupted.");
@@ -166,7 +169,9 @@ public class MessageRouter {
 				//需要记录日志
 				log(id,sessionId,pool == null ? null : pool.getDescription(),ctx);
 			}
-			Tool.end(tc, "ALOGIC", "MessageRouter", ctx.getReturnCode().equals("core.ok")?"OK":"FAILED", ctx.getReason(), ctx.getContentLength());
+			if (tracerEnable){
+				Tool.end(tc, "ALOGIC", "MessageRouter", ctx.getReturnCode().equals("core.ok")?"OK":"FAILED", ctx.getReason(), ctx.getContentLength());
+			}
 		}
 		return 0;
 	}	
@@ -204,6 +209,7 @@ public class MessageRouter {
 	}
 	
 	protected static boolean threadMode = true;
+	protected static boolean tracerEnable = false;
 	protected static BizLogger bizLogger = null;
 	protected static ServantFactory servantFactory = null;
 	static {
@@ -211,7 +217,7 @@ public class MessageRouter {
 		
 		//初始化threadMode
 		threadMode = PropertiesConstants.getBoolean(settings, "servant.threadMode", true);
-		
+		tracerEnable = PropertiesConstants.getBoolean(settings, "servant.tracer", false);
 		bizLogger = (BizLogger) settings.get("bizLogger");
 		
 		servantFactory = (ServantFactory) settings.get("servantFactory");
