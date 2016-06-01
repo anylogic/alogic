@@ -23,6 +23,9 @@ import com.logicbus.models.catalog.Path;
  * @since 1.2.7.2
  * @version 1.6.4.4 [20150910 duanyy] <br>
  * - 缺省的代理服务的路径调整为/core/util/Proxy <br>
+ * 
+ * @version 1.6.5.8 [20160601 duanyy] <br>
+ * - Proxy支持web应用的Context路径 <br>
  */
 public class ProxyNormalizer implements Normalizer {
 
@@ -49,6 +52,12 @@ public class ProxyNormalizer implements Normalizer {
 		}
 
 		if (host != null && host.length() > 0){
+			int index = host.indexOf("$");
+			if (index >= 0){
+				String contextPath = host.substring(index + 1);
+				ctx.SetValue("contexPath", contextPath);
+				host = host.substring(0, index);
+			}
 			ctx.SetValue("host", host);
 		}
 		if (svc != null && svc.length() > 0){

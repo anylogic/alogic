@@ -3,6 +3,9 @@ package com.logicbus.service;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.logicbus.backend.Context;
@@ -26,6 +29,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.1.2 <br>
  * - 修正Already connected问题 <br>
+ * 
+ * @version 1.6.5.8 [20160601 duanyy] <br>
+ * - Proxy支持web应用的Context路径 <br>
  */
 public class Proxy extends Servant {
 
@@ -48,8 +54,15 @@ public class Proxy extends Servant {
 			throw new ServantException("client.noservice","Can not get service from url.");
 		}
 		
+		String contextPath = ctx.GetValue("contexPath", "");
+		
 		try {
-			String _url = scheme + "://" + host + proxyPath + service;
+			String _url;
+			if (StringUtils.isEmpty(contextPath)){
+				_url = scheme + "://" + host + proxyPath + service;
+			}else{
+				_url = scheme + "://" + host + "/" + contextPath + proxyPath + service;
+			}
 			//组装URL
 			{
 				String query = ctx.GetValue("query", "");

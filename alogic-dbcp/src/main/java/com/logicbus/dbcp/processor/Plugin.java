@@ -9,8 +9,11 @@ import com.anysoft.util.KeyGen;
 
 /**
  * 插件
+ * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.5.8 [20160601 duanyy] <br>
+ * - 考虑到其它数据库的需求，支持自定义绑定变量名(1.6.5.8)
  */
 abstract public class Plugin extends Function {
 	protected BindedListener bindedListener = null;
@@ -75,17 +78,18 @@ abstract public class Plugin extends Function {
 
 		@Override
 		public void checkArgument(Expression arg) throws FormulaException {
-			if (getArgumentCount() > 1){
-				throw new FormulaException("bind function only supports 1 argument.");
+			if (getArgumentCount() > 2){
+				throw new FormulaException("bind function only supports less than 2 arguments.");
 			}	
 		}
 
 		@Override
 		public ExprValue getValue(DataProvider provider) throws FormulaException {
-			if (getArgumentCount() != 1) {
+			int arguCnt = getArgumentCount();
+			if (arguCnt > 2 || arguCnt <= 0) {
 				throw new FormulaException(
 						"bind function need 1 argument.we have "
-								+ getArgumentCount());
+								+ arguCnt);
 			}
 
 			ExprValue value = getArgument(0).getValue(provider);
@@ -97,7 +101,12 @@ abstract public class Plugin extends Function {
 
 			String object = provider.getValue(varName, varContext, "");
 			bind(object);
-			return new ExprValue("?");
+			
+			if (arguCnt <= 1){
+				return new ExprValue("?");
+			}else{
+				return getArgument(1).getValue(provider);
+			}
 		}
 	}
 	
@@ -116,17 +125,18 @@ abstract public class Plugin extends Function {
 
 		@Override
 		public void checkArgument(Expression arg) throws FormulaException {
-			if (getArgumentCount() > 1){
-				throw new FormulaException("bind function only supports 1 argument.");
+			if (getArgumentCount() > 2){
+				throw new FormulaException("bind_raw function only supports less than 2 arguments.");
 			}	
 		}
 
 		@Override
 		public ExprValue getValue(DataProvider provider) throws FormulaException {
-			if (getArgumentCount() != 1) {
+			int arguCnt = getArgumentCount();
+			if (arguCnt > 2 || arguCnt <= 0) {
 				throw new FormulaException(
 						"bind function need 1 argument.we have "
-								+ getArgumentCount());
+								+ arguCnt);
 			}
 
 			ExprValue value = getArgument(0).getValue(provider);
@@ -138,7 +148,11 @@ abstract public class Plugin extends Function {
 
 			String object = provider.getRawValue(varName, varContext, "");
 			bind(object);
-			return new ExprValue("?");
+			if (arguCnt <= 1){
+				return new ExprValue("?");
+			}else{
+				return getArgument(1).getValue(provider);
+			}
 		}
 	}	
 	
@@ -163,20 +177,27 @@ abstract public class Plugin extends Function {
 		@Override
 		public ExprValue getValue(DataProvider provider) throws FormulaException {
 			int arguCnt = getArgumentCount();
+			
+			ExprValue bindValue = null;
 			if (arguCnt <= 0){
-				bind(KeyGen.uuid());
+				bindValue = new ExprValue("?");
 			}else{
+				bindValue = getArgument(0).getValue(provider);		
 				if (arguCnt <= 1){
-					int length = getArgument(0).getValue(provider).getInt();
-					bind(KeyGen.uuid(length, 0));
+					bind(KeyGen.uuid());
 				}else{
-					int length = getArgument(0).getValue(provider).getInt();
-					int redix = getArgument(1).getValue(provider).getInt();
-					bind(KeyGen.uuid(length, redix));
+					if (arguCnt <= 2){
+						int length = getArgument(1).getValue(provider).getInt();
+						bind(KeyGen.uuid(length, 0));
+					}else{
+						int length = getArgument(1).getValue(provider).getInt();
+						int redix = getArgument(2).getValue(provider).getInt();
+						bind(KeyGen.uuid(length, redix));
+					}					
 				}
 			}
 			
-			return new ExprValue("?");
+			return bindValue;
 		}
 	}	
 }

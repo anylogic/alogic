@@ -186,3 +186,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-core:核心框架增加tracelog(1.6.5.6)
  	 + alogic-common:Handler增加采样功能(1.6.5.6)
  	 + alogic-common:Tracer可以选择关闭(1.6.5.7)
+ 	 + alogic-dbcp:考虑到其它数据库的需求，Preprocessor支持自定义绑定变量名(1.6.5.8)
+ 	 + alogic-addons:Proxy支持web应用的Context路径(1.6.5.8)
