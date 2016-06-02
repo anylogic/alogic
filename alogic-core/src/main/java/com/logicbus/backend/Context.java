@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.sql.Connection;
 import com.anysoft.formula.DataProvider;
 import com.anysoft.util.DefaultProperties;
 import com.logicbus.backend.message.Message;
@@ -47,11 +46,6 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	 * 文档编码
 	 */
 	protected String encoding = "utf-8";
-
-	/**
-	 * a db connection
-	 */
-	private Connection m_conn;	
 
 	/**
 	 * 结果代码
@@ -99,18 +93,6 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	 * @return 编码
 	 */
 	public String getEncoding(){return encoding;}
-
-	/**
-	 * to get the db connection
-	 * @return db connection
-	 */
-	public Connection getConnection(){return m_conn;}
-	
-	/**
-	 * to set the db connection
-	 * @param conn connection
-	 */
-	public void setConnection(Connection conn){m_conn = conn;}
 	
 	/**
 	 * to get the start time
