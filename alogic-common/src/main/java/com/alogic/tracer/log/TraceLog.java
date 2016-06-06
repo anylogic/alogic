@@ -11,6 +11,9 @@ import com.anysoft.stream.Flowable;
  * 
  * @version 1.6.5.6 [20160523 duanyy] <br>
  * - 增加id()接口
+ * 
+ * @version 1.6.5.11 [20160603 duanyy] <br>
+ * - tracelog增加type字段 <br>
  */
 public class TraceLog implements Comparable<TraceLog>,Flowable{
 	/**
@@ -22,6 +25,11 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 	 * 调用次序
 	 */
 	protected long order;
+	
+	/**
+	 * 方法类型
+	 */
+	protected String type;
 	
 	/**
 	 * 方法
@@ -114,6 +122,15 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 	
 	public long order(){
 		return order;
+	}
+	
+	public String type(){
+		return type;
+	}
+	
+	public TraceLog type(String type){
+		this.type = type;
+		return this;
 	}
 
 	public TraceLog method(String method) {

@@ -10,6 +10,10 @@ import com.anysoft.util.Properties;
  * 
  * @author duanyy
  * @since 1.6.5.3
+ * 
+ * @version 1.6.5.11 [20160603 duanyy] <br>
+ * - tracelog增加type字段 <br>
+ * 
  */
 public class StackTracer extends Tracer.Abstract{
 	/**
@@ -68,6 +72,7 @@ public class StackTracer extends Tracer.Abstract{
 			traceLog.method(name);
 			traceLog.reason(note);
 			traceLog.code(result);
+			traceLog.type(type);
 			traceLog.startDate(current.timestamp());
 			traceLog.duration(System.currentTimeMillis()-current.timestamp());			
 			traceLog.contentLength(contentLength);

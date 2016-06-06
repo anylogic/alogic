@@ -170,7 +170,8 @@ public class MessageRouter {
 				log(id,sessionId,pool == null ? null : pool.getDescription(),ctx);
 			}
 			if (tracerEnable){
-				Tool.end(tc, "ALOGIC", "MessageRouter", ctx.getReturnCode().equals("core.ok")?"OK":"FAILED", ctx.getReason(), ctx.getContentLength());
+				boolean error = ctx.getReturnCode().equals("core.ok");
+				Tool.end(tc, "ALOGIC", "Router", error ?"FAILED":"OK", error ? ctx.getReason() : ctx.getQueryString(), ctx.getContentLength());
 			}
 		}
 		return 0;

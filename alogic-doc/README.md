@@ -191,3 +191,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-core:Context不再提供数据库Connection上下文(1.6.5.9)
  	 + alogic-together:淘汰alogic-together，准备推出新版本(1.6.5.9)
  	 + alogic-together:增加全新的服务组装together框架(1.6.5.10)
+ 	 + alogic-addons:修正采用HttpURLConnection导致的一些bug(1.6.5.11)
+ 	 + alogic-common:tracelog增加type字段(1.6.5.11)

@@ -1,11 +1,16 @@
 package com.logicbus.service;
 
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alogic.tracer.Tool;
+import com.alogic.tracer.TraceContext;
+import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.logicbus.backend.Context;
@@ -32,6 +37,10 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.5.8 [20160601 duanyy] <br>
  * - Proxy支持web应用的Context路径 <br>
+ * 
+ * @version 1.6.5.11 [20160603 duanyy] <br>
+ * - 修正采用HttpURLConnection导致的一些bug <br>
+ * 
  */
 public class Proxy extends Servant {
 
@@ -55,27 +64,32 @@ public class Proxy extends Servant {
 		}
 		
 		String contextPath = ctx.GetValue("contexPath", "");
+
+		String endPoint;
+		if (StringUtils.isEmpty(contextPath)){
+			endPoint = scheme + "://" + host + proxyPath + service;
+		}else{
+			endPoint = scheme + "://" + host + "/" + contextPath + proxyPath + service;
+		}
+		//组装URL
+		{
+			String query = ctx.GetValue("query", "");
+			if (query != null && query.length() > 0){
+				endPoint = endPoint + "?" + query;
+			}
+		}		
 		
-		try {
-			String _url;
-			if (StringUtils.isEmpty(contextPath)){
-				_url = scheme + "://" + host + proxyPath + service;
-			}else{
-				_url = scheme + "://" + host + "/" + contextPath + proxyPath + service;
-			}
-			//组装URL
-			{
-				String query = ctx.GetValue("query", "");
-				if (query != null && query.length() > 0){
-					_url = _url + "?" + query;
-				}
-			}
-			
-			URL url = new URL(_url);
+		boolean error = false;
+		String errorMsg = "OK";
+		TraceContext trace = traceEnable?Tool.start(ctx.getGlobalSerial(), ctx.getGlobalSerialOrder()):null;
+		try {	
+			URL url = new URL(endPoint);
 			String method = ctx.getMethod();
 			
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod(method);
+			conn.setRequestMethod(method);		
+			conn.setDoInput(true);			
+			
 			//设置request header
 			{
 				if (forwarded){
@@ -85,40 +99,78 @@ public class Proxy extends Servant {
 				if (contentType != null && contentType.length() > 0){
 					conn.addRequestProperty("Content-Type", contentType);
 				}
-				String globalSerial = ctx.getGlobalSerial();
-				if (globalSerial != null && globalSerial.length() > 0){
-					conn.addRequestProperty("GlobalSerial", globalSerial);
+				if (traceEnable && trace != null){
+					TraceContext childTrace = trace.newChild();
+					conn.addRequestProperty("GlobalSerial", childTrace.sn());
+					conn.addRequestProperty("GlobalSerialOrder", String.valueOf(childTrace.order()));					
+				}else{
+					String globalSerial = ctx.getGlobalSerial();
+					long order = ctx.getGlobalSerialOrder();
+					if (globalSerial != null && globalSerial.length() > 0){
+						conn.addRequestProperty("GlobalSerial", globalSerial);
+						conn.addRequestProperty("GlobalSerialOrder", String.valueOf(order));
+					}
 				}
 			}
-			
-			conn.setDoInput(true);
-			byte[] toWrite = msg.getInput();
-			if (toWrite.length > 0){
-				conn.setDoOutput(true);
-				ByteMessage.writeBytes(conn.getOutputStream(), toWrite);
-			}else{
-				conn.setDoOutput(false);
-			}
-			
-			
+			output(conn,msg);			
 			int ret = conn.getResponseCode();
 			if (ret!= HttpURLConnection.HTTP_OK){
+				IOTools.close(conn.getInputStream());
 				throw new ServantException("client.invoke_error", 
 						"Error occurs when invoking service :"
 						+ conn.getResponseMessage());
 			}
 			
+			input(conn,msg);
+		}catch (Exception ex){
+			error = true;
+			errorMsg = ex.getMessage();
+			throw ex;
+		}
+		finally{
+			if (traceEnable){
+				Tool.end(trace, "ALOGIC", "Proxy", error?"FAILED":"OK", error?errorMsg:endPoint);
+			}
+		}
+		return 0;
+	}
+	
+	public void output(HttpURLConnection conn,ByteMessage msg){
+		OutputStream out = null;
+		
+		try {
+			byte[] toWrite = msg.getInput();
+			if (toWrite.length > 0){
+				conn.setDoOutput(true);
+				out = conn.getOutputStream();
+				ByteMessage.writeBytes(conn.getOutputStream(), toWrite);
+			}else{
+				conn.setDoOutput(false);
+			}
+		}catch (Exception ex){
+			throw new ServantException("core.io_error","Can not write data to network.");
+		}finally{
+			IOTools.close(out);
+		}
+	}
+	
+	protected void input(HttpURLConnection conn,ByteMessage msg){
+		InputStream in = null;
+		
+		try {
+			in = conn.getInputStream();
 			byte[] toRead = ByteMessage.readBytes(conn.getInputStream());
 			
 			String resonseContentType = conn.getContentType();
 			if (resonseContentType != null && resonseContentType.length() > 0){
 				msg.setContentType(resonseContentType);
 			}
-			msg.setOutput(toRead);
+			msg.setOutput(toRead);		
 		}catch (Exception ex){
-			throw ex;
+			throw new ServantException("core.io_error","Can not read data from network.");
+		}finally{
+			IOTools.close(in);
 		}
-		return 0;
 	}
 	
 	public void create(ServiceDescription sd) throws ServantException{
@@ -137,6 +189,8 @@ public class Proxy extends Servant {
 		scheme = PropertiesConstants.getString(p, "proxy.scheme", scheme);
 		
 		enable = PropertiesConstants.getBoolean(p, "proxy.enable", enable);
+		
+		traceEnable = PropertiesConstants.getBoolean(p, "servant.tracer", traceEnable);
 	}
 	
 	protected String forwardedHeader = "X-Forwarded-For";
@@ -144,4 +198,5 @@ public class Proxy extends Servant {
 	protected String proxyPath = "/services/";
 	protected String scheme = "http";
 	protected boolean enable = true;
+	protected boolean traceEnable = false;
 }

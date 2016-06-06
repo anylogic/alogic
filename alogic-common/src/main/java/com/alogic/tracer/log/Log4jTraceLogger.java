@@ -22,6 +22,9 @@ import com.anysoft.util.Settings;
  * 
  * @author duanyy
  * @since 1.6.5.3
+ * 
+ * @version 1.6.5.11 [20160603 duanyy] <br>
+ * - tracelog增加type字段 <br>
  */
 public class Log4jTraceLogger extends AbstractHandler<TraceLog> implements TraceLogger {
 
@@ -104,6 +107,7 @@ public class Log4jTraceLogger extends AbstractHandler<TraceLog> implements Trace
 		.append(item.order()).append(delimeter)
 		.append(app).append(delimeter)
 		.append(host).append(delimeter)
+		.append(item.type()).append(delimeter)
 		.append(item.method()).append(delimeter)
 		.append(item.startDate()).append(delimeter)
 		.append(item.duration()).append(delimeter)
@@ -114,8 +118,6 @@ public class Log4jTraceLogger extends AbstractHandler<TraceLog> implements Trace
 		logger.info(buf.toString());
 	}
 
-
-	
 	private Logger initLogger(Properties props) {
 		Logger _logger = LogManager.getLogger(Log4jTraceLogger.class.getName() + "." + thread);
 		
