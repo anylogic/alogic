@@ -24,7 +24,7 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  */
 public class Template extends Segment {
 	protected Map<String,Object> template = null;
-	protected String id = "data";
+	protected String tag = "data";
 	
 	public Template(String tag, Logiclet p) {
 		super(tag, p);
@@ -34,8 +34,10 @@ public class Template extends Segment {
 	@Override
 	public void configure(Properties p) {
 		super.configure(p);
-		String content = PropertiesConstants.getString(p, "content", "");
 		
+		tag = PropertiesConstants.getString(p, "tag", tag);
+		
+		String content = PropertiesConstants.getString(p, "content", "");
 		JsonProvider provider = JsonProviderFactory.createProvider();
 		if (StringUtils.isNotEmpty(content)){
 			template = (Map<String, Object>) provider.parse(content);
@@ -60,9 +62,9 @@ public class Template extends Segment {
 	protected void onExecute(Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
 		if (current != null && template != null){
-			current.put(id, template);
+			current.put(tag, template);
 			
-			super.onExecute(root, current, ctx, watcher);
+			super.onExecute(root, template, ctx, watcher);
 		}
 	}
 
