@@ -195,3 +195,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:tracelog增加type字段(1.6.5.11)
  	 + alogic-common:增加load框架(1.6.5.12)
  	 + alogic-addons:增加together的idu操作插件(1.6.5.12)
+ 	 + alogic-common:load框架增加对象过期判断功能(1.6.5.13)
+ 	 + alogic-together:增加Encrypt和Decrypt插件(1.6.5.13)

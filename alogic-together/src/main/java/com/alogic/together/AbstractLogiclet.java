@@ -11,7 +11,11 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
 import com.alogic.together.plugins.Asynchronized;
+import com.alogic.together.plugins.Check;
+import com.alogic.together.plugins.CheckAndSetDefault;
 import com.alogic.together.plugins.DBConnection;
+import com.alogic.together.plugins.Decrypt;
+import com.alogic.together.plugins.Encrypt;
 import com.alogic.together.plugins.Except;
 import com.alogic.together.plugins.Helloworld;
 import com.alogic.together.plugins.Location;
@@ -41,7 +45,8 @@ import com.logicbus.backend.ServantException;
  * 虚基类
  * 
  * @author duanyy
- *
+ * @version 1.6.5.13 [20160612 duanyy] <br>
+ * - 增加Encrypt,Decrypt,Check,CheckAndSetDefault等插件 <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -89,6 +94,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_SCOPE = "scope";
 	public static final String STMT_VAR = "var";
 	public static final String STMT_SET = "set";
+	public static final String STMT_ENCRYPT = "encrypt";
+	public static final String STMT_DECRYPT = "decrypt";
+	public static final String STMT_CHECK = "check";
+	public static final String STMT_CHECK_AND_SET = "checkAndSet";
 	
 	protected static MetricsHandler metricsHandler = null;
 	
@@ -107,6 +116,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_SCOPE, Scope.class);
 		staticModules.put(STMT_VAR, Variable.class);
 		staticModules.put(STMT_SET, Set.class);
+		staticModules.put(STMT_ENCRYPT,Encrypt.class);
+		staticModules.put(STMT_DECRYPT,Decrypt.class);
+		staticModules.put(STMT_CHECK,Check.class);
+		staticModules.put(STMT_CHECK_AND_SET,CheckAndSetDefault.class);
 		
 		Settings settings = Settings.get();
 		metricsHandler = (MetricsHandler) settings.get("metricsHandler");

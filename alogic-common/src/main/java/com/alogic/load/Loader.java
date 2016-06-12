@@ -32,7 +32,8 @@ import com.anysoft.util.resource.ResourceFactory;
  * 通用装载框架
  * 
  * @author duanyy
- *
+ * @version 1.6.5.13 [20160612 duanyy] <br>
+ * - 增加对象过期判断功能 <br>
  */
 public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable,Reportable{
 	
@@ -232,7 +233,15 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 		
 		@Override
 		protected O loadFromSelf(String id, boolean cacheAllowed) {
-			return cacheAllowed?cachedObjects.get(id):null;
+			O found = null;
+			if (cacheAllowed){
+				found = cachedObjects.get(id);
+				if (found != null && found.isExpired()){
+					cachedObjects.remove(id);
+					found = null;
+				}
+			}
+			return found;
 		}	
 	}
 	
