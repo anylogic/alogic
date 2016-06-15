@@ -1,11 +1,13 @@
-package com.alogic.together.plugins;
+package com.alogic.together.idu;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
+
 import com.alogic.together.ExecuteWatcher;
 import com.alogic.together.Logiclet;
 import com.alogic.together.LogicletContext;
+import com.alogic.together.plugins.Segment;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;

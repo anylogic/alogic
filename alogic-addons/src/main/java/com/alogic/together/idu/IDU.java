@@ -15,6 +15,7 @@ public class IDU extends Segment{
 	public IDU(String tag, Logiclet p) {
 		super(tag, p);
 		
+		registerModule("db",DBConnection.class);
 		registerModule("delete", Delete.class);
 		registerModule("idExist",IdExist.class);
 		registerModule("list",ListAll.class);
@@ -22,7 +23,6 @@ public class IDU extends Segment{
 		registerModule("newId",NewId.class);
 		registerModule("query",Query.class);
 		registerModule("update",Update.class);
-		registerModule("checkArgu",CheckArgu.class);
 		registerModule("cache",Cache.class);
 		registerModule("expire",CacheClear.class);
 		registerModule("get",CacheQuery.class);

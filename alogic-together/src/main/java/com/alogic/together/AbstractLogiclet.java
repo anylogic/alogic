@@ -13,16 +13,17 @@ import org.w3c.dom.Element;
 import com.alogic.together.plugins.Asynchronized;
 import com.alogic.together.plugins.Check;
 import com.alogic.together.plugins.CheckAndSetDefault;
-import com.alogic.together.plugins.DBConnection;
 import com.alogic.together.plugins.Decrypt;
 import com.alogic.together.plugins.Encrypt;
 import com.alogic.together.plugins.Except;
 import com.alogic.together.plugins.Helloworld;
 import com.alogic.together.plugins.Location;
 import com.alogic.together.plugins.Message;
+import com.alogic.together.plugins.Repeat;
 import com.alogic.together.plugins.Scope;
 import com.alogic.together.plugins.Segment;
 import com.alogic.together.plugins.Set;
+import com.alogic.together.plugins.Switch;
 import com.alogic.together.plugins.Template;
 import com.alogic.together.plugins.Throw;
 import com.alogic.together.plugins.Using;
@@ -86,7 +87,6 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_SEGMENT = "segment";
 	public static final String STMT_THROW = "throw";
 	public static final String STMT_INCLUDE = "include";
-	public static final String STMT_DB = "db";
 	public static final String STMT_TEMPLATE = "template";
 	public static final String STMT_HELLO = "hello";
 	public static final String STMT_MSG = "msg";
@@ -98,6 +98,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_DECRYPT = "decrypt";
 	public static final String STMT_CHECK = "check";
 	public static final String STMT_CHECK_AND_SET = "checkAndSet";
+	public static final String STMT_REPEAT = "repeat";
+	public static final String STMT_CASE = "case";
+	public static final String STMT_SWITCH = "switch";
+	public static final String STMT_DEFAULT = "default";
 	
 	protected static MetricsHandler metricsHandler = null;
 	
@@ -108,7 +112,6 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_THROW, Throw.class);
 		staticModules.put(STMT_EXCEPTION, Except.class);
 		staticModules.put(STMT_FINALLY, Except.class);
-		staticModules.put(STMT_DB, DBConnection.class);
 		staticModules.put(STMT_TEMPLATE, Template.class);
 		staticModules.put(STMT_HELLO, Helloworld.class);
 		staticModules.put(STMT_MSG, Message.class);
@@ -120,6 +123,8 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_DECRYPT,Decrypt.class);
 		staticModules.put(STMT_CHECK,Check.class);
 		staticModules.put(STMT_CHECK_AND_SET,CheckAndSetDefault.class);
+		staticModules.put(STMT_REPEAT,Repeat.class);
+		staticModules.put(STMT_SWITCH, Switch.class);
 		
 		Settings settings = Settings.get();
 		metricsHandler = (MetricsHandler) settings.get("metricsHandler");

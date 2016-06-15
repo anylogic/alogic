@@ -6,6 +6,7 @@ import com.alogic.together.AbstractLogiclet;
 import com.alogic.together.ExecuteWatcher;
 import com.alogic.together.Logiclet;
 import com.alogic.together.LogicletContext;
+import com.alogic.together.util.MapProperties;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -32,7 +33,8 @@ public class Message extends AbstractLogiclet {
 	protected void onExecute(Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
 		if (current != null){
-			current.put("message", msg);
+			MapProperties p = new MapProperties(current,ctx);
+			current.put("message", p.transform(msg));
 		}
 	}
 
