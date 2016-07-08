@@ -16,9 +16,11 @@ import com.alogic.together.plugins.CheckAndSetDefault;
 import com.alogic.together.plugins.Decrypt;
 import com.alogic.together.plugins.Encrypt;
 import com.alogic.together.plugins.Except;
+import com.alogic.together.plugins.Formula;
 import com.alogic.together.plugins.Helloworld;
 import com.alogic.together.plugins.Location;
 import com.alogic.together.plugins.Message;
+import com.alogic.together.plugins.Now;
 import com.alogic.together.plugins.Repeat;
 import com.alogic.together.plugins.Scope;
 import com.alogic.together.plugins.Segment;
@@ -26,6 +28,7 @@ import com.alogic.together.plugins.Set;
 import com.alogic.together.plugins.Switch;
 import com.alogic.together.plugins.Template;
 import com.alogic.together.plugins.Throw;
+import com.alogic.together.plugins.UUid;
 import com.alogic.together.plugins.Using;
 import com.alogic.together.plugins.Variable;
 import com.alogic.tracer.Tool;
@@ -102,6 +105,9 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_CASE = "case";
 	public static final String STMT_SWITCH = "switch";
 	public static final String STMT_DEFAULT = "default";
+	public static final String STMT_FORMULA = "formula";
+	public static final String STMT_NOW = "now";
+	public static final String STMT_UUID = "uuid";
 	
 	protected static MetricsHandler metricsHandler = null;
 	
@@ -125,6 +131,9 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_CHECK_AND_SET,CheckAndSetDefault.class);
 		staticModules.put(STMT_REPEAT,Repeat.class);
 		staticModules.put(STMT_SWITCH, Switch.class);
+		staticModules.put(STMT_FORMULA, Formula.class);
+		staticModules.put(STMT_NOW,Now.class);
+		staticModules.put(STMT_UUID,UUid.class);
 		
 		Settings settings = Settings.get();
 		metricsHandler = (MetricsHandler) settings.get("metricsHandler");

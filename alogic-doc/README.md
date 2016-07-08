@@ -199,3 +199,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-together:增加Encrypt和Decrypt插件(1.6.5.13)
  	 + alogic-together:增加repeat和switch插件(1.6.5.14)
  	 + alogic-together:调整db插件到addons(1.6.5.14)
+ 	 + alogic-together:增加uuid,now,formula等内置插件(1.6.5.15)
