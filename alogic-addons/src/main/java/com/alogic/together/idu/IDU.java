@@ -1,8 +1,8 @@
 package com.alogic.together.idu;
 
 
-import com.alogic.together.Logiclet;
-import com.alogic.together.plugins.Segment;
+import com.alogic.xscript.Logiclet;
+import com.alogic.xscript.plugins.Segment;
 
 
 /**

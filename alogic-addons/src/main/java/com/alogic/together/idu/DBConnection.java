@@ -4,10 +4,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
-import com.alogic.together.ExecuteWatcher;
-import com.alogic.together.Logiclet;
-import com.alogic.together.LogicletContext;
-import com.alogic.together.plugins.Segment;
+import com.alogic.xscript.ExecuteWatcher;
+import com.alogic.xscript.Logiclet;
+import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.plugins.Segment;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;

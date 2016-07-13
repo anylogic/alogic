@@ -3,9 +3,9 @@ package com.alogic.together.idu;
 import java.util.Map;
 
 import com.alogic.cache.core.CacheStore;
-import com.alogic.together.ExecuteWatcher;
-import com.alogic.together.Logiclet;
-import com.alogic.together.LogicletContext;
+import com.alogic.xscript.ExecuteWatcher;
+import com.alogic.xscript.Logiclet;
+import com.alogic.xscript.LogicletContext;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 

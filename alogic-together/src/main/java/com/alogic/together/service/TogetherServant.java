@@ -2,8 +2,8 @@ package com.alogic.together.service;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.alogic.together.LogicletContext;
-import com.alogic.together.Script;
+import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.Script;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.logicbus.backend.AbstractServant;
@@ -48,9 +48,13 @@ public class TogetherServant extends AbstractServant {
 		if (script != null){
 			JsonMessage msg = (JsonMessage) ctx.asMessage(JsonMessage.class);
 			
-			LogicletContext logicletContext = new LogicletContext(null,ctx);
-			
-			script.execute(msg.getRoot(),msg.getRoot(), logicletContext, null);
+			LogicletContext logicletContext = new SevantLogicletContext(ctx);
+			logicletContext.setObject("$context", ctx);
+			try {
+				script.execute(msg.getRoot(),msg.getRoot(), logicletContext, null);
+			}finally{
+				logicletContext.removeObject("$context");
+			}
 		}else{
 			ctx.asMessage(JsonMessage.class);
 		}
