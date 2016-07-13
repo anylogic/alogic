@@ -28,6 +28,7 @@ import com.alogic.xscript.plugins.Repeat;
 import com.alogic.xscript.plugins.Scope;
 import com.alogic.xscript.plugins.Segment;
 import com.alogic.xscript.plugins.Set;
+import com.alogic.xscript.plugins.Sleep;
 import com.alogic.xscript.plugins.Switch;
 import com.alogic.xscript.plugins.Template;
 import com.alogic.xscript.plugins.Throw;
@@ -120,6 +121,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_CONSTANTS = "constants";
 	public static final String STMT_LOGGER = "logger";
 	public static final String STMT_LOG = "log";
+	public static final String STMT_SLEEP = "sleep";
 	
 	protected static MetricsHandler metricsHandler = null;
 	
@@ -149,6 +151,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_CONSTANTS, Constants.class);
 		staticModules.put(STMT_LOGGER, com.alogic.xscript.plugins.Logger.class);
 		staticModules.put(STMT_LOG, Log.class);
+		staticModules.put(STMT_SLEEP, Sleep.class);
 		
 		Settings settings = Settings.get();
 		metricsHandler = (MetricsHandler) settings.get("metricsHandler");

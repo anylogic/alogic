@@ -1,11 +1,16 @@
 package com.alogic.timer.core;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.alogic.xscript.Logiclet;
+import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.Script;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -13,9 +18,7 @@ import com.anysoft.util.Settings;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
-import com.anysoft.xscript.Script;
-import com.anysoft.xscript.ScriptLogInfo;
-import com.anysoft.xscript.Statement;
+import com.alogic.xscript.log.LogInfo;
 
 /**
  * 外部脚本处理者
@@ -43,10 +46,12 @@ public class LinkedScriptDoer extends Doer.Abstract{
 			} else {
 				//装入脚本
 				Document doc = loadDocument(src);
-				Statement stmt = new TheScript(this, "script", null);
-				stmt.compile(doc.getDocumentElement(), task.getParameters(), null);	
+				Logiclet stmt = new TheScript(this, "script");
+				stmt.configure(doc.getDocumentElement(), task.getParameters());
+				Map<String,Object> root = new HashMap<String,Object>();
+				LogicletContext ctx = new LogicletContext(task.getParameters());
 				// 执行任务
-				stmt.execute(task.getParameters(), null);
+				stmt.execute(root,root,ctx, null);
 				// 任务完成
 				reportState(Task.State.Done, 10000);
 			}
@@ -83,7 +88,7 @@ public class LinkedScriptDoer extends Doer.Abstract{
 	 * 
 	 * @param logInfo 日志信息
 	 */
-	public void report(ScriptLogInfo logInfo) {
+	public void report(LogInfo logInfo) {
 		Task currentTask = getCurrentTask();
 		if (currentTask != null){
 			//当前有任务处理才有意义
@@ -113,12 +118,12 @@ public class LinkedScriptDoer extends Doer.Abstract{
 	protected static class TheScript extends Script{
 		protected LinkedScriptDoer doer = null;
 		
-		public TheScript(LinkedScriptDoer _doer,String xmlTag, Statement _parent) {
-			super(xmlTag, _parent);
+		public TheScript(LinkedScriptDoer _doer,String xmlTag) {
+			super(xmlTag, null);
 			doer = _doer;
 		}
 		@Override
-		public void log(ScriptLogInfo logInfo){
+		public void log(LogInfo logInfo){
 			super.log(logInfo);
 			if (doer != null){
 				doer.report(logInfo);

@@ -1,12 +1,18 @@
 package com.alogic.timer.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.w3c.dom.Element;
+
+import com.alogic.xscript.Logiclet;
+import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.Script;
+import com.alogic.xscript.log.LogInfo;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
-import com.anysoft.xscript.Script;
-import com.anysoft.xscript.ScriptLogInfo;
-import com.anysoft.xscript.Statement;
+
 
 /**
  * 脚本处理者
@@ -31,10 +37,12 @@ public class ScriptDoer extends Doer.Abstract{
 				LOG.error("Can not find script element");
 				reportState(Task.State.Failed, 10000);
 			} else {
-				Statement stmt = new TheScript(this, "script", null);
-				stmt.compile(script, task.getParameters(),null);
+				Logiclet stmt = new TheScript(this, "script");
+				stmt.configure(script, task.getParameters());
+				Map<String,Object> root = new HashMap<String,Object>();
+				LogicletContext ctx = new LogicletContext(task.getParameters());
 				// 执行任务
-				stmt.execute(task.getParameters(), null);
+				stmt.execute(root,root,ctx, null);
 				// 任务完成
 				reportState(Task.State.Done, 10000);
 			}
@@ -59,7 +67,7 @@ public class ScriptDoer extends Doer.Abstract{
 	 * 
 	 * @param logInfo 日志信息
 	 */
-	public void report(ScriptLogInfo logInfo) {
+	public void report(LogInfo logInfo) {
 		Task currentTask = getCurrentTask();
 		if (currentTask != null){
 			//当前有任务处理才有意义
@@ -89,12 +97,12 @@ public class ScriptDoer extends Doer.Abstract{
 	protected static class TheScript extends Script{
 		protected ScriptDoer doer = null;
 		
-		public TheScript(ScriptDoer _doer,String xmlTag, Statement _parent) {
-			super(xmlTag, _parent);
+		public TheScript(ScriptDoer _doer,String xmlTag) {
+			super(xmlTag, null);
 			doer = _doer;
 		}
 		@Override
-		public void log(ScriptLogInfo logInfo){
+		public void log(LogInfo logInfo){
 			super.log(logInfo);
 			if (doer != null){
 				doer.report(logInfo);
