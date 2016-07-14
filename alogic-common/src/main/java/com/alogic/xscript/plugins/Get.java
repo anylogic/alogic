@@ -3,6 +3,7 @@ package com.alogic.xscript.plugins;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
@@ -12,16 +13,16 @@ import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
 /**
- * 设置变量值到上下文
+ * 从上下文变量中获取变量值，并设置到当前节点上
  * 
  * @author duanyy
  *
  */
-public class Set extends AbstractLogiclet {
+public class Get extends AbstractLogiclet {
 	protected String id;
 	protected String value;
 	
-	public Set(String tag, Logiclet p) {
+	public Get(String tag, Logiclet p) {
 		super(tag, p);
 	}
 
@@ -37,7 +38,7 @@ public class Set extends AbstractLogiclet {
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
 		if (StringUtils.isNotEmpty(id)){
 			MapProperties p = new MapProperties(current,ctx);
-			ctx.SetValue(id, p.transform(value));
+			current.put(id, p.transform(value));
 		}
 	}
 

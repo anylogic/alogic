@@ -115,6 +115,7 @@ public class TogetherServantCatalog extends XMLResourceServantCatalog{
 		sd.setModule(servant);
 		sd.setName(id);
 		sd.setNote(id);
+		sd.setPath(childPath.getPath());
 		String visible = element.getAttribute("visible");
 		sd.setVisible(StringUtils.isNotEmpty(visible)?visible:"public");
 		String log = element.getAttribute("log");

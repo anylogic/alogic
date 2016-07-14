@@ -202,3 +202,5 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-together:增加uuid,now,formula等内置插件(1.6.5.15)
  	 + alogic-together:整合together脚本和xscript脚本,新增com.alogic.xscript包(1.6.5.16)
  	 + alogic-common:淘汰 xscript1.0（1.6.5.17)
+ 	 + alogic-common:优化内置的xscript插件(1.6.5.18)
+ 	 + alogic-together:增加基于本地文件系统的服务目录实现(1.6.5.18)

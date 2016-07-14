@@ -8,7 +8,6 @@ import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.anysoft.util.Properties;
-import com.anysoft.util.PropertiesConstants;
 
 /**
  * Message
@@ -26,7 +25,7 @@ public class Message extends AbstractLogiclet {
 	@Override
 	public void configure(Properties p) {
 		super.configure(p);
-		msg = PropertiesConstants.getString(p,"msg",msg);
+		msg = p.GetValue("p", msg, false, true);
 	}
 
 	@Override
