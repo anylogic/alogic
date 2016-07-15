@@ -206,3 +206,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-together:增加基于本地文件系统的服务目录实现(1.6.5.18)
  	 + alogic-blob:增加project,avatar内置图标集(1.6.5.19)
  	 + alogic-core:服务器启动和关闭时可触发脚本执行(1.6.5.20)
+ 	 + alogic-vfs:增加sftp模式的实现(1.6.5.21)
