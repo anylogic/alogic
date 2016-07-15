@@ -13,8 +13,6 @@ import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
-import com.anysoft.selector.Selector;
-import com.anysoft.selector.impl.Constants;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XmlElementProperties;
 
@@ -29,8 +27,8 @@ public class Switch extends AbstractLogiclet{
 	 * 子语句
 	 */
 	protected Map<String,Logiclet> children = new HashMap<String,Logiclet>();
-	
-	protected Selector selector = null;
+
+	protected String pattern = "";
 	
 	public Switch(String tag, Logiclet p) {
 		super(tag, p);
@@ -39,8 +37,6 @@ public class Switch extends AbstractLogiclet{
 	@Override
 	public void configure(Element element, Properties props) {
 		XmlElementProperties p = new XmlElementProperties(element, props);
-		
-		selector = Selector.newInstanceWithDefault(element, p, Constants.class.getName());
 		
 		NodeList nodeList = element.getChildNodes();
 		
@@ -65,6 +61,8 @@ public class Switch extends AbstractLogiclet{
 			}
 		}
 		
+		pattern = p.GetValue("value", "", false, true);
+		
 		configure(p);
 	}	
 
@@ -73,9 +71,9 @@ public class Switch extends AbstractLogiclet{
 			Map<String, Object> current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		String caseValue = "default";
-		if (selector != null){
+		if (StringUtils.isNotEmpty(pattern)){
 			MapProperties p = new MapProperties(current,ctx);
-			caseValue = selector.select(p);
+			caseValue = p.transform(pattern);
 		}
 		
 		Logiclet stmt = children.get(caseValue);
