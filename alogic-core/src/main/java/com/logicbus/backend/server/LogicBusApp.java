@@ -1,11 +1,17 @@
 package com.logicbus.backend.server;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.alogic.xscript.ExecuteWatcher;
+import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.Script;
 import com.anysoft.metrics.core.Fragment;
 import com.anysoft.metrics.core.MetricsHandler;
 import com.anysoft.stream.Handler;
@@ -61,7 +67,10 @@ import com.logicbus.backend.bizlog.BizLogger;
  * - 增加ketty.web.xml文件，用于替代web.xml中的部分内容 <br>
  * 
  * @version 1.6.4.38 [20160324 duanyy] <br>
- * - 优化WEB退出时的清理工作(1.6.4.38) <br>
+ * - 优化WEB退出时的清理工作 <br>
+ * 
+ * @version 1.6.5.20 [20160715 duanyy] <br>
+ * - 服务器启动和关闭时可触发脚本执行 <br>
  */
 public class LogicBusApp implements WebApp {
 	/**
@@ -208,6 +217,20 @@ public class LogicBusApp implements WebApp {
 		logger.info("Load xml settings..OK!");
 
 		onInit(settings);
+		
+		String script = settings.GetValue("script.bootup","");
+		if (StringUtils.isNotEmpty(script)){
+			logger.info("Execute script:" + script);
+			try {
+				Script logiclet = Script.create(script, settings);
+				if (logiclet != null){
+					Map<String,Object> root = new HashMap<String,Object>();
+					logiclet.execute(root, root, new LogicletContext(settings), new ExecuteWatcher.Quiet());
+				}
+			}catch (Exception ex){
+				logger.error("Failed to execute script:" + script);
+			}
+		}
 	}
 
 	protected void onDestroy(Settings settings){		
@@ -239,8 +262,22 @@ public class LogicBusApp implements WebApp {
 	}
 	
 	@Override
-	public void destroy(ServletContext sc) {
-		Settings settings = Settings.get();
+	public void destroy(ServletContext sc) {		
+		Settings settings = Settings.get();		
+		String script = settings.GetValue("script.shutdown","");
+		if (StringUtils.isNotEmpty(script)){
+			logger.info("Execute script:" + script);
+			try {
+				Script logiclet = Script.create(script, settings);
+				if (logiclet != null){
+					Map<String,Object> root = new HashMap<String,Object>();
+					logiclet.execute(root, root, new LogicletContext(settings), new ExecuteWatcher.Quiet());
+				}
+			}catch (Exception ex){
+				logger.error("Failed to execute script:" + script);
+			}
+		}
+
 		onDestroy(settings);
 		
 		settings.unregisterObject("classLoader");
