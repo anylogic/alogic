@@ -68,7 +68,7 @@ public class AutoIconSet extends BlobManager.Abstract{
 		
 		contentType = PropertiesConstants.getString(p,"contentType",contentType,true); // NOSONAR
 		
-		home = PropertiesConstants.getString(p,"home","/com/alogic/blob/icon",true);
+		home = PropertiesConstants.getString(p,"home","/com/alogic/blob/icon/auto",true);
 		
 		String clazz = PropertiesConstants.getString(p,"bootstrap","",true); // NOSONAR
 		if (clazz != null && clazz.length() > 0){

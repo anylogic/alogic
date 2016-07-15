@@ -204,3 +204,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:淘汰 xscript1.0（1.6.5.17)
  	 + alogic-common:优化内置的xscript插件(1.6.5.18)
  	 + alogic-together:增加基于本地文件系统的服务目录实现(1.6.5.18)
+ 	 + alogic-blob:增加project,avatar内置图标集(1.6.5.19)
