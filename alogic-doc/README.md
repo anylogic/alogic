@@ -211,3 +211,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:xscript的switch插件不再使用selector(1.6.5.23)
  	 + alogic-together:增加服务环境下xscript的内置变量(1.6.5.24)
  	 + alogic-common:xscript增加include(1.6.5.25)
+ 	 + alogic-common:constants增加设置变量模版功能(1.6.5.26)

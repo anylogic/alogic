@@ -15,7 +15,8 @@ import com.anysoft.util.PropertiesConstants;
  * 设置一个常量到上下文环境
  * 
  * @author duanyy
- *
+ * @version 1.6.5.26 <br>
+ * - 增加设置变量模版功能 <br>
  */
 public class Constants extends AbstractLogiclet {
 	protected String id;
@@ -29,7 +30,7 @@ public class Constants extends AbstractLogiclet {
 		super.configure(p);
 		
 		id = PropertiesConstants.getString(p,"id","",true);
-		value = PropertiesConstants.getString(p,"value","",true);
+		value = p.GetValue("value", "", false, true);
 	}
 
 	@Override
