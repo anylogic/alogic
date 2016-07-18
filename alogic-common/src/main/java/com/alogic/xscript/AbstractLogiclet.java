@@ -20,6 +20,7 @@ import com.alogic.xscript.plugins.Encrypt;
 import com.alogic.xscript.plugins.Except;
 import com.alogic.xscript.plugins.Formula;
 import com.alogic.xscript.plugins.Get;
+import com.alogic.xscript.plugins.Include;
 import com.alogic.xscript.plugins.Location;
 import com.alogic.xscript.plugins.Log;
 import com.alogic.xscript.plugins.Message;
@@ -127,6 +128,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	protected static MetricsHandler metricsHandler = null;
 	
 	static{
+		staticModules.put(STMT_INCLUDE, Include.class);
 		staticModules.put(STMT_SEGMENT, Segment.class);
 		staticModules.put(STMT_USING, Using.class);
 		staticModules.put(STMT_ASYNC, Asynchronized.class);
