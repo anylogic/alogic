@@ -25,7 +25,7 @@ public class IDU extends Segment{
 		registerModule("update",Update.class);
 		registerModule("cache",Cache.class);
 		registerModule("expire",CacheClear.class);
-		registerModule("get",CacheQuery.class);
+		registerModule("load",CacheQuery.class);
 		
 	}
 }
