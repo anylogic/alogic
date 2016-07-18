@@ -40,6 +40,9 @@ import com.logicbus.backend.message.Message;
  * - 不再从MessageDoc上继承 <br>
  * - 增加报文长度 <br>
  * - 增加全局调用次序 <br>
+ * 
+ * @version 1.6.5.24 [20160718 duanyy] <br>
+ * - 增加getPathInfo方法 <br>
  */
 public abstract class Context extends DefaultProperties implements DataProvider{
 	/**
@@ -188,6 +191,12 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	 * @return client ip
 	 */
 	abstract public String getClientRealIp();
+	
+	/**
+	 * to get the request path
+	 * @return request path
+	 */
+	abstract public String getPathInfo();
 	
 	/**
 	 * 获取主机信息

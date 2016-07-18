@@ -209,3 +209,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-vfs:增加sftp模式的实现(1.6.5.21)
  	 + alogic-vfs:增加基于vfs的目录比较工具(1.6.5.22)
  	 + alogic-common:xscript的switch插件不再使用selector(1.6.5.23)
+ 	 + alogic-together:增加服务环境下xscript的内置变量(1.6.5.24)

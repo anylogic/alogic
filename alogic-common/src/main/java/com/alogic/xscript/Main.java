@@ -14,6 +14,8 @@ import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.SystemProperties;
+import com.jayway.jsonpath.spi.JsonProvider;
+import com.jayway.jsonpath.spi.JsonProviderFactory;
 
 /**
  * 命令行脚本入口
@@ -85,6 +87,9 @@ public class Main implements Process {
 			Map<String,Object> root = new HashMap<String,Object>();
 			LogicletContext ctx = new LogicletContext(props);
 			script.execute(root, root, ctx, new ExecuteWatcher.Quiet());
+			
+			JsonProvider provider = JsonProviderFactory.createProvider();
+			logger.info(provider.toJson(root));
 		}
 		return 0;
 	}

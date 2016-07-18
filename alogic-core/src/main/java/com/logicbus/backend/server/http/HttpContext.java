@@ -175,6 +175,11 @@ public class HttpContext extends Context {
 	}
 	
 	@Override
+	public String getPathInfo(){
+		return request.getPathInfo();
+	}
+	
+	@Override
 	public String getGlobalSerial() {
 		if (StringUtils.isEmpty(globalSerial)){
 			globalSerial = request.getHeader("GlobalSerial");
