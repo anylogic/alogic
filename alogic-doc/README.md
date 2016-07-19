@@ -213,3 +213,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:xscript增加include(1.6.5.25)
  	 + alogic-common:constants增加设置变量模版功能(1.6.5.26)
  	 + alogic-addons:修改idu中获取缓存对象操作为load(1.6.5.27)
+ 	 + alogic-common:xscript的template支持非Map类型(1.6.5.28)

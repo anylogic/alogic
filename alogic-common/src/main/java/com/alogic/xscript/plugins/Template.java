@@ -21,17 +21,17 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * Tempate is used to create a template.
  * 
  * @author duanyy
- *
+ * @version 1.6.5.28 [20160719 duanyy] <br>
+ * - 可以支持非map类型 <br>
  */
 public class Template extends Segment {
-	protected Map<String,Object> template = null;
+	protected Object template = null;
 	protected String tag = "data";
 	
 	public Template(String tag, Logiclet p) {
 		super(tag, p);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void configure(Properties p) {
 		super.configure(p);
@@ -41,7 +41,7 @@ public class Template extends Segment {
 		String content = PropertiesConstants.getString(p, "content", "");
 		JsonProvider provider = JsonProviderFactory.createProvider();
 		if (StringUtils.isNotEmpty(content)){
-			template = (Map<String, Object>) provider.parse(content);
+			template = provider.parse(content);
 		}else{
 			String src = PropertiesConstants.getString(p, "src", "");
 			if (StringUtils.isNotEmpty(src)){
@@ -49,7 +49,7 @@ public class Template extends Segment {
 				InputStream in = null;
 				try {
 					in = resourceFactory.load(src, null);
-					template = (Map<String, Object>) provider.parse(in);
+					template = provider.parse(in);
 				}catch (Exception ex){
 					logger.error("The file is not a valid json file,url = " + src,ex);
 				}finally{
@@ -59,13 +59,16 @@ public class Template extends Segment {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onExecute(Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
 		if (current != null && template != null){
 			current.put(tag, template);
 			
-			super.onExecute(root, template, ctx, watcher);
+			if (template instanceof Map){
+				super.onExecute(root, (Map<String,Object>)template, ctx, watcher);
+			}
 		}
 	}
 
