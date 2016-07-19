@@ -39,7 +39,7 @@ public class CacheQuery extends CacheOperation {
 	
 		Map<String,Object> data = new HashMap<String,Object>();		
 		found.toJson(data);		
-		current.put(tag, found);
+		current.put(tag, data);
 	}
 
 }
