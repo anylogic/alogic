@@ -14,7 +14,9 @@
    * [定时小任务组件](alogic-framework/doer.md)
 * [alogic-service内置服务接口文档](alogic-service.md)
 * [alogic-common微架构指南](alogic-common.md)
-   * [xscript脚本](alogic-common/xscript.md)
+   * [xscript](alogic-common/xscript.md)
+   * [xscript2.0](alogic-common/xscript2.md)
+   * [xscript参考](alogic-common/xscript2-plugins.md)
    * [SQL预处理器](alogic-common/sqlprocessor.md)
    * [公式解析器](alogic-common/formulaparser.md)
 
