@@ -46,6 +46,8 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
 	    - [新增语句new](xscript-plugins-idu/new.md)
 	    - [删除语句delete](xscript-plugins-idu/delete.md)
 	    - [更新语句update](xscript-plugins-idu/update.md)
+	    - [提交事务commit](xscript-plugins-idu/commit.md)
+	    - [回滚事务rollback](xscript-plugins-idu/rollback.md)
     - 缓存操作
 	    - [创建缓存连接](xscript-plugins-idu/cache.md)
 	    - [获取缓存对象(load)](xscript-plugins-idu/load.md)

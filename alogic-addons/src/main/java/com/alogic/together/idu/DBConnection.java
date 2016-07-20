@@ -19,11 +19,15 @@ import com.logicbus.dbcp.core.ConnectionPool;
  * 
  * @author duanyy
  *
+ * @version 1.6.5.30 [duanyy 20160720] <br>
+ * - 将事务操作交给事务语句去做 <br>
+ * 
  */
 public class DBConnection extends Segment {
 	
 	protected String dbcpId;
 	protected String dbconn = "dbconn";
+	protected boolean autoCommit = true;
 	
 	public DBConnection(String tag, Logiclet p) {
 		super(tag, p);
@@ -34,6 +38,7 @@ public class DBConnection extends Segment {
 		super.configure(p);
 		dbcpId = PropertiesConstants.getString(p,"dbcpId","");
 		dbconn = PropertiesConstants.getString(p, "dbconn",dbconn);
+		autoCommit = PropertiesConstants.getBoolean(p, "autoCommit",autoCommit);
 	}
 
 	@Override
@@ -51,30 +56,13 @@ public class DBConnection extends Segment {
 		}
 		
 		boolean hasError = false;
-		boolean autoCommit = true;
 		try {
-			autoCommit = conn.getAutoCommit();
-			conn.setAutoCommit(false);
-
-			ctx.setObject(dbconn, conn);
-			
-			super.onExecute(root, current, ctx, watcher);
-			
-			conn.commit();
 			conn.setAutoCommit(autoCommit);
-		} catch (Exception ex) {
-			try {
-				conn.rollback();
-			} catch (SQLException e) {
-				hasError = true;
-				logger.error(e.getMessage());
-			}
+			ctx.setObject(dbconn, conn);			
+			super.onExecute(root, current, ctx, watcher);
+		} catch (SQLException ex) {
 			hasError = true;
-			if (ex instanceof BaseException){
-				throw (BaseException)ex;
-			}else{
-				throw new BaseException("core.unknown",ex.getMessage());
-			}
+			throw new BaseException("core.sqlError",ex.getMessage());
 		} finally {
 			ctx.removeObject(dbconn);
 			pool.recycle(conn, hasError);

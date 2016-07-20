@@ -15,7 +15,7 @@ com.alogic.xscript.plugins.Except
 
 | 编号 | 代码 | 说明 |
 | ---- | ---- | ---- |
-| 1 | id | 所处理的异常id | 
+| 1 | id | 所处理的异常id,缺省为except,即处理所有的异常 | 
 
 ### 案例
 
@@ -35,8 +35,8 @@ com.alogic.xscript.plugins.Except
 
 上述脚本的输出日志如下：
 ```
-[160719151021,897] [INFO] [com.alogic.xscript.Logiclet] can not find who parameter.
-[160719151021,897] [INFO] [com.alogic.xscript.Logiclet] finally,must be executed.
+	can not find who parameter.
+	finally,must be executed.
 ```
 
 
