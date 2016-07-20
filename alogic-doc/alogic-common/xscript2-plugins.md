@@ -37,19 +37,19 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
         - [抛出异常throw](xscript-plugins/throw.md)
         - [包含脚本文件include](xscript-plugins/include.md)
 - idu插件集合
-	- [命名空间idu]
-	- 数据库操作
-	    - 创建数据库连接db
-	    - 指定id是否可用idExist
-	    - 查询列表list
-	    - 查询个体对象query
-	    - 新增语句new
-	    - 删除语句delete
-	    - 更新语句update
-	- 缓存操作
-	    - 创建缓存连接(cache)
-	    - 获取缓存对象(load)
-	    - 过期缓存指定对象(expire)
+    - [命名空间idu](xscript-plugins-idu/idu.md)
+    - 数据库操作
+	    - [创建数据库连接db](xscript-plugins-idu/db.md)
+	    - [指定id是否可用idExist](xscript-plugins-idu/idExist.md)
+	    - [查询列表list](xscript-plugins-idu/list.md)
+	    - [查询个体对象query](xscript-plugins-idu/query.md)
+	    - [新增语句new](xscript-plugins-idu/new.md)
+	    - [删除语句delete](xscript-plugins-idu/delete.md)
+	    - [更新语句update](xscript-plugins-idu/update.md)
+    - 缓存操作
+	    - [创建缓存连接](xscript-plugins-idu/cache.md)
+	    - [获取缓存对象(load)](xscript-plugins-idu/load.md)
+	    - [过期指定缓存对象(expire)](xscript-plugins-idu/expire.md)
 - rest插件集合
 
 
