@@ -17,7 +17,7 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
         - [设置一个变量set](xscript-plugins/set.md)
         - [设置一个通过公式计算的变量formula](xscript-plugins/formula.md)
     - 文档操作
-        - [获取一个变量值，并输出到文档set](xscript-plugins/get.md)
+        - [获取一个变量值，并输出到文档get](xscript-plugins/get.md)
         - [将一个预定义的JSON文档输出到文档template](xscript-plugins/template.md)
         - [通过定位切换文档的当前节点location](xscript-plugins/location.md)
     - 日志
