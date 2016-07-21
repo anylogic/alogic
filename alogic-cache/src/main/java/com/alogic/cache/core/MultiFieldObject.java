@@ -32,6 +32,9 @@ import com.anysoft.util.JsonTools;
  * 
  * @version 1.6.5.31 [duanyy 20160721] <br>
  * - 增加set的exist接口 <br>
+ * 
+ * @version 1.6.5.32 [duanyy 20160721] <br>
+ * - 修正set接口的bug <br>
  */
 public interface MultiFieldObject extends Cacheable,DataProvider {
 	/**
@@ -580,6 +583,7 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 				Set<String> found = setValues.get(id);
 				if (found == null){
 					found = new HashSet<String>();
+					setValues.put(id, found);
 				}
 				
 				for (String m:member){

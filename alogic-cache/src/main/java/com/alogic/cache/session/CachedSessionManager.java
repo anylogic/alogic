@@ -346,6 +346,7 @@ public class CachedSessionManager extends SessionManager{
 				Set<String> found = setValues.get(id);
 				if (found == null){
 					found = new HashSet<String>();
+					setValues.put(id, found);
 				}
 				
 				for (String m:member){
