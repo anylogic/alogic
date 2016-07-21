@@ -19,6 +19,7 @@ import com.logicbus.models.servant.ServiceDescription;
  */
 public class TogetherServant extends AbstractServant {
 	protected Script script = null;
+	protected String service;
 	
 	@Override
 	protected void onDestroy() {
@@ -28,7 +29,7 @@ public class TogetherServant extends AbstractServant {
 	@Override
 	protected void onCreate(ServiceDescription sd) {
 		Properties p = sd.getProperties();
-		
+		service = sd.getPath();
 		String bootstrap = PropertiesConstants.getString(p,"bootstrap","",true);
 		if (StringUtils.isEmpty(bootstrap)){
 			String config = PropertiesConstants.getString(p,"script","");
@@ -50,6 +51,7 @@ public class TogetherServant extends AbstractServant {
 			
 			LogicletContext logicletContext = new SevantLogicletContext(ctx);
 			logicletContext.setObject("$context", ctx);
+			logicletContext.SetValue("$service", service);
 			try {
 				script.execute(msg.getRoot(),msg.getRoot(), logicletContext, null);
 			}finally{

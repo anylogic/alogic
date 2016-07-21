@@ -10,6 +10,10 @@ import com.anysoft.util.Properties;
  * @author duanyy
  * 
  * @since 1.6.2.6
+ * 
+ * @version 1.6.5.31 [duanyy 20160721] <br>
+ * - 增加set的exist接口 <br>
+ * 
  */
 abstract public class Session extends Properties{
 	abstract public String hGet(String id,String field,String dftValue);
@@ -33,6 +37,8 @@ abstract public class Session extends Properties{
 	abstract public int sSize(String id);
 	
 	abstract public String[] sMembers(String id);
+	
+	abstract public boolean sExist(String id,String member);
 	
 	abstract public long getCreateTime();
 	

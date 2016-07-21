@@ -396,6 +396,20 @@ public class CachedSessionManager extends SessionManager{
 			
 			return found.toArray(new String[found.size()]);
 		}
+		
+		@Override
+		public boolean sExist(String id, String member) {
+			lastVisitedTime = System.currentTimeMillis();
+			if (setValues == null){
+				return false;
+			}
+			
+			Set<String> found = setValues.get(id);
+			if (found == null){
+				return false;
+			}
+			return found.contains(member);
+		}		
 
 		@Override
 		public void del(String id) {
@@ -446,7 +460,6 @@ public class CachedSessionManager extends SessionManager{
 		public long getLastVisitedTime() {
 			return lastVisitedTime;
 		}
-
 	}
 	
 	public static class CachedSession extends Session{
@@ -512,6 +525,11 @@ public class CachedSessionManager extends SessionManager{
 			return agent.sMembers(id);
 		}
 
+		@Override
+		public boolean sExist(String id,String member){
+			return agent.sExist(id, member);
+		}
+		
 		@Override
 		public long getCreateTime() {
 			return agent.getLastVisitedTime();

@@ -506,6 +506,12 @@ public class KValueCacheStore extends AbstractCacheStore {
 			
 			return members.toArray(new String[members.size()]);
 		}
+		
+		@Override
+		public boolean sExist(String id,String member){
+			visited();
+			return set.contain(id + SEPERATOR + member);
+		}
 
 		@Override
 		public void del(String id) {
@@ -561,6 +567,7 @@ public class KValueCacheStore extends AbstractCacheStore {
 		public int count() {
 			return hLen("");
 		}
-		
+
+
 	}
 }

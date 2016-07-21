@@ -173,6 +173,18 @@ public class LocalSession extends Session {
 			return null;
 		}
 	}
+	
+	@Override
+	public boolean sExist(String id, String member) {
+		Object found = httpSession.getAttribute(id);
+		if (found != null && found instanceof Set){
+			@SuppressWarnings("unchecked")
+			Set<String> set = (Set<String>)found;
+			return set.contains(member);
+		}else{
+			return false;
+		}
+	}	
 
 	@Override
 	protected void _SetValue(String _name, String _value) {

@@ -20,7 +20,8 @@ Together是algoic提供的一个服务组装框架，当前版本是2.0。
 | 5 | $method | String | http方法 | GET,POST等 |
 | 6 | $query | String | URL的Query字串 | |
 | 7 | $uri | String | 服务请求的URL | |
-| 8 | $path | String | 服务路径 | | 
+| 8 | $path | String | 服务请求的路径 | | 
+| 9 | $service | String | 服务路径 | | 
 
 为了验证上面的变量，编写下列服务脚本：
 
