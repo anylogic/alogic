@@ -35,9 +35,9 @@ public class Decrypt extends AbstractLogiclet{
 	public void configure(Properties p) {
 		super.configure(p);
 		
-		in = PropertiesConstants.getString(p,"in", in);
-		out = PropertiesConstants.getString(p,"out", out);
-		key = PropertiesConstants.getString(p,"key", "");
+		in = PropertiesConstants.getRaw(p,"in", "");
+		out = PropertiesConstants.getRaw(p,"out", "");
+		key = PropertiesConstants.getRaw(p,"key", "");
 		
 		coder = CoderFactory.newCoder(PropertiesConstants.getString(p,"coder","DES3"));
 	}		
@@ -49,12 +49,13 @@ public class Decrypt extends AbstractLogiclet{
 		
 		MapProperties p = new MapProperties(current,ctx);
 		
-		String inData = PropertiesConstants.getString(p,in,"");
-		String keyData = PropertiesConstants.getString(p,key,"");
+		String inData = p.transform(in);
+		String keyData = p.transform(key);
 		
 		if (StringUtils.isNotEmpty(inData)&&StringUtils.isNotEmpty(keyData)){
 			String outData = coder.decode(inData, keyData);
-			if (StringUtils.isNotEmpty(outData)){
+			String outId = p.transform(out);
+			if (StringUtils.isNotEmpty(outData) && StringUtils.isNotEmpty(outId)){
 				ctx.SetValue(out, outData);
 			}
 		}

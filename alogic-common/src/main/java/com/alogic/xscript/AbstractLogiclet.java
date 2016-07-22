@@ -11,6 +11,8 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
 import com.alogic.xscript.log.LogInfo;
+import com.alogic.xscript.plugins.Array;
+import com.alogic.xscript.plugins.ArrayItem;
 import com.alogic.xscript.plugins.Asynchronized;
 import com.alogic.xscript.plugins.Check;
 import com.alogic.xscript.plugins.CheckAndSetDefault;
@@ -18,12 +20,14 @@ import com.alogic.xscript.plugins.Constants;
 import com.alogic.xscript.plugins.Decrypt;
 import com.alogic.xscript.plugins.Encrypt;
 import com.alogic.xscript.plugins.Except;
+import com.alogic.xscript.plugins.ForEach;
 import com.alogic.xscript.plugins.Formula;
 import com.alogic.xscript.plugins.Get;
 import com.alogic.xscript.plugins.Include;
 import com.alogic.xscript.plugins.Location;
 import com.alogic.xscript.plugins.Log;
 import com.alogic.xscript.plugins.Message;
+import com.alogic.xscript.plugins.Obj;
 import com.alogic.xscript.plugins.Now;
 import com.alogic.xscript.plugins.Repeat;
 import com.alogic.xscript.plugins.Scope;
@@ -124,6 +128,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_LOGGER = "logger";
 	public static final String STMT_LOG = "log";
 	public static final String STMT_SLEEP = "sleep";
+	public static final String STMT_FOREACH = "foreach";
+	public static final String STMT_OBJ = "obj";
+	public static final String STMT_ARRAY = "array";
+	public static final String STMT_ARRAYITEM = "array-item";
 	
 	protected static MetricsHandler metricsHandler = null;
 	
@@ -155,6 +163,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_LOGGER, com.alogic.xscript.plugins.Logger.class);
 		staticModules.put(STMT_LOG, Log.class);
 		staticModules.put(STMT_SLEEP, Sleep.class);
+		staticModules.put(STMT_FOREACH, ForEach.class);
+		staticModules.put(STMT_OBJ, Obj.class);
+		staticModules.put(STMT_ARRAY, Array.class);
+		staticModules.put(STMT_ARRAYITEM, ArrayItem.class);
 		
 		Settings settings = Settings.get();
 		metricsHandler = (MetricsHandler) settings.get("metricsHandler");

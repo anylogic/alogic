@@ -15,9 +15,9 @@ com.alogic.xscript.plugins.Encrypt
 
 | 编号 | 代码 | 说明 |
 | ---- | ---- | ---- |
-| 1 | in | 输入变量名 |
-| 2 | out | 输出变量名 |
-| 3 | key | 加密的密钥的变量名 ｜
+| 1 | in | 输入值，可计算 |
+| 2 | out | 输出变量名，可计算 |
+| 3 | key | 加密的密钥，可计算 ｜
 | 4 | coder | 加密算法，支持:MD5,DES3,DES,AES,SHA1等,缺省为DES3 |
 
 ### 案例
@@ -32,31 +32,31 @@ com.alogic.xscript.plugins.Encrypt
         <set id="pwd" value="alogic123_"/>
         
         <!--通过DES3加密-->
-        <encrypt out="pwdEncrypted" in="pwd" key="userId" coder="DES3"/>
+        <encrypt out="pwdEncrypted" in="${pwd}" key="${userId}" coder="DES3"/>
         <log msg="pwdEncrypted=${pwdEncrypted}"/>
         
         <!--通过DES3解密-->
-        <descrypt out="pwd" in="pwdEncrypted" key="userId" coder="DES3"/>
+        <descrypt out="pwd" in="${pwdEncrypted}" key="${userId}" coder="DES3"/>
         <log msg="pwd=${pwd}"/>
         
         <!--通过AES加密-->
-        <encrypt out="pwdEncrypted" in="pwd" key="userId" coder="AES"/>
+        <encrypt out="pwdEncrypted" in="${pwd}" key="${userId}" coder="AES"/>
         <log msg="pwdEncrypted=${pwdEncrypted}"/>
         
         <!--通过AES解密-->
-        <descrypt out="pwd" in="pwdEncrypted" key="userId" coder="AES"/>
+        <descrypt out="pwd" in="${pwdEncrypted}" key="${userId}" coder="AES"/>
         <log msg="pwd=${pwd}"/>
         
         <!--通过SHA1加密-->
-        <encrypt out="pwdEncrypted" in="pwd" key="userId" coder="SHA1"/>
+        <encrypt out="pwdEncrypted" in="${pwd}" key="${userId}" coder="SHA1"/>
         <log msg="pwdEncrypted=${pwdEncrypted}"/>
         
         <!--通过SHA1解密-->
-        <descrypt out="pwd" in="pwdEncrypted" key="userId" coder="SHA1"/>
+        <descrypt out="pwd" in="${pwdEncrypted}" key="${userId}" coder="SHA1"/>
         <log msg="pwd=${pwd}"/>
         
         <!--通过MD5加密-->
-        <encrypt out="pwdEncrypted" in="pwd" key="userId" coder="MD5"/>
+        <encrypt out="pwdEncrypted" in="${pwd}" key="${userId}" coder="MD5"/>
         <log msg="pwdEncrypted=${pwdEncrypted}"/>	
 	</script>
 ```

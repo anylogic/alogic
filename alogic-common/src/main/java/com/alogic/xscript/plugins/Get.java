@@ -29,16 +29,17 @@ public class Get extends AbstractLogiclet {
 	public void configure(Properties p){
 		super.configure(p);
 		
-		id = PropertiesConstants.getString(p,"id","",true);
+		id = PropertiesConstants.getRaw(p,"id","");
 		value = p.GetValue("value", "", false, true);
 	}
 
 	@Override
 	protected void onExecute(Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
-		if (StringUtils.isNotEmpty(id)){
-			MapProperties p = new MapProperties(current,ctx);
-			current.put(id, p.transform(value));
+		MapProperties p = new MapProperties(current,ctx);
+		String idValue = p.transform(id);
+		if (StringUtils.isNotEmpty(idValue)){
+			current.put(idValue, p.transform(value));
 		}
 	}
 

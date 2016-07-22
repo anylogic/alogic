@@ -30,7 +30,7 @@ public class CheckAndSetDefault extends AbstractLogiclet{
 		super.configure(p);
 		
 		arguId = PropertiesConstants.getString(p,"id", arguId);
-		dftValue = PropertiesConstants.getString(p,"dft", dftValue);
+		dftValue = PropertiesConstants.getRaw(p, "dft", "");
 	}		
 	
 	@Override

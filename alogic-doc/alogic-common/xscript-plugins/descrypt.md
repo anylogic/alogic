@@ -15,9 +15,9 @@ com.alogic.xscript.plugins.Descrypt
 
 | 编号 | 代码 | 说明 |
 | ---- | ---- | ---- |
-| 1 | in | 输入变量名 |
-| 2 | out | 输出变量名 |
-| 3 | key | 解密密钥的变量名 ｜
+| 1 | in | 输入值，可计算 |
+| 2 | out | 输出变量名，可计算 |
+| 3 | key | 加密的密钥，可计算 ｜
 | 4 | coder | 加密算法，支持:MD5,DES3,DES,AES,SHA1等,缺省为DES3 |
 
 ### 案例

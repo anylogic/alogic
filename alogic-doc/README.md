@@ -219,3 +219,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-together:上下文增加变量$service(1.6.5.31)
  	 + alogic-cache:MultiFieldObject增加set相关接口(1.6.5.31)
  	 + alogic-cache:修正set接口的bug(1.6.5.32)
+ 	 + alogic-common:xscript增加foreach,obj,array,array-item等指令(1.6.5.33)

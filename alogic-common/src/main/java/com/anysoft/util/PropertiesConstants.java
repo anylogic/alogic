@@ -31,6 +31,9 @@ import org.apache.commons.lang3.StringUtils;
  * 
  * @version 1.6.4.27 [20160125 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.5.33 [20160722 duanyy[ <br>
+ * - 增加getRaw方法
  */
 public class PropertiesConstants {
 	public static final String DEFAULT_DATE_PATTERN = "yyyyMMddHHmmss";
@@ -61,7 +64,18 @@ public class PropertiesConstants {
 	 * @return 变量值
 	 */
 	public static String getString(Properties props,String name,String defaultValue){
-		return props.GetValue(name, defaultValue,true,false);
+		return props == null ? defaultValue : props.GetValue(name, defaultValue,true,false);
+	}
+	
+	/**
+	 * 获取原始未经过计算的值
+	 * @param p Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @return 原始值
+	 */
+	public static String getRaw(Properties p,String name,String defaultValue){
+		return p == null ? defaultValue : p.GetValue(name, defaultValue, false, true);
 	}
 	
 	/**
@@ -75,7 +89,7 @@ public class PropertiesConstants {
 	 */
 	public static String getString(Properties props,String name,String defaultValue,
 			boolean noParent){
-		return props.GetValue(name, defaultValue,true,noParent);
+		return props == null ? defaultValue : props.GetValue(name, defaultValue,true,noParent);
 	}
 	
 	/**

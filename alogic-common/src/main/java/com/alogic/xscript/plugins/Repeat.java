@@ -26,6 +26,7 @@ public class Repeat extends Segment{
 	}
 	
 	public void configure(Properties p){
+		super.configure(p);
 		jsonPath = PropertiesConstants.getString(p, "path", jsonPath);
 	}
 

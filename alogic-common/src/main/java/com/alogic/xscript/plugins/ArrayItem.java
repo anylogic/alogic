@@ -1,43 +1,40 @@
 package com.alogic.xscript.plugins;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
 /**
- * Throw
- * 
- * <p>
- * Throw is used to throw an exception.
+ * 为数组增加子项
  * 
  * @author duanyy
  *
  */
-public class Throw extends AbstractLogiclet{
-	protected String id = STMT_EXCEPTION;
-	protected String msg;
+public class ArrayItem extends Segment {
+	protected String id = "$array";
 	
-	public Throw(String tag, Logiclet p) {
+	public ArrayItem(String tag, Logiclet p) {
 		super(tag, p);
 	}
 
 	@Override
-	public void configure(Properties p) {
+	public void configure(Properties p){
 		super.configure(p);
 		id = PropertiesConstants.getString(p,"id",id,true);
-		msg = PropertiesConstants.getRaw(p,"msg","");
 	}
-
-	@Override
+	
 	protected void onExecute(Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
-		throw new BaseException(id,ctx.transform(msg));
-	}
-
+		List<Object> list = ctx.getObject(id);
+		if (list != null){
+			Map<String,Object> template = new HashMap<String,Object>();
+			list.add(template);
+			super.onExecute(root, (Map<String,Object>)template, ctx, watcher);			
+		}
+	}	
 }

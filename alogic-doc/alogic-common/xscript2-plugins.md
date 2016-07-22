@@ -20,6 +20,9 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
         - [获取一个变量值，并输出到文档get](xscript-plugins/get.md)
         - [将一个预定义的JSON文档输出到文档template](xscript-plugins/template.md)
         - [通过定位切换文档的当前节点location](xscript-plugins/location.md)
+        - [创建对象，输出到文档obj](xscript-plugins/obj.md)
+        - [创建数组，输出到文档array](xscript-plugins/array.md)
+        - [创建数组项，输出到文档array-item](xscript-plugins/array-item.md)
     - 日志
         - [日志输出log](xscript-plugins/log.md)
         - [定义日志处理器logger](xscript-plugins/logger.md)
@@ -32,6 +35,7 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
     - 控制语句
         - [条件switch](xscript-plugins/switch.md)
         - [循环repeat](xscript-plugins/repeat.md)
+        - [循环foreach](xscript-plugins/foreach.md)
         - [定义异常处理器except](xscript-plugins/except.md)
         - [定义最终处理器finally](xscript-plugins/finally.md)
         - [抛出异常throw](xscript-plugins/throw.md)

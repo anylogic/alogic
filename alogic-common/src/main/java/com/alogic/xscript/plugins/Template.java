@@ -1,6 +1,7 @@
 package com.alogic.xscript.plugins;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,8 +26,9 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * - 可以支持非map类型 <br>
  */
 public class Template extends Segment {
-	protected Object template = null;
+	protected String content = new String();
 	protected String tag = "data";
+	protected JsonProvider provider = JsonProviderFactory.createProvider();
 	
 	public Template(String tag, Logiclet p) {
 		super(tag, p);
@@ -36,24 +38,30 @@ public class Template extends Segment {
 	public void configure(Properties p) {
 		super.configure(p);
 		
-		tag = PropertiesConstants.getString(p, "tag", tag);
+		tag = p.GetValue("tag", tag, false, true);
 		
-		String content = PropertiesConstants.getString(p, "content", "");
-		JsonProvider provider = JsonProviderFactory.createProvider();
-		if (StringUtils.isNotEmpty(content)){
-			template = provider.parse(content);
-		}else{
+		content = PropertiesConstants.getString(p, "content", "");
+		if (StringUtils.isEmpty(content)){
 			String src = PropertiesConstants.getString(p, "src", "");
 			if (StringUtils.isNotEmpty(src)){
 				ResourceFactory resourceFactory = Settings.getResourceFactory();
 				InputStream in = null;
+				InputStreamReader reader = null;
 				try {
 					in = resourceFactory.load(src, null);
-					template = provider.parse(in);
+					reader = new InputStreamReader(in);
+					
+					StringBuffer strBuffer = new StringBuffer();
+					char[] buffer = new char[2048];
+					int length = -1;
+					while ((length = reader.read(buffer)) != -1){
+						strBuffer.append(buffer, 0, length);
+					}
+					content = strBuffer.toString();
 				}catch (Exception ex){
 					logger.error("The file is not a valid json file,url = " + src,ex);
 				}finally{
-					IOTools.close(in);
+					IOTools.close(in,reader);
 				}				
 			}
 		}
@@ -63,9 +71,10 @@ public class Template extends Segment {
 	@Override
 	protected void onExecute(Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
-		if (current != null && template != null){
-			current.put(tag, template);
-			
+		String tagValue = ctx.transform(tag);
+		if (current != null && content != null && StringUtils.isNotEmpty(tagValue)){
+			Object template = provider.parse(content);
+			current.put(tagValue, template);
 			if (template instanceof Map){
 				super.onExecute(root, (Map<String,Object>)template, ctx, watcher);
 			}
