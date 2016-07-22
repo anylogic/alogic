@@ -15,8 +15,8 @@ com.alogic.together.idu.CacheQuery
 | 编号 | 代码 | 说明 |
 | ---- | ---- | ---- |
 | 1 | cacheConn | 上下文对象的id，缺省为cacheConn |
-| 2 | tag | 输出对象的tag |
-| 3 | id | 缓存对象的id |
+| 2 | tag | 输出对象的tag，支持变量计算 |
+| 3 | id | 缓存对象的id，支持变量计算 |
 
 ### 案例
 

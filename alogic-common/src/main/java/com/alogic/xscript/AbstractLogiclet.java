@@ -26,6 +26,7 @@ import com.alogic.xscript.plugins.Get;
 import com.alogic.xscript.plugins.Include;
 import com.alogic.xscript.plugins.Location;
 import com.alogic.xscript.plugins.Log;
+import com.alogic.xscript.plugins.Lowercase;
 import com.alogic.xscript.plugins.Message;
 import com.alogic.xscript.plugins.Obj;
 import com.alogic.xscript.plugins.Now;
@@ -35,10 +36,13 @@ import com.alogic.xscript.plugins.Segment;
 import com.alogic.xscript.plugins.Select;
 import com.alogic.xscript.plugins.Set;
 import com.alogic.xscript.plugins.Sleep;
+import com.alogic.xscript.plugins.Substr;
 import com.alogic.xscript.plugins.Switch;
 import com.alogic.xscript.plugins.Template;
 import com.alogic.xscript.plugins.Throw;
+import com.alogic.xscript.plugins.Trim;
 import com.alogic.xscript.plugins.UUid;
+import com.alogic.xscript.plugins.Uppercase;
 import com.alogic.xscript.plugins.Using;
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
@@ -89,7 +93,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	/**
 	 * 静态注册表（全局有效）
 	 */
-	private static Hashtable<String,Class<? extends Logiclet>> staticModules = 
+	protected static Hashtable<String,Class<? extends Logiclet>> staticModules = 
 			new Hashtable<String,Class<? extends Logiclet>>();
 	
 	/**
@@ -132,6 +136,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_OBJ = "obj";
 	public static final String STMT_ARRAY = "array";
 	public static final String STMT_ARRAYITEM = "array-item";
+	public static final String STMT_TRIM = "trim";
+	public static final String STMT_UPPERCASE = "uppercase";
+	public static final String STMT_LOWERCASE = "lowercase";
+	public static final String STMT_SUBSTR = "substr";
 	
 	protected static MetricsHandler metricsHandler = null;
 	
@@ -167,6 +175,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_OBJ, Obj.class);
 		staticModules.put(STMT_ARRAY, Array.class);
 		staticModules.put(STMT_ARRAYITEM, ArrayItem.class);
+		staticModules.put(STMT_TRIM, Trim.class);
+		staticModules.put(STMT_UPPERCASE,Uppercase.class);
+		staticModules.put(STMT_LOWERCASE,Lowercase.class);
+		staticModules.put(STMT_SUBSTR,Substr.class);
 		
 		Settings settings = Settings.get();
 		metricsHandler = (MetricsHandler) settings.get("metricsHandler");

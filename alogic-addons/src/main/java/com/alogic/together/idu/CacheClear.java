@@ -2,6 +2,8 @@ package com.alogic.together.idu;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alogic.cache.core.CacheStore;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
@@ -19,15 +21,17 @@ public class CacheClear extends CacheOperation{
 	@Override
 	public void configure(Properties p){
 		super.configure(p);
-		id = PropertiesConstants.getString(p, "id", id);
+		id = PropertiesConstants.getRaw(p, "id", "");
 	}
 
 	@Override
 	protected void onExecute(CacheStore cache, Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
-		String idValue = getArgument(id,ctx);
-		cache.expire(idValue);
+		String idValue = ctx.transform(id);
+		if (StringUtils.isNotEmpty(idValue)){
+			cache.expire(idValue);
+		}
 	}
 
 }

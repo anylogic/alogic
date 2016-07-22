@@ -18,7 +18,7 @@ com.alogic.together.idu.ListAll
 | ---- | ---- | ---- |
 | 1 | dbconn | 上下文对象的id，缺省为dbconn |
 | 2 | sql.Query | 查询SQL语句 |
-| 3 | tag | 输出对象的tag | 
+| 3 | tag | 输出对象的tag，支持变量计算 | 
 
 ### 案例
 

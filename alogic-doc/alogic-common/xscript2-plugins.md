@@ -16,6 +16,10 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
         - [设置一个随机字符标示uuid](xscript-plugins/uuid.md)
         - [设置一个变量set](xscript-plugins/set.md)
         - [设置一个通过公式计算的变量formula](xscript-plugins/formula.md)
+        - [设置一个变量，取值进行截断trim](xscript-plugins/trim.md)
+        - [设置一个变量，取值转为小写lowercase](xscript-plugins/lowercase.md)
+        - [设置一个变量，取值转为大写uppercase](xscript-plugins/uppercase.md)
+        - [设置一个变量，在取值中取子字符串substr](xscript-plugins/substr.md)
     - 文档操作
         - [获取一个变量值，并输出到文档get](xscript-plugins/get.md)
         - [将一个预定义的JSON文档输出到文档template](xscript-plugins/template.md)

@@ -15,7 +15,7 @@ com.alogic.together.idu.CacheClear
 | 编号 | 代码 | 说明 |
 | ---- | ---- | ---- |
 | 1 | cacheConn | 上下文对象的id，缺省为cacheConn |
-| 3 | id | 缓存对象的id |
+| 3 | id | 缓存对象的id,支持变量计算 |
 
 ### 案例
 

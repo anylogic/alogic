@@ -3,6 +3,8 @@ package com.alogic.together.idu;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alogic.cache.core.CacheStore;
 import com.alogic.cache.core.MultiFieldObject;
 import com.alogic.xscript.ExecuteWatcher;
@@ -23,23 +25,26 @@ public class CacheQuery extends CacheOperation {
 	@Override
 	public void configure(Properties p){
 		super.configure(p);
-		tag = PropertiesConstants.getString(p, "tag", tag);
-		id = PropertiesConstants.getString(p, "id", id);		
+		tag = PropertiesConstants.getRaw(p, "tag", tag);
+		id = PropertiesConstants.getRaw(p, "id", "");		
 	}	
 	
 	@Override
 	protected void onExecute(CacheStore cache, Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
-		String idValue = getArgument(id,ctx);
-		MultiFieldObject found = cache.get(idValue, true);
-		if (found == null){
-			throw new ServantException("core.data_not_found","Can not find object,id=" + idValue);
+		String idValue = ctx.transform(id);
+		if (StringUtils.isNotEmpty(idValue)){
+			MultiFieldObject found = cache.get(idValue, true);
+			if (found == null){
+				throw new ServantException("core.data_not_found","Can not find object,id=" + idValue);
+			}
+		
+			Map<String,Object> data = new HashMap<String,Object>();		
+			found.toJson(data);		
+			String tagValue = ctx.transform(tag);
+			current.put(tagValue, data);
 		}
-	
-		Map<String,Object> data = new HashMap<String,Object>();		
-		found.toJson(data);		
-		current.put(tag, data);
 	}
 
 }
