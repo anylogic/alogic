@@ -1,6 +1,6 @@
 query
 =====
-query用于在数据库中查询出单行记录，并以对象的形式输出到文档。
+query用于在数据库中查询出单行记录，并以对象的形式输出到文档，或者扩展当前文档节点的对象属性。
 
 本插件中所使用的SQL支持动态SQL语句，参考[sqlprocessor](../sqlprocessor.md)。
 
@@ -19,6 +19,7 @@ com.alogic.together.idu.Query
 | 1 | dbconn | 上下文对象的id，缺省为dbconn |
 | 2 | sql.Query | 查询SQL语句 |
 | 3 | tag | 输出对象的tag，支持变量计算 | 
+| 4 | extend | 是否扩展当前对象，缺省为false，当前exend为true的时候，tag无意义 |
 
 ### 案例
 

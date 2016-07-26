@@ -14,9 +14,16 @@ import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.logicbus.backend.ServantException;
 
+/**
+ * 查询当前缓存中指定id的对象，并输出到当前文档
+ * 
+ * @author duanyy
+ *
+ */
 public class CacheQuery extends CacheOperation {
 	protected String tag = "data";
 	protected String id = "id";
+	protected boolean extend = false;
 	
 	public CacheQuery(String tag, Logiclet p) {
 		super(tag, p);
@@ -27,6 +34,7 @@ public class CacheQuery extends CacheOperation {
 		super.configure(p);
 		tag = PropertiesConstants.getRaw(p, "tag", tag);
 		id = PropertiesConstants.getRaw(p, "id", "");		
+		extend = PropertiesConstants.getBoolean(p,"extend",extend);
 	}	
 	
 	@Override
@@ -40,10 +48,15 @@ public class CacheQuery extends CacheOperation {
 				throw new ServantException("core.data_not_found","Can not find object,id=" + idValue);
 			}
 		
-			Map<String,Object> data = new HashMap<String,Object>();		
-			found.toJson(data);		
-			String tagValue = ctx.transform(tag);
-			current.put(tagValue, data);
+			if (extend){
+				//扩展当前节点
+				found.toJson(current);
+			}else{
+				Map<String,Object> data = new HashMap<String,Object>();		
+				found.toJson(data);		
+				String tagValue = ctx.transform(tag);
+				current.put(tagValue, data);
+			}
 		}
 	}
 

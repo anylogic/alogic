@@ -221,3 +221,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-cache:修正set接口的bug(1.6.5.32)
  	 + alogic-common:xscript增加foreach,obj,array,array-item等指令(1.6.5.33)
  	 + alogic-common:xscript增加trim,substr,lowercase,uppercase等指令(1.6.5.34)
+ 	 + alogic-addons:idu的load和query插件增加extend参数，用于扩展当前节点对象(1.6.5.35)

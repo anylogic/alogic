@@ -1,6 +1,6 @@
 load
 ====
-load用于从指定缓存中装入对象，并以指定的tag输出到当前文档节点。
+load用于从指定缓存中装入对象，并以指定的tag输出到当前文档节点，或者扩展当前文档节点的对象属性。
 
 load必须在某个cache语句之内，参见[cache](cache.md)。
 
@@ -17,6 +17,7 @@ com.alogic.together.idu.CacheQuery
 | 1 | cacheConn | 上下文对象的id，缺省为cacheConn |
 | 2 | tag | 输出对象的tag，支持变量计算 |
 | 3 | id | 缓存对象的id，支持变量计算 |
+| 4 | extend | 是否扩展当前对象，缺省为false，当前exend为true的时候，tag无意义 |
 
 ### 案例
 
