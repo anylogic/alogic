@@ -11,7 +11,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import com.alogic.timer.matcher.Crontab;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
@@ -36,6 +35,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.4.16 [duanyy 20151110] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.5.36 [duanyy 20160729] <br>
+ * - 增加stop接口，优化清理工作 <br>
  */
 public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	/**
@@ -76,6 +78,11 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	 * 恢复定时器状态为Running
 	 */	
 	public void resume();
+	
+	/**
+	 * 停止
+	 */
+	public void stop();
 	
 	/**
 	 * 预测1个月内下一次调度时间
@@ -287,6 +294,10 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 
 		public void resume() {
 			state = State.Running;
+		}
+		
+		public void stop(){
+			state = State.Stopped;
 		}
 
 		public Date forecastNextDate() {

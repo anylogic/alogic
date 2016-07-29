@@ -273,6 +273,9 @@ public interface Scheduler extends Timer,Runnable {
 		public void stop(){
 			state = State.Stopping;
 			logger.info(String.format("Try to stop the scheduler[%s]....[%s]",getId(),state.toString()));
+			if (lock != null){
+				lock.unlock();
+			}			
 			if (future != null){
 				//等待2秒钟，再打断线程
 				try {
@@ -280,9 +283,10 @@ public interface Scheduler extends Timer,Runnable {
 				} catch (InterruptedException e) {
 				}
 				future.cancel(true);
-			}			
-			if (lock != null){
-				lock.unlock();
+			}	
+			Timer [] timers = getTimers();
+			for (Timer timer:timers){
+				timer.stop();
 			}
 		}
 		
