@@ -684,6 +684,19 @@
 				</properties>		    
 			</service>
 			<service 
+				id = "Reload" 
+				name="Reload" 
+				note="重新装入配置" 
+				visible="protected"
+				log = "none" 
+				module="com.alogic.timer.service.SchedulerReload">
+				<properties>
+					<parameter id="jsonDefault" value="false"/>
+					<parameter id="servant.maxActive" value="10"/>
+					<parameter id="servant.maxIdle" value="1"/>
+				</properties>		    
+			</service>			
+			<service 
 				id = "Resume" 
 				name="Resume" 
 				note="恢复调度器" 
@@ -723,6 +736,19 @@
 						<parameter id="servant.maxIdle" value="1"/>
 					</properties>		    
 				</service>
+				<service 
+					id = "Reload" 
+					name="Reload" 
+					note="重新装入配置" 
+					visible="protected"
+					log = "none" 
+					module="com.alogic.timer.service.TimerReload">
+					<properties>
+						<parameter id="jsonDefault" value="false"/>
+						<parameter id="servant.maxActive" value="10"/>
+						<parameter id="servant.maxIdle" value="1"/>
+					</properties>		    
+				</service>				
 				<service 
 					id = "Resume" 
 					name="Resume" 

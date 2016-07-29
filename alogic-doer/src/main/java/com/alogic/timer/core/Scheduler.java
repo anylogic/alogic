@@ -269,6 +269,14 @@ public interface Scheduler extends Timer,Runnable {
 						}}, 
 					0, TimeUnit.MILLISECONDS);
 		}		
+
+		@Override
+		public void reload(){
+			Timer[] all = getTimers();
+			for (Timer t:all){
+				t.reload();
+			}
+		}		
 		
 		public void stop(){
 			state = State.Stopping;
@@ -316,7 +324,7 @@ public interface Scheduler extends Timer,Runnable {
 		
 		private Lock getLock(Properties p) {
 			Lock lock = null;
-			String module = PropertiesConstants.getString(p,"lock","");
+			String module = PropertiesConstants.getString(p,"lock","",true);
 			if (module != null && module.length() > 0){
 				try {
 					ClassLoader cl = Settings.getClassLoader();
@@ -326,7 +334,7 @@ public interface Scheduler extends Timer,Runnable {
 							new Class[]{String.class,Properties.class}
 							);
 					
-					String lockName = PropertiesConstants.getString(p,"lock.name", "${server.app}");
+					String lockName = PropertiesConstants.getString(p,"lock.name", "${server.app}",true);
 					if (lockName == null || lockName.length() <= 0){
 						lockName = "global";
 					}
@@ -366,7 +374,7 @@ public interface Scheduler extends Timer,Runnable {
 
 		public void remove(String id) {
 			timers.remove(id);
-		}
+		}	
 		
 		protected void scheduleOnce() {
 			if (state != State.Running){
@@ -523,7 +531,7 @@ public interface Scheduler extends Timer,Runnable {
 	 * @author duanyy
 	 *
 	 */
-	public static class Linked extends XMLed{
+	public static class Linked extends XMLed{	
 		public void configure(Element _e, Properties _properties){
 			Properties p = new XmlElementProperties(_e,_properties);
 			

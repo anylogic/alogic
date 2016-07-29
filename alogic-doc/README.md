@@ -223,3 +223,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:xscript增加trim,substr,lowercase,uppercase等指令(1.6.5.34)
  	 + alogic-addons:idu的load和query插件增加extend参数，用于扩展当前节点对象(1.6.5.35)
  	 + alogic-doer:优化timer的清理工作(1.6.5.36)
+ 	 + alogic-doer:timer提供刷新配置的功能(1.6.5.37)

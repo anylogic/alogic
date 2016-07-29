@@ -38,6 +38,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.5.36 [duanyy 20160729] <br>
  * - 增加stop接口，优化清理工作 <br>
+ * 
+ * @version 1.6.5.36 [duanyy 20160729] <br>
+ * - 增加reload接口，可以刷新配置 <br>
  */
 public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	/**
@@ -83,6 +86,11 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	 * 停止
 	 */
 	public void stop();
+	
+	/**
+	 * 刷新配置
+	 */
+	public void reload();
 	
 	/**
 	 * 预测1个月内下一次调度时间
@@ -298,6 +306,10 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		
 		public void stop(){
 			state = State.Stopped;
+		}
+		
+		public void reload(){
+			// nothing to do
 		}
 
 		public Date forecastNextDate() {
