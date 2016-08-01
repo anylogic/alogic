@@ -20,7 +20,7 @@ import com.jayway.jsonpath.JsonPath;
  */
 public class Repeat extends Segment{
 	protected String jsonPath;
-	
+	protected String id = "$value";
 	public Repeat(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -28,6 +28,7 @@ public class Repeat extends Segment{
 	public void configure(Properties p){
 		super.configure(p);
 		jsonPath = PropertiesConstants.getString(p, "path", jsonPath);
+		id = PropertiesConstants.getString(p,"id",id,true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -43,6 +44,9 @@ public class Repeat extends Segment{
 					if (o instanceof Map<?,?>){
 						Map<String,Object> newCurrent = (Map<String,Object>)o;
 						super.onExecute(root, newCurrent, ctx, watcher);
+					}else{
+						ctx.SetValue(id, o.toString());
+						super.onExecute(root, current, ctx, watcher);
 					}
 				}
 			}else{

@@ -39,7 +39,12 @@ public class Get extends AbstractLogiclet {
 		MapProperties p = new MapProperties(current,ctx);
 		String idValue = p.transform(id);
 		if (StringUtils.isNotEmpty(idValue)){
-			current.put(idValue, p.transform(value));
+			String v = p.transform(value);
+			if (StringUtils.isNotEmpty(v)){
+				current.put(idValue, v);
+			}else{
+				current.remove(idValue);
+			}
 		}
 	}
 
