@@ -22,6 +22,8 @@ import com.alogic.xscript.plugins.Encrypt;
 import com.alogic.xscript.plugins.Except;
 import com.alogic.xscript.plugins.ForEach;
 import com.alogic.xscript.plugins.Formula;
+import com.alogic.xscript.plugins.FromEnv;
+import com.alogic.xscript.plugins.FromSettings;
 import com.alogic.xscript.plugins.Get;
 import com.alogic.xscript.plugins.Include;
 import com.alogic.xscript.plugins.Location;
@@ -140,6 +142,8 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_UPPERCASE = "uppercase";
 	public static final String STMT_LOWERCASE = "lowercase";
 	public static final String STMT_SUBSTR = "substr";
+	public static final String STMT_SETTING = "setting";
+	public static final String STMT_ENV = "env";
 	
 	protected static MetricsHandler metricsHandler = null;
 	
@@ -179,6 +183,8 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_UPPERCASE,Uppercase.class);
 		staticModules.put(STMT_LOWERCASE,Lowercase.class);
 		staticModules.put(STMT_SUBSTR,Substr.class);
+		staticModules.put(STMT_SETTING, FromSettings.class);
+		staticModules.put(STMT_ENV,FromEnv.class);
 		
 		Settings settings = Settings.get();
 		metricsHandler = (MetricsHandler) settings.get("metricsHandler");
