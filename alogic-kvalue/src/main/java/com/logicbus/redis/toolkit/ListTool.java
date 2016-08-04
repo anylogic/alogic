@@ -116,7 +116,7 @@ public class ListTool extends KeyTool {
 	public List<String> lrange(final String key,final long start,final long stop){
 		_lrange(key,start,stop);
 		
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public void _lrem(final String key,final String value,final long count){
@@ -217,7 +217,7 @@ public class ListTool extends KeyTool {
 	
 	public List<String> blpop(long time,TimeUnit tu,final String...keys){
 		_blpop(time,tu,keys);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public void _brpop(long time,TimeUnit tu,final String...keys){
@@ -234,7 +234,7 @@ public class ListTool extends KeyTool {
 	
 	public List<String> brpop(long time,TimeUnit tu,final String...keys){
 		_brpop(time,tu,keys);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}	
 	
 	public void _brpoplpush(final String srcKey,final String destKey,long time,TimeUnit tu){
@@ -246,6 +246,6 @@ public class ListTool extends KeyTool {
 	
 	public List<String> brpoplpush(final String srcKey,final String destKey,long time,TimeUnit tu){
 		_brpoplpush(srcKey,destKey,time,tu);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}	
 }

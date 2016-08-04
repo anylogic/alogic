@@ -70,8 +70,8 @@ public class Toolkit {
 	 * 获取应答，应答内容为多个大块字符串
 	 * @return
 	 */
-	protected List<String> getMultiBulkReply(){
-		return conn().getMultiBulkReply();
+	protected List<String> getMultiBulkReply(List<String> t){
+		return conn().getMultiBulkReply(t);
 	}
 	
 	/**

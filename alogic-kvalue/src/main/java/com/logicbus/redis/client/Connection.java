@@ -282,8 +282,8 @@ public class Connection implements AutoCloseable {
 		return (Long) readProtocolWithCheckingBroken();
 	}
 
-	public List<String> getMultiBulkReply() {
-		return BuilderFactory.STRING_LIST.build(getBinaryMultiBulkReply());
+	public List<String> getMultiBulkReply(List<String> t) {
+		return BuilderFactory.STRING_LIST.build(getBinaryMultiBulkReply(),t);
 	}
 
 	@SuppressWarnings("unchecked")

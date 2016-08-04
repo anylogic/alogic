@@ -303,7 +303,7 @@ public class StringTool extends KeyTool {
 	 */
 	public List<String> mget(final String...keys){
 		_mget(keys);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 
 	/**

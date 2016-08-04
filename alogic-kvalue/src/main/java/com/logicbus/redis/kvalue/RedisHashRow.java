@@ -105,6 +105,17 @@ public class RedisHashRow extends RedisBaseRow implements HashRow {
 			client.poolClose();
 		}
 	}
+	
+	@Override
+	public Map<String, Object> getAll(Map<String, Object> json) {
+		Client client = getClient(true);
+		try {
+			HashTool tool = (HashTool)client.getToolKit(HashTool.class);
+			return tool.hgetall(key(),json);
+		}finally{
+			client.poolClose();
+		}
+	}	
 
 	
 	public boolean set(String field, String value) {

@@ -33,9 +33,9 @@ com.alogic.together.idu.Update
 					update user 
 					set 
 						user_id = #{bind('userId')}
-						#not_nvl(name,',name=' + bind('name'))
-						#not_nvl(email,',email=' + bind('email'))
-						#not_nvl(mobile,',mobile=' + bind('mobile'))
+						#{not_nvl(name,',name=' + bind('name'))}
+						#{not_nvl(email,',email=' + bind('email'))}
+						#{not_nvl(mobile,',mobile=' + bind('mobile'))}
 					where 
 					user_id = #{bind('userId')}
 				"/>

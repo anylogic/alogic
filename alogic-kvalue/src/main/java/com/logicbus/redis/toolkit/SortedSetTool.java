@@ -173,7 +173,7 @@ public class SortedSetTool extends KeyTool {
 	
 	public List<String> zrevrangebyscore(final String key,final String min,final String max){
 		_zrevrangebyscore(key,min,max,false);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public List<Pair<String,Double>> zrevrangebyscoreWithScores(final String key,final String min,final String max){
@@ -183,7 +183,7 @@ public class SortedSetTool extends KeyTool {
 	
 	public List<String> zrevrangebyscore(final String key,final String min,final String max,final long offset,final long count){
 		_zrevrangebyscore(key,min,max,false,offset,count);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public List<Pair<String, Double>> zrevrangebyscoreWithScores(final String key,final String min,final String max,final long offset,final long count){
@@ -236,7 +236,7 @@ public class SortedSetTool extends KeyTool {
 	
 	public List<String> zrevrange(final String key,final long start,final long stop){
 		_zrevrange(key,start,stop,false);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public void _zrevrange(final String key,final long start,final long stop,boolean withScores){
@@ -312,7 +312,7 @@ public class SortedSetTool extends KeyTool {
 	
 	public List<String> zrangebyscore(final String key,final String min,final String max){
 		_zrangebyscore(key,min,max,false);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public List<Pair<String,Double>> zrangebyscoreWithScores(final String key,final String min,final String max){
@@ -322,7 +322,7 @@ public class SortedSetTool extends KeyTool {
 	
 	public List<String> zrangebyscore(final String key,final String min,final String max,final long offset,final long count){
 		_zrangebyscore(key,min,max,false,offset,count);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public List<Pair<String, Double>> zrangebyscoreWithScores(final String key,final String min,final String max,final long offset,final long count){
@@ -375,7 +375,7 @@ public class SortedSetTool extends KeyTool {
 	
 	public List<String> zrange(final String key,final long start,final long stop){
 		_zrange(key,start,stop,false);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public void _zrange(final String key,final long start,final long stop,boolean withScores){
@@ -486,7 +486,7 @@ public class SortedSetTool extends KeyTool {
 	}
 	
 	private List<Pair<String,Double>> getResultWithScores(){
-		List<String> membersWithScores = getMultiBulkReply();
+		List<String> membersWithScores = getMultiBulkReply(null);
 		
 		List<Pair<String,Double>> result = new ArrayList<Pair<String,Double>>();
 		

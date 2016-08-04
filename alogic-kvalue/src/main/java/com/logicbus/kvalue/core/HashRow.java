@@ -7,7 +7,9 @@ import java.util.Map;
  * 基于Hash的Row
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.5.40 [20160804 duanyy] <br>
+ * - 增加getAll接口 <br>
  */
 public interface HashRow extends KeyValueRow{
 	
@@ -58,9 +60,16 @@ public interface HashRow extends KeyValueRow{
 	
 	/**
 	 * 获取Hash的所有数据
-	 * @return
+	 * @return Map<String,String>形式的数据
 	 */
 	public Map<String,String> getAll();
+	
+	/**
+	 * 获取Hash的所有数据
+	 * @param json 预定义的json，如果为空，将创建一个
+	 * @return Map<String,Object>形式的数据
+	 */	
+	public Map<String,Object> getAll(Map<String,Object> json);
 	
 	/**
 	 * 设置Field

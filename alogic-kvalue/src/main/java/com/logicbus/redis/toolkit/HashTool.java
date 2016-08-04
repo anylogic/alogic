@@ -76,7 +76,7 @@ public class HashTool extends KeyTool {
 	public List<String> hvals(final String key){
 		_hvals(key);
 		
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public void _hvals(final String key){
@@ -120,7 +120,7 @@ public class HashTool extends KeyTool {
 	
 	public List<String> hmget(final String key,final String...fields){
 		_hmget(key,fields);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public void _hmget(final String key,final String... fields){
@@ -146,7 +146,7 @@ public class HashTool extends KeyTool {
 	public List<String> hkeys(final String key){
 		_hkeys(key);
 		
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public void _hkeys(final String key){
@@ -188,8 +188,13 @@ public class HashTool extends KeyTool {
 	
 	public Map<String,String> hgetall(final String key){
 		_hgetall(key);
-		return BuilderFactory.STRING_MAP.build(getBinaryMultiBulkReply());
+		return BuilderFactory.STRING_MAP.build(getBinaryMultiBulkReply(),null);
 	}
+	
+	public Map<String,Object> hgetall(final String key,final Map<String,Object> json){
+		_hgetall(key);
+		return BuilderFactory.JSON_MAP.build(getBinaryMultiBulkReply(),json);
+	}	
 	
 	public void _hget(final String key,final String field){
 		sendCommand(Command.HGET.raw,key,field);

@@ -56,7 +56,7 @@ public class SetTool extends KeyTool {
 	
 	public List<String> sunion(final String key,final String...keys){
 		_sunion(key,keys);
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public void _sunion(final String key,final String...keys){
@@ -87,7 +87,7 @@ public class SetTool extends KeyTool {
 	public List<String> sinter(final String key,final String...keys){
 		_sinter(key,keys);
 		
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public void _sinter(final String key,final String...keys){
@@ -117,7 +117,7 @@ public class SetTool extends KeyTool {
 	public List<String> sdiff(final String key,final String...keys){
 		_sdiff(key,keys);
 		
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public void _sdiff(final String key,final String...keys){
@@ -213,7 +213,7 @@ public class SetTool extends KeyTool {
 	public List<String> smembers(final String key){
 		_smembers(key);
 		
-		return getMultiBulkReply();
+		return getMultiBulkReply(null);
 	}
 	
 	public void _sismember(final String key,final String member){

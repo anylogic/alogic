@@ -139,7 +139,7 @@ public class KeyTool extends Toolkit {
 	public Set<String> keys(final String pattern){
 		_keys(pattern);
 		return BuilderFactory.STRING_SET.build(
-				getBinaryMultiBulkReply()
+				getBinaryMultiBulkReply(),null
 				);
 	}
 	
