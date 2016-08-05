@@ -62,7 +62,8 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
 	    - [创建缓存连接](xscript-plugins-idu/cache.md)
 	    - [获取缓存对象(load)](xscript-plugins-idu/load.md)
 	    - [过期指定缓存对象(expire)](xscript-plugins-idu/expire.md)
-- rest插件集合
+- [rest插件参考](https://github.com/yyduan/alogic-xscript-rest/blob/master/src/docs/reference.md)
+- [kvalue插件参考](https://github.com/yyduan/alogic-xscript-kvalue/blob/master/src/docs/reference.md)
 
 
 
