@@ -228,3 +228,4 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:xscript的get支持清除对象(1.6.5.38)
  	 + alogic-common:增加setting和env，分别从Settings和Envs中获取指定的值(1.6.5.39)
  	 + alogic-kvalue:HastRow增加getAll接口(1.6.5.40)
+ 	 + 1.6.5封版，发布release版本(1.6.5)
