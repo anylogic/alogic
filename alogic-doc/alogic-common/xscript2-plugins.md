@@ -64,6 +64,7 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
 	    - [过期指定缓存对象(expire)](xscript-plugins-idu/expire.md)
 - [rest插件参考](https://github.com/yyduan/alogic-xscript-rest/blob/master/src/docs/reference.md)
 - [kvalue插件参考](https://github.com/yyduan/alogic-xscript-kvalue/blob/master/src/docs/reference.md)
-
+- [hbase插件参考](https://github.com/yyduan/alogic-xscript-hbase/blob/master/src/docs/reference.md)
+- [zk插件参考](https://github.com/yyduan/alogic-xscript-zk/blob/master/src/docs/reference.md)
 
 
