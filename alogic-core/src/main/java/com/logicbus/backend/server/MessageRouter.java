@@ -171,7 +171,7 @@ public class MessageRouter {
 			}
 			if (tracerEnable){
 				boolean ok = ctx.getReturnCode().equals("core.ok");
-				Tool.end(tc, "ALOGIC", "Router", ok ?"OK":"FAILED", ok ? ctx.getQueryString() : ctx.getReason(), ctx.getContentLength());
+				Tool.end(tc, "ALOGIC", id.getPath(), ok ?"OK":"FAILED", ok ? ctx.getQueryString() : ctx.getReason(), ctx.getContentLength());
 			}
 		}
 		return 0;
