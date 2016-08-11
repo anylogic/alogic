@@ -7,6 +7,14 @@
   </parent>
   <artifactId>alogic-jms</artifactId>
   <name>alogic-jms</name>
+  <description>JMS框架</description>     
+	<distributionManagement>
+		<site>
+			<id>localhost</id>
+			<name>localhost</name>
+			<url>file:///${project.site.home}</url>
+		</site>
+	</distributionManagement>  
   <dependencies>
   	<dependency>
   		<groupId>com.github.anylogic</groupId>

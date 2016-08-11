@@ -7,7 +7,14 @@
   </parent>
   <artifactId>alogic-dbcp</artifactId>
   <name>alogic-dbcp</name>
-  
+  <description>数据库连接池(Database Connection Pool,dbcp)框架</description>    
+	<distributionManagement>
+		<site>
+			<id>localhost</id>
+			<name>localhost</name>
+			<url>file:///${project.site.home}</url>
+		</site>
+	</distributionManagement>  
    <dependencies>
   	<dependency>
   		<groupId>com.github.anylogic</groupId>

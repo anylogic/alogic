@@ -7,27 +7,27 @@
 	<packaging>pom</packaging>
 	<name>alogic</name>
 	<description>一个高效的轻量级服务框架</description>
-	<url>https://github.com/yyduan/alogic</url>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <scm>
-        <tag>master</tag>
-        <url>https://github.com/yyduan/alogic.git</url>
-        <connection>scm:git:git@github.com:yyduan/alogic.git</connection>
-        <developerConnection>scm:git:git@github.com:yyduan/alogic.git</developerConnection>
-    </scm>
-    <developers>
-        <developer>
-            <name>duanyy</name>
-            <email>szduanyy@189.cn</email>
-            <organization>China Telecom Group</organization>
-        </developer>
-    </developers>	
+	<url>https://github.com/anylogic/alogic</url>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<tag>master</tag>
+		<url>https://github.com/anylogic/alogic.git</url>
+		<connection>scm:git:git@github.com:anylogic/alogic.git</connection>
+		<developerConnection>scm:git:git@github.com:anylogic/alogic.git</developerConnection>
+	</scm>
+	<developers>
+		<developer>
+			<name>duanyy</name>
+			<email>szduanyy@189.cn</email>
+			<organization>China Telecom Group</organization>
+		</developer>
+	</developers>
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
@@ -35,6 +35,7 @@
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.site.home>${alogic.site.home}/alogic/${project.artifactId}</project.site.home>
 	</properties>
 	<modules>
 		<module>alogic-common</module>
@@ -58,12 +59,17 @@
 			<id>sonatype-nexus-staging</id>
 			<name>Sonatype Staging</name>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>		
+		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
 			<name>Internal Snapshots</name>
 			<url>http://10.142.90.52:8002/content/repositories/snapshots</url>
-		</snapshotRepository>	
+		</snapshotRepository>
+		<site>
+			<id>localhost</id>
+			<name>localhost</name>
+			<url>file:///${alogic.site.home}/alogic</url>
+		</site> 		
 	</distributionManagement>
 
 	<build>
@@ -109,19 +115,51 @@
 				</configuration>
 			</plugin>
 			<plugin>
-		      <groupId>org.apache.maven.plugins</groupId>
-		      <artifactId>maven-gpg-plugin</artifactId>
-		      <version>1.5</version>
-		      <executions>
-		        <execution>
-		          <id>sign-artifacts</id>
-		          <phase>verify</phase>
-		          <goals>
-		            <goal>sign</goal>
-		          </goals>
-		        </execution>
-		      </executions>
-		    </plugin>			
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+					<locales>zh_CN</locales>
+					<outputEncoding>GBK</outputEncoding>
+					<reportPlugins>
+						<plugin>  
+						    <groupId>org.apache.maven.plugins</groupId>  
+						    <artifactId>maven-project-info-reports-plugin</artifactId>  
+						    <version>${project.info.reports.version}</version>  
+						      </plugin>  					
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>2.7</version>
+						</plugin>
+						<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>taglist-maven-plugin</artifactId>
+						</plugin>
+						<plugin>
+						        <artifactId>maven-pmd-plugin</artifactId>
+						        <version>3.6</version>
+						        <configuration>
+						          <targetJdk>1.7</targetJdk>
+						        </configuration>
+						      </plugin>						
+					</reportPlugins>
+				</configuration>
+				<version>3.3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>

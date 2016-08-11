@@ -7,6 +7,14 @@
   </parent>
   <artifactId>alogic-kvalue</artifactId>
   <name>alogic-kvalue</name>
+  <description>基于Redis的KValue数据库实现</description>   
+	<distributionManagement>
+		<site>
+			<id>localhost</id>
+			<name>localhost</name>
+			<url>file:///${project.site.home}</url>
+		</site>
+	</distributionManagement>   
   <dependencies>
   	<dependency>
   		<groupId>com.github.anylogic</groupId>

@@ -7,6 +7,14 @@
   </parent>
   <artifactId>alogic-example</artifactId>
   <name>alogic-example</name>
+  <description>一些样例</description>     
+	<distributionManagement>
+		<site>
+			<id>localhost</id>
+			<name>localhost</name>
+			<url>file:///${project.site.home}</url>
+		</site>
+	</distributionManagement>    
   <dependencies>
   	<dependency>
   		<groupId>com.github.anylogic</groupId>
