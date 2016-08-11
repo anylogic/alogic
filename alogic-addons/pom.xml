@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.github.alogic</groupId>
+    <groupId>com.github.anylogic</groupId>
     <artifactId>alogic</artifactId>
     <version>1.6.5</version>
   </parent>
@@ -9,47 +9,47 @@
   <name>alogic-addons</name>
   <dependencies>
   	<dependency>
-  		<groupId>com.github.alogic</groupId>
+  		<groupId>com.github.anylogic</groupId>
   		<artifactId>alogic-core</artifactId>
   		<version>${project.version}</version>
   	</dependency>
   	<dependency>
-  		<groupId>com.github.alogic</groupId>
+  		<groupId>com.github.anylogic</groupId>
   		<artifactId>alogic-remote</artifactId>
   		<version>${project.version}</version>
   	</dependency>
    	<dependency>
-  		<groupId>com.github.alogic</groupId>
+  		<groupId>com.github.anylogic</groupId>
   		<artifactId>alogic-blob</artifactId>
   		<version>${project.version}</version>
   	</dependency> 	
   	<dependency>
-  		<groupId>com.github.alogic</groupId>
+  		<groupId>com.github.anylogic</groupId>
   		<artifactId>alogic-dbcp</artifactId>
   		<version>${project.version}</version>
   	</dependency>
    	<dependency>
-  		<groupId>com.github.alogic</groupId>
+  		<groupId>com.github.anylogic</groupId>
   		<artifactId>alogic-seq</artifactId>
   		<version>${project.version}</version>
   	</dependency> 	
   	<dependency>
-  		<groupId>com.github.alogic</groupId>
+  		<groupId>com.github.anylogic</groupId>
   		<artifactId>alogic-together</artifactId>
   		<version>${project.version}</version>
   	</dependency>
   	<dependency>
-  		<groupId>com.github.alogic</groupId>
+  		<groupId>com.github.anylogic</groupId>
   		<artifactId>alogic-kvalue</artifactId>
   		<version>${project.version}</version>
   	</dependency>
    	<dependency>
-  		<groupId>com.github.alogic</groupId>
+  		<groupId>com.github.anylogic</groupId>
   		<artifactId>alogic-cache</artifactId>
   		<version>${project.version}</version>
   	</dependency> 	
    	<dependency>
-  		<groupId>com.github.alogic</groupId>
+  		<groupId>com.github.anylogic</groupId>
   		<artifactId>alogic-vfs</artifactId>
   		<version>${project.version}</version>
   	</dependency> 	
