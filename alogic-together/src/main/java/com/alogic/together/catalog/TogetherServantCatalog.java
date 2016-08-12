@@ -89,9 +89,14 @@ public class TogetherServantCatalog extends XMLResourceServantCatalog{
         while (files.hasMoreElements()) {
           JarEntry entry = files.nextElement();
           String name = entry.getName();
-          if (name.startsWith(home.substring(1)) && (name.endsWith(".xml"))){
-        	  serviceFound(element,node,"/" + name,bootstrap);
+          if (name.endsWith(".xml")){
+              int end = name.lastIndexOf('/');
+              String path = '/' + name.substring(0, end);
+              if (path.equals(home)){
+            	  serviceFound(element,node,"/" + name,bootstrap);
+              }      	  
           }
+
         } 
 	}
 

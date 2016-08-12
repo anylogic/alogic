@@ -69,11 +69,12 @@
 			<id>localhost</id>
 			<name>localhost</name>
 			<url>file:///${alogic.site.home}/alogic</url>
-		</site> 		
+		</site>
 	</distributionManagement>
 
 	<build>
 		<plugins>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -121,11 +122,11 @@
 					<locales>zh_CN</locales>
 					<outputEncoding>GBK</outputEncoding>
 					<reportPlugins>
-						<plugin>  
-						    <groupId>org.apache.maven.plugins</groupId>  
-						    <artifactId>maven-project-info-reports-plugin</artifactId>  
-						    <version>${project.info.reports.version}</version>  
-						      </plugin>  					
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-project-info-reports-plugin</artifactId>
+							<version>${project.info.reports.version}</version>
+						</plugin>
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-javadoc-plugin</artifactId>
@@ -136,20 +137,21 @@
 							<artifactId>taglist-maven-plugin</artifactId>
 						</plugin>
 						<plugin>
-						        <artifactId>maven-pmd-plugin</artifactId>
-						        <version>3.6</version>
-						        <configuration>
-						          <targetJdk>1.7</targetJdk>
-						        </configuration>
-						      </plugin>						
+							<artifactId>maven-pmd-plugin</artifactId>
+							<version>3.6</version>
+							<configuration>
+								<targetJdk>1.7</targetJdk>
+							</configuration>
+						</plugin>
 					</reportPlugins>
 				</configuration>
 				<version>3.3</version>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.5</version>
+				<version>1.6</version>
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
@@ -160,6 +162,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 		</plugins>
 	</build>
 </project>
