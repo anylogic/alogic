@@ -22,6 +22,8 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  - 基于anyWebLoader自动更新框架
 
  - 面向协议的服务组装和并发调度框架,从1.1.0起提供
+ 
+alogic已经在maven中央仓库进行了发布，参见[mvnrepository](http://mvnrepository.com/artifact/com.github.anylogic)。
 
 ### 版本
  - 1.3.0 [20141023 duanyy]
@@ -229,3 +231,6 @@ alogic是一个高效的,可扩展的,轻量级服务框架,具有下列特征:
  	 + alogic-common:增加setting和env，分别从Settings和Envs中获取指定的值(1.6.5.39)
  	 + alogic-kvalue:HastRow增加getAll接口(1.6.5.40)
  	 + 1.6.5封版，发布release版本(1.6.5)
+ - 1.6.6 [20160819 duanyy]
+ 	 + 创建1.6.6-SNAPSHOT版本,开始1.6.6版本开发.
+ 	 
