@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<script>
+	<obj tag="data">
+		<get id="id" value="alogic"/>
+		<get id="name" value="ketty"/>
+		
+		<setAsJson id="jsonData"/>
+	</obj>
+	
+	<log msg="the json data is ${jsonData}"/>
+</script>

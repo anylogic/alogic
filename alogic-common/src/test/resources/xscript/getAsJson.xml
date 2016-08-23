@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<script>
+	<getAsJson extend="true" content="{name3:alogic.alogic,name1:ketty,name2:alogic}">
+		<get id="name4" value="ketty2" />
+	</getAsJson>
+</script>

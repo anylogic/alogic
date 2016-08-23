@@ -2,7 +2,10 @@ package com.alogic.xscript.plugins;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.alogic.xscript.ExecuteWatcher;
@@ -24,10 +27,15 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * @author duanyy
  * @version 1.6.5.28 [20160719 duanyy] <br>
  * - 可以支持非map类型 <br>
+ * 
+ * @version 1.6.6.1 [20160823 duanyy] <br>
+ * - 支持extend模式
+ * 
  */
 public class Template extends Segment {
 	protected String content = new String();
 	protected String tag = "data";
+	protected boolean extend = false;
 	protected JsonProvider provider = JsonProviderFactory.createProvider();
 	
 	public Template(String tag, Logiclet p) {
@@ -39,10 +47,10 @@ public class Template extends Segment {
 		super.configure(p);
 		
 		tag = p.GetValue("tag", tag, false, true);
-		
-		content = PropertiesConstants.getString(p, "content", "");
+		extend = PropertiesConstants.getBoolean(p,"extend",extend,true);
+		content = PropertiesConstants.getString(p, "content", "",true);
 		if (StringUtils.isEmpty(content)){
-			String src = PropertiesConstants.getString(p, "src", "");
+			String src = PropertiesConstants.getString(p, "src", "",true);
 			if (StringUtils.isNotEmpty(src)){
 				ResourceFactory resourceFactory = Settings.getResourceFactory();
 				InputStream in = null;
@@ -71,12 +79,31 @@ public class Template extends Segment {
 	@Override
 	protected void onExecute(Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
-		String tagValue = ctx.transform(tag);
-		if (current != null && content != null && StringUtils.isNotEmpty(tagValue)){
+		
+		if (StringUtils.isNotEmpty(content)){
 			Object template = provider.parse(content);
-			current.put(tagValue, template);
+			
 			if (template instanceof Map){
-				super.onExecute(root, (Map<String,Object>)template, ctx, watcher);
+				if (extend){
+					Map<String,Object> data = (Map<String,Object>)template;
+					Iterator<Entry<String,Object>> iter = data.entrySet().iterator();
+					while (iter.hasNext()){
+						Entry<String,Object> entry = iter.next();
+						current.put(entry.getKey(), entry.getValue());
+					}
+					super.onExecute(root, current, ctx, watcher);
+				}else{
+					String tagValue = ctx.transform(tag);
+					if (StringUtils.isNotEmpty(tagValue)){
+						current.put(tagValue, template);
+						super.onExecute(root, (Map<String,Object>)template, ctx, watcher);
+					}
+				}
+			}else{
+				String tagValue = ctx.transform(tag);
+				if (StringUtils.isNotEmpty(tagValue)){
+					current.put(tagValue,template);
+				}
 			}
 		}
 	}

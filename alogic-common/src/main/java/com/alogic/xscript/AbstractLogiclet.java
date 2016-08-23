@@ -25,6 +25,7 @@ import com.alogic.xscript.plugins.Formula;
 import com.alogic.xscript.plugins.FromEnv;
 import com.alogic.xscript.plugins.FromSettings;
 import com.alogic.xscript.plugins.Get;
+import com.alogic.xscript.plugins.GetAsJson;
 import com.alogic.xscript.plugins.Include;
 import com.alogic.xscript.plugins.Location;
 import com.alogic.xscript.plugins.Log;
@@ -37,6 +38,7 @@ import com.alogic.xscript.plugins.Scope;
 import com.alogic.xscript.plugins.Segment;
 import com.alogic.xscript.plugins.Select;
 import com.alogic.xscript.plugins.Set;
+import com.alogic.xscript.plugins.SetAsJson;
 import com.alogic.xscript.plugins.Sleep;
 import com.alogic.xscript.plugins.Substr;
 import com.alogic.xscript.plugins.Switch;
@@ -67,6 +69,9 @@ import com.anysoft.util.XmlElementProperties;
  * @author duanyy
  * @version 1.6.5.13 [20160612 duanyy] <br>
  * - 增加Encrypt,Decrypt,Check,CheckAndSetDefault等插件 <br>
+ * 
+ * @version 1.6.6.1 [20160823 duanyy] <br>
+ * - 增加getAsJson和setAsJson插件 <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -144,6 +149,8 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_SUBSTR = "substr";
 	public static final String STMT_SETTING = "setting";
 	public static final String STMT_ENV = "env";
+	public static final String STMT_GETASJSON = "getAsJson";
+	public static final String STMT_SETASJSON = "setAsJson";
 	
 	protected static MetricsHandler metricsHandler = null;
 	
@@ -185,6 +192,8 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_SUBSTR,Substr.class);
 		staticModules.put(STMT_SETTING, FromSettings.class);
 		staticModules.put(STMT_ENV,FromEnv.class);
+		staticModules.put(STMT_GETASJSON, GetAsJson.class);
+		staticModules.put(STMT_SETASJSON, SetAsJson.class);
 		
 		Settings settings = Settings.get();
 		metricsHandler = (MetricsHandler) settings.get("metricsHandler");

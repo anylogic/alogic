@@ -20,8 +20,9 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
         - [设置一个变量，取值转为小写lowercase](xscript-plugins/lowercase.md)
         - [设置一个变量，取值转为大写uppercase](xscript-plugins/uppercase.md)
         - [设置一个变量，在取值中取子字符串substr](xscript-plugins/substr.md)
-        - [设置一个变量，其取值从Settings中提取](xscript-plugins/setting.md)
-        - [设置一个变量，其取值从Env中提取](xscript-plugins/env.md)
+        - [设置一个变量，其取值从Settings中提取setting](xscript-plugins/setting.md)
+        - [设置一个变量，其取值从Env中提取env](xscript-plugins/env.md)
+        - [设置一个变量，其取值是当前文档节点所转化的Json字符串setAsJson](xscript-plugins/setAsJson.md)
     - 文档操作
         - [获取一个变量值，并输出到文档get](xscript-plugins/get.md)
         - [将一个预定义的JSON文档输出到文档template](xscript-plugins/template.md)
@@ -29,6 +30,7 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
         - [创建对象，输出到文档obj](xscript-plugins/obj.md)
         - [创建数组，输出到文档array](xscript-plugins/array.md)
         - [创建数组项，输出到文档array-item](xscript-plugins/array-item.md)
+        - [从变量值中解析Json对象，并输出到文档getAsJson](xscript-plugins/getAsJson.md)
     - 日志
         - [日志输出log](xscript-plugins/log.md)
         - [定义日志处理器logger](xscript-plugins/logger.md)
