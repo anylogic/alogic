@@ -10,6 +10,8 @@ import com.anysoft.util.Pair;
  * 
  * @author duanyy
  *
+ * @version 1.6.6.2 [20160826 duanyy] <br>
+ * - rangeByScore和rangeByScoreWithScores增加分页接口 <br>
  */
 public interface SortedSetRow extends KeyValueRow {
 	
@@ -102,21 +104,48 @@ public interface SortedSetRow extends KeyValueRow {
 	public List<String> rangeByScore(final double min,final double max,boolean reverse);
 	
 	/**
+	 * 获取指定Score区间(from min to max)的元素列表(不带Score)
+	 * @param min
+	 * @param max
+	 * @param reverse
+	 * @param offset 偏移，用于分页查询
+	 * @param cnt 本次查询数据个数，用于分页查询
+	 * @return 元素列表
+	 * 
+	 * @since 1.6.6.2
+	 */
+	public List<String> rangeByScore(final double min,final double max,boolean reverse,final long offset,final long cnt);	
+	
+	/**
 	 * 获取指定Score区间(from min to max)的元素列表(带Score)
 	 * @param min
 	 * @param max
 	 * @param reverse
-	 * @return
+	 * @return 元素列表
 	 */
 	public List<Pair<String,Double>> rangeByScoreWithScores(
 			final double min,final double max,boolean reverse);
+	
+	/**
+	 * 获取指定Score区间(from min to max)的元素列表(带Score)
+	 * @param min
+	 * @param max
+	 * @param reverse
+	 * @param offset 偏移，用于分页查询
+	 * @param cnt 本次查询数据个数，用于分页查询
+	 * @return 元素列表
+	 * 
+	 * @since 1.6.6.2
+	 */
+	public List<Pair<String,Double>> rangeByScoreWithScores(
+			final double min,final double max,boolean reverse,final long offset,final long cnt);	
 	
 	/**
 	 * 获取指定排名范围（from start to stop）的元素列表(不带Score)
 	 * @param start
 	 * @param stop
 	 * @param reverse 是否逆序(从大到小)
-	 * @return
+	 * @return 元素列表
 	 */
 	public List<String> range(final long start,final long stop,boolean reverse);
 	
@@ -125,7 +154,8 @@ public interface SortedSetRow extends KeyValueRow {
 	 * @param start
 	 * @param stop
 	 * @param reverse
-	 * @return
+	 * @return 元素列表
 	 */
 	public List<Pair<String,Double>> rangeWithScores(final long start,final long stop,boolean reverse);
+	
 }

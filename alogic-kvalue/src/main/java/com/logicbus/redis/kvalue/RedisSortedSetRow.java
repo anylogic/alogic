@@ -199,4 +199,37 @@ public class RedisSortedSetRow extends RedisBaseRow implements SortedSetRow {
 		}
 	}
 
+
+	@Override
+	public List<String> rangeByScore(double min, double max, boolean reverse, long offset, long cnt) {
+		Client client = getClient(true);
+		try {
+			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
+			if (reverse){
+				return tool.zrevrangebyscore(key, String.valueOf(min),String.valueOf(max),offset,cnt);
+			}else{
+				return tool.zrangebyscore(key, String.valueOf(min),String.valueOf(max),offset,cnt);
+			}
+		}finally{
+			client.poolClose();
+		}
+	}
+
+
+	@Override
+	public List<Pair<String, Double>> rangeByScoreWithScores(double min, double max, boolean reverse, long offset,
+			long cnt) {
+		Client client = getClient(true);
+		try {
+			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
+			if (reverse){
+				return tool.zrevrangebyscoreWithScores(key(), String.valueOf(min), String.valueOf(max),offset,cnt);
+			}else{
+				return tool.zrangebyscoreWithScores(key(), String.valueOf(min), String.valueOf(max),offset,cnt);
+			}
+		}finally{
+			client.poolClose();
+		}
+	}
+
 }
