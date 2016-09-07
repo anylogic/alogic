@@ -198,15 +198,17 @@ public class SortedSetTool extends KeyTool {
 					SafeEncoder.encode(key),
 					SafeEncoder.encode(min),
 					SafeEncoder.encode(max),
-					SafeEncoder.encode("WITHSCORES"),
+					SafeEncoder.encode("LIMIT"),
 					SafeEncoder.encode(offset),
-					SafeEncoder.encode(count)
+					SafeEncoder.encode(count),
+					SafeEncoder.encode("WITHSCORES")
 					);
 		}else{
 			sendCommand(Command.ZREVRANGEBYSCORE.raw,
 				SafeEncoder.encode(key),
 				SafeEncoder.encode(min),
 				SafeEncoder.encode(max),
+				SafeEncoder.encode("LIMIT"),
 				SafeEncoder.encode(offset),
 				SafeEncoder.encode(count)
 				);
@@ -337,7 +339,7 @@ public class SortedSetTool extends KeyTool {
 					SafeEncoder.encode(key),
 					SafeEncoder.encode(min),
 					SafeEncoder.encode(max),
-					SafeEncoder.encode("WITHSCORES"),
+					SafeEncoder.encode("LIMIT"),
 					SafeEncoder.encode(offset),
 					SafeEncoder.encode(count)
 					);
@@ -346,8 +348,10 @@ public class SortedSetTool extends KeyTool {
 				SafeEncoder.encode(key),
 				SafeEncoder.encode(min),
 				SafeEncoder.encode(max),
+				SafeEncoder.encode("LIMIT"),
 				SafeEncoder.encode(offset),
-				SafeEncoder.encode(count)
+				SafeEncoder.encode(count),
+				SafeEncoder.encode("WITHSCORES")
 				);
 		}
 	}

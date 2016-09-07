@@ -10,3 +10,7 @@ alogic-1.6.6
 	 
 - 1.6.6.2 [20160826 duanyy] 
  	 - alogic-kvalue:对于SortedSet的rangeByScore和rangeByScoreWithScores接口增加分页功能
+
+- 1.6.6.3 [20160907 duanyy] 
+	 - alogic-kvalue:修正SortedSetTool进行zrangebyscore查询的语法错误问题.
+	 
