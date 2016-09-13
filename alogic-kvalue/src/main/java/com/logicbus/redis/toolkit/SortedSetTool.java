@@ -196,8 +196,8 @@ public class SortedSetTool extends KeyTool {
 		if (withScores){
 			sendCommand(Command.ZREVRANGEBYSCORE.raw,
 					SafeEncoder.encode(key),
-					SafeEncoder.encode(min),
 					SafeEncoder.encode(max),
+					SafeEncoder.encode(min),
 					SafeEncoder.encode("LIMIT"),
 					SafeEncoder.encode(offset),
 					SafeEncoder.encode(count),
@@ -206,8 +206,8 @@ public class SortedSetTool extends KeyTool {
 		}else{
 			sendCommand(Command.ZREVRANGEBYSCORE.raw,
 				SafeEncoder.encode(key),
-				SafeEncoder.encode(min),
 				SafeEncoder.encode(max),
+				SafeEncoder.encode(min),
 				SafeEncoder.encode("LIMIT"),
 				SafeEncoder.encode(offset),
 				SafeEncoder.encode(count)
@@ -219,14 +219,14 @@ public class SortedSetTool extends KeyTool {
 		if (withScores){
 			sendCommand(Command.ZREVRANGEBYSCORE.raw,
 					SafeEncoder.encode(key),
-					SafeEncoder.encode(min),
 					SafeEncoder.encode(max),
+					SafeEncoder.encode(min),
 					SafeEncoder.encode("WITHSCORES"));
 		}else{
 			sendCommand(Command.ZREVRANGEBYSCORE.raw,
 				SafeEncoder.encode(key),
-				SafeEncoder.encode(min),
-				SafeEncoder.encode(max)
+				SafeEncoder.encode(max),
+				SafeEncoder.encode(min)
 				);
 		}
 	}
@@ -341,7 +341,8 @@ public class SortedSetTool extends KeyTool {
 					SafeEncoder.encode(max),
 					SafeEncoder.encode("LIMIT"),
 					SafeEncoder.encode(offset),
-					SafeEncoder.encode(count)
+					SafeEncoder.encode(count),
+					SafeEncoder.encode("WITHSCORES")
 					);
 		}else{
 			sendCommand(Command.ZRANGEBYSCORE.raw,
@@ -350,8 +351,7 @@ public class SortedSetTool extends KeyTool {
 				SafeEncoder.encode(max),
 				SafeEncoder.encode("LIMIT"),
 				SafeEncoder.encode(offset),
-				SafeEncoder.encode(count),
-				SafeEncoder.encode("WITHSCORES")
+				SafeEncoder.encode(count)
 				);
 		}
 	}

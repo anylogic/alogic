@@ -14,3 +14,5 @@ alogic-1.6.6
 - 1.6.6.3 [20160907 duanyy] 
 	 - alogic-kvalue:修正SortedSetTool进行zrangebyscore查询的语法错误问题.
 	 
+- 1.6.6.4 [20160907 duanyy] 
+	 - alogic-kvalue:修正SortedSetTool进行zrangebyscore查询的语法错误问题.	 
