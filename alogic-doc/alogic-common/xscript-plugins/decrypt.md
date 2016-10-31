@@ -7,7 +7,7 @@ descrypt将指定变量的值解密，并设置到相应的变量中。
 
 ### 实现模块
 
-com.alogic.xscript.plugins.Descrypt
+com.alogic.xscript.plugins.Decrypt
 
 ### 配置参数
 

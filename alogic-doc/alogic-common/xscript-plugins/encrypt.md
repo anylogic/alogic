@@ -2,7 +2,7 @@ encrypt
 =======
 encrypt将指定变量的值加密，并设置到相应的变量中。
 
-> 解密过程参见[descrypt](descrypt.md)
+> 解密过程参见[decrypt](decrypt.md)
 
 
 ### 实现模块
@@ -36,7 +36,7 @@ com.alogic.xscript.plugins.Encrypt
         <log msg="pwdEncrypted=${pwdEncrypted}"/>
         
         <!--通过DES3解密-->
-        <descrypt out="pwd" in="${pwdEncrypted}" key="${userId}" coder="DES3"/>
+        <decrypt out="pwd" in="${pwdEncrypted}" key="${userId}" coder="DES3"/>
         <log msg="pwd=${pwd}"/>
         
         <!--通过AES加密-->
@@ -44,7 +44,7 @@ com.alogic.xscript.plugins.Encrypt
         <log msg="pwdEncrypted=${pwdEncrypted}"/>
         
         <!--通过AES解密-->
-        <descrypt out="pwd" in="${pwdEncrypted}" key="${userId}" coder="AES"/>
+        <decrypt out="pwd" in="${pwdEncrypted}" key="${userId}" coder="AES"/>
         <log msg="pwd=${pwd}"/>
         
         <!--通过SHA1加密-->
@@ -52,7 +52,7 @@ com.alogic.xscript.plugins.Encrypt
         <log msg="pwdEncrypted=${pwdEncrypted}"/>
         
         <!--通过SHA1解密-->
-        <descrypt out="pwd" in="${pwdEncrypted}" key="${userId}" coder="SHA1"/>
+        <decrypt out="pwd" in="${pwdEncrypted}" key="${userId}" coder="SHA1"/>
         <log msg="pwd=${pwd}"/>
         
         <!--通过MD5加密-->

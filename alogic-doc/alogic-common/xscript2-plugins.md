@@ -36,7 +36,7 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
         - [定义日志处理器logger](xscript-plugins/logger.md)
     - 工具
         - [加密encrypt](xscript-plugins/encrypt.md)
-        - [解密descrypt](xscript-plugins/descrypt.md)
+        - [解密decrypt](xscript-plugins/decrypt.md)
     - 多线程
         - [异步async](xscript-plugins/async.md)
         - [睡眠sleep](xscript-plugins/sleep.md)
