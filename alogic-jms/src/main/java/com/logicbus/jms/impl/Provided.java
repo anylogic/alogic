@@ -21,6 +21,10 @@ import com.logicbus.jms.JmsModelFactory;
  *
  * @version 1.2.9.1 [20141017 duanyy]
  * - 淘汰ChangeAware模型，转为更为通用的Watcher模型
+ * 
+ * @version 1.6.6.5 [20161121 duanyy] <br>
+ * - 增加allChanged方法，以便通知Watcher所有对象已经改变
+ * 
  */
 public class Provided implements JmsModelFactory,Watcher<JmsModel> {
 	
@@ -83,6 +87,12 @@ public class Provided implements JmsModelFactory,Watcher<JmsModel> {
 	
 	public void removed(String id, JmsModel _data) {
 		watcherHub.removed(id, _data);
+	}
+
+
+	@Override
+	public void allChanged() {
+		watcherHub.allChanged();
 	}
 	
 }

@@ -39,6 +39,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.4.20 [20151222 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.6.5 [20161121 duanyy] <br>
+ * - 增加allChanged方法，以便通知Watcher所有对象已经改变
  */
 public abstract class Source<O extends Reportable> implements Context<O>,Watcher<O> {
 	
@@ -180,6 +183,14 @@ public abstract class Source<O extends Reportable> implements Context<O>,Watcher
 		if (watcherHub != null){
 			watcherHub.changed(id, _data);
 		}
+	}
+	
+	@Override
+	public void allChanged(){
+		caches.clear();
+		if (watcherHub != null){
+			watcherHub.allChanged();
+		}		
 	}
 	
 	@Override

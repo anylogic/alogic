@@ -34,6 +34,9 @@ import com.anysoft.util.WatcherHub;
  * 
  * @version 1.6.4.20 [20151222 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.6.5 [20161121 duanyy] <br>
+ * - 增加allChanged方法，以便通知Watcher所有对象已经改变
  */
 public class CacheManager<D1 extends Cacheable> extends Manager<D1> 
 implements Provider<D1>,Watcher<D1> {
@@ -192,6 +195,16 @@ implements Provider<D1>,Watcher<D1> {
 		if (watchers != null){
 			watchers.changed(id, data);
 		}
+	}
+	
+	@Override
+	public void allChanged(){
+		synchronized (lock){
+			clear();
+		}		
+		if (watchers != null){
+			watchers.allChanged();
+		}		
 	}
 
 	@Override

@@ -32,7 +32,8 @@ import com.anysoft.util.resource.ResourceFactory;
  * @author duanyy
  *
  * @since 1.2.6.1
- * 
+ * @version 1.6.6.5 [20161121 duanyy] <br>
+ * - 增加allChanged方法，以便通知Watcher所有对象已经改变
  */
 public class JmsSource implements Watcher<JmsModel>{
 	
@@ -201,6 +202,11 @@ public class JmsSource implements Watcher<JmsModel>{
 		models.put(id, _data);		
 	}
 	
+	@Override
+	public void allChanged() {
+		models.clear();
+	}	
+	
 	public static class TheFactory extends Factory<JmsModelFactory>{
 		
 	}
@@ -259,4 +265,6 @@ public class JmsSource implements Watcher<JmsModel>{
 			context.close();
 		}	
 	}
+
+
 }

@@ -6,6 +6,9 @@ package com.anysoft.util;
  * @author duanyy
  *
  * @param <data>
+ * 
+ * @version 1.6.6.5 [20161121 duanyy] <br>
+ * - 增加allChanged方法，以便通知Watcher所有对象已经改变
  */
 public interface Watcher<data> {
 	
@@ -28,4 +31,11 @@ public interface Watcher<data> {
 	 * @param _data
 	 */
 	public void changed(String id,data _data);
+	
+	/**
+	 * 所有对象都变更了
+	 * 
+	 * @since 1.6.6.5
+	 */
+	public void allChanged();
 }
