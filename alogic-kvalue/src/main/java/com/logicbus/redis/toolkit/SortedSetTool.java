@@ -31,7 +31,10 @@ public class SortedSetTool extends KeyTool {
 		ZINCRBY,
 		ZCOUNT,
 		ZCARD,
-		ZADD;
+		ZADD,
+		ZLEXCOUNT,
+		ZRANGEBYLEX,
+		ZREMRANGEBYLEX;
 		
 		public final byte [] raw;		
 		
@@ -398,6 +401,35 @@ public class SortedSetTool extends KeyTool {
 		}
 	}
 	
+	public List<String> zrangeByLex(final String key,final String min,final String max,final long offset,final long cnt){
+		_zrangeByLex(key,min,max,offset,cnt);
+		return getMultiBulkReply(null);
+	}
+	
+	public void _zrangeByLex(final String key,final String min,final String max,final long offset,final long cnt){
+		sendCommand(Command.ZRANGEBYLEX.raw,
+				SafeEncoder.encode(key),
+				SafeEncoder.encode(min),
+				SafeEncoder.encode(max),
+				SafeEncoder.encode("LIMIT"),
+				SafeEncoder.encode(offset),
+				SafeEncoder.encode(cnt)
+				);
+	}
+	
+	public long zremrangeByLex(final String key,final String min,final String max){
+		_zremrangeByLex(key,min,max);
+		return getIntegerReply();
+	}
+	
+	public void _zremrangeByLex(final String key,final String min,final String max){
+		sendCommand(Command.ZREMRANGEBYLEX.raw,
+				SafeEncoder.encode(key),
+				SafeEncoder.encode(min),
+				SafeEncoder.encode(max)
+				);
+	}
+	
 	public double zincrby(final String key,final String member,final double increment){
 		_zincrby(key,member,increment);
 		
@@ -440,6 +472,19 @@ public class SortedSetTool extends KeyTool {
 				SafeEncoder.encode(min),
 				SafeEncoder.encode(max)
 				);
+	}
+	
+	public long zcountByLex(final String key,final String min,final String max){
+		_zcountByLex(key,min,max);
+		return getIntegerReply();
+	}
+	
+	protected void _zcountByLex(final String key,final String min,final String max){
+		sendCommand(Command.ZLEXCOUNT.raw,
+				SafeEncoder.encode(key),
+				SafeEncoder.encode(min),
+				SafeEncoder.encode(max)
+				);				
 	}
 	
 	public long size(final String key){

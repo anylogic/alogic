@@ -12,6 +12,9 @@ import com.anysoft.util.Pair;
  *
  * @version 1.6.6.2 [20160826 duanyy] <br>
  * - rangeByScore和rangeByScoreWithScores增加分页接口 <br>
+ * 
+ * @version 1.6.6.6 [20161121 duanyy] <br>
+ * - 增加对redis指令ZRANGEBYLEX,ZLEXCOUNT,ZREMRANGEBYLEX的支持，该指令支持通过字典区间来操作zset类型的数据，适合redis-2.8.9版本 <br>
  */
 public interface SortedSetRow extends KeyValueRow {
 	
@@ -158,4 +161,29 @@ public interface SortedSetRow extends KeyValueRow {
 	 */
 	public List<Pair<String,Double>> rangeWithScores(final long start,final long stop,boolean reverse);
 	
+	/**
+	 * 获取指定字典区间(from min to max)的元素列表
+	 * @param min min lex
+	 * @param max max lex
+	 * @param offset 偏移，用于分页查询
+	 * @param cnt 本次查询数据个数，用于分页查询
+	 * @return 元素列表
+	 */
+	public List<String> rangeByLex(final String min,final String max,final long offset,final long cnt);
+	
+	/**
+	 * 删除指定字典区间(from min to max)的元素
+	 * @param min min lex
+	 * @param max max lex
+	 * @return 删除元素的个数
+	 */
+	public long removeByLex(final String min,final String max);
+	
+	/**
+	 * 计算有序集合中指定字典区间内成员数量
+	 * @param min min lex
+	 * @param max max lex
+	 * @return 成员数量
+	 */
+	public long countByLex(final String min,final String max);
 }

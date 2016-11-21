@@ -19,3 +19,6 @@ alogic-1.6.6
 	 
 - 1.6.6.5 [20161121 duanyy] 
 	- alogic-common:Watcher接口增加allChanged方法，以便通知Watcher所有对象已经改变
+	
+- 1.6.6.6 [20161121 duanyy]
+	- alogic-kvalue:增加对redis指令ZRANGEBYLEX,ZLEXCOUNT,ZREMRANGEBYLEX的支持，该指令支持通过字典区间来操作zset类型的数据，适合redis-2.8.9版本

@@ -232,4 +232,40 @@ public class RedisSortedSetRow extends RedisBaseRow implements SortedSetRow {
 		}
 	}
 
+
+	@Override
+	public List<String> rangeByLex(String min, String max, long offset, long cnt) {
+		Client client = getClient(true);
+		try {
+			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
+			return tool.zrangeByLex(key(), min, max, offset, cnt);
+		}finally{
+			client.poolClose();
+		}
+	}
+
+
+	@Override
+	public long removeByLex(String min, String max) {
+		Client client = getClient(true);
+		try {
+			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
+			return tool.zremrangeByLex(max, min, max);
+		}finally{
+			client.poolClose();
+		}
+	}
+
+
+	@Override
+	public long countByLex(String min, String max) {
+		Client client = getClient(true);
+		try {
+			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
+			return tool.zcountByLex(max, min, max);
+		}finally{
+			client.poolClose();
+		}
+	}
+
 }
