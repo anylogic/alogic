@@ -250,7 +250,7 @@ public class RedisSortedSetRow extends RedisBaseRow implements SortedSetRow {
 		Client client = getClient(true);
 		try {
 			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
-			return tool.zremrangeByLex(max, min, max);
+			return tool.zremrangeByLex(key(), min, max);
 		}finally{
 			client.poolClose();
 		}
@@ -262,7 +262,7 @@ public class RedisSortedSetRow extends RedisBaseRow implements SortedSetRow {
 		Client client = getClient(true);
 		try {
 			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
-			return tool.zcountByLex(max, min, max);
+			return tool.zcountByLex(key(), min, max);
 		}finally{
 			client.poolClose();
 		}

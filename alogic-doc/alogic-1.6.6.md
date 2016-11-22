@@ -22,3 +22,6 @@ alogic-1.6.6
 	
 - 1.6.6.6 [20161121 duanyy]
 	- alogic-kvalue:增加对redis指令ZRANGEBYLEX,ZLEXCOUNT,ZREMRANGEBYLEX的支持，该指令支持通过字典区间来操作zset类型的数据，适合redis-2.8.9版本
+	
+- 1.6.6.7 [20161122 duanyy]
+	- alogic-kvalue:修正bug
