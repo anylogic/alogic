@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<naming>
+	<context module="com.alogic.pool.context.Inner">
+		<pool id="globalUser" module="com.alogic.naming.demo.NamingDemo$GlobalUserFactory"/>
+		<pool id="user" module="com.alogic.naming.demo.NamingDemo$UserFactory"/>
+		<pool id="pooledUser" module="com.alogic.naming.demo.NamingDemo$UserQueue"/>
+	</context>
+</naming>

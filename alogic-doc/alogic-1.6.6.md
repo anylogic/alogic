@@ -25,3 +25,8 @@ alogic-1.6.6
 	
 - 1.6.6.7 [20161122 duanyy]
 	- alogic-kvalue:修正bug
+	
+- 1.6.6.8 [20161208 duanyy]
+	- alogic-common:增加com.alogic.naming，以命名服务的形式提供全局对象的配置框架，用来替代com.anysoft.context
+	- alogic-common:增加com.alogic.pool,全新的对象管理池的实现，用来替代com.anysoft.pool
+	
