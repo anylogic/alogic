@@ -4,12 +4,10 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
-import com.anysoft.pool.QueuedPool;
+import com.alogic.pool.impl.Queued;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-import com.anysoft.util.Reportable;
-import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
 import com.logicbus.redis.client.Client;
 import com.logicbus.redis.client.Protocol;
@@ -21,10 +19,10 @@ import com.logicbus.redis.util.RedisException;
  * 连接池
  * 
  * @author duanyy
- * 
+ * @version 1.6.6.9 [20161209 duanyy] <br>
+ * - 从新的框架下继承 <br>
  */
-public class RedisPool extends QueuedPool<Client> 
-	implements XMLConfigurable,Reportable{
+public class RedisPool extends Queued{
 
 	/**
 	 * host
@@ -83,10 +81,10 @@ public class RedisPool extends QueuedPool<Client>
 	}
 	
 	
-	protected Client createObject() throws BaseException {
+	protected <pooled> pooled createObject() throws BaseException {
 		Client instance =  new Client(host,port,password,db);
 		instance.register(this);
-		return instance;
+		return (pooled)instance;
 	}
 
 	
@@ -106,7 +104,7 @@ public class RedisPool extends QueuedPool<Client>
 		db = PropertiesConstants.getInt(p, "defaultDB", db,true);
 		
 		timeout = PropertiesConstants.getInt(p,"timeout", timeout);
-		create(p);
+		configure(p);
 	}
 
 	

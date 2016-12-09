@@ -22,18 +22,21 @@ import com.logicbus.models.servant.ServiceDescription;
  * @since 1.2.4
  * 
  * @version 1.2.6 [20140807 duanyy] <br>
- * - ServantPool和ServantFactory插件化
+ * - ServantPool和ServantFactory插件化 <br>
  * 
  * @version 1.2.8.2 [20141014 duanyy] <br>
- * - 修正异常处理
- * - servant.pool缺省改为QueuedServantPool2
+ * - 修正异常处理 <br>
+ * - servant.pool缺省改为QueuedServantPool2 <br>
  * 
+ * @version 1.6.6.9 [20161209 duanyy] <br>
+ * - 淘汰QueuedServantPool <br>
  */
 public class QueuedServantFactory implements ServantFactory {
 	/**
 	 * a logger of log4j
 	 */
 	protected Logger logger = LogManager.getLogger(QueuedServantFactory.class);
+	
 	/**
 	 * 服务资源池列表
 	 */
@@ -58,8 +61,8 @@ public class QueuedServantFactory implements ServantFactory {
 		try {
 			poolClazz = (Class<? extends ServantPool>)cl.loadClass(poolClass);
 		}catch (Throwable t){
-			poolClazz = QueuedServantPool.class;
-			logger.error("Can not load servant pool class,using default:" + QueuedServantPool.class.getName(),t);
+			poolClazz = QueuedServantPool2.class;
+			logger.error("Can not load servant pool class,using default:" + QueuedServantPool2.class.getName(),t);
 		}
 	}
 	
@@ -97,7 +100,7 @@ public class QueuedServantFactory implements ServantFactory {
 			return constructor.newInstance(sd);
 		}catch (Throwable t){
 			logger.error("Can not create servant pool instance,using default:",t);
-			return new QueuedServantPool(sd);
+			return new QueuedServantPool2(sd);
 		}
 	}
 	

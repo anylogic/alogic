@@ -9,13 +9,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
+import com.alogic.pool.impl.Queued;
 import com.anysoft.metrics.core.Dimensions;
 import com.anysoft.metrics.core.Fragment;
 import com.anysoft.metrics.core.Measures;
 import com.anysoft.metrics.core.MetricsCollector;
-import com.anysoft.pool.QueuedPool2;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Counter;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
@@ -41,8 +39,11 @@ import com.logicbus.models.servant.ServiceDescription;
  *  
  * @version 1.6.4.31 [20160129 duanyy] <br>
  * - 改造计数器体系 <br>
+ * 
+ * @version 1.6.6.9 [20161209 duanyy] <br>
+ * - 从新的框架下继承 <br>
  */
-public class QueuedServantPool2 extends QueuedPool2<Servant> implements ServantPool{
+public class QueuedServantPool2 extends Queued implements ServantPool{
 	/**
 	 * 服务描述
 	 */
@@ -62,6 +63,16 @@ public class QueuedServantPool2 extends QueuedPool2<Servant> implements ServantP
 	 */
 	protected String status = "running";
 	
+	/**
+	 * 超时缺省时间
+	 */
+	protected int queueTimeout = 0;
+	
+	/**
+	 * 更新统计信息的锁
+	 */
+	protected ReentrantLock lockStat = new ReentrantLock();	
+		
 	/**
 	 * 获取服务描述
 	 * @return ServiceDescription
@@ -94,21 +105,23 @@ public class QueuedServantPool2 extends QueuedPool2<Servant> implements ServantP
 		return status.equals("running");
 	}
 	
-	
+	@Override
 	protected String getIdOfMaxQueueLength() {
 		return "servant.maxActive";
 	}
 
-	
+	@Override
 	protected String getIdOfIdleQueueLength() {
 		return "servant.maxIdle";
 	}
 	
 	
-	protected Servant createObject() throws BaseException {
-		return createServant(m_desc);
+	@SuppressWarnings("unchecked")
+	@Override
+	protected <pooled> pooled createObject() {
+		return (pooled)createServant(m_desc);
 	}
-	protected int queueTimeout = 0;
+	
 	/**
 	 * 通过服务描述构造资源池
 	 * @param sd 服务描述
@@ -122,7 +135,7 @@ public class QueuedServantPool2 extends QueuedPool2<Servant> implements ServantP
 
 		queueTimeout = PropertiesConstants.getInt(props, "servant.queueTimeout", 10);
 		metricsId = PropertiesConstants.getString(props, "servant.metrics.id", metricsId);
-		create(props);
+		configure(props);
 		
 		logger.info("Initialize the servant pool..");
 		logger.info("Id:" + m_desc.getServiceID());
@@ -169,19 +182,23 @@ public class QueuedServantPool2 extends QueuedPool2<Servant> implements ServantP
 		}
 	}
 	
-	public Servant borrowObject(int priority) throws BaseException{
+	@Override
+	public Servant borrowObject(int priority){
 		return borrowObject(priority,queueTimeout);
 	}
 	
-	protected ReentrantLock lockStat = new ReentrantLock();	
-	
+	@Override
+	public void returnObject(Servant obj) {
+		super.returnObject(obj);
+	}		
+		
 	/**
 	 * 根据服务描述创建服务员
 	 * @param desc 服务描述
 	 * @return 服务员
 	 * @throws ServantException
 	 */
-	protected Servant createServant(ServiceDescription desc) throws ServantException{
+	protected Servant createServant(ServiceDescription desc){
 		String class_name = desc.getModule();
 		Servant temp = null;
 		try {			
@@ -304,5 +321,7 @@ public class QueuedServantPool2 extends QueuedPool2<Servant> implements ServantP
 	@Override
 	public int getActiveScore() {
 		return m_stat.getActiveScore();
-	}	
+	}
+
+
 }

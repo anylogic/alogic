@@ -9,11 +9,10 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.alogic.pool.impl.Queued;
 import com.anysoft.loadbalance.LoadBalance;
 import com.anysoft.loadbalance.LoadBalanceFactory;
 import com.anysoft.metrics.core.MetricsCollector;
-import com.anysoft.pool.QueuedPool2;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Counter;
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.Properties;
@@ -49,15 +48,20 @@ import com.logicbus.dbcp.util.ConnectionPoolStat;
  * 
  * @version 1.6.3.15 [20150409 duanyy] <br>
  * - 修正Connection.isValid出异常的问题 <br>
+ * 
  * @version 1.6.3.17 [20150413 duanyy] <br>
  * - 增加控制属性timeout <br>
+ * 
+ * @version 1.6.6.9 [20161209 duanyy] <br>
+ * - 从新的框架下继承 <br>
+ * 
  */
-abstract public class AbstractConnectionPool extends QueuedPool2<Connection> implements ConnectionPool{
+abstract public class AbstractConnectionPool extends Queued implements ConnectionPool{
 	protected Counter stat = null;
 	protected LoadBalance<ReadOnlySource> loadBalance = null;
 	
-	
-	public void create(Properties props){
+	@Override
+	public void configure(Properties props){
 		boolean enableStat = true;
 		
 		enableStat = PropertiesConstants.getBoolean(props, "dbcp.stat.enable", enableStat);
@@ -77,7 +81,7 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 			loadBalance = f.newInstance(lbModule, props);
 		}
 		
-		super.create(props);
+		super.configure(props);
 	}
 	
 	protected Counter createCounter(Properties p){
@@ -216,16 +220,19 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 		return getConnection(getMaxWait(),false);
 	}
 
-	protected Connection createObject() throws BaseException {
+	@Override
+	@SuppressWarnings("unchecked")
+	protected <pooled> pooled createObject(){
 		//用ManagedConnection去包装实际的Connection
 		Connection wrapper = null;
 		Connection real = newConnection();
 		if (real != null){
 			wrapper = new ManagedConnection(this,real,getTimeout());
 		}
-		return wrapper;
+		return (pooled)wrapper;
 	}
 	
+	@Override
 	public void recycle(Connection conn) {
 		//缺省状况下，没有发生错误
 		recycle(conn,false);
@@ -295,5 +302,5 @@ abstract public class AbstractConnectionPool extends QueuedPool2<Connection> imp
 	 * 
 	 * @since 1.6.3.11
 	 */
-	abstract protected Connection newConnection() throws BaseException;
+	protected abstract Connection newConnection();
 }

@@ -30,3 +30,10 @@ alogic-1.6.6
 	- alogic-common:增加com.alogic.naming，以命名服务的形式提供全局对象的配置框架，用来替代com.anysoft.context
 	- alogic-common:增加com.alogic.pool,全新的对象管理池的实现，用来替代com.anysoft.pool
 	
+- 1.6.6.9 [20161209 duanyy]
+	- alogic-core:QueuedServantPool2从新的框架下继承
+	- alogic-core:淘汰QueuedServantPool
+	- alogic-dbcp:缓冲池实现采用新的框架
+	- alogic-kvalue:连接池实现采用新的框架
+
+	

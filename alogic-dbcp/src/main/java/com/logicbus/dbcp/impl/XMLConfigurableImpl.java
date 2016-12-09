@@ -26,6 +26,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.3.17 [20150413 duanyy] <br>
  * - 增加控制属性timeout <br>
+ * 
+ * @version 1.6.6.9 [20161209 duanyy] <br>
+ * - 从新的框架下继承 <br>
  */
 public class XMLConfigurableImpl extends AbstractConnectionPool implements XMLConfigurable{
 
@@ -42,7 +45,7 @@ public class XMLConfigurableImpl extends AbstractConnectionPool implements XMLCo
 		model = new ConnectionModel();
 		model.fromXML(_e);
 		
-		create(p);
+		configure(p);
 	}
 
 	

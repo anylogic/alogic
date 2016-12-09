@@ -2,8 +2,8 @@ package com.logicbus.redis.client;
 
 import java.lang.reflect.Constructor;
 
-import com.anysoft.pool.CloseAware;
-import com.anysoft.pool.PooledCloseable;
+import com.alogic.pool.CloseAware;
+import com.alogic.pool.PooledCloseable;
 import com.logicbus.redis.util.RedisException;
 
 
@@ -14,13 +14,22 @@ import com.logicbus.redis.util.RedisException;
  * @version 1.0.0.1 [20141106 duanyy] <br>
  * - 修正设置index或password之后死循环的bug. <br>
  * 
+ * @version 1.6.6.9 [20161209 duanyy] <br>
+ * - 从新的框架下继承 <br>
  */
-public class Client extends Connection implements PooledCloseable<Client>{
+public class Client extends Connection implements PooledCloseable{
 	
 	/**
 	 * 当前数据库 
 	 */
 	private int db = 0;
+	
+	protected CloseAware closeAware = null;	
+
+	/**
+	 * 验证密码
+	 */
+	private String password;	
 	
 	/**
 	 * 设置当前DB
@@ -37,11 +46,6 @@ public class Client extends Connection implements PooledCloseable<Client>{
 	public long getCurrentDB(){
 		return db;
 	}
-	
-	/**
-	 * 验证密码
-	 */
-	private String password;
 	
 	/**
 	 * 设置验证密码
@@ -75,8 +79,7 @@ public class Client extends Connection implements PooledCloseable<Client>{
 		password = pwd;
 	}
 	
-	
-	
+
 	public void connect() {
 		super.connect();
 		if (password != null && password.length() > 0) {
@@ -101,22 +104,20 @@ public class Client extends Connection implements PooledCloseable<Client>{
 		super.disconnect();
 	}
 	
-	
+	@Override
 	public void poolClose() {
 		if (closeAware != null){
 			closeAware.closeObject(this);
 		}
 	}
 
-	protected CloseAware<Client> closeAware = null;
-	
-	
-	public void register(CloseAware<Client> listener) {
+	@Override
+	public void register(CloseAware listener) {
 		closeAware = listener;
 	}
 
-	
-	public void unregister(CloseAware<Client> listener) {
+	@Override
+	public void unregister(CloseAware listener) {
 		closeAware = null;
 	}		
 	
