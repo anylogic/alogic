@@ -35,5 +35,8 @@ alogic-1.6.6
 	- alogic-core:淘汰QueuedServantPool
 	- alogic-dbcp:缓冲池实现采用新的框架
 	- alogic-kvalue:连接池实现采用新的框架
-
+	
+- 1.6.6.10 [20161209 duanyy]
+	- alogic-common:增加Expired接口
+	- alogic-common:Naming允许缓存对象过期
 	

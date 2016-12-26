@@ -14,6 +14,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import com.anysoft.util.IOTools;
+import com.anysoft.util.Expired;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.Settings;
@@ -28,6 +29,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @author duanyy
  * @since 1.6.6.8 
+ * 
+ * @version 1.6.6.10 [duanyy 20161226] <br>
+ * - 允许缓存对象过期<br>
  */
 public abstract class Naming <O extends Reportable> implements Context<O>,Watcher<O> {
 
@@ -193,6 +197,13 @@ public abstract class Naming <O extends Reportable> implements Context<O>,Watche
 					found = lookupInSubContexts(name);
 					if (found != null){
 						caches.put(name, found);
+					}
+				}else{
+					if (found instanceof Expired && ((Expired)found).isExpired(System.currentTimeMillis())){
+						found = lookupInSubContexts(name);
+						if (found != null){
+							caches.put(name, found);
+						}						
 					}
 				}
 			}
