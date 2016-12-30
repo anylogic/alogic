@@ -23,6 +23,12 @@ public class HashTool extends KeyTool {
 		HGETALL,
 		HINCRBY,
 		HINCRBYFLOAT,
+		HMAX,
+		HMAXBYFLOAT,
+		HMIN,
+		HMINBYFLOAT,
+		HAVG,
+		HAVGBYFLOAT,
 		HKEYS,
 		HLEN,
 		HMGET,
@@ -229,6 +235,90 @@ public class HashTool extends KeyTool {
 		_hdel(key,fields);
 		return getIntegerReply();
 	}
+
+	public long hmax(final String key, final String field, final long latest) {
+		_hmax(key,field,latest);
+		return getIntegerReply();
+	}
 	
+	public void _hmax(final String key,final String field,final long latest){
+		sendCommand(
+				Command.HMAX.raw,
+				SafeEncoder.encode(key),
+				SafeEncoder.encode(field),
+				SafeEncoder.encode(latest)
+				);		
+	}
 	
+	public long hmin(final String key, final String field, final long latest) {
+		_hmin(key,field,latest);
+		return getIntegerReply();
+	}
+	
+	public void _hmin(final String key,final String field,final long latest){
+		sendCommand(
+				Command.HMIN.raw,
+				SafeEncoder.encode(key),
+				SafeEncoder.encode(field),
+				SafeEncoder.encode(latest)
+				);		
+	}	
+	
+	public long havg(final String key, final String field, final long latest,final double rate) {
+		_havg(key,field,latest,rate);
+		return getIntegerReply();
+	}
+	
+	public void _havg(final String key,final String field,final long latest,final double rate){
+		sendCommand(
+				Command.HAVG.raw,
+				SafeEncoder.encode(key),
+				SafeEncoder.encode(field),
+				SafeEncoder.encode(latest),
+				SafeEncoder.encode(rate)
+				);		
+	}	
+	
+	public double hmaxbyfloat(final String key, final String field, final double latest) {
+		_hmaxbyfloat(key,field,latest);
+		return Double.parseDouble(getBulkReply());
+	}
+	
+	public void _hmaxbyfloat(final String key,final String field,final double latest){
+		sendCommand(
+				Command.HMAXBYFLOAT.raw,
+				SafeEncoder.encode(key),
+				SafeEncoder.encode(field),
+				SafeEncoder.encode(latest)
+				);		
+	}
+	
+	public double hminbyfloat(final String key, final String field, final double latest) {
+		_hminbyfloat(key,field,latest);
+		return Double.parseDouble(getBulkReply());
+	}
+	
+	public void _hminbyfloat(final String key,final String field,final double latest){
+		sendCommand(
+				Command.HMINBYFLOAT.raw,
+				SafeEncoder.encode(key),
+				SafeEncoder.encode(field),
+				SafeEncoder.encode(latest)
+				);		
+	}	
+	
+	public double havgbyfloat(final String key, final String field, final double latest,final double rate) {
+		_havgbyfloat(key,field,latest,rate);
+		return Double.parseDouble(getBulkReply());
+	}
+	
+	public void _havgbyfloat(final String key,final String field,final double latest,final double rate){
+		sendCommand(
+				Command.HAVGBYFLOAT.raw,
+				SafeEncoder.encode(key),
+				SafeEncoder.encode(field),
+				SafeEncoder.encode(latest),
+				SafeEncoder.encode(rate)
+				);		
+	}		
 }

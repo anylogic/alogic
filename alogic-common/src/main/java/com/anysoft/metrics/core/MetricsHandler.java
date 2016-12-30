@@ -28,6 +28,10 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.4.16 [duanyy 20151110] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.6.11 [duanyy 20161229] <br>
+ * - 分别为服务端和客户端维护两个实例 <br>
+ * 
  */
 public interface MetricsHandler extends Handler<Fragment>,MetricsCollector{
 	public static class TheFactory extends Factory<MetricsHandler>{
@@ -42,18 +46,55 @@ public interface MetricsHandler extends Handler<Fragment>,MetricsCollector{
 		public static final String DEFAULT = 
 				"java:///com/anysoft/metrics/core/metrics.handler.default.xml#com.anysoft.metrics.core.MetricsHandler";
 
+		/**
+		 * 用于客户端的MetricsHandler
+		 */
+		private static MetricsHandler client = null;
+		
+		/**
+		 * 用于服务端的MetricsHandler
+		 */
+		private static MetricsHandler server = null;
+		
+		/**
+		 * 工厂实例
+		 */
+		protected static TheFactory INSTANCE = new TheFactory();
+		
+		/**
+		 * 获取客户端的唯一实例
+		 * @param p 环境变量
+		 * @return client
+		 */
 		public static MetricsHandler getClientInstance(Properties p){
-			String master = p.GetValue("metrics.handler.client.master",DEFAULT);
-			String secondary = p.GetValue("metrics.handler.client.secondary",DEFAULT);
-			
-			return getInstance(master,secondary,p);
+			if (client == null){
+				synchronized (MetricsHandler.class){
+					if (client == null){
+						String master = p.GetValue("metrics.handler.client.master",DEFAULT);
+						String secondary = p.GetValue("metrics.handler.client.secondary",DEFAULT);
+						
+						client = getInstance(master,secondary,p);						
+					}
+				}
+			}
+			return client;
 		}
 		
+		/**
+		 * 获取服务端的唯一实例
+		 * @param p 环境变量
+		 * @return server
+		 */
 		public static MetricsHandler getServerInstance(Properties p){
-			String master = p.GetValue("metrics.handler.server.master",DEFAULT);
-			String secondary = p.GetValue("metrics.handler.server.secondary",DEFAULT);
-			
-			return getInstance(master,secondary,p);
+			if (server == null){
+				synchronized (MetricsHandler.class){
+					String master = p.GetValue("metrics.handler.server.master",DEFAULT);
+					String secondary = p.GetValue("metrics.handler.server.secondary",DEFAULT);
+					
+					server = getInstance(master,secondary,p);
+				}
+			}
+			return server;
 		}
 		
 		/**
@@ -75,7 +116,6 @@ public interface MetricsHandler extends Handler<Fragment>,MetricsCollector{
 			}
 			return null;
 		}		
-		protected static TheFactory INSTANCE = new TheFactory();
 		
 		public static MetricsHandler getInstance(Element e,Properties p){
 			return INSTANCE.newInstance(e, p);

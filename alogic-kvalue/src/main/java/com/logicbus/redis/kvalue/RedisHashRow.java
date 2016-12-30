@@ -193,4 +193,76 @@ public class RedisHashRow extends RedisBaseRow implements HashRow {
 		}
 	}
 
+
+	@Override
+	public long max(String field, long latest) {
+		Client client = getClient(false);
+		try {
+			HashTool tool = (HashTool)client.getToolKit(HashTool.class);
+			return tool.hmax(key(), field, latest);
+		}finally{
+			client.poolClose();
+		}
+	}
+
+
+	@Override
+	public long min(String field, long latest) {
+		Client client = getClient(false);
+		try {
+			HashTool tool = (HashTool)client.getToolKit(HashTool.class);
+			return tool.hmin(key(), field, latest);
+		}finally{
+			client.poolClose();
+		}
+	}
+
+
+	@Override
+	public long avg(String field, long latest, double rate) {
+		Client client = getClient(false);
+		try {
+			HashTool tool = (HashTool)client.getToolKit(HashTool.class);
+			return tool.havg(key(), field, latest,rate);
+		}finally{
+			client.poolClose();
+		}
+	}
+
+
+	@Override
+	public double max(String field, double latest) {
+		Client client = getClient(false);
+		try {
+			HashTool tool = (HashTool)client.getToolKit(HashTool.class);
+			return tool.hmaxbyfloat(key(), field, latest);
+		}finally{
+			client.poolClose();
+		}
+	}
+
+
+	@Override
+	public double min(String field, double latest) {
+		Client client = getClient(false);
+		try {
+			HashTool tool = (HashTool)client.getToolKit(HashTool.class);
+			return tool.hminbyfloat(key(), field, latest);
+		}finally{
+			client.poolClose();
+		}
+	}
+
+
+	@Override
+	public double avg(String field, double latest, double rate) {
+		Client client = getClient(false);
+		try {
+			HashTool tool = (HashTool)client.getToolKit(HashTool.class);
+			return tool.havgbyfloat(key(), field, latest,rate);
+		}finally{
+			client.poolClose();
+		}
+	}
+
 }

@@ -10,6 +10,9 @@ import java.util.Map;
  * 
  * @version 1.6.5.40 [20160804 duanyy] <br>
  * - 增加getAll接口 <br>
+ * 
+ * @version 1.1.6.11 [20161227 duanyy] <br>
+ * - 增加max,min,avg操作
  */
 public interface HashRow extends KeyValueRow{
 	
@@ -111,12 +114,68 @@ public interface HashRow extends KeyValueRow{
 	public long incr(final String field,final long increment);
 	
 	/**
+	 * 对指定Field的值进行max操作
+	 * 
+	 * <p>如果当前值比latest小，则设置当前值为latest
+	 * 
+	 * @param field 指定的field
+	 * @param latest 最新值
+	 * @return 操作前的值
+	 */
+	public long max(final String field,final long latest);
+	
+	/**
+	 * 对指定Field的值进行min操作
+	 * @param field 指定的field
+	 * @param latest 最新值
+	 * @return 操作前的值
+	 */
+	public long min(final String field,final long latest);
+	
+	/**
+	 * 对指定Field的值进行avg操作
+	 * @param field 指定的field
+	 * @param latest 最新值
+	 * @param rate 比率
+	 * @return 操作前的值
+	 */
+	public long avg(final String field,final long latest,final double rate);	
+	
+	/**
 	 * 对指定Field的值进行增量加减
 	 * @param field
 	 * @param increment
 	 * @return
 	 */	
 	public double incr(final String field,final double increment);
+	
+	/**
+	 * 对指定Field的值进行max操作
+	 * 
+	 * <p>如果当前值比latest小，则设置当前值为latest
+	 * 
+	 * @param field 指定的field
+	 * @param latest 最新值
+	 * @return 操作前的值
+	 */	
+	public double max(final String field,final double latest);
+	
+	/**
+	 * 对指定Field的值进行min操作
+	 * @param field 指定的field
+	 * @param latest 最新值
+	 * @return 操作前的值
+	 */
+	public double min(final String field,final double latest);	
+	
+	/**
+	 * 对指定Field的值进行avg操作
+	 * @param field 指定的field
+	 * @param latest 最新值
+	 * @param rate 比率
+	 * @return 操作前的值
+	 */
+	public double avg(final String field,final double latest,final double rate);		
 	
 	/**
 	 * 获取多个field的取值

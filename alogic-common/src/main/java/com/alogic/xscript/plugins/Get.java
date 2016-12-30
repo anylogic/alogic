@@ -16,12 +16,14 @@ import com.anysoft.util.PropertiesConstants;
  * 从上下文变量中获取变量值，并设置到当前节点上
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.6.11 [duanyy 20161227] <br>
+ * - 增加类型
  */
 public class Get extends AbstractLogiclet {
 	protected String id;
 	protected String value;
-	
+	protected String type;
 	public Get(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -30,7 +32,8 @@ public class Get extends AbstractLogiclet {
 		super.configure(p);
 		
 		id = PropertiesConstants.getRaw(p,"id","");
-		value = p.GetValue("value", "", false, true);
+		value = PropertiesConstants.getRaw(p,"value","");
+		type = PropertiesConstants.getString(p,"type","string",true);
 	}
 
 	@Override
@@ -41,7 +44,27 @@ public class Get extends AbstractLogiclet {
 		if (StringUtils.isNotEmpty(idValue)){
 			String v = p.transform(value);
 			if (StringUtils.isNotEmpty(v)){
-				current.put(idValue, v);
+				if (type.equals("string")){
+					current.put(idValue, v);
+				}else{
+					if (type.equals("long")){
+						try{
+							current.put(idValue,Long.parseLong(v));
+						}catch (NumberFormatException ex){
+							current.put(idValue, v);
+						}
+					}else{
+						if (type.equals("double")){
+							try{
+								current.put(idValue,Double.parseDouble(v));
+							}catch (NumberFormatException ex){
+								current.put(idValue, v);
+							}							
+						}else{
+							current.put(idValue, v);
+						}
+					}
+				}
 			}else{
 				current.remove(idValue);
 			}

@@ -40,3 +40,9 @@ alogic-1.6.6
 	- alogic-common:增加Expired接口
 	- alogic-common:Naming允许缓存对象过期
 	
+- 1.6.6.11 [20161227 duanyy]
+	- alogic-common:xscript插件get增加long,double等类型
+	- alogic-kvalue:HashRow增加max,min,avg操作
+	- alogic-common:MetricsHandler分别为服务端和客户端维护两个实例
+	
+	
