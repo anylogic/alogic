@@ -44,5 +44,8 @@ alogic-1.6.6
 	- alogic-common:xscript插件get增加long,double等类型
 	- alogic-kvalue:HashRow增加max,min,avg操作
 	- alogic-common:MetricsHandler分别为服务端和客户端维护两个实例
-	
+
+- 1.6.6.12 [20170105 duanyy]
+	- alogic-kvalue:修正zset相关double转换为string的问题。
+	- alogic-common:增加com.alogic.metrics，提供指标处理api，替代com.anysoft.metrics （未完）
 	

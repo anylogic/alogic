@@ -1,5 +1,6 @@
 package com.logicbus.redis.kvalue;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,12 @@ import com.logicbus.redis.context.RedisContext;
 import com.logicbus.redis.toolkit.SortedSetTool;
 
 public class RedisSortedSetRow extends RedisBaseRow implements SortedSetRow {
-
+	
+	/**
+	 * 格式化
+	 */
+	protected static DecimalFormat df = new DecimalFormat("#.00");
+	
 	public RedisSortedSetRow(DataType _dataType, String _key,
 			boolean _enableRWSplit, RedisContext _source, Partition _partition) {
 		super(_dataType, _key, _enableRWSplit, _source, _partition);
@@ -131,7 +137,7 @@ public class RedisSortedSetRow extends RedisBaseRow implements SortedSetRow {
 		Client client = getClient(false);
 		try {
 			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
-			return tool.zremrangebyscore(key(), String.valueOf(min), String.valueOf(max));
+			return tool.zremrangebyscore(key(), df.format(min),df.format(max));
 		}finally{
 			client.poolClose();
 		}
@@ -143,9 +149,9 @@ public class RedisSortedSetRow extends RedisBaseRow implements SortedSetRow {
 		try {
 			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
 			if (reverse){
-				return tool.zrevrangebyscore(key, String.valueOf(min),String.valueOf(max));
+				return tool.zrevrangebyscore(key, df.format(min),df.format(max));
 			}else{
-				return tool.zrangebyscore(key, String.valueOf(min),String.valueOf(max));
+				return tool.zrangebyscore(key, df.format(min),df.format(max));
 			}
 		}finally{
 			client.poolClose();
@@ -159,9 +165,9 @@ public class RedisSortedSetRow extends RedisBaseRow implements SortedSetRow {
 		try {
 			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
 			if (reverse){
-				return tool.zrevrangebyscoreWithScores(key(), String.valueOf(min), String.valueOf(max));
+				return tool.zrevrangebyscoreWithScores(key(), df.format(min), df.format(max));
 			}else{
-				return tool.zrangebyscoreWithScores(key(), String.valueOf(min), String.valueOf(max));
+				return tool.zrangebyscoreWithScores(key(), df.format(min), df.format(max));
 			}
 		}finally{
 			client.poolClose();
@@ -206,9 +212,9 @@ public class RedisSortedSetRow extends RedisBaseRow implements SortedSetRow {
 		try {
 			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
 			if (reverse){
-				return tool.zrevrangebyscore(key, String.valueOf(min),String.valueOf(max),offset,cnt);
+				return tool.zrevrangebyscore(key, df.format(min),df.format(max),offset,cnt);
 			}else{
-				return tool.zrangebyscore(key, String.valueOf(min),String.valueOf(max),offset,cnt);
+				return tool.zrangebyscore(key, df.format(min),df.format(max),offset,cnt);
 			}
 		}finally{
 			client.poolClose();
@@ -223,9 +229,9 @@ public class RedisSortedSetRow extends RedisBaseRow implements SortedSetRow {
 		try {
 			SortedSetTool tool = (SortedSetTool)client.getToolKit(SortedSetTool.class);
 			if (reverse){
-				return tool.zrevrangebyscoreWithScores(key(), String.valueOf(min), String.valueOf(max),offset,cnt);
+				return tool.zrevrangebyscoreWithScores(key(), df.format(min), df.format(max),offset,cnt);
 			}else{
-				return tool.zrangebyscoreWithScores(key(), String.valueOf(min), String.valueOf(max),offset,cnt);
+				return tool.zrangebyscoreWithScores(key(), df.format(min), df.format(max),offset,cnt);
 			}
 		}finally{
 			client.poolClose();
