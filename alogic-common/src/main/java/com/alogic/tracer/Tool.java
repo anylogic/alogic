@@ -23,6 +23,8 @@ import com.anysoft.util.resource.ResourceFactory;
  * @version 1.6.5.7 [20160525 duanyy] <br>
  * - 当tracer的enable()为true的时候，才会开启tracer <br>
  * 
+ * @version 1.6.6.13 [20170111 duanyy] <br>
+ * - 修正Tool.Get()的并发性问题 <br>
  */
 public class Tool {
 	
@@ -48,25 +50,27 @@ public class Tool {
 	public static Tracer get() {
 		if (instance == null) {
 			synchronized (Tool.class) {
-				Settings settings = Settings.get();
-
-				String secondary = settings.GetValue("trace.secondary", DEFAULT);
-				String master = settings.GetValue("trace.master", secondary);
-
-				ResourceFactory rf = Settings.getResourceFactory();
-				InputStream in = null;
-				try {
-					in = rf.load(master, secondary, null);
-					Document doc = XmlTools.loadFromInputStream(in);
-					if (doc != null) {
-						Factory<Tracer> factory = new Factory<Tracer>();
-						instance = factory.newInstance(doc.getDocumentElement(), settings, "module",
-								StackTracer.class.getName());
+				if (instance == null){
+					Settings settings = Settings.get();
+	
+					String secondary = settings.GetValue("trace.secondary", DEFAULT);
+					String master = settings.GetValue("trace.master", secondary);
+	
+					ResourceFactory rf = Settings.getResourceFactory();
+					InputStream in = null;
+					try {
+						in = rf.load(master, secondary, null);
+						Document doc = XmlTools.loadFromInputStream(in);
+						if (doc != null) {
+							Factory<Tracer> factory = new Factory<Tracer>();
+							instance = factory.newInstance(doc.getDocumentElement(), settings, "module",
+									StackTracer.class.getName());
+						}
+					} catch (Exception ex) {
+						LOG.error("Error occurs when load xml file,source=" + master, ex);
+					} finally {
+						IOTools.closeStream(in);
 					}
-				} catch (Exception ex) {
-					LOG.error("Error occurs when load xml file,source=" + master, ex);
-				} finally {
-					IOTools.closeStream(in);
 				}
 			}
 		}

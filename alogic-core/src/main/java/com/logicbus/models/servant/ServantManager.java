@@ -198,11 +198,14 @@ public class ServantManager {
 	 * 获取唯一实例
 	 * @return 唯一实例
 	 */
-	synchronized static public ServantManager get(){
-		if (instance != null){
-			return instance;
+	public static ServantManager get(){
+		if (instance == null){
+			synchronized (ServantManager.class){
+				if (instance == null){
+					instance = new ServantManager();
+				}
+			}
 		}
-		instance = new ServantManager();
 		return instance;
 	}
 	

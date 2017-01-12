@@ -30,31 +30,23 @@ import com.alogic.xscript.log.LogInfo;
  */
 public class LinkedScriptDoer extends Doer.Abstract{
 	
-	/**
-	 * 脚本地址
-	 */
-	protected String src = null;
+	protected Logiclet stmt = null;
 	
 	@Override
 	public void execute(Task task) {
+		if (stmt == null){
+			LOG.error("The script is null");
+			return ;
+		}
 		try {
 			// 向队列报告任务已经开始
 			reportState(Task.State.Running, 0);
-			if (StringUtils.isEmpty(src)) {
-				LOG.error("Can not find script source.");
-				reportState(Task.State.Failed, 10000);
-			} else {
-				//装入脚本
-				Document doc = loadDocument(src);
-				Logiclet stmt = new TheScript(this, "script");
-				stmt.configure(doc.getDocumentElement(), task.getParameters());
-				Map<String,Object> root = new HashMap<String,Object>();
-				LogicletContext ctx = new LogicletContext(task.getParameters());
-				// 执行任务
-				stmt.execute(root,root,ctx, null);
-				// 任务完成
-				reportState(Task.State.Done, 10000);
-			}
+			Map<String,Object> root = new HashMap<String,Object>();
+			LogicletContext ctx = new LogicletContext(task.getParameters());
+			// 执行任务
+			stmt.execute(root,root,ctx, null);
+			// 任务完成
+			reportState(Task.State.Done, 10000);
 		} catch (Exception t) {
 			LOG.error("Failed to execute script", t);
 			// 任务失败
@@ -65,7 +57,14 @@ public class LinkedScriptDoer extends Doer.Abstract{
 	@Override
 	public void configure(Element _e, Properties _properties){
 		Properties p = new XmlElementProperties(_e,_properties);
-		src = PropertiesConstants.getString(p, "src",src);
+		String src = PropertiesConstants.getString(p, "src","");
+		if (StringUtils.isNotEmpty(src)) {
+			Document doc = loadDocument(src);
+			stmt = new TheScript(this, "script");
+			stmt.configure(doc.getDocumentElement(), p);
+		}else{
+			LOG.error("Can not find script src");
+		}
 		configure(p);
 	}
 

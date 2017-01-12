@@ -25,6 +25,11 @@ import com.anysoft.util.Settings;
  * 
  * @version 1.6.5.11 [20160603 duanyy] <br>
  * - tracelog增加type字段 <br>
+ * 
+ *
+ * @version 1.6.6.13 [20170112 duanyy] <br>
+ * - 增加行间隔符 <br>
+ *
  */
 public class Log4jTraceLogger extends AbstractHandler<TraceLog> implements TraceLogger {
 
@@ -41,7 +46,12 @@ public class Log4jTraceLogger extends AbstractHandler<TraceLog> implements Trace
 	/**
 	 * 输出间隔符
 	 */
-	protected String delimeter = "|";
+	protected String delimeter = "%%";
+	
+	/**
+	 * 行间隔符
+	 */
+	protected String eol = "$$";
 		
 	/**
 	 * 单条记录的缓存
@@ -71,6 +81,8 @@ public class Log4jTraceLogger extends AbstractHandler<TraceLog> implements Trace
 	protected void onConfigure(Element _e, Properties p) throws BaseException {
 		thread = PropertiesConstants.getInt(p, "thread", 0);
 		delimeter = PropertiesConstants.getString(p,"delimeter", delimeter);
+		eol = PropertiesConstants.getString(p,"eol", eol);
+		
 		app = PropertiesConstants.getString(p, "app", "${server.app}");
 		
 		log4jProperties = new DefaultProperties("Default",Settings.get());
@@ -88,7 +100,7 @@ public class Log4jTraceLogger extends AbstractHandler<TraceLog> implements Trace
 	protected void onHandle(TraceLog item,long t) {
 		if (logger == null){
 			synchronized (this){
-				host = log4jProperties.GetValue("host", "${server.host}:${server.port}");
+				host = log4jProperties.GetValue("host", "${server.ip}:${server.port}");
 				logger = initLogger(log4jProperties);
 			}
 		}		
@@ -113,7 +125,7 @@ public class Log4jTraceLogger extends AbstractHandler<TraceLog> implements Trace
 		.append(item.duration()).append(delimeter)
 		.append(item.contentLength()).append(delimeter)
 		.append(item.code()).append(delimeter)
-		.append(reason);
+		.append(reason).append(eol);
 		
 		logger.info(buf.toString());
 	}

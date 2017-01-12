@@ -32,7 +32,7 @@ public class Interval extends Abstract {
 	}
 
 	public boolean match(Date _last, Date _now,ContextHolder ctx) {
-		return ((_now.getTime() - _last.getTime()) >= interval);
+		return _last == null ? true:((_now.getTime() - _last.getTime()) >= interval);
 	}
 
 	public boolean isTimeToClear() {

@@ -1,7 +1,7 @@
 package com.anysoft.rrm;
 
 
-import com.anysoft.metrics.core.MetricsReportable;
+import com.alogic.metrics.stream.MetricsReportable;
 import com.anysoft.util.Reportable;
 
 /**
@@ -11,6 +11,9 @@ import com.anysoft.util.Reportable;
  * 
  * @version 1.6.4.42 [duanyy 20160407] <br>
  * - 对接指标处理器 <br>
+ * 
+ * @version 1.6.6.13 [20170109 duanyy] <br>
+ * - 采用新的指标接口
  */
 public interface RRData extends Reportable,MetricsReportable {
 	

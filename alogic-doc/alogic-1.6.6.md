@@ -49,3 +49,14 @@ alogic-1.6.6
 	- alogic-kvalue:修正zset相关double转换为string的问题。
 	- alogic-common:增加com.alogic.metrics，提供指标处理api，替代com.anysoft.metrics （未完）
 	
+- 1.6.6.13 [20170106 duanyy] 
+	- alogic-common:增加com.alogic.metrics，提供指标处理api，替代com.anysoft.metrics
+	- alogic-common:JsonTools增加json2txt功能
+	- alogic-common:修改KeyGen的随机字符串生成规则
+	- alogic-common:Selector增加Template实现
+	- alogic-common:Tracer修正Tool.Get()的并发性问题
+	- alogic-core:QueuedServantFactory, 主容器由hashtable改为ConcurrentHashMap，增强并发性
+	- alogic-addons:RemoteWriter采用新的指标框架
+	- alogic-common:Log4jTraceLogger输出文件增加行间隔符
+	
+	

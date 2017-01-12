@@ -6,9 +6,10 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.anysoft.metrics.core.MetricsHandler;
+import com.alogic.metrics.Fragment;
+import com.alogic.metrics.stream.MetricsHandlerFactory;
+import com.anysoft.stream.Handler;
 import com.anysoft.util.JsonTools;
-import com.anysoft.util.Settings;
 import com.anysoft.util.XmlTools;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
@@ -24,6 +25,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * @since 1.2.8
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 将MessageDoc和Context进行合并整合 <br>
+ * 
+ * @version 1.6.6.13 [20170109 duanyy] <br>
+ * - 采用新的指标接口 <br.
  */
 public class MetricsReport extends AbstractServant{
 
@@ -41,9 +45,7 @@ public class MetricsReport extends AbstractServant{
 		int offset = getArgument("offset", 0, ctx);
 		int limit = getArgument("limit", 30, ctx);	
 		String keyword = getArgument("keyword","",ctx);		
-		Settings settings = Settings.get();
-		
-		MetricsHandler handler = (MetricsHandler) settings.get("metricsHandler");
+		Handler<Fragment> handler = MetricsHandlerFactory.getClientInstance();
 		
 		if (handler != null){
 			Element root = msg.getRoot();
@@ -66,9 +68,7 @@ public class MetricsReport extends AbstractServant{
 		int offset = getArgument("offset", 0, ctx);
 		int limit = getArgument("limit", 30, ctx);	
 		String keyword = getArgument("keyword","",ctx);		
-		Settings settings = Settings.get();
-		
-		MetricsHandler handler = (MetricsHandler) settings.get("metricsHandler");
+		Handler<Fragment> handler = MetricsHandlerFactory.getClientInstance();
 		if (handler != null){
 			Map<String,Object> root = msg.getRoot();
 		

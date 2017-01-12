@@ -126,7 +126,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		/**
 		 * 上次调度时间
 		 */
-		protected Date lastDate = new Date();
+		protected Date lastDate = null;
 		
 		/**
 		 * 任务执行者

@@ -8,16 +8,17 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import com.anysoft.metrics.core.Fragment;
-import com.anysoft.metrics.core.MetricsCollector;
-import com.anysoft.metrics.core.MetricsHandler;
+
+import com.alogic.metrics.Fragment;
+import com.alogic.metrics.stream.MetricsCollector;
+import com.alogic.metrics.stream.MetricsHandlerFactory;
+import com.anysoft.stream.Handler;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
-import com.anysoft.util.Settings;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
 
@@ -26,6 +27,9 @@ import com.anysoft.util.XmlElementProperties;
  * @author duanyy
  * @version 1.6.4.42 [duanyy 20160407] <br>
  * - 对接指标处理器 <br>
+ * 
+ * @version 1.6.6.13 [20170109 duanyy] <br>
+ * - 采用新的指标接口
  */
 public class RRModel<data extends RRData> implements XMLConfigurable,Configurable,Reportable,MetricsCollector{
 
@@ -42,7 +46,12 @@ public class RRModel<data extends RRData> implements XMLConfigurable,Configurabl
 	/**
 	 * 指标处理器
 	 */
-	private MetricsHandler metricsHandler = null;
+	private Handler<Fragment> metricsHandler = null;
+	
+	/**
+	 * 是否向指标处理器输出指标
+	 */
+	private boolean metricsOutput = true;
 	
 	/**
 	 * 获取id
@@ -78,7 +87,9 @@ public class RRModel<data extends RRData> implements XMLConfigurable,Configurabl
 			rra.update(timestamp, fragment);
 		}
 		
-		fragment.report(this);
+		if (metricsOutput){
+			fragment.report(this);
+		}
 	}
 	
 	@Override
@@ -166,8 +177,8 @@ public class RRModel<data extends RRData> implements XMLConfigurable,Configurabl
 			}
 		}
 		
-		Settings settings = Settings.get();
-		metricsHandler = (MetricsHandler) settings.get("metricsHandler");	
+		metricsOutput = PropertiesConstants.getBoolean(p,getId() + ".output",metricsOutput);
+		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}
 
 	@Override

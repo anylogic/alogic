@@ -1,7 +1,7 @@
-package com.alogic.metrics.core;
+package com.alogic.metrics;
 
-import com.alogic.metrics.core.Fragment.DataType;
-import com.alogic.metrics.core.Fragment.Method;
+import com.alogic.metrics.Fragment.DataType;
+import com.alogic.metrics.Fragment.Method;
 import com.anysoft.util.JsonSerializer;
 
 
@@ -9,6 +9,8 @@ import com.anysoft.util.JsonSerializer;
  * 量度值
  * 
  * @author duanyy
+ *
+ * @since 1.6.6.13
  *
  */
 public interface Value extends JsonSerializer{
@@ -31,6 +33,12 @@ public interface Value extends JsonSerializer{
 	 * @return 数据类型
 	 */
 	public DataType type();
+	
+	/**
+	 * 获取数据的key
+	 * @return key
+	 */
+	public String key();
 	
 	/**
 	 * 获取量度值

@@ -9,11 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.alogic.metrics.Fragment;
+import com.alogic.metrics.stream.MetricsHandlerFactory;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.Script;
-import com.anysoft.metrics.core.Fragment;
-import com.anysoft.metrics.core.MetricsHandler;
 import com.anysoft.stream.Handler;
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.IOTools;
@@ -122,8 +122,7 @@ public class LogicBusApp implements WebApp {
 		//初始化MetricsHandler
 		// since 1.2.8
 		
-		Handler<Fragment> handler = MetricsHandler.TheFactory
-				.getClientInstance(settings);
+		Handler<Fragment> handler = MetricsHandlerFactory.getClientInstance();
 		if (handler != null) {
 			logger.info("MetricsHandler is initalized,module:"
 					+ handler.getClass().getName());
@@ -250,7 +249,8 @@ public class LogicBusApp implements WebApp {
 		}
 		
 		// since 1.2.8
-		MetricsHandler metricsHandler = (MetricsHandler)settings.get("metricsHandler");
+		@SuppressWarnings("unchecked")
+		Handler<Fragment> metricsHandler = (Handler<Fragment>)settings.get("metricsHandler");
 		if (metricsHandler != null){
 			metricsHandler.flush(System.currentTimeMillis());
 			logger.info("The metrics handler is closing..");

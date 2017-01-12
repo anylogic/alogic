@@ -1,12 +1,14 @@
 package com.logicbus.backend;
 
-import com.anysoft.metrics.core.Dimensions;
-import com.anysoft.metrics.core.Fragment;
-import com.anysoft.metrics.core.Measures;
-import com.anysoft.metrics.core.MetricsCollector;
-import com.anysoft.metrics.core.MetricsHandler;
+import com.alogic.metrics.Dimensions;
+import com.alogic.metrics.Fragment;
+import com.alogic.metrics.Fragment.Method;
+import com.alogic.metrics.Measures;
+import com.alogic.metrics.impl.DefaultFragment;
+import com.alogic.metrics.stream.MetricsCollector;
+import com.alogic.metrics.stream.MetricsHandlerFactory;
+import com.anysoft.stream.Handler;
 import com.anysoft.util.PropertiesConstants;
-import com.anysoft.util.Settings;
 import com.logicbus.models.servant.ServiceDescription;
 
 /**
@@ -26,12 +28,15 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.4.29 [20160126 duanyy] <br>
  * - 清除Servant体系中处于deprecated的方法 <br>
+ * 
+ * @version 1.6.6.13 [20170109 duanyy] <br>
+ * - 采用新的指标接口 <br.
  */
 public abstract class AbstractServant extends Servant implements MetricsCollector {
 
 	protected boolean jsonDefault = true;	
 	
-	protected static MetricsHandler metricsHandler = null;
+	protected static Handler<Fragment> metricsHandler = null;
 	
 	@Override
 	public int actionProcess(Context ctx) throws Exception{
@@ -46,14 +51,7 @@ public abstract class AbstractServant extends Servant implements MetricsCollecto
 	public void create(ServiceDescription sd){
 		super.create(sd);
 		
-		if (metricsHandler == null){
-			synchronized (AbstractServant.class){
-				if (metricsHandler == null){
-					Settings settings = Settings.get();
-					metricsHandler = (MetricsHandler) settings.get("metricsHandler");
-				}
-			}
-		}
+		metricsHandler = MetricsHandlerFactory.getClientInstance();
 		
 		jsonDefault = PropertiesConstants.getBoolean(sd.getProperties(),"jsonDefault",jsonDefault);
 		onCreate(sd);
@@ -95,82 +93,47 @@ public abstract class AbstractServant extends Servant implements MetricsCollecto
 		if (metricsHandler != null){
 			Dimensions dims = fragment.getDimensions();
 			if (dims != null){
-				dims.lpush(getDescription().getPath());
+				dims.set("svc", getDescription().getPath(), false);
 			}
 			metricsHandler.handle(fragment,System.currentTimeMillis());
 		}
 	}
 	
-	public void metricsIncr(String id,String [] sDims,Object...values){
-		Fragment f = new Fragment(id);
-		
-		Dimensions dims = f.getDimensions();
-		if (dims != null)
-			dims.lpush(sDims);
+	public void metricsIncr(String mId,String measure,long value,Method m){
+		Fragment f = new DefaultFragment(mId);
 		
 		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
+		if (meas != null){
+			meas.set(measure, value,m);
+		}
 		
 		metricsIncr(f);
 	}
 	
-	public void metricsIncr(String id,String [] sDims,Double...values){
-		Fragment f = new Fragment(id);
-		
-		Dimensions dims = f.getDimensions();
-		if (dims != null)
-			dims.lpush(sDims);
+	public void metricsIncr(String mId,String measure,double value,Method m){
+		Fragment f = new DefaultFragment(mId);
 		
 		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
-		
-		metricsIncr(f);
-	}
-	
-	public void metricsIncr(String id,String [] sDims,Long...values){
-		Fragment f = new Fragment(id);
-		
-		Dimensions dims = f.getDimensions();
-		if (dims != null)
-			dims.lpush(sDims);
-		
-		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
+		if (meas != null){
+			meas.set(measure, value,m);
+		}
 		
 		metricsIncr(f);		
 	}
 	
-	public void metricsIncr(String id,Double...values){
-		Fragment f = new Fragment(id);
-		
-		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
-		
-		metricsIncr(f);		
+	public void metricsIncr(String mId,String measure,long value){
+		metricsIncr(mId,measure,value,Method.sum);
 	}
 	
-	public void metricsIncr(String id,Long ...values){
-		Fragment f = new Fragment(id);
-		
-		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
-		
-		metricsIncr(f);	
-	}
-	
-	public void metricsIncr(String id,Object ...values){
-		Fragment f = new Fragment(id);
-		
-		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
-		
-		metricsIncr(f);	
+	public void metricsIncr(String mId,long value){
+		metricsIncr(mId,"v",value,Method.sum);
 	}	
-
+	
+	public void metricsIncr(String mId,String measure,double value){
+		metricsIncr(mId,measure,value,Method.sum);
+	}	
+	
+	public void metricsIncr(String mId,double value){
+		metricsIncr(mId,"v",value,Method.sum);
+	}		
 }

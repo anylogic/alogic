@@ -1,18 +1,23 @@
 package com.alogic.metrics.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import com.alogic.metrics.core.Fragment.Method;
-import com.alogic.metrics.core.Measures;
-import com.alogic.metrics.core.Value;
+import org.apache.commons.lang3.StringUtils;
+
+import com.alogic.metrics.Measures;
+import com.alogic.metrics.Value;
+import com.alogic.metrics.Fragment.Method;
 
 /**
  * 量度的缺省实现
  * 
  * @author duanyy
+ *
+ * @since 1.6.6.13
+ *
  *
  */
 public class DefaultMeasures implements Measures{
@@ -23,35 +28,52 @@ public class DefaultMeasures implements Measures{
 	protected Map<String,Value> values = new HashMap<String,Value>(5);
 	
 	@Override
+	public String toString(){
+		StringBuffer buf = new StringBuffer();
+		
+		Value[] vals = values();
+
+		for (Value v:vals){
+			buf.append(v).append(";");
+		}		
+		
+		return buf.toString();
+	}
+	
+	@Override
 	public void toJson(Map<String, Object> json) {
 		if (json != null){
-			Iterator<Entry<String,Value>> iterator = values.entrySet().iterator();
+			Value[] vals = values();
 			
-			while (iterator.hasNext()){
-				Entry<String,Value> entry = iterator.next();
-				
-				Map<String,Object> map = new HashMap<String,Object>();
-				entry.getValue().toJson(map);
-				json.put(entry.getKey(), map);
+			List<Object> list = new ArrayList<Object>(vals.length);			
+			for (Value v:vals){
+				Map<String,Object> map = new HashMap<String,Object>();				
+				v.toJson(map);				
+				list.add(map);
 			}
+			
+			json.put("meas", list);
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void fromJson(Map<String, Object> json) {
 		if (json != null){
-			Iterator<Entry<String,Object>> iter = json.entrySet().iterator();
-			while (iter.hasNext()){
-				Entry<String,Object> entry = iter.next();
-				String key = entry.getKey();
-				Object value = entry.getValue();
-				if (value instanceof Map){
-					@SuppressWarnings("unchecked")
-					Map<String,Object> map = (Map<String,Object>)value;
-					Value v = newValue(0L,Method.sum);
-					v.fromJson(map);
-					
-					values.put(key, v);
+			Object meas = json.get("meas");
+			
+			if (meas != null && meas instanceof List){
+				List<Object> list = (List<Object>)meas;
+				for (Object o:list){
+					if (o instanceof Map){
+						Map<String,Object> map = (Map<String,Object>)o;
+						Value value = newValue(map);
+						
+						String key = value.key();
+						if (StringUtils.isNotEmpty(key)){
+							values.put(key, value);
+						}
+					}
 				}
 			}
 		}
@@ -79,14 +101,14 @@ public class DefaultMeasures implements Measures{
 
 	@Override
 	public Measures set(String key, String value) {
-		Value v = newValue(value,Method.lst);
+		Value v = newValue(key,value,Method.lst);
 		values.put(key, v);
 		return this;
 	}
 
 	@Override
 	public Measures set(String key, long value, Method m) {
-		Value v = newValue(value,m);
+		Value v = newValue(key,value,m);
 		values.put(key, v);
 		return this;
 	}
@@ -98,7 +120,7 @@ public class DefaultMeasures implements Measures{
 
 	@Override
 	public Measures set(String key, double value, Method m) {
-		Value v = newValue(value,m);
+		Value v = newValue(key,value,m);
 		values.put(key, v);
 		return this;
 	}
@@ -128,7 +150,19 @@ public class DefaultMeasures implements Measures{
 
 	@Override
 	public Measures incr(Measures other) {
+		Value[] vals = other.values();
 		
+		for (Value val:vals){
+			String key = val.key();
+			
+			Value found = values.get(key);
+			if (found == null){
+				Value added = newValue(key,val.value(),val.method());
+				values.put(key, added);
+			}else{
+				found.incr(val);
+			}
+		}
 		return this;
 	}
 
@@ -143,7 +177,16 @@ public class DefaultMeasures implements Measures{
 		return values.containsKey(key);
 	}
 
-	protected Value newValue(Object value,Method m){
-		return new DefaultValue(value,m);
+	protected Value newValue(String key,Object value,Method m){
+		return new DefaultValue(key,value,m);
+	}
+	
+	protected Value newValue(Map<String,Object> json){
+		return new DefaultValue(json);
+	}
+
+	@Override
+	public Value[] values() {
+		return values.values().toArray(new Value[values.size()]);
 	}
 }

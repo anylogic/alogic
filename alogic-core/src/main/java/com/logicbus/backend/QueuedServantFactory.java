@@ -1,13 +1,15 @@
 package com.logicbus.backend;
 
 import java.lang.reflect.Constructor;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
@@ -30,6 +32,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.6.9 [20161209 duanyy] <br>
  * - 淘汰QueuedServantPool <br>
+ * 
+ * @version 1.6.6.13 [20170112 duanyy] <br>
+ * - 主容器由hashtable改为ConcurrentHashMap，增强并发性 <br>
  */
 public class QueuedServantFactory implements ServantFactory {
 	/**
@@ -40,9 +45,14 @@ public class QueuedServantFactory implements ServantFactory {
 	/**
 	 * 服务资源池列表
 	 */
-	private Hashtable<String, ServantPool> m_pools = null;
+	private Map<String, ServantPool> m_pools = null;
 	
 	protected Class<? extends ServantPool> poolClazz = null;
+
+	/**
+	 * m_pools对象锁
+	 */
+	protected ReentrantLock lockPools = new ReentrantLock();	
 	
 	/**
 	 * constructor
@@ -51,7 +61,7 @@ public class QueuedServantFactory implements ServantFactory {
 	public QueuedServantFactory(Properties props){
 		ServantManager sm = ServantManager.get();
 		sm.addWatcher(this);
-		m_pools = new Hashtable<String, ServantPool>();
+		m_pools = new ConcurrentHashMap<String, ServantPool>();
 		
 		String poolClass = PropertiesConstants.getString(props, 
 				"servant.pool", 
@@ -134,34 +144,24 @@ public class QueuedServantFactory implements ServantFactory {
 	 * @throws ServantException
 	 */
 	public ServantPool getPool(Path _id) throws ServantException{
-		Object found = m_pools.get(_id.getPath());
-		if (found != null){
-			return (ServantPool)found;
-		}
-		lockPools.lock();
-		try {
-			Object temp = m_pools.get(_id.getPath());
-			if (temp != null){		
-				ServantPool pool = (ServantPool)temp;
-				return pool;
+		ServantPool found = m_pools.get(_id.getPath());
+		if (found == null){
+			lockPools.lock();
+			try {
+				found = m_pools.get(_id.getPath());
+				if (found == null){		
+					found = getServantPool(_id);
+					if (found != null)
+					{
+						m_pools.put(_id.getPath(), found);
+					}
+				}
+			}finally{
+				lockPools.unlock();
 			}
-
-			ServantPool newPool = getServantPool(_id);
-			if (newPool != null)
-			{
-				m_pools.put(_id.getPath(), newPool);
-				return newPool;
-			}
-			return null;
-		}finally{
-			lockPools.unlock();
 		}
+		return found;
 	}
-	
-	/**
-	 * m_pools对象锁
-	 */
-	protected ReentrantLock lockPools = new ReentrantLock();
 	
 	/**
 	 * 关闭
@@ -169,17 +169,11 @@ public class QueuedServantFactory implements ServantFactory {
 	public void close(){
 		lockPools.lock();
 		try {
-			Enumeration<ServantPool> pools = m_pools.elements();
+			Iterator<ServantPool> iter = m_pools.values().iterator();
 			
-			while (pools.hasMoreElements()){
-				ServantPool sp = pools.nextElement();
-				if (sp != null){
-					try {
-					sp.close();
-					}catch (Throwable t){
-						
-					}
-				}
+			while (iter.hasNext()){
+				ServantPool sp = iter.next();
+				IOTools.close(sp);
 			}
 		}finally{
 			lockPools.unlock();

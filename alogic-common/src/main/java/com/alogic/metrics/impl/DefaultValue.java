@@ -2,18 +2,24 @@ package com.alogic.metrics.impl;
 
 import java.util.Map;
 
-import com.alogic.metrics.core.Fragment.DataType;
-import com.alogic.metrics.core.Fragment.Method;
-import com.alogic.metrics.core.Value;
-import com.anysoft.util.JsonSerializer;
+import com.alogic.metrics.Value;
+import com.alogic.metrics.Fragment.DataType;
+import com.alogic.metrics.Fragment.Method;
 import com.anysoft.util.JsonTools;
 
 /**
  * 缺省的量度实现
  * @author duanyy
  *
+ * @since 1.6.6.13
+ *
  */
 public class DefaultValue implements Value{
+	/**
+	 * key
+	 */
+	protected String key;
+	
 	/**
 	 * 量度值
 	 */
@@ -29,13 +35,14 @@ public class DefaultValue implements Value{
 	 */
 	protected DataType type;
 	
-	public DefaultValue(Object v,Method m){		
+	public DefaultValue(String k,Object v,Method m){
+		key = k;
 		method = m;
-		if (value instanceof Long || value instanceof Integer){
+		if (v instanceof Long || v instanceof Integer){
 			type = DataType.L;
 			value = v;
 		}else{
-			if (value instanceof Double || value instanceof Float){
+			if (v instanceof Double || v instanceof Float){
 				type = DataType.D;
 				value = v;
 			}else{
@@ -43,6 +50,10 @@ public class DefaultValue implements Value{
 				value = v.toString();
 			}
 		}
+	}
+	
+	public DefaultValue(Map<String,Object> json){
+		fromJson(json);
 	}
 	
 	@Override
@@ -99,11 +110,24 @@ public class DefaultValue implements Value{
 	}
 
 	@Override
+	public String toString(){
+		StringBuffer buf = new StringBuffer();
+		
+		buf.append(key).append(",");
+		buf.append(type).append(",");
+		buf.append(method).append(",");
+		buf.append(value);
+		
+		return buf.toString();
+	}
+	
+	@Override
 	public void toJson(Map<String, Object> json) {
 		if (json != null){
 			JsonTools.setString(json,"v",String.valueOf(value));
 			JsonTools.setString(json,"m",method.name());
 			JsonTools.setString(json,"t",type.name());
+			JsonTools.setString(json, "k", key);
 		}
 	}
 
@@ -112,6 +136,7 @@ public class DefaultValue implements Value{
 		if (json != null){
 			method = Method.valueOf(JsonTools.getString(json, "m", Method.lst.name()));
 			type = DataType.valueOf(JsonTools.getString(json,"t",DataType.S.name()));
+			key = JsonTools.getString(json, "k", "");
 			String v = JsonTools.getString(json, "v", "");
 			if (type == DataType.L){
 				try {
@@ -171,5 +196,10 @@ public class DefaultValue implements Value{
 		}
 		
 		return value;
+	}
+
+	@Override
+	public String key() {
+		return key;
 	}
 }

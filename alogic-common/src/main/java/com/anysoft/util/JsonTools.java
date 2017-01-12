@@ -15,6 +15,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.jayway.jsonpath.spi.JsonProvider;
+import com.jayway.jsonpath.spi.JsonProviderFactory;
+
 
 /**
  * Json的一些工具
@@ -44,12 +47,21 @@ import org.w3c.dom.NodeList;
  * 
  * @version 1.6.4.41 [20160401 duanyy] <br>
  * - 增加float操作方法 <br>
+ * 
+ * @version 1.6.6.13 [20170106 duanyy] <br>
+ * - 增加json2txt和txt2json功能  <br>
  */
 public class JsonTools {
+	
+	protected static JsonProvider provider = null;	
+	static {
+		provider = JsonProviderFactory.createProvider();
+	}	
 	
 	private JsonTools(){
 		
 	}
+		
 	
 	/**
 	 * 从Json对象中获取指定的属性值
@@ -409,4 +421,50 @@ public class JsonTools {
 			}
 		}
 	}	
+	
+	/**
+	 * 将Map对象转换为Json文本
+	 * @param json map对象
+	 * @return Json文本
+	 */
+	public static String map2text(Map<String,Object> json){
+		return provider.toJson(json);
+	}
+	
+	/**
+	 * 将json文本转换为Map对象
+	 * @param text json文本
+	 * @return Map对象
+	 */
+	@SuppressWarnings("unchecked")
+	public static Map<String,Object> text2map(String text){
+		Object json = provider.parse(text);
+		if (json instanceof Map){
+			return (Map<String,Object>)json;
+		}
+		return null;
+	}
+	
+	/**
+	 * 将List对象转换为Json文本
+	 * @param json List对象
+	 * @return Json文本
+	 */
+	public static String list2text(List<Object> json){
+		return provider.toJson(json);
+	}
+	
+	/**
+	 * 将Json文本转换为List对象
+	 * @param text Json文本
+	 * @return List对象
+	 */
+	@SuppressWarnings("unchecked")
+	public static List<Object> text2list(String text){
+		Object json = provider.parse(text);
+		if (json instanceof List){
+			return (List<Object>)json;
+		}
+		return null;		
+	}
 }

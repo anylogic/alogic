@@ -26,31 +26,28 @@ import com.anysoft.util.XmlTools;
  * - 根据sonar建议优化代码 <br>
  */
 public class ScriptDoer extends Doer.Abstract{
-	private Element script = null;
+	protected Logiclet stmt = null;
 	
 	@Override
 	public void execute(Task task) {
+		if (stmt == null){
+			LOG.error("The script is null");
+			return ;
+		}		
 		try {
 			// 向队列报告任务已经开始
 			reportState(Task.State.Running, 0);
-			if (script == null) {
-				LOG.error("Can not find script element");
-				reportState(Task.State.Failed, 10000);
-			} else {
-				Logiclet stmt = new TheScript(this, "script");
-				stmt.configure(script, task.getParameters());
-				Map<String,Object> root = new HashMap<String,Object>();
-				LogicletContext ctx = new LogicletContext(task.getParameters());
-				// 执行任务
-				stmt.execute(root,root,ctx, null);
-				// 任务完成
-				reportState(Task.State.Done, 10000);
-			}
+			Map<String, Object> root = new HashMap<String, Object>();
+			LogicletContext ctx = new LogicletContext(task.getParameters());
+			// 执行任务
+			stmt.execute(root, root, ctx, null);
+			// 任务完成
+			reportState(Task.State.Done, 10000);
 		} catch (Exception t) {
 			LOG.error("Failed to execute script", t);
 			// 任务失败
 			reportState(Task.State.Failed, 10000);
-		}	
+		}
 	}
 
 	@Override
@@ -58,7 +55,11 @@ public class ScriptDoer extends Doer.Abstract{
 		Properties p = new XmlElementProperties(_e,_properties);
 		configure(p);		
 		
-		script = XmlTools.getFirstElementByPath(_e, "script");
+		Element script = XmlTools.getFirstElementByPath(_e, "script");
+		if (script != null){
+			stmt = new TheScript(this, "script");
+			stmt.configure(script, p);
+		}
 	}
 
 	

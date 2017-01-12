@@ -261,7 +261,7 @@ public interface Scheduler extends Timer,Runnable {
 								state = State.Running;
 								logger.info(String.format("Scheduler[%s] is working now....[%s]", getId(),state.toString()));
 								
-								future = service.scheduleAtFixedRate(self, 0, interval, TimeUnit.MILLISECONDS);				
+								future = service.scheduleAtFixedRate(self, 5000, interval, TimeUnit.MILLISECONDS);				
 							}catch (InterruptedException ex){
 								state = State.Stopped;
 								logger.info("Schdule thread has been interrupted,exit",ex);

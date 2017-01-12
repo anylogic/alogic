@@ -1,4 +1,4 @@
-package com.alogic.metrics.core;
+package com.alogic.metrics;
 
 import com.anysoft.stream.Flowable;
 import com.anysoft.util.JsonSerializer;
@@ -7,6 +7,8 @@ import com.anysoft.util.JsonSerializer;
  * 指标片段
  * 
  * @author duanyy
+ *
+ * @since 1.6.6.13
  *
  */
 public interface Fragment extends JsonSerializer,Flowable{
@@ -51,6 +53,17 @@ public interface Fragment extends JsonSerializer,Flowable{
 	public String id();
 	
 	/**
+	 * 获取Fragment的类型
+	 * 
+	 * <p>Fragment类型包括:
+	 * <li>metrics</li>:系统运行的指标；
+	 * <li>info</li>:系统的信息
+	 * <li>alarm</li>:告警信息
+	 * @return 类型
+	 */
+	public String type();
+	
+	/**
 	 * 获取时间戳
 	 * @return timestamp
 	 */
@@ -67,4 +80,11 @@ public interface Fragment extends JsonSerializer,Flowable{
 	 * @return 量度列表
 	 */
 	public Measures getMeasures();
+	
+	/**
+	 * 指标汇聚
+	 * @param other 另一个指标
+	 * @return 新的指标
+	 */
+	public Fragment incr(Fragment other);
 }

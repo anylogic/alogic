@@ -1,6 +1,6 @@
-package com.alogic.metrics.core;
+package com.alogic.metrics;
 
-import com.alogic.metrics.core.Fragment.Method;
+import com.alogic.metrics.Fragment.Method;
 import com.anysoft.formula.DataProvider;
 import com.anysoft.util.JsonSerializer;
 
@@ -8,6 +8,8 @@ import com.anysoft.util.JsonSerializer;
  * 量度集
  * 
  * @author duanyy
+ *
+ * @since 1.6.6.13
  *
  */
 public interface Measures extends JsonSerializer,DataProvider{
@@ -99,4 +101,9 @@ public interface Measures extends JsonSerializer,DataProvider{
 	 */
 	public boolean exist(String key);
 	
+	/**
+	 * 获取量度值列表
+	 * @return 量度值列表
+	 */
+	public Value[] values();
 }

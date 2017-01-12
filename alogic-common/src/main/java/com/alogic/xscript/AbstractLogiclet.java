@@ -48,18 +48,15 @@ import com.alogic.xscript.plugins.Trim;
 import com.alogic.xscript.plugins.UUid;
 import com.alogic.xscript.plugins.Uppercase;
 import com.alogic.xscript.plugins.Using;
+import com.alogic.metrics.Fragment;
+import com.alogic.metrics.stream.MetricsCollector;
+import com.alogic.metrics.stream.MetricsHandlerFactory;
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
-import com.anysoft.metrics.core.Dimensions;
-import com.anysoft.metrics.core.Fragment;
-import com.anysoft.metrics.core.Measures;
-import com.anysoft.metrics.core.MetricsCollector;
-import com.anysoft.metrics.core.MetricsHandler;
 import com.anysoft.stream.Handler;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-import com.anysoft.util.Settings;
 import com.anysoft.util.XmlElementProperties;
 
 
@@ -72,6 +69,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.6.1 [20160823 duanyy] <br>
  * - 增加getAsJson和setAsJson插件 <br>
+ * 
+ * @version 1.6.6.13 [20170109 duanyy] <br>
+ * - 采用新的指标接口
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -152,7 +152,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_GETASJSON = "getAsJson";
 	public static final String STMT_SETASJSON = "setAsJson";
 	
-	protected static MetricsHandler metricsHandler = null;
+	protected static Handler<Fragment> metricsHandler = null;
 	
 	static{
 		staticModules.put(STMT_INCLUDE, Include.class);
@@ -195,8 +195,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_GETASJSON, GetAsJson.class);
 		staticModules.put(STMT_SETASJSON, SetAsJson.class);
 		
-		Settings settings = Settings.get();
-		metricsHandler = (MetricsHandler) settings.get("metricsHandler");
+		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	
 	
 	public AbstractLogiclet(String tag,Logiclet p){
@@ -399,77 +398,5 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		if (metricsHandler != null){
 			metricsHandler.handle(fragment,System.currentTimeMillis());
 		}
-	}
-	
-	public void metricsIncr(String id,String [] sDims,Object...values){
-		Fragment f = new Fragment(id);
-		
-		Dimensions dims = f.getDimensions();
-		if (dims != null)
-			dims.lpush(sDims);
-		
-		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
-		
-		metricsIncr(f);
-	}
-	
-	public void metricsIncr(String id,String [] sDims,Double...values){
-		Fragment f = new Fragment(id);
-		
-		Dimensions dims = f.getDimensions();
-		if (dims != null)
-			dims.lpush(sDims);
-		
-		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
-		
-		metricsIncr(f);
-	}
-	
-	public void metricsIncr(String id,String [] sDims,Long...values){
-		Fragment f = new Fragment(id);
-		
-		Dimensions dims = f.getDimensions();
-		if (dims != null)
-			dims.lpush(sDims);
-		
-		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
-		
-		metricsIncr(f);		
-	}
-	
-	public void metricsIncr(String id,Double...values){
-		Fragment f = new Fragment(id);
-		
-		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
-		
-		metricsIncr(f);		
-	}
-	
-	public void metricsIncr(String id,Long ...values){
-		Fragment f = new Fragment(id);
-		
-		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
-		
-		metricsIncr(f);	
-	}
-	
-	public void metricsIncr(String id,Object ...values){
-		Fragment f = new Fragment(id);
-		
-		Measures meas = f.getMeasures();
-		if (meas != null)
-			meas.lpush(values);
-		
-		metricsIncr(f);	
-	}		
+	}	
 }
