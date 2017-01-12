@@ -1,4 +1,4 @@
-package com.alogic.metrics.core;
+package com.alogic.metrics;
 
 import com.anysoft.formula.DataProvider;
 import com.anysoft.util.JsonSerializer;
@@ -7,6 +7,8 @@ import com.anysoft.util.JsonSerializer;
  * 维度集
  * 
  * @author duanyy
+ * 
+ * @since 1.6.6.13
  *
  */
 public interface Dimensions extends JsonSerializer,DataProvider{
