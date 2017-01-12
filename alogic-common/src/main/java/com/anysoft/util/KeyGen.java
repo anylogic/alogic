@@ -64,9 +64,7 @@ public class KeyGen {
 		int e = end < 0 || end >= chars.length ? chars.length - 1 : end;
 		int s = start < 0 || start >= e ? e: start;
 		int l = length <= 0 ? 20 : length;
-		System.out.println(e);
-		System.out.println(s);
-		System.out.println(e - s);
+
 		char [] uuid = new char[length];
 		
 		Random rand = new Random();
