@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.anylogic</groupId>
 	<artifactId>alogic</artifactId>
-	<version>1.6.6</version>
+	<version>1.6.7-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>alogic</name>
 	<description>一个高效的轻量级服务框架</description>

@@ -235,3 +235,7 @@ alogic已经在maven中央仓库进行了发布，参见[mvnrepository](http://m
  	 + 创建1.6.6-SNAPSHOT版本,开始1.6.6版本开发.
  	 + 参见[1.6.6更新记录](alogic-1.6.6.md).
  	 
+ - 1.6.7 [20170113 duanyy]
+ 	 + 创建1.6.7-SNAPSHOT版本，开始1.6.7版本开发.
+ 	 + 参见[1.6.7更新记录](alogic-1.6.7.md)
+ 	 
