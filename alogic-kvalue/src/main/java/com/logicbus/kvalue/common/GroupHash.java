@@ -21,7 +21,7 @@ public class GroupHash extends AbstractPartitioner {
 	protected TreeMap<Integer,String> nodes = new TreeMap<Integer,String>();
 	
 	protected String getPartitionCase(String key) {
-		int idx = key.hashCode() & Integer.MAX_VALUE % vnodesCnt;
+		int idx = (key.hashCode() & Integer.MAX_VALUE) % vnodesCnt;
 		SortedMap<Integer,String> tail = nodes.tailMap(idx);
 		if (tail == null || tail.size() == 0){
 			return nodes.get(nodes.firstKey());

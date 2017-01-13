@@ -17,7 +17,7 @@ public class SimpleHash extends AbstractPartitioner {
 	
 	
 	protected String getPartitionCase(String key) {
-		int idx = key.hashCode() & Integer.MAX_VALUE % nodesCnt;
+		int idx = (key.hashCode() & Integer.MAX_VALUE) % nodesCnt;
 		return String.valueOf(idx);
 	}
 

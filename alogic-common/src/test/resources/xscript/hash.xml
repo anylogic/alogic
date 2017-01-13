@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<script>
+	<uuid/>
+	<hash id="index" value="${$uuid}" limit="10"/>
+	<log msg="uuid=${$uuid};index=${index}"/>
+
+	<uuid/>
+	<hash id="index" value="${$uuid}" limit="10"/>
+	<log msg="uuid=${$uuid};index=${index}"/>
+
+	<uuid/>
+	<hash id="index" value="${$uuid}" limit="10"/>
+	<log msg="uuid=${$uuid};index=${index}"/>
+
+	<uuid/>
+	<hash id="index" value="${$uuid}" limit="10"/>
+	<log msg="uuid=${$uuid};index=${index}"/>
+
+	<uuid/>
+	<hash id="index" value="${$uuid}" limit="10"/>
+	<log msg="uuid=${$uuid};index=${index}"/>
+
+	<uuid/>
+	<hash id="index" value="${$uuid}" limit="10"/>
+	<log msg="uuid=${$uuid};index=${index}"/>
+
+	<uuid/>
+	<hash id="index" value="${$uuid}" limit="10"/>
+	<log msg="uuid=${$uuid};index=${index}"/>
+
+	<uuid/>
+	<hash id="index" value="${$uuid}" limit="10"/>
+	<log msg="uuid=${$uuid};index=${index}"/>
+
+	<uuid/>
+	<hash id="index" value="${$uuid}" limit="10"/>
+	<log msg="uuid=${$uuid};index=${index}"/>
+
+	<uuid/>
+	<hash id="index" value="${$uuid}" limit="10"/>
+	<log msg="uuid=${$uuid};index=${index}"/>
+
+	<uuid/>
+	<hash id="index" value="${$uuid}" limit="10"/>
+	<log msg="uuid=${$uuid};index=${index}"/>
+				
+</script>

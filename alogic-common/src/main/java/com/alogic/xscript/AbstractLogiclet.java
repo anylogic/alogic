@@ -48,6 +48,7 @@ import com.alogic.xscript.plugins.Trim;
 import com.alogic.xscript.plugins.UUid;
 import com.alogic.xscript.plugins.Uppercase;
 import com.alogic.xscript.plugins.Using;
+import com.alogic.xscript.plugins.Hash;
 import com.alogic.metrics.Fragment;
 import com.alogic.metrics.stream.MetricsCollector;
 import com.alogic.metrics.stream.MetricsHandlerFactory;
@@ -151,6 +152,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_ENV = "env";
 	public static final String STMT_GETASJSON = "getAsJson";
 	public static final String STMT_SETASJSON = "setAsJson";
+	public static final String STMT_HASH = "hash";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -194,6 +196,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_ENV,FromEnv.class);
 		staticModules.put(STMT_GETASJSON, GetAsJson.class);
 		staticModules.put(STMT_SETASJSON, SetAsJson.class);
+		staticModules.put(STMT_HASH, Hash.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	
@@ -210,7 +213,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	@Override
 	public void configure(Properties p) {
 		activity = PropertiesConstants.getString(p,"activity",xmlTag);
-		traceEnable = PropertiesConstants.getBoolean(p, "servant.tracer", traceEnable);
+		traceEnable = PropertiesConstants.getBoolean(p, "xscript.tracer", traceEnable);
 	}	
 	
 	@Override

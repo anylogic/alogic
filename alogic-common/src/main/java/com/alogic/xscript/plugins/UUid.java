@@ -21,7 +21,7 @@ import com.anysoft.util.PropertiesConstants;
  * - 支持按字符区间取值 <br>
  */
 public class UUid extends AbstractLogiclet {
-	protected String id;
+	protected String id = "$uuid";
 	protected int length = -1;
 	protected int redix = -1;
 	protected int start = 0;
@@ -34,7 +34,7 @@ public class UUid extends AbstractLogiclet {
 	public void configure(Properties p){
 		super.configure(p);
 		
-		id = PropertiesConstants.getString(p,"id","",true);
+		id = PropertiesConstants.getString(p,"id",id,true);
 		length = PropertiesConstants.getInt(p,"length",length,true);
 		redix = PropertiesConstants.getInt(p,"redix",redix,true);
 		start = PropertiesConstants.getInt(p,"start",start,true);

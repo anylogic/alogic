@@ -59,4 +59,6 @@ alogic-1.6.6
 	- alogic-addons:RemoteWriter采用新的指标框架
 	- alogic-common:Log4jTraceLogger输出文件增加行间隔符
 	
+- 1.6.6.14 [20170113 duanyy]
+	- alogic-common:增加xscript插件hash;
 	

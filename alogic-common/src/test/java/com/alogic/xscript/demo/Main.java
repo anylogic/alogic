@@ -40,6 +40,7 @@ public class Main {
 		
 		run("java:///xscript/getAsJson.xml#com.alogic.xscript.demo.Main",settings);
 		run("java:///xscript/setAsJson.xml#com.alogic.xscript.demo.Main",settings);
+		run("java:///xscript/hash.xml#com.alogic.xscript.demo.Main",settings);
 	}
 
 }
