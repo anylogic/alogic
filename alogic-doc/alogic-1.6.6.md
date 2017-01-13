@@ -62,3 +62,5 @@ alogic-1.6.6
 - 1.6.6.14 [20170113 duanyy]
 	- alogic-common:增加xscript插件hash;
 	
+- 1.6.6 [20170113 duanyy]
+	- release版本

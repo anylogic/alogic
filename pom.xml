@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.anylogic</groupId>
 	<artifactId>alogic</artifactId>
-	<version>1.6.6-SNAPSHOT</version>
+	<version>1.6.6</version>
 	<packaging>pom</packaging>
 	<name>alogic</name>
 	<description>一个高效的轻量级服务框架</description>
@@ -148,7 +148,6 @@
 				<version>3.3</version>
 			</plugin>
 
-<!-- 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
@@ -163,7 +162,6 @@
 					</execution>
 				</executions>
 			</plugin>
- -->
 		</plugins>
 	</build>
 </project>
