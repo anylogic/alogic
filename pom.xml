@@ -40,7 +40,6 @@
 	<modules>
 		<module>alogic-common</module>
 		<module>alogic-core</module>
-		<module>alogic-jms</module>
 		<module>alogic-dbcp</module>
 		<module>alogic-addons</module>
 		<module>alogic-remote</module>

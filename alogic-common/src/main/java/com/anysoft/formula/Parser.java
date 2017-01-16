@@ -28,6 +28,9 @@ package com.anysoft.formula;
  * @version 1.6.3.39 [duanyy 20150812] <br>
  * - 修正%算法的bug; <br>
  * - 修正无参函数的解析错误问题;<br>
+ * 
+ * @version 1.6.7.1 <br>
+ * - 修改方法为protected，增加可定制性 <br>
  */
 public class Parser {
 	/**
@@ -146,11 +149,11 @@ public class Parser {
 				);
 	}
 	
-	private Expression higher_expression() {
+	protected Expression higher_expression() {
 		return higher_expression_R( sign_expression() );
 	}
 
-	private Expression higher_expression_R(Expression left) {
+	protected Expression higher_expression_R(Expression left) {
 		Expression result = left;
 		if( type == MULTIPLY )
 		{
@@ -171,7 +174,7 @@ public class Parser {
 		return result;
 	}
 
-	private Expression sign_expression() {
+	protected Expression sign_expression() {
 		Expression result;
 		if( type == ADD_OR_POSITIVE )
 		{
@@ -188,7 +191,7 @@ public class Parser {
 		return result;
 	}
 
-	private Expression factor() {
+	protected Expression factor() {
 		Expression result;
 		if (type == FLOAT)
 		{
@@ -230,13 +233,13 @@ public class Parser {
 		return result;
 	}
 
-	private Expression lang_structure() {
+	protected Expression lang_structure() {
 	    String id = identifier;
         match(IDENTIFIER);
         return lang_tail( id );
 	}
 
-	private Expression lang_tail(String id) {
+	protected Expression lang_tail(String id) {
 		if (id.equals("true"))
 		{
 			return new Expression.BooleanConstant(true);
@@ -303,10 +306,14 @@ public class Parser {
 					)
 				);
 		}
+		return variant(id);
+	}
+	
+	protected Expression variant(String id){
 		return new Expression.Variant(id);
 	}
 
-	private Expression expression_R_Logical_Or(Expression left) {
+	protected Expression expression_R_Logical_Or(Expression left) {
 		Expression result = left;
 
 		if( type == OR )
@@ -325,7 +332,7 @@ public class Parser {
 		return result;
 	}
 
-	private Expression expression_R_Logical_And(Expression left) {
+	protected Expression expression_R_Logical_And(Expression left) {
 		Expression result = left;
 
 		if( type == AND )
@@ -341,7 +348,7 @@ public class Parser {
 		return result;
 	}
 
-	private Expression expression_R_Compare(Expression left) {
+	protected Expression expression_R_Compare(Expression left) {
 		Expression result = left;
 
 		if( type == EQUAL_LESS )
@@ -384,7 +391,7 @@ public class Parser {
 		return result;
 	}
 
-	private Expression expression_R(Expression left) {
+	protected Expression expression_R(Expression left) {
 		Expression result = left;
 
 		if( type == ADD_OR_POSITIVE )
@@ -402,14 +409,14 @@ public class Parser {
 		return result;
 	}
 
-	private char get(int _current){
+	protected char get(int _current){
 		if (_current >= text.length()){
 			return 0;
 		}
 		return text.charAt(_current);
 	}
 	
-	private void lookAhead(){
+	protected void lookAhead(){
 		for (;;){
 			if (get(current) <= 0){
 				break;
@@ -515,7 +522,7 @@ public class Parser {
 		}
 	}
 	
-	private void match(char _type){
+	protected void match(char _type){
 		if( type == _type )
 			lookAhead();
 		else
