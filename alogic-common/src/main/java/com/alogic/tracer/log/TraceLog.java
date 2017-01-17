@@ -14,6 +14,9 @@ import com.anysoft.stream.Flowable;
  * 
  * @version 1.6.5.11 [20160603 duanyy] <br>
  * - tracelog增加type字段 <br>
+ * 
+ * @version 1.6.7.1 [20170117 duanyy] <br>
+ * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
  */
 public class TraceLog implements Comparable<TraceLog>,Flowable{
 	/**
@@ -24,7 +27,7 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 	/**
 	 * 调用次序
 	 */
-	protected long order;
+	protected String order;
 	
 	/**
 	 * 方法类型
@@ -101,7 +104,7 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 	public int compareTo(TraceLog o) {
 		int ret = sn.compareTo(o.sn);
 		if (ret == 0){
-			ret = Long.compare(order, o.order);
+			ret = order.compareTo(o.order);
 		}
 		return ret;
 	}
@@ -115,12 +118,12 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 		return sn;
 	}
 
-	public TraceLog order(long order) {
+	public TraceLog order(String order) {
 		this.order = order;
 		return this;
 	}
 	
-	public long order(){
+	public String order(){
 		return order;
 	}
 	

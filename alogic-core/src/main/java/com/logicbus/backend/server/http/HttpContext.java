@@ -49,6 +49,8 @@ import com.logicbus.backend.Context;
  * - 增加报文长度 <br>
  * - 增加全局调用次序 <br>
  * 
+ * @version 1.6.7.1 [20170117 duanyy] <br>
+ * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
  */
 
 public class HttpContext extends Context {
@@ -70,7 +72,7 @@ public class HttpContext extends Context {
 	/**
 	 * 调用次序
 	 */
-	private long globalSerialOrder = -1;
+	private String globalSerialOrder = null;
 	
 	/**
 	 * response
@@ -192,17 +194,11 @@ public class HttpContext extends Context {
 	}
 	
 	@Override
-	public long getGlobalSerialOrder() {
-		if (globalSerialOrder < 0){
-			String value = request.getHeader("GlobalSerialOrder");
-			if (StringUtils.isNotEmpty(value)){
-				try {
-					globalSerialOrder = Long.parseLong(value);
-				}catch (NumberFormatException ex){
-					globalSerialOrder = 1;
-				}
-			}else{
-				globalSerialOrder = 1;
+	public String getGlobalSerialOrder() {
+		if (StringUtils.isEmpty(globalSerialOrder)){
+			globalSerialOrder = request.getHeader("GlobalSerialOrder");
+			if (StringUtils.isEmpty(globalSerialOrder)){
+				globalSerialOrder = "1";
 			}
 		}
 		return globalSerialOrder;

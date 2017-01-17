@@ -25,6 +25,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.6.13 [20170111 duanyy] <br>
  * - 修正Tool.Get()的并发性问题 <br>
+ * 
+ * @version 1.6.7.1 [20170117 duanyy] <br>
+ * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
  */
 public class Tool {
 	
@@ -93,7 +96,7 @@ public class Tool {
 	 * @param order 顺序
 	 * @return 上下文
 	 */
-	public static TraceContext start(String sn,long order){
+	public static TraceContext start(String sn,String order){
 		Tracer tracer = get();
 		return tracer != null && tracer.enable() ? tracer.startProcedure(sn,order) : null;
 	}

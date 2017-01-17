@@ -15,6 +15,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  * @since 1.6.5.3
+ * 
+ * @version 1.6.7.1 [20170117 duanyy] <br>
+ * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
  */
 public interface TraceContext extends Reportable{
 	/**
@@ -27,7 +30,7 @@ public interface TraceContext extends Reportable{
 	 * 次序
 	 * @return 次序
 	 */
-	public long order();
+	public String order();
 		
 	/**
 	 * 时间戳
@@ -62,7 +65,7 @@ public interface TraceContext extends Reportable{
 		/**
 		 * 次序
 		 */
-		protected volatile long order = 1;
+		protected volatile String order = "1";
 		
 		/**
 		 * 子节点次序
@@ -81,10 +84,10 @@ public interface TraceContext extends Reportable{
 		
 		public Default(){
 			sn = KeyGen.uuid(10, 64);
-			order = 1;
+			order = "1";
 		}
 		
-		public Default(TraceContext p,String n,long o){
+		public Default(TraceContext p,String n,String o){
 			parent = p;
 			sn = StringUtils.isEmpty(n)?KeyGen.uuid(10, 64):n;
 			order = o;
@@ -101,11 +104,11 @@ public interface TraceContext extends Reportable{
 		}
 		
 		@Override
-		public long order() {
+		public String order() {
 			return order;
 		}
 		
-		public Default order(long o){
+		public Default order(String o){
 			order = o;
 			return this;
 		}
@@ -124,7 +127,7 @@ public interface TraceContext extends Reportable{
 		public void report(Element xml) {
 			if (xml != null){
 				XmlTools.setString(xml,"sn",sn);
-				XmlTools.setLong(xml, "order", order);
+				XmlTools.setString(xml, "order", order);
 				XmlTools.setLong(xml,"t",t);
 			}
 		}
@@ -133,7 +136,7 @@ public interface TraceContext extends Reportable{
 		public void report(Map<String, Object> json) {
 			if (json != null){
 				JsonTools.setString(json,"sn",sn);
-				JsonTools.setLong(json,"order",order);
+				JsonTools.setString(json,"order",order);
 				JsonTools.setLong(json, "t", t);
 			}
 		}
@@ -145,7 +148,7 @@ public interface TraceContext extends Reportable{
 
 		@Override
 		public synchronized TraceContext newChild() {
-			return new TraceContext.Default(this,sn(),order * 100 + (childOrder ++));
+			return new TraceContext.Default(this,sn(),order + "." + (childOrder ++));
 		}
 		
 	}

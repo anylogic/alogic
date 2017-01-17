@@ -27,6 +27,9 @@ import com.anysoft.util.XmlTools;
  * @version 1.6.5.7 [20160525 duanyy] <br>
  * - 增加enable方法，以便可以选择关闭tracer <br>
  * 
+ * @version 1.6.7.1 [20170117 duanyy] <br>
+ * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
+ * 
  */
 public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 	
@@ -50,7 +53,7 @@ public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 	 * 
 	 * @return 上下文实例
 	 */
-	public TraceContext startProcedure(String sn,long order);
+	public TraceContext startProcedure(String sn,String order);
 	
 	/**
 	 * 结束过程

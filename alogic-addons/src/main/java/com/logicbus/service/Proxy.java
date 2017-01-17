@@ -41,6 +41,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.6.5.11 [20160603 duanyy] <br>
  * - 修正采用HttpURLConnection导致的一些bug <br>
  * 
+ * @version 1.6.7.1 [20170117 duanyy] <br>
+ * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
+ * 
  */
 public class Proxy extends Servant {
 
@@ -105,7 +108,7 @@ public class Proxy extends Servant {
 					conn.addRequestProperty("GlobalSerialOrder", String.valueOf(childTrace.order()));					
 				}else{
 					String globalSerial = ctx.getGlobalSerial();
-					long order = ctx.getGlobalSerialOrder();
+					String order = ctx.getGlobalSerialOrder();
 					if (globalSerial != null && globalSerial.length() > 0){
 						conn.addRequestProperty("GlobalSerial", globalSerial);
 						conn.addRequestProperty("GlobalSerialOrder", String.valueOf(order));

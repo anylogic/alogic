@@ -14,6 +14,8 @@ import com.anysoft.util.Properties;
  * @version 1.6.5.11 [20160603 duanyy] <br>
  * - tracelog增加type字段 <br>
  * 
+ * @version 1.6.7.1 [20170117 duanyy] <br>
+ * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
  */
 public class StackTracer extends Tracer.Abstract{
 	/**
@@ -38,7 +40,7 @@ public class StackTracer extends Tracer.Abstract{
 	}
 	
 	@Override
-	public TraceContext startProcedure(String sn, long order) {
+	public TraceContext startProcedure(String sn, String order) {
 		long thread = Thread.currentThread().getId();
 		
 		TraceContext current = contexts.get(thread);

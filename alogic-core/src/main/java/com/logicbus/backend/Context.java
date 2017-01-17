@@ -43,6 +43,9 @@ import com.logicbus.backend.message.Message;
  * 
  * @version 1.6.5.24 [20160718 duanyy] <br>
  * - 增加getPathInfo方法 <br>
+ * 
+ * @version 1.6.7.1 [20170117 duanyy] <br>
+ * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
  */
 public abstract class Context extends DefaultProperties implements DataProvider{
 	/**
@@ -239,7 +242,7 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	 * 
 	 * @since 1.6.5.6
 	 */
-	abstract public long getGlobalSerialOrder();
+	abstract public String getGlobalSerialOrder();
 	
 	/**
 	 * 获取请求的Content-Type
