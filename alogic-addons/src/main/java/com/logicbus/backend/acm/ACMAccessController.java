@@ -14,10 +14,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.anysoft.metrics.core.Dimensions;
-import com.anysoft.metrics.core.Fragment;
-import com.anysoft.metrics.core.Measures;
-import com.anysoft.metrics.core.MetricsCollector;
+import com.alogic.metrics.Dimensions;
+import com.alogic.metrics.Fragment;
+import com.alogic.metrics.Measures;
+import com.alogic.metrics.Fragment.Method;
+import com.alogic.metrics.impl.DefaultFragment;
+import com.alogic.metrics.stream.MetricsCollector;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -52,6 +54,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.5.5 [20160515 duanyy] <br>
  * - 增加reload接口 <br>
+ * 
+ * @version 1.6.7.4 [20170118 duanyy] <br>
+ * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
  */
 public abstract class ACMAccessController implements AccessController {
 	/**
@@ -290,20 +295,19 @@ public abstract class ACMAccessController implements AccessController {
 				String key = keys.nextElement();
 				AccessStat value = acl.get(key);
 				
-				Fragment f = new Fragment(metricsId);
+				Fragment f = new DefaultFragment(metricsId);
 				
 				Dimensions dims = f.getDimensions();
-				if (dims != null)
-					dims.lpush(key);
-				
+				if (dims != null){
+					dims.set("session", key, true);
+				}
 				Measures meas = f.getMeasures();
-				if (meas != null)
-					meas.lpush(new Object[]{
-							value.thread,
-							value.timesTotal,
-							value.timesOneMin,
-							value.waitCnt
-					});
+				if (meas != null){
+					meas.set("thread", value.thread, Method.avg);
+					meas.set("timesTotal", value.timesTotal,Method.avg);
+					meas.set("timesOneMin", value.timesOneMin,Method.avg);
+					meas.set("waitCnt", value.waitCnt,Method.avg);
+				}
 				
 				collector.metricsIncr(f);
 			}			

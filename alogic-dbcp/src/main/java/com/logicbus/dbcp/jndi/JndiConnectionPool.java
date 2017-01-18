@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.anysoft.metrics.core.MetricsCollector;
+import com.alogic.metrics.stream.MetricsCollector;
 import com.logicbus.dbcp.core.ConnectionPool;
 import com.logicbus.dbcp.sql.SQLTools;
 import com.logicbus.dbcp.util.ConnectionPoolStat;

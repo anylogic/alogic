@@ -9,11 +9,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.alogic.metrics.Dimensions;
+import com.alogic.metrics.Fragment;
+import com.alogic.metrics.Measures;
+import com.alogic.metrics.Fragment.Method;
+import com.alogic.metrics.impl.DefaultFragment;
+import com.alogic.metrics.stream.MetricsCollector;
 import com.alogic.pool.impl.Queued;
-import com.anysoft.metrics.core.Dimensions;
-import com.anysoft.metrics.core.Fragment;
-import com.anysoft.metrics.core.Measures;
-import com.anysoft.metrics.core.MetricsCollector;
 import com.anysoft.util.Counter;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
@@ -42,6 +45,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.6.9 [20161209 duanyy] <br>
  * - 从新的框架下继承 <br>
+ * 
+ * @version 1.6.7.4 [20170118 duanyy] <br>
+ * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
  */
 public class QueuedServantPool2 extends Queued implements ServantPool{
 	/**
@@ -255,23 +261,21 @@ public class QueuedServantPool2 extends Queued implements ServantPool{
 	
 	public void report(MetricsCollector collector) {
 		if (collector != null){
-			Fragment f = new Fragment(metricsId);
+			Fragment f = new DefaultFragment(metricsId);
 			
 			Dimensions dims = f.getDimensions();
-			if (dims != null)
-				dims.lpush(m_desc.getPath());
-			
+			if (dims != null){
+				dims.set("svc", m_desc.getPath(), true);
+			}
 			Measures meas = f.getMeasures();
-			if (meas != null)
-				meas.lpush(new Object[]{
-						getIdleCnt(),
-						getWaitCnt(),
-						getCreatingCnt(),
-						getWorkingCnt(),
-						getMaxActive(),
-						getMaxIdle()
-				});
-			
+			if (meas != null){
+				meas.set("idle", getIdleCnt(), Method.avg);
+				meas.set("wait", getWaitCnt(),Method.avg);
+				meas.set("creating", getCreatingCnt(),Method.avg);
+				meas.set("working", getWorkingCnt(),Method.avg);
+				meas.set("maxActive", getMaxActive(),Method.avg);
+				meas.set("maxIdle", getMaxIdle(),Method.avg);
+			}
 			collector.metricsIncr(f);
 		}
 	}

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
-import com.anysoft.metrics.core.MetricsCollector;
+import com.alogic.metrics.stream.MetricsCollector;
 import com.anysoft.util.Properties;
 import com.logicbus.models.catalog.Path;
 import com.logicbus.models.servant.ServiceDescription;
@@ -24,6 +24,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.5.5 [20160515 duanyy] <br>
  * - 增加reload接口 <br>
+ * 
+ * @version 1.6.7.4 [20170118 duanyy] <br>
+ * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
  */
 public class NothingAccessController implements AccessController {
 	@Override

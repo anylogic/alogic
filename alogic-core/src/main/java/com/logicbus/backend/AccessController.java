@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.anysoft.metrics.core.MetricsReportable;
+import com.alogic.metrics.stream.MetricsReportable;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
@@ -46,6 +46,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.5.5 [20160515 duanyy] <br>
  * - 增加reload接口 <br>
+ * 
+ * @version 1.6.7.4 [20170118 duanyy] <br>
+ * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
  */
 public interface AccessController extends Reportable,MetricsReportable,XMLConfigurable,Configurable{
 	

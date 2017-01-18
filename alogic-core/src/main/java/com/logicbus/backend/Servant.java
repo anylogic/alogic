@@ -34,6 +34,9 @@ import org.apache.log4j.LogManager;
  * 
  * @version 1.6.4.29 [20160126 duanyy] <br>
  * - 清除Servant体系中处于deprecated的方法 <br>
+ * 
+ * @version 1.6.7.4 [20170118 duanyy] <br>
+ * - 服务耗时单位改为ns <br>
  */
 public abstract class Servant implements Pooled{
 	/**
@@ -282,7 +285,6 @@ public abstract class Servant implements Pooled{
 	 */
 	public void actionAfter(Context ctx){
 		ctx.setReturn("core.ok","It is successful");
-		ctx.setEndTime(System.currentTimeMillis());
 	}
 	
 	/**
@@ -293,6 +295,5 @@ public abstract class Servant implements Pooled{
 	 */
 	public void actionException(Context ctx,ServantException ex){
 		ctx.setReturn(ex.getCode(), ex.getMessage());
-		ctx.setEndTime(System.currentTimeMillis());
 	}
 }

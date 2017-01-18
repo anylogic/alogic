@@ -9,10 +9,10 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.alogic.metrics.stream.MetricsCollector;
 import com.alogic.pool.impl.Queued;
 import com.anysoft.loadbalance.LoadBalance;
 import com.anysoft.loadbalance.LoadBalanceFactory;
-import com.anysoft.metrics.core.MetricsCollector;
 import com.anysoft.util.Counter;
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.Properties;

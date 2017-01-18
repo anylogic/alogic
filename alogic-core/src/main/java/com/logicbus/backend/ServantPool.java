@@ -1,6 +1,6 @@
 package com.logicbus.backend;
 
-import com.anysoft.metrics.core.MetricsReportable;
+import com.alogic.metrics.stream.MetricsReportable;
 import com.anysoft.util.Reportable;
 import com.logicbus.models.servant.ServiceDescription;
 
@@ -28,6 +28,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.4.31 [20160129 duanyy] <br>
  * - 改造计数器体系 <br>
+ * 
+ * @version 1.6.7.4 [20170118 duanyy] <br>
+ * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
  */
 public interface ServantPool extends AutoCloseable,Reportable,MetricsReportable{
 	/**

@@ -46,6 +46,9 @@ import com.logicbus.backend.message.Message;
  * 
  * @version 1.6.7.1 [20170117 duanyy] <br>
  * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
+ * 
+ * @version 1.6.7.4 [20170118 duanyy] <br>
+ * - 服务耗时单位改为ns <br>
  */
 public abstract class Context extends DefaultProperties implements DataProvider{
 	/**
@@ -64,9 +67,9 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	protected String reason = "It is ok.";
 	
 	/**
-	 * 时长
+	 * 时间戳
 	 */
-	protected long duration = 0;
+	protected long timestamp = System.currentTimeMillis();
 
 	/**
 	 * the start time
@@ -99,6 +102,8 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	 * @return 编码
 	 */
 	public String getEncoding(){return encoding;}
+	
+	public long getTimestamp(){return timestamp;}
 	
 	/**
 	 * to get the start time

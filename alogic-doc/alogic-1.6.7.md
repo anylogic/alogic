@@ -16,3 +16,8 @@ alogic-1.6.7
 - alogic-common:新增com.alogic.tlog，替代com.alogic.tracer.log包;
 - alogic-common:trace日志的时长单位改为ns;
 - alogic-common:对tlog的开启开关进行了统一;
+
+### 1.6.7.4 [20170118 duanyy]
+- alogic-common:增加发送指标所需的xscript插件;
+- alogic-common:淘汰com.anysoft.metrics包;
+- alogic-core:服务耗时统计修改为ns;

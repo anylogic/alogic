@@ -2,7 +2,7 @@ package com.logicbus.dbcp.core;
 
 import java.sql.Connection;
 
-import com.anysoft.metrics.core.MetricsReportable;
+import com.alogic.metrics.stream.MetricsReportable;
 import com.anysoft.util.Reportable;
 
 
@@ -25,6 +25,8 @@ import com.anysoft.util.Reportable;
  * @version 1.6.3.11 [20150402 duanyy] <br>
  * - 增加{@link #recycle(Connection, boolean)},获取客户的使用反馈,以便连接池的处理 <br>
  * 
+ * @version 1.6.7.4 [20170118 duanyy] <br>
+ * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
  */
 public interface ConnectionPool extends Reportable,MetricsReportable,AutoCloseable{
 	

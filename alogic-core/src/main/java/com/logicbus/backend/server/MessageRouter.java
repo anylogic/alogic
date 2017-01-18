@@ -78,6 +78,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.6.7.3 [20170118 duanyy] <br>
  * - 对tlog的开启开关进行了统一 <br>
  * 
+ * @version 1.6.7.4 [20170118 duanyy] <br>
+ * - 服务耗时单位改为ns <br>
  */
 public class MessageRouter {
 	
@@ -104,7 +106,7 @@ public class MessageRouter {
 		}
 		try{
 			//访问开始
-			ctx.setStartTime(System.currentTimeMillis());
+			ctx.setStartTime(System.nanoTime());
 			
 			//获取服务实例池
 			ServantFactory factory = servantFactory;
@@ -156,7 +158,7 @@ public class MessageRouter {
 			logger.error("core.fatalerror:" + t.getMessage(),t);			
 		}
 		finally {
-			ctx.setEndTime(System.currentTimeMillis());
+			ctx.setEndTime(System.nanoTime());
 			if (ctx != null){
 				ctx.finish();
 			}
@@ -195,7 +197,7 @@ public class MessageRouter {
 		//item.host = ctx.getHost();
 		item.result = ctx.getReturnCode();
 		item.reason = ctx.getReason();
-		item.startTime = ctx.getStartTime();
+		item.startTime = ctx.getTimestamp();
 		item.duration = ctx.getDuration();
 		item.url = ctx.getRequestURI();
 		item.content = logType == ServiceDescription.LogType.detail ? ctx.toString() : null;
