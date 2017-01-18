@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<logger module="com.alogic.tlog.handler.Hub"
+	report.enable="true" report.cycle="3600000" async="true">
+	<logger module="com.alogic.tlog.handler.Debug"/>
+	<logger module="com.alogic.tlog.handler.Matcher"
+		pattern="*">
+		<logger module="com.alogic.tlog.handler.Dispatch"
+			report.enable="false" report.cycle="3600000" async="false" threadCnt="1">
+			<logger module="com.alogic.tlog.handler.Log4j"
+				delimeter="|" billing="false"
+				log4j.file="${tlog.home}/tracelog_${server.app}_${server.port}_${thread}.log"
+				log4j.datePattern="'.'yyyy-MM-dd" log4j.encoding="${http.encoding}"
+				log4j.bufferSize="2048" log4j.bufferedIO="false"
+				log4j.immediateFlush="true" report.enable="false" async="false"
+				async.interval="1000" async.maxQueueLength="4096" />
+		</logger>
+	</logger>
+</logger>

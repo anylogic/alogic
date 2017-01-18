@@ -6,7 +6,7 @@ import com.anysoft.stream.HubHandler;
 /**
  * Hub分发
  * @author yyduan
- * @since 1.6.7.2
+ * @since 1.6.7.3
  */
 public class Hub extends HubHandler<TLog> {
 	public String getHandlerType(){

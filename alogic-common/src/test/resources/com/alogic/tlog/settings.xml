@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<settings>
+	<parameter id="tlog.master" value="java:///com/alogic/tlog/tlog.xml#com.alogic.tlog.test.Main"/>
+	<parameter id="tracer.enable" value="true"/>
+	<parameter id="tlog.home" value="D://temp"/>
+</settings>

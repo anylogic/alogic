@@ -9,7 +9,7 @@ import com.anysoft.stream.Flowable;
  * 
  * @author yyduan
  *
- * @since 1.6.7.2
+ * @since 1.6.7.3
  */
 public class TLog implements Comparable<TLog>,Flowable{
 	protected static final String PATTERN = 
