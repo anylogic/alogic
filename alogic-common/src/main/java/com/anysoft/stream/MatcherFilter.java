@@ -18,8 +18,7 @@ public class MatcherFilter <data extends Flowable> extends FilterHandler<data> {
 	protected StringMatcher matcher = null;
 	@Override
 	protected boolean accept(data d) {
-		String id = d.id();
-		return matcher == null? true:matcher.match(id);
+		return matcher == null? true:matcher.match(d.id());
 	}
 
 	@Override

@@ -1,16 +1,9 @@
 package com.alogic.tracer;
 
-import java.io.InputStream;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
 
 import com.anysoft.util.Factory;
-import com.anysoft.util.IOTools;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
-import com.anysoft.util.XmlTools;
-import com.anysoft.util.resource.ResourceFactory;
 
 /**
  * 工具类
@@ -28,6 +21,10 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.7.1 [20170117 duanyy] <br>
  * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
+ * 
+ * @version 1.6.7.3 [20170118 duanyy] <br>
+ * - trace日志的时长单位改为ns <br>
+ * - 新增com.alogic.tlog，替代com.alogic.tracer.log包;
  */
 public class Tool {
 	
@@ -35,16 +32,6 @@ public class Tool {
 	 * Tracer的唯一实例
 	 */
 	private static Tracer instance = null;
-	
-	/**
-	 * a logger of log4j
-	 */
-	private static final Logger LOG = LogManager.getLogger(Tool.class);
-	
-	/**
-	 * 缺省的配置文件
-	 */
-	private static final String DEFAULT = "java:///com/alogic/tracer/tracer.xml#" + Tool.class.getName();
 	
 	/**
 	 * 获取唯一实例
@@ -55,24 +42,14 @@ public class Tool {
 			synchronized (Tool.class) {
 				if (instance == null){
 					Settings settings = Settings.get();
-	
-					String secondary = settings.GetValue("trace.secondary", DEFAULT);
-					String master = settings.GetValue("trace.master", secondary);
-	
-					ResourceFactory rf = Settings.getResourceFactory();
-					InputStream in = null;
-					try {
-						in = rf.load(master, secondary, null);
-						Document doc = XmlTools.loadFromInputStream(in);
-						if (doc != null) {
-							Factory<Tracer> factory = new Factory<Tracer>();
-							instance = factory.newInstance(doc.getDocumentElement(), settings, "module",
-									StackTracer.class.getName());
-						}
-					} catch (Exception ex) {
-						LOG.error("Error occurs when load xml file,source=" + master, ex);
-					} finally {
-						IOTools.closeStream(in);
+					String module = PropertiesConstants.getString(settings,"tracer.module",StackTracer.class.getName());
+					
+					Factory<Tracer> f = new Factory<Tracer>();
+					try{
+						instance = f.newInstance(module, settings);
+					}catch (Exception ex){
+						instance = new StackTracer();
+						instance.configure(settings);
 					}
 				}
 			}

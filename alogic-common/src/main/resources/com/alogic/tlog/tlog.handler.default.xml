@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logger module="com.alogic.tlog.handler.Quiet" report.enable="true" report.cycle="3600000">
+	
+</logger>

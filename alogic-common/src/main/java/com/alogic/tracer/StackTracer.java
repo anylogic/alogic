@@ -2,7 +2,7 @@ package com.alogic.tracer;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.alogic.tracer.log.TraceLog;
+import com.alogic.tlog.TLog;
 import com.anysoft.util.Properties;
 
 /**
@@ -16,6 +16,10 @@ import com.anysoft.util.Properties;
  * 
  * @version 1.6.7.1 [20170117 duanyy] <br>
  * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
+ * 
+ * @version 1.6.7.3 [20170118 duanyy] <br>
+ * - trace日志的时长单位改为ns <br>
+ * - 新增com.alogic.tlog，替代com.alogic.tracer.log包;
  */
 public class StackTracer extends Tracer.Abstract{
 	/**
@@ -68,7 +72,7 @@ public class StackTracer extends Tracer.Abstract{
 				contexts.put(thread, parent);		
 			}
 			
-			TraceLog traceLog= new TraceLog();
+			TLog traceLog= new TLog();
 			traceLog.sn(current.sn());
 			traceLog.order(current.order());
 			traceLog.method(name);
@@ -76,7 +80,7 @@ public class StackTracer extends Tracer.Abstract{
 			traceLog.code(result);
 			traceLog.type(type);
 			traceLog.startDate(current.timestamp());
-			traceLog.duration(System.currentTimeMillis()-current.timestamp());			
+			traceLog.duration(System.nanoTime()-current.startTime());			
 			traceLog.contentLength(contentLength);
 			
 			log(traceLog);			
@@ -88,7 +92,7 @@ public class StackTracer extends Tracer.Abstract{
 
 	@Override
 	public void configure(Properties p) {
-		
+		super.configure(p);
 	}
 
 }

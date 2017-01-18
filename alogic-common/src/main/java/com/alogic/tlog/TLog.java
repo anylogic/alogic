@@ -1,72 +1,71 @@
-package com.alogic.tracer.log;
+package com.alogic.tlog;
 
 import java.lang.reflect.Field;
+
 import com.anysoft.stream.Flowable;
 
 /**
- * 追踪日志
+ * Trace日志记录
  * 
- * @author duanyy
- * @since 1.6.5.3
- * 
- * @version 1.6.5.6 [20160523 duanyy] <br>
- * - 增加id()接口
- * 
- * @version 1.6.5.11 [20160603 duanyy] <br>
- * - tracelog增加type字段 <br>
- * 
- * @version 1.6.7.1 [20170117 duanyy] <br>
- * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
+ * @author yyduan
+ *
+ * @since 1.6.7.2
  */
-public class TraceLog implements Comparable<TraceLog>,Flowable{
+public class TLog implements Comparable<TLog>,Flowable{
+	protected static final String PATTERN = 
+			"%s|%s|%s|%s|%d|%d|%d|%s|%s";
 	/**
 	 * 序列号
 	 */
-	protected String sn;
+	public String sn;
 	
 	/**
 	 * 调用次序
 	 */
-	protected String order;
+	public String order;
 	
 	/**
 	 * 方法类型
 	 */
-	protected String type;
+	public String type;
 	
 	/**
 	 * 方法
 	 */
-	protected String method;
+	public String method;
 	
 	/**
 	 * 开始时间
 	 */
-	protected long startDate;
+	public long startDate;
 	
 	/**
 	 * 调用时长
 	 */
-	protected long duration;
+	public long duration;
 	
 	/**
 	 * 结果代码
 	 */
-	protected String code;
+	public String code;
 	
 	/**
 	 * 原因
 	 */
-	protected String reason;
+	public String reason;
 	
 	/**
 	 * 内容长度
 	 */
-	protected long contentLength;
+	public long contentLength;
 	
 	@Override
 	public String id(){
 		return sn;
+	}	
+	
+	public String toString(){
+		return String.format(PATTERN, sn,order,type,method,startDate,duration,contentLength,code,reason);
 	}	
 	
 	@Override
@@ -77,7 +76,6 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 			if (field == null){
 				return defaultValue;
 			}
-			
 			Object found = field.get(this);
 			return found.toString();
 		}catch (Exception ex){
@@ -101,7 +99,7 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 	}
 
 	@Override
-	public int compareTo(TraceLog o) {
+	public int compareTo(TLog o) {
 		int ret = sn.compareTo(o.sn);
 		if (ret == 0){
 			ret = order.compareTo(o.order);
@@ -109,7 +107,7 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 		return ret;
 	}
 
-	public TraceLog sn(String sn) {
+	public TLog sn(String sn) {
 		this.sn = sn;
 		return this;
 	}
@@ -118,7 +116,7 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 		return sn;
 	}
 
-	public TraceLog order(String order) {
+	public TLog order(String order) {
 		this.order = order;
 		return this;
 	}
@@ -131,12 +129,12 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 		return type;
 	}
 	
-	public TraceLog type(String type){
+	public TLog type(String type){
 		this.type = type;
 		return this;
 	}
 
-	public TraceLog method(String method) {
+	public TLog method(String method) {
 		this.method = method;
 		return this;
 	}
@@ -145,7 +143,7 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 		return method;
 	}
 
-	public TraceLog startDate(long startDate) {
+	public TLog startDate(long startDate) {
 		this.startDate = startDate;
 		return this;
 	}
@@ -154,7 +152,7 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 		return startDate;
 	}
 
-	public TraceLog duration(long duration) {
+	public TLog duration(long duration) {
 		this.duration = duration;
 		return this;
 	}
@@ -163,7 +161,7 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 		return duration;
 	}
 
-	public TraceLog code(String code) {
+	public TLog code(String code) {
 		this.code = code;
 		return this;
 	}
@@ -172,7 +170,7 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 		return code;
 	}
 
-	public TraceLog reason(String reason) {
+	public TLog reason(String reason) {
 		this.reason = reason;
 		return this;
 	}
@@ -181,7 +179,7 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 		return reason;
 	}
 	
-	public TraceLog contentLength(long length){
+	public TLog contentLength(long length){
 		this.contentLength = length;
 		return this;
 	}
@@ -189,4 +187,5 @@ public class TraceLog implements Comparable<TraceLog>,Flowable{
 	public long contentLength(){
 		return this.contentLength;
 	}
+
 }

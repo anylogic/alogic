@@ -74,6 +74,10 @@ import com.logicbus.models.servant.ServiceDescription;
  * - bizlog增加报文长度 <br>
  * - 在action中提前写出报文 <br>
  * - 增加trace日志 <br>
+ * 
+ * @version 1.6.7.3 [20170118 duanyy] <br>
+ * - 对tlog的开启开关进行了统一 <br>
+ * 
  */
 public class MessageRouter {
 	
@@ -218,7 +222,7 @@ public class MessageRouter {
 		
 		//初始化threadMode
 		threadMode = PropertiesConstants.getBoolean(settings, "servant.threadMode", true);
-		tracerEnable = PropertiesConstants.getBoolean(settings, "servant.tracer", false);
+		tracerEnable = PropertiesConstants.getBoolean(settings, "tracer.servant.enable", false);
 		bizLogger = (BizLogger) settings.get("bizLogger");
 		
 		servantFactory = (ServantFactory) settings.get("servantFactory");

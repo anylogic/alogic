@@ -44,6 +44,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.6.7.1 [20170117 duanyy] <br>
  * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
  * 
+ * @version 1.6.7.3 [20170118 duanyy] <br>
+ * - 对tlog的开启开关进行了统一 <br>
  */
 public class Proxy extends Servant {
 
@@ -193,7 +195,7 @@ public class Proxy extends Servant {
 		
 		enable = PropertiesConstants.getBoolean(p, "proxy.enable", enable);
 		
-		traceEnable = PropertiesConstants.getBoolean(p, "servant.tracer", traceEnable);
+		traceEnable = PropertiesConstants.getBoolean(p, "tracer.servant.enable", traceEnable);
 	}
 	
 	protected String forwardedHeader = "X-Forwarded-For";

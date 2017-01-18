@@ -18,6 +18,10 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.7.1 [20170117 duanyy] <br>
  * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
+ * 
+ * @version 1.6.7.3 [20170118 duanyy] <br>
+ * - trace日志的时长单位改为ns <br>
+ * - 新增com.alogic.tlog，替代com.alogic.tracer.log包;
  */
 public interface TraceContext extends Reportable{
 	/**
@@ -37,6 +41,12 @@ public interface TraceContext extends Reportable{
 	 * @return 时间戳
 	 */
 	public long timestamp();
+	
+	/**
+	 * 开始时间，单位:ns
+	 * @return 开始时间
+	 */
+	public long startTime();
 	
 	/**
 	 * 父节点
@@ -76,6 +86,11 @@ public interface TraceContext extends Reportable{
 		 * 时间戳
 		 */
 		protected long t = System.currentTimeMillis();
+		
+		/**
+		 * 开始时间：ns
+		 */
+		protected long start = System.nanoTime();
 		
 		/**
 		 * 父节点
@@ -149,6 +164,11 @@ public interface TraceContext extends Reportable{
 		@Override
 		public synchronized TraceContext newChild() {
 			return new TraceContext.Default(this,sn(),order + "." + (childOrder ++));
+		}
+
+		@Override
+		public long startTime() {
+			return start;
 		}
 		
 	}

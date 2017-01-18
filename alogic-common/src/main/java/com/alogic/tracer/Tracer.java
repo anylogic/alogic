@@ -6,10 +6,10 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
-import com.alogic.tracer.log.TraceLog;
-import com.alogic.tracer.log.TraceLogger;
+import com.alogic.tlog.TLog;
+import com.alogic.tlog.TLogHandlerFactory;
+import com.anysoft.stream.Handler;
 import com.anysoft.util.Configurable;
-import com.anysoft.util.Factory;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -30,6 +30,9 @@ import com.anysoft.util.XmlTools;
  * @version 1.6.7.1 [20170117 duanyy] <br>
  * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
  * 
+ * @version 1.6.7.3 [20170118 duanyy] <br>
+ * - trace日志的时长单位改为ns <br>
+ * - 新增com.alogic.tlog，替代com.alogic.tracer.log包;
  */
 public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 	
@@ -75,7 +78,7 @@ public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 		/**
 		 * a trace logger
 		 */
-		protected TraceLogger logger=null;
+		protected Handler<TLog> logger=null;
 		
 		/**
 		 * 是否开放
@@ -112,24 +115,15 @@ public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 		public void configure(Element e, Properties p) {
 			Properties props = new XmlElementProperties(e,p);
 			configure(props);
-			
-			enable = PropertiesConstants.getBoolean(props, "enable", enable);
-			
-			Element elem = XmlTools.getFirstElementByPath(e, "logger");
-			
-			if (elem != null){
-				Factory<TraceLogger> factory = new Factory<TraceLogger>();				
-				try {
-					logger = factory.newInstance(elem, p, "module", TraceLogger.Default.class.getName());
-				}catch (Exception ex){
-					logger = new TraceLogger.Default();
-					logger.configure(elem, p);
-					LOG.error("Can not create a trace logger,using default:" + logger.getClass().getName(),ex);
-				}
-			}
 		}	
 		
-		public void log(TraceLog log){
+		@Override
+		public void configure(Properties p){
+			enable = PropertiesConstants.getBoolean(p, "tracer.enable", enable);
+			logger = TLogHandlerFactory.getHandler();
+		}
+		
+		public void log(TLog log){
 			if (logger != null){
 				logger.handle(log, System.currentTimeMillis());
 			}

@@ -73,6 +73,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.6.13 [20170109 duanyy] <br>
  * - 采用新的指标接口
+ * 
+ * @version 1.6.7.3 [20170118 duanyy] <br>
+ * - 对tlog的开启开关进行了统一 <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -213,7 +216,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	@Override
 	public void configure(Properties p) {
 		activity = PropertiesConstants.getString(p,"activity",xmlTag);
-		traceEnable = PropertiesConstants.getBoolean(p, "xscript.tracer", traceEnable);
+		traceEnable = PropertiesConstants.getBoolean(p, "tracer.xscript.enable", traceEnable);
 	}	
 	
 	@Override
