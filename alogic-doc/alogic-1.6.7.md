@@ -21,3 +21,7 @@ alogic-1.6.7
 - alogic-common:增加发送指标所需的xscript插件;
 - alogic-common:淘汰com.anysoft.metrics包;
 - alogic-core:服务耗时统计修改为ns;
+
+### 1.6.7.5 [20170119 duanyy]
+- alogic-common:JsonTools允许输入的json为空;
+- alogic-vfs:增加VFS相关的XScript插件；

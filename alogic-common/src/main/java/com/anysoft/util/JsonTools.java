@@ -50,6 +50,9 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * 
  * @version 1.6.6.13 [20170106 duanyy] <br>
  * - 增加json2txt和txt2json功能  <br>
+ * 
+ * @version 1.6.7.5 [20170119 duanyy] <br>
+ * - 允许输入的json为空 <br>
  */
 public class JsonTools {
 	
@@ -72,6 +75,9 @@ public class JsonTools {
 	 * @return 属性值
 	 */
 	public static String getString(Map<String,Object> json,String name,String defaultValue){
+		if (json == null){
+			return defaultValue;
+		}
 		Object found = json.get(name);
 		if (found == null){
 			return defaultValue;
@@ -105,6 +111,9 @@ public class JsonTools {
 	 * @return 属性值
 	 */
 	public static int getInt(Map<String,Object> json,String name,int defaultValue){
+		if (json == null){
+			return defaultValue;
+		}		
 		Object found = json.get(name);
 		if (found == null){
 			return defaultValue;
@@ -147,6 +156,9 @@ public class JsonTools {
 	 * @since 1.4.1
 	 */
 	public static double getDouble(Map<String,Object> json,String name,double dftValue){
+		if (json == null){
+			return dftValue;
+		}		
 		Object found = json.get(name);
 		if (found == null){
 			return dftValue;
@@ -185,6 +197,9 @@ public class JsonTools {
 	 * @since 1.6.4.41
 	 */
 	public static float getFloat(Map<String,Object> json,String name,float dftValue){
+		if (json == null){
+			return dftValue;
+		}		
 		Object found = json.get(name);
 		if (found == null){
 			return dftValue;
@@ -223,6 +238,9 @@ public class JsonTools {
 	 * @since 1.0.14
 	 */
 	public static long getLong(Map<String,Object> json,String name,long defaultValue){
+		if (json == null){
+			return defaultValue;
+		}		
 		Object found = json.get(name);
 		if (found == null){
 			return defaultValue;
@@ -264,6 +282,9 @@ public class JsonTools {
 	 * @since 1.0.8
 	 */
 	public static boolean getBoolean(Map<String,Object> json,String name,boolean defaultValue){
+		if (json == null){
+			return defaultValue;
+		}		
 		Object found = json.get(name);
 		if (found == null){
 			return defaultValue;
