@@ -25,3 +25,6 @@ alogic-1.6.7
 ### 1.6.7.5 [20170119 duanyy]
 - alogic-common:JsonTools允许输入的json为空;
 - alogic-vfs:增加VFS相关的XScript插件；
+
+### 1.6.7.6 [20170125 duanyy] 
+- alogic-common:Batch框架可以装入额外的CLASSPATH;

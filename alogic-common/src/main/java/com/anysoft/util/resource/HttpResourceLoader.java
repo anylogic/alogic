@@ -45,7 +45,6 @@ public class HttpResourceLoader implements ResourceLoader {
 	 */
 	
 	public URL createURL(URLocation _url, Object _context) throws BaseException {
-		// TODO Auto-generated method stub
 		try {
 			return _url.makeURL();
 		} catch (MalformedURLException e) {

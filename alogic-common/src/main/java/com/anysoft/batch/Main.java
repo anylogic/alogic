@@ -1,12 +1,18 @@
 package com.anysoft.batch;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -24,6 +30,7 @@ import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.SystemProperties;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
+
 
 /**
  * 处理入口
@@ -47,6 +54,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.4.20 [20151222 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.7.6 [20170125 duanyy] <br>
+ * - Batch框架可以装入额外的CLASSPATH <br>
  */
 public class Main implements CommandHelper,Process{
 	
@@ -82,6 +92,11 @@ public class Main implements CommandHelper,Process{
 	 * 当前支持的command列表
 	 */
 	protected Hashtable<String,Command> commands = new Hashtable<String,Command>();// NOSONAR
+	
+	/**
+	 * 扩展CLASSPATH列表
+	 */
+	protected List<URL> libs = new ArrayList<URL>();
 	
 	/**
 	 * 当前的资源工厂
@@ -171,7 +186,7 @@ public class Main implements CommandHelper,Process{
 			}
 		}catch (Exception ex){
 			LOG.error("The config file is not a valid file,url = "
-					+ fileUrl,ex);
+					+ fileUrl);
 		}finally{
 			IOTools.close(in);
 		}		
@@ -273,14 +288,14 @@ public class Main implements CommandHelper,Process{
 				Element element = (Element)node;
 				
 				String link = element.getAttribute("link");
-				if (link != null && link.length() > 0){
+				if (StringUtils.isNotEmpty(link)){
 					String loadable = element.getAttribute("loadable");
-					if (loadable != null){ // NOSONAR
+					if (StringUtils.isNotEmpty(loadable)){ // NOSONAR
 						String load = p.transform(loadable);
-						if (load.length() > 0){
+						if (StringUtils.isNotEmpty(load)){
 							loadConfig(p,p.transform(link));
 						}else{
-							LOG.info("Find xml link file,but the loadable is null");
+							LOG.info("Find xml link file,but the loadable is null,ignore...");
 						}
 					}else{
 						loadConfig(p,p.transform(link));
@@ -294,8 +309,67 @@ public class Main implements CommandHelper,Process{
 		loadParameterConfigFromElement(p,e);
 		loadCommandConfigFromElement(p,e);
 		loadIncludeConfigFromElement(p,e);
+		loadLibaryFromElement(p,e);
 	}
 
+	private void loadLibaryFromElement(DefaultProperties p, Element e) {
+		//处理libs/path
+		NodeList nodeList = XmlTools.getNodeListByPath(e, "libs/lib");
+		if (nodeList != null && nodeList.getLength() > 0){
+			
+			for (int i = 0 ;i < nodeList.getLength() ; i++){
+				Node node = nodeList.item(i);
+				
+				if (Node.ELEMENT_NODE != node.getNodeType()){
+					continue;
+				}
+				
+				Element element = (Element)node;
+				String path = element.getAttribute("path");
+				if (StringUtils.isNotEmpty(path)){
+					String loadable = element.getAttribute("loadable");
+					if (StringUtils.isNotEmpty(loadable)){ // NOSONAR
+						String load = p.transform(loadable);
+						if (StringUtils.isNotEmpty(load)){
+							addLibary(libs,p.transform(path));
+						}else{
+							LOG.info("Find xml lib file,but the loadable is null,ignore..");
+						}
+					}else{
+						addLibary(libs,p.transform(path));
+					}					
+					
+				}
+			}
+		}			
+	}
+
+	protected static void addLibary(List<URL> urls,String path){
+		LOG.info("Searching jar libary in :" + path);
+		File dir = new File(path);
+		if (!dir.isDirectory()){
+			return ;
+		}
+
+		File[] jars = dir.listFiles(new FilenameFilter() {
+			public boolean accept(File file, String name) {
+				if (name.endsWith(".jar") || name.endsWith(".zip"))
+					return true;
+				return false;
+			}
+		});
+		
+		if (jars != null){
+			for (File file:jars){
+				try {
+					urls.add(file.toURI().toURL());
+					LOG.info("Add Jar:" + file.toString());
+				} catch (MalformedURLException e) {
+				}
+			}
+		}
+	}
+	
 	@Override
 	public int init(DefaultProperties p) {
 		commandLine = new DefaultProperties("default",p);
@@ -340,6 +414,10 @@ public class Main implements CommandHelper,Process{
 	
 	@Override
 	public int run() {
+		boolean bless = PropertiesConstants.getBoolean(commandLine, "bless", true);
+		if (bless){
+			Copyright.bless(LOG, "\t\t");
+		}
 		if (command.equals(CMD_HELP)){
 			printHelp(helpPS);
 			return -1;
@@ -350,6 +428,20 @@ public class Main implements CommandHelper,Process{
 			helpPS.println("Please give me a valid command...");
 			printHelp(helpPS);
 			return -1;
+		}
+		
+		//装入扩展CLASSPATH
+		if (libs.size() > 0){
+			ClassLoader parent = Thread.currentThread().getContextClassLoader();
+			if (parent == null){
+				 parent = Main.class.getClassLoader();
+			}
+			if (parent == null){
+				parent = ClassLoader.getSystemClassLoader();
+			}
+			URLClassLoader cl = new URLClassLoader(libs.toArray(new URL[libs.size()]),
+					parent);			
+			Thread.currentThread().setContextClassLoader(cl);			
 		}
 		
 		//创建Process对象
@@ -377,12 +469,10 @@ public class Main implements CommandHelper,Process{
 	}
 
 	public static void main(String[] args) {
-		Copyright.bless(LOG, "\t\t");
 		int result = 0;
 		try {
 			CommandLine cmdLine = new CommandLine(args,new SystemProperties());		
 			Main main = new Main();
-			
 			result = main.init(cmdLine);
 			if (result == 0){
 				result = main.run();

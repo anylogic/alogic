@@ -81,7 +81,7 @@ public class Argument implements XMLConfigurable,CommandHelper {
 		note = PropertiesConstants.getString(p,"note","");
 		nullable = PropertiesConstants.getBoolean(p, "nullable", nullable);
 		
-		selector = Selector.newInstance(e,p,"SingleField");
+		selector = Selector.newInstanceWithDefault(e,p,"SingleField");
 	}
 
 	/**

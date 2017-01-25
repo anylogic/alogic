@@ -28,7 +28,6 @@ public class FileResourceLoader implements ResourceLoader {
 	
 	public InputStream load(URLocation _url, Object _context)
 			throws BaseException {
-		// TODO Auto-generated method stub
 		if (!_url.hasPath()) {
 			throw new BaseException(FileResourceLoader.class.getName(),
 					"Can not find path from url:" + _url.toString());
@@ -62,7 +61,6 @@ public class FileResourceLoader implements ResourceLoader {
 	 */
 	
 	public URL createURL(URLocation _url, Object _context) throws BaseException {
-		// TODO Auto-generated method stub
 		try {
 			return _url.makeURL();
 		} catch (MalformedURLException e) {

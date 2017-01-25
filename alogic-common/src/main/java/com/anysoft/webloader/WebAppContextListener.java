@@ -59,7 +59,6 @@ public class WebAppContextListener implements ServletContextListener {
 
 	
 	public void contextInitialized(ServletContextEvent e) {
-		// TODO Auto-generated method stub
 		ServletContext sc = e.getServletContext();
 		DefaultProperties props = new DefaultProperties("Default",new SystemProperties());
 		

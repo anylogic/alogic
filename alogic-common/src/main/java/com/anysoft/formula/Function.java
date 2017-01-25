@@ -205,7 +205,6 @@ abstract public class Function extends Expression{
 	public static class Char2Date extends Function{
 		public Char2Date() {
 			super("to_date");
-			// TODO Auto-generated constructor stub
 		}
 
 		
@@ -248,7 +247,6 @@ abstract public class Function extends Expression{
 	public static class Date2Char extends Function{
 		public Date2Char() {
 			super("to_char");
-			// TODO Auto-generated constructor stub
 		}
 
 		
