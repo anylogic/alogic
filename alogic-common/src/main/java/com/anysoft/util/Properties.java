@@ -1,6 +1,14 @@
 package com.anysoft.util;
 
 import java.util.*;
+import java.util.Map.Entry;
+
+import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.anysoft.formula.DataProvider;
 
@@ -19,6 +27,9 @@ import com.anysoft.formula.DataProvider;
  * 
  * @version 1.6.4.43 [20160411 duanyy] <br>
  * - DataProvider增加获取原始值接口 <br>
+ * 
+ * @version 1.6.7.7 [20170126 duanyy] <br>
+ * - 增加loadFrom系列方法，用于从Json对象，Element节点，Element属性列表中装入变量列表 <br>
  */
 abstract public class Properties implements DataProvider{
 	/**
@@ -132,6 +143,83 @@ abstract public class Properties implements DataProvider{
 	         SetValue(__name,__value);
 	     }
 	}
+	
+	/**
+	 * 从JSON对象的属性列表中装入
+	 * @param json Json对象
+	 * 
+	 * @since  1.6.7.7
+	 */
+	public void loadFrom(Map<String,Object> json){
+		Iterator<Entry<String,Object>> iter = json.entrySet().iterator();
+		
+		while (iter.hasNext()){
+			Entry<String,Object> entry = iter.next();
+			String key = entry.getKey();
+			Object value = entry.getValue();
+			
+			if (value instanceof String || value instanceof Number){
+				SetValue(key,value.toString());
+			}
+		}
+	}
+	
+	/**
+	 * 从Element节点的属性列表中装入
+	 * @param elem Element节点
+	 * 
+	 * @since  1.6.7.7
+	 */
+	public void loadFromElementAttrs(Element elem){
+		if (elem != null){
+			NamedNodeMap attrs = elem.getAttributes();
+			for (int i = 0 ;i < attrs.getLength() ; i ++){
+				Node n = attrs.item(i);
+				if (Node.ATTRIBUTE_NODE != n.getNodeType()){
+					continue;
+				}
+				Attr attr = (Attr)n;
+				
+				String key = attr.getName();
+				String value = attr.getValue();
+
+				if (StringUtils.isNotEmpty(key) && StringUtils.isNotEmpty(value)){
+					SetValue(key,value);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 从Element中装入
+	 * @param root Element节点
+	 * 
+	 * @since  1.6.7.7
+	 */
+	public void loadFrom(Element root){
+		NodeList nodeList = root.getChildNodes();	
+		for (int i = 0 ; i < nodeList.getLength() ; i ++){
+			Node node = nodeList.item(i);
+			if (node.getNodeType() != Node.ELEMENT_NODE){
+				continue;
+			}
+			if (node.getNodeName().equals("parameter")){
+				Element e = (Element)node;
+				String id = e.getAttribute("id");
+				String value = e.getAttribute("value");
+				//支持final标示,如果final为true,则不覆盖原有的取值
+				boolean isFinal = e.getAttribute("final").equals("true")?true:false;
+				if (isFinal){
+					String oldValue = this._GetValue(id);
+					if (oldValue == null || oldValue.length() <= 0){
+						SetValue(id,value);
+					}
+				}else{
+					SetValue(id,value);
+				}
+			}
+		}
+	}	
 	
 	/**
 	 * 设置变量

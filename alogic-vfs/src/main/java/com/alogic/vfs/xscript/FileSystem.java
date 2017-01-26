@@ -13,10 +13,10 @@ import com.alogic.vfs.sftp.SFtp;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Factory;
-import com.anysoft.util.XmlTools;
 
 /**
  * 打开一个VFS文件系统
@@ -25,15 +25,11 @@ import com.anysoft.util.XmlTools;
  *
  */
 public class FileSystem extends VFS{
-	/**
-	 * 全局VFS的ID
-	 */
-	protected String globalId = "";
 	
 	/**
-	 * VFS
+	 * 属性列表
 	 */
-	protected VirtualFileSystem filesystem = null;
+	protected DefaultProperties props = new DefaultProperties();
 	
 	protected String cid = "$vfs";
 	
@@ -42,26 +38,17 @@ public class FileSystem extends VFS{
 	}
 	
 	@Override
-	public void configure(Element element, Properties props) {
-		super.configure(element, props);
+	public void configure(Element element, Properties p) {
+		super.configure(element, p);
 		
-		if (StringUtils.isEmpty(globalId)){
-			//如果没有定义全局的VFS,取本地配置
-			VirtualFileSystemFactory f = new VirtualFileSystemFactory();
-			try{
-				filesystem = f.newInstance(element, props);
-			}catch (Exception ex){
-				log(String.format("Can not create file system with %s",XmlTools.node2String(element)));
-			}
-		}else{
-			filesystem = FileSystemSource.get().get(globalId);
-		}		
+		//将element的配置保存下来
+		props.Clear();
+		props.loadFromElementAttrs(element);
 	}		
 	
 	@Override
 	public void configure(Properties p){
 		super.configure(p);
-		globalId = PropertiesConstants.getString(p,"globalId",globalId,true);
 		cid = getCurrentId(p);
 	}
 	
@@ -69,20 +56,41 @@ public class FileSystem extends VFS{
 	protected void onExecute(Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
-		if (StringUtils.isNotEmpty(cid) && filesystem != null){
-			try{
-				ctx.setObject(cid, filesystem);
-				super.onExecute(root, current, ctx, watcher);
-			}finally{
-				ctx.removeObject(cid);
+		props.PutParent(ctx);
+		try{
+			VirtualFileSystem filesystem = null;
+			
+			String globalId = PropertiesConstants.getString(props,"globalId","",true);		
+			if (StringUtils.isEmpty(globalId)){
+				//如果没有定义全局的VFS,取本地配置
+				VirtualFileSystemFactory f = new VirtualFileSystemFactory();
+				String module = PropertiesConstants.getString(props,"module","local",true);
+				try{
+					filesystem = f.newInstance(module, props);
+				}catch (Exception ex){
+					log(String.format("Can not create file system with %s",module));
+				}
+			}else{
+				filesystem = FileSystemSource.get().get(globalId);
+			}	
+			
+			if (StringUtils.isNotEmpty(cid) && filesystem != null){
+				try{
+					ctx.setObject(cid, filesystem);
+					super.onExecute(root, current, ctx, watcher);
+				}finally{
+					ctx.removeObject(cid);
+				}
 			}
+		}finally{
+			props.PutParent(null);
 		}
 	}
 	
 	/**
 	 * 获取当前对象id
 	 * @param p 
-	 * @return
+	 * @return 当前对象id
 	 */
 	protected String getCurrentId(Properties p) {
 		return PropertiesConstants.getString(p,"cid",cid,true);

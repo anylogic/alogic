@@ -40,8 +40,8 @@ public class Sync extends AbstractLogiclet {
 		srcId = PropertiesConstants.getString(p,"src",srcId,true);
 		destId = PropertiesConstants.getString(p,"dest",destId,true);
 		reportId = PropertiesConstants.getString(p,"report",reportId,true);
-		srcPath = PropertiesConstants.getString(p,"srcPath",srcPath,true);
-		destPath = PropertiesConstants.getString(p,"destPath",destPath,true);
+		srcPath = PropertiesConstants.getRaw(p,"srcPath",srcPath);
+		destPath = PropertiesConstants.getRaw(p,"destPath",destPath);
 	}
 	
 	@Override
@@ -58,12 +58,15 @@ public class Sync extends AbstractLogiclet {
 			throw new BaseException("core.no_vfs_context",String.format("Can not find vfs:%s", destId));
 		}
 		
+		String srcPathValue = ctx.transform(srcPath);
+		String destPathValue = ctx.transform(destPath);
+		
 		Tool.Watcher report = ctx.getObject(reportId);
 		
 		Tool tool = new ToolImpl();
 		
-		tool.setSource(new Dir(srcPath,src));
-		tool.setDestination(new Dir(destPath,dest));
+		tool.setSource(new Dir(srcPathValue,src));
+		tool.setDestination(new Dir(destPathValue,dest));
 		
 		tool.sync(report);
 	}

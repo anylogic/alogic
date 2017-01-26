@@ -28,3 +28,9 @@ alogic-1.6.7
 
 ### 1.6.7.6 [20170125 duanyy] 
 - alogic-common:Batch框架可以装入额外的CLASSPATH;
+
+### 1.6.7.7 [20170126 duanyy]
+- alogic-common:Properties增加loadFrom系列方法，用于从Json对象，Element节点，Element属性列表中装入变量列表
+- alogic-core:删除缺省的log4j.properties配置
+- alogic-common:xscript插件Set增加缺省值和引用模式
+

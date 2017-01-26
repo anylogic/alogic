@@ -12,6 +12,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -265,9 +266,15 @@ public class Main implements CommandHelper,Process{
 				
 				Command cmd = new Command();
 				cmd.configure(element, p);
-				
+
 				if (cmd.isOk()){
-					commands.put(cmd.getId(), cmd);
+					boolean overwrite = BooleanUtils.toBoolean(element.getAttribute("overwrite"));
+					if (!overwrite){
+						overwrite = !commands.containsKey(cmd.getId());
+					}
+					if (overwrite){
+						commands.put(cmd.getId(), cmd);
+					}
 				}
 			}
 		}		

@@ -3,8 +3,6 @@ package com.alogic.metrics.xscript;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.alogic.metrics.Dimensions;
 import com.alogic.metrics.Fragment;
 import com.alogic.metrics.Measures;
 import com.alogic.xscript.ExecuteWatcher;

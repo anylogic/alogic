@@ -354,9 +354,9 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	/**
 	 * 向输出流输出文本
 	 * 
-	 * @param _out 输出流 
-	 * @param _doc 输出文档
-	 * @param _encoding 编码
+	 * @param out 输出流 
+	 * @param doc 输出文档
+	 * @param encoding 编码
 	 */
 	public static void writeToOutpuStream(OutputStream out,String doc,String encoding){
 		try {

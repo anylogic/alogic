@@ -20,5 +20,6 @@ public class VFS extends Segment{
 		registerModule("vfs-report-json",JsonReport.class);
 		registerModule("vfs-src",FileSystem.Source.class);
 		registerModule("vfs-dest",FileSystem.Destination.class);
+		registerModule("vfs-exist",FileExist.class);
 	}
 }

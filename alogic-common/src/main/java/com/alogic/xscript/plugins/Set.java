@@ -20,6 +20,8 @@ import com.anysoft.util.PropertiesConstants;
 public class Set extends AbstractLogiclet {
 	protected String id;
 	protected String value;
+	protected String dftValue = "";
+	protected boolean ref = false;
 	
 	public Set(String tag, Logiclet p) {
 		super(tag, p);
@@ -30,6 +32,8 @@ public class Set extends AbstractLogiclet {
 		
 		id = PropertiesConstants.getString(p,"id","",true);
 		value = p.GetValue("value", "", false, true);
+		ref = PropertiesConstants.getBoolean(p,"ref",ref,true);
+		dftValue = PropertiesConstants.getString(p,"dft",dftValue,true);
 	}
 
 	@Override
@@ -37,7 +41,16 @@ public class Set extends AbstractLogiclet {
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
 		if (StringUtils.isNotEmpty(id)){
 			MapProperties p = new MapProperties(current,ctx);
-			ctx.SetValue(id, p.transform(value));
+			String v = p.transform(value);
+			String dft = p.transform(dftValue);
+			if (StringUtils.isEmpty(v)){
+				v = dft;
+			}
+			if (ref){
+				v = PropertiesConstants.getString(p,v,dft,false);
+			}
+			
+			ctx.SetValue(id, v);
 		}
 	}
 

@@ -85,7 +85,7 @@ public interface Measures extends JsonSerializer,DataProvider{
 	 * @param dftValue 缺省值
 	 * @return 量度值
 	 */	
-	public double getAsDouble(String key,double value);
+	public double getAsDouble(String key,double dftValue);
 	
 	/**
 	 * 获取量度的汇聚方式

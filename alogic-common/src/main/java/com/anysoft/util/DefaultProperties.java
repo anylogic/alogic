@@ -6,8 +6,6 @@ import java.util.Map.Entry;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * 缺省的变量集实现
@@ -16,6 +14,9 @@ import org.w3c.dom.NodeList;
  *
  * @version 1.6.3.4 [duanyy 20150305] <br>
  * - 实现{@link com.anysoft.util.JsonSerializer JsonSerializer}和{@link com.anysoft.util.XmlSerializer XmlSerializer}接口<br>
+ * 
+ * @version 1.6.7.7 [20170126 duanyy] <br>
+ * - 迁移loadFrom系列方法到父类 <br>
  */
 public class DefaultProperties extends Properties implements JsonSerializer,XmlSerializer{
 	/**
@@ -164,46 +165,7 @@ public class DefaultProperties extends Properties implements JsonSerializer,XmlS
 		Clear();
 		loadFrom(json);
 	}
-	
-	public void loadFrom(Map<String,Object> json){
-		Iterator<Entry<String,Object>> iter = json.entrySet().iterator();
 		
-		while (iter.hasNext()){
-			Entry<String,Object> entry = iter.next();
-			String key = entry.getKey();
-			Object value = entry.getValue();
-			
-			if (value instanceof String || value instanceof Number){
-				content.put(key, value.toString());
-			}
-		}
-	}
-	
-	public void loadFrom(Element root){
-		NodeList nodeList = root.getChildNodes();	
-		for (int i = 0 ; i < nodeList.getLength() ; i ++){
-			Node node = nodeList.item(i);
-			if (node.getNodeType() != Node.ELEMENT_NODE){
-				continue;
-			}
-			if (node.getNodeName().equals("parameter")){
-				Element e = (Element)node;
-				String id = e.getAttribute("id");
-				String value = e.getAttribute("value");
-				//支持final标示,如果final为true,则不覆盖原有的取值
-				boolean isFinal = e.getAttribute("final").equals("true")?true:false;
-				if (isFinal){
-					String oldValue = this._GetValue(id);
-					if (oldValue == null || oldValue.length() <= 0){
-						SetValue(id,value);
-					}
-				}else{
-					SetValue(id,value);
-				}
-			}
-		}
-	}
-	
 	public String toString(){
 		StringBuffer buffer = new StringBuffer();
 		
