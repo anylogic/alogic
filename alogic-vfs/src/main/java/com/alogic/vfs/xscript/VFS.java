@@ -7,6 +7,8 @@ import com.alogic.xscript.plugins.Segment;
  * VFS Namespce
  * @author yyduan
  *
+ * @version 1.6.7.8 [20170128 duanyy]
+ * - 增加文件内容读取，保存，文件删除等xscript插件
  */
 public class VFS extends Segment{
 
@@ -21,5 +23,8 @@ public class VFS extends Segment{
 		registerModule("vfs-src",FileSystem.Source.class);
 		registerModule("vfs-dest",FileSystem.Destination.class);
 		registerModule("vfs-exist",FileExist.class);
+		registerModule("vfs-save",FileSave.class);
+		registerModule("vfs-load",FileLoad.class);
+		registerModule("vfs-del",FileDelete.class);
 	}
 }

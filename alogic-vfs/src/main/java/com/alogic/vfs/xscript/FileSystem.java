@@ -110,7 +110,7 @@ public class FileSystem extends VFS{
 		
 		static{
 			mapping.put("local", LocalFileSystem.class.getName());
-			mapping.put("sftp", SFtp.class.getName());
+			mapping.put("ssh", SFtp.class.getName());
 		}
 	}
 

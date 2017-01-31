@@ -34,3 +34,8 @@ alogic-1.6.7
 - alogic-core:删除缺省的log4j.properties配置
 - alogic-common:xscript插件Set增加缺省值和引用模式
 
+### 1.6.7.8 [20170128 duanyy]
+- alogic-vfs:增加文件内容读取，保存，文件删除等xscript插件
+- alogic-vfs:增加terminal框架，提供local和ssh两种实现
+
+

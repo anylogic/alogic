@@ -33,7 +33,7 @@ public class Set extends AbstractLogiclet {
 		id = PropertiesConstants.getString(p,"id","",true);
 		value = p.GetValue("value", "", false, true);
 		ref = PropertiesConstants.getBoolean(p,"ref",ref,true);
-		dftValue = PropertiesConstants.getString(p,"dft",dftValue,true);
+		dftValue = PropertiesConstants.getRaw(p,"dft",dftValue);
 	}
 
 	@Override
