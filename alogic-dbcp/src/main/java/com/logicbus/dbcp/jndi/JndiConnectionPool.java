@@ -7,8 +7,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -29,9 +29,12 @@ import com.logicbus.dbcp.util.ConnectionPoolStat;
  * 
  * @version 1.6.3.11 [20150402 duanyy] <br>
  * - 增加{@link #recycle(Connection, boolean)},获取客户的使用反馈,以便连接池的处理 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class JndiConnectionPool implements ConnectionPool {
-	protected static final Logger logger = LogManager.getLogger(JndiConnectionPool.class);
+	protected static final Logger logger = LoggerFactory.getLogger(JndiConnectionPool.class);
 	protected String name;
 	protected DataSource datasource = null;
 	protected ConnectionPoolStat stat = null;

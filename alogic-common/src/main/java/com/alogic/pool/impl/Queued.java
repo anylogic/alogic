@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.IOTools;
@@ -22,13 +22,15 @@ import com.alogic.pool.CloseAware;
  * 
  * 
  * @author duanyy
- *
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
+ * 
  */
 public abstract class Queued implements Pool,CloseAware {
 	/**
 	 * a logger of log4j
 	 */
-	protected Logger logger = LogManager.getLogger(Queued.class);
+	protected Logger logger = LoggerFactory.getLogger(Queued.class);
 	
 	/**
 	 * 正在工作的对象个数

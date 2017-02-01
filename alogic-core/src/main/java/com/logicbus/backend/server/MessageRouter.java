@@ -3,8 +3,8 @@ package com.logicbus.backend.server;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
@@ -80,13 +80,16 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.7.4 [20170118 duanyy] <br>
  * - 服务耗时单位改为ns <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class MessageRouter {
 	
 	/**
 	 * a logger of log4j
 	 */
-	protected static Logger logger = LogManager.getLogger(MessageRouter.class);
+	protected static Logger logger = LoggerFactory.getLogger(MessageRouter.class);
 	
 	/**
 	 * 服务调用

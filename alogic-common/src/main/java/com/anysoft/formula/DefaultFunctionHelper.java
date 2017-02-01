@@ -2,8 +2,8 @@ package com.anysoft.formula;
 
 import java.util.Hashtable;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 函数对象辅助器
@@ -13,6 +13,9 @@ import org.apache.log4j.Logger;
  * @author duanyy
  * @version 1.6.4.21 [20151229 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 
 @SuppressWarnings("unchecked")
@@ -20,7 +23,7 @@ public class DefaultFunctionHelper implements FunctionHelper {
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger LOG = LogManager.getLogger(FunctionHelper.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(FunctionHelper.class);
 	
 	/**
 	 * 父节点
@@ -65,7 +68,7 @@ public class DefaultFunctionHelper implements FunctionHelper {
 			static_mappings.put("match", (Class<Function>) Class
 					.forName("com.anysoft.formula.Function$Match"));
 		} catch (ClassNotFoundException e) {
-			LOG.error(e);
+			LOG.error(e.getMessage());
 		}
 	}	
 
@@ -119,7 +122,7 @@ public class DefaultFunctionHelper implements FunctionHelper {
 			}
 			throw new FormulaException("Can not find function :" + funcName);
 		} catch (Exception ex) {
-			LOG.error(ex);
+			LOG.error(ex.getMessage());
 			throw new FormulaException("Can not create function :" + funcName);
 		}
 	}

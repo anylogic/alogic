@@ -14,8 +14,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -58,6 +58,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.7.6 [20170125 duanyy] <br>
  * - Batch框架可以装入额外的CLASSPATH <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class Main implements CommandHelper,Process{
 	
@@ -68,7 +71,7 @@ public class Main implements CommandHelper,Process{
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger LOG = LogManager.getLogger(Main.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(Main.class);
 	
 	/**
 	 * a print stream to print help

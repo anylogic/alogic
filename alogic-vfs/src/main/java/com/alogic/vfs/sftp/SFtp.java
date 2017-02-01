@@ -30,7 +30,8 @@ import ch.ethz.ssh2.SFTPv3FileHandle;
  * 基于sftp的vfs
  * 
  * @author weibj
- *
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 
 public class SFtp extends VirtualFileSystem.Abstract {
@@ -116,7 +117,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 							client0 = new SFTPv3Client(conn);
 						}
 					} catch (Exception e) {
-						LOG.error(e);
+						LOG.error(e.getMessage());
 					}
 				}
 			}
@@ -173,7 +174,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 				return result;
 			}
 		} catch (IOException e) {
-			LOG.error(e);
+			LOG.error(e.getMessage());
 		}
 		return null;
 	}
@@ -218,7 +219,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 				}
 			}
 		} catch (IOException e) {
-			LOG.error(e);
+			LOG.error(e.getMessage());
 		}
 
 	}
@@ -236,7 +237,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 			}
 			return true;
 		} catch (IOException e) {
-			LOG.error(e);
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
@@ -257,7 +258,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 					client.rm(getRealPath(path));
 				}
 			} catch (IOException e) {
-				LOG.error(e);
+				LOG.error(e.getMessage());
 				result = false;
 			}
 		}
@@ -288,7 +289,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 			}
 			return attrs == null ? false : attrs.isDirectory();
 		} catch (IOException e) {
-			LOG.error(e);
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
@@ -301,7 +302,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 			SFTPv3FileAttributes attrs = client.stat(path);
 			return attrs == null ? 0 : attrs.size;
 		} catch (IOException e) {
-			LOG.error(e);
+			LOG.error(e.getMessage());
 			return 0;
 		}
 	}
@@ -317,7 +318,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 				json.put("path", path);
 			}
 		} catch (IOException e) {
-			LOG.error(e);
+			LOG.error(e.getMessage());
 		}
 	}
 
@@ -333,7 +334,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 					client.mkdir(getRealPath(pathtmp), permissions);
 				}
 			} catch (IOException e) {
-				LOG.error(e);
+				LOG.error(e.getMessage());
 				return false;
 			}
 		}
@@ -371,7 +372,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 			}
 			return null;
 		} catch (IOException e) {
-			LOG.error(e);
+			LOG.error(e.getMessage());
 			return null;
 		}
 	}
@@ -445,7 +446,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 			}
 			return null;
 		} catch (IOException e) {
-			LOG.error(e);
+			LOG.error(e.getMessage());
 			return null;
 		}
 	}

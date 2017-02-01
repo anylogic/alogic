@@ -3,10 +3,10 @@ package com.alogic.lucene.core;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.BaseException;
@@ -24,6 +24,8 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @since 1.6.4.1
  * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface IndexBuilder extends Configurable,XMLConfigurable,Reportable{
 	
@@ -41,7 +43,7 @@ public interface IndexBuilder extends Configurable,XMLConfigurable,Reportable{
 	 * @since 1.6.4.1
 	 */
 	abstract public static class Abstract implements IndexBuilder{
-		protected static final Logger logger = LogManager.getLogger(IndexBuilder.class);
+		protected static final Logger logger = LoggerFactory.getLogger(IndexBuilder.class);
 		protected long docCnt = 0;
 		
 		public void configure(Properties p) throws BaseException {

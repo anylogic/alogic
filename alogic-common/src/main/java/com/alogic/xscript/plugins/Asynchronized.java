@@ -76,7 +76,7 @@ public class Asynchronized extends Block {
 				logger.warn("The async executing is timtout.");
 			}
 		}catch (Exception ex){
-			logger.error(ex);
+			logger.error(ex.getMessage());
 			error = true;
 			msg = ex.getMessage();
 		}finally{

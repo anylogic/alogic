@@ -6,8 +6,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.PropertiesConstants;
@@ -41,22 +41,25 @@ import com.anysoft.util.SystemProperties;
  * @author duanyy
  * @version 1.0.2 <br>
  * - class {@link com.anysoft.webloader.WebApp WebApp} is changed.<br>
+ * 
  * @version 1.0.3 [20140325 by duanyy] <br> 
  * - Add some varibles to global settings.<br>
+ * 
  * @version 1.0.17 [20140630 duanyy] <br>
  * - contextInitialized期间可以读取系统定义变量
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class WebAppContextListener implements ServletContextListener {
-	protected static Logger logger = LogManager.getLogger(WebAppContextListener.class);
+	protected static Logger logger = LoggerFactory.getLogger(WebAppContextListener.class);
 	protected WebApp app = null;
-	
 	
 	public void contextDestroyed(ServletContextEvent e) {
 		if (app != null){
 			app.destroy(e.getServletContext());
 		}
 	}
-
 	
 	public void contextInitialized(ServletContextEvent e) {
 		ServletContext sc = e.getServletContext();

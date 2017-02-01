@@ -119,7 +119,7 @@ public class CometDemo extends AbstractServant {
 				}catch (Exception ex){
 					
 				}
-				logger.info(comets.size());
+				//logger.info(comets.size());
 				Iterator<Comet> iter = comets.iterator();
 				while (iter.hasNext()){
 					Comet c = iter.next();

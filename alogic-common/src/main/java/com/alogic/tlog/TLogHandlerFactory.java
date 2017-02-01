@@ -2,10 +2,11 @@ package com.alogic.tlog;
 
 import java.io.InputStream;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.alogic.metrics.stream.MetricsHandlerFactory;
 import com.anysoft.stream.Handler;
 import com.anysoft.util.Factory;
@@ -19,13 +20,16 @@ import com.anysoft.util.resource.ResourceFactory;
  * 工厂类
  * @author yyduan
  * @since 1.6.7.3
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class TLogHandlerFactory extends Factory<Handler<TLog>>{
 	
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger LOG = LogManager.getLogger(TLogHandlerFactory.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(TLogHandlerFactory.class);
 	
 	private TLogHandlerFactory(){
 		

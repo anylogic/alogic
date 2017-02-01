@@ -1,7 +1,7 @@
 package com.anysoft.cache;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.Manager;
 import com.anysoft.util.Watcher;
@@ -36,7 +36,10 @@ import com.anysoft.util.WatcherHub;
  * - 根据sonar建议优化代码 <br>
  * 
  * @version 1.6.6.5 [20161121 duanyy] <br>
- * - 增加allChanged方法，以便通知Watcher所有对象已经改变
+ * - 增加allChanged方法，以便通知Watcher所有对象已经改变 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class CacheManager<D1 extends Cacheable> extends Manager<D1> 
 implements Provider<D1>,Watcher<D1> {
@@ -44,7 +47,7 @@ implements Provider<D1>,Watcher<D1> {
 	/**
 	 * a logger of log4j
 	 */
-	protected static Logger logger = LogManager.getLogger(CacheManager.class);
+	protected static Logger logger = LoggerFactory.getLogger(CacheManager.class);
 	/**
 	 * 委托的Provider
 	 */

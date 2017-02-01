@@ -7,12 +7,13 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Expired;
 import com.anysoft.util.Properties;
@@ -32,13 +33,16 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.6.10 [duanyy 20161226] <br>
  * - 允许缓存对象过期<br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public abstract class Naming <O extends Reportable> implements Context<O>,Watcher<O> {
 
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger LOG = LogManager.getLogger(Naming.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(Naming.class);
 	
 	/**
 	 * Watcher Hub

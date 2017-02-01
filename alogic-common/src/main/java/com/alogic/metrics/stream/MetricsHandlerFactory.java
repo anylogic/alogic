@@ -2,8 +2,8 @@ package com.alogic.metrics.stream;
 
 import java.io.InputStream;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -22,14 +22,16 @@ import com.anysoft.util.resource.ResourceFactory;
  * @author yyduan
  *
  * @since 1.6.6.13
- *
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class MetricsHandlerFactory extends Factory<Handler<Fragment>>{
 	
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger LOG = LogManager.getLogger(MetricsHandlerFactory.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(MetricsHandlerFactory.class);
 	
 	private MetricsHandlerFactory(){
 		

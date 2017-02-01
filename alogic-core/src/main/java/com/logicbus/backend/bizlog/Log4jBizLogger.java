@@ -1,15 +1,11 @@
 package com.logicbus.backend.bizlog;
 
-import org.apache.log4j.DailyRollingFileAppender;
-import org.apache.log4j.Layout;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggingEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.anysoft.stream.AbstractHandler;
 import com.anysoft.util.BaseException;
-import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
@@ -29,6 +25,9 @@ import com.logicbus.models.servant.ServiceDescription.LogType;
  * 
  * @version 1.6.4.11 [20151116 duanyy] <br>
  * - 日志类型为none的服务日志也将输出到bizlog，在此过滤掉为none的输出
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class Log4jBizLogger extends AbstractHandler<BizLogItem> implements BizLogger {
 
@@ -47,6 +46,8 @@ public class Log4jBizLogger extends AbstractHandler<BizLogItem> implements BizLo
 	 */
 	protected String delimeter = "%%";
 	
+	protected String eol = "$$";
+	
 	/**
 	 * 计费标志
 	 */
@@ -56,11 +57,6 @@ public class Log4jBizLogger extends AbstractHandler<BizLogItem> implements BizLo
 	 * 单条记录的缓存
 	 */
 	protected StringBuffer buf = new StringBuffer();
-	
-	/**
-	 * log4j的变量集模板
-	 */
-	protected DefaultProperties log4jProperties = null;
 	
 	/**
 	 * 应用
@@ -74,23 +70,20 @@ public class Log4jBizLogger extends AbstractHandler<BizLogItem> implements BizLo
 	 * 
 	 * @since 1.2.7.1
 	 */
-	protected String host;
+	protected String hostPattern = "${server.host}:${server.port}";
+	
+	protected String host = null;
 	
 	
 	protected void onConfigure(Element _e, Properties p) throws BaseException {
 		thread = PropertiesConstants.getInt(p, "thread", 0);
 		delimeter = PropertiesConstants.getString(p,"delimeter", delimeter);
+		eol = PropertiesConstants.getString(p,"eol", eol);
 		isBilling = PropertiesConstants.getBoolean(p,"billing", isBilling);
 		app = PropertiesConstants.getString(p, "app", "${server.app}");
+		hostPattern = PropertiesConstants.getRaw(p,"host",hostPattern);
 		
-		log4jProperties = new DefaultProperties("Default",Settings.get());
-		log4jProperties.SetValue("thread", String.valueOf(thread));
-		log4jProperties.SetValue("file",p.GetValue("log4j.file", "${bizlog.home}/bizlog${server.port}_${thread}.log", false));
-		log4jProperties.SetValue("datePattern",p.GetValue("log4j.datePattern", "'.'yyyy-MM-dd-HH-mm", false));
-		log4jProperties.SetValue("encoding",p.GetValue("log4j.encoding", "${http.encoding}", false));
-		log4jProperties.SetValue("bufferSize",p.GetValue("log4j.bufferSize", "10240", false));
-		log4jProperties.SetValue("bufferedIO",p.GetValue("log4j.bufferedIO", "true", false));
-		log4jProperties.SetValue("immediateFlush",p.GetValue("log4j.immediateFlush", "false", false));
+		logger = LoggerFactory.getLogger("Bizlog" + thread);
 	}
 
 	
@@ -98,12 +91,11 @@ public class Log4jBizLogger extends AbstractHandler<BizLogItem> implements BizLo
 		if (item.logType == LogType.none){
 			return;
 		}
-		if (logger == null){
-			synchronized (this){
-				host = log4jProperties.GetValue("host", "${server.host}:${server.port}");
-				logger = initLogger(log4jProperties);
-			}
-		}		
+	
+		if (host == null){
+			host = Settings.get().transform(hostPattern);
+		}
+		
 		buf.setLength(0);
 		
 		buf.append(isBilling?1:0).append(delimeter)
@@ -122,69 +114,12 @@ public class Log4jBizLogger extends AbstractHandler<BizLogItem> implements BizLo
 		if (item.content != null && item.content.length() > 0){
 			buf.append(item.content.replaceAll("\n", "").replaceAll("\r",""));
 		}
+		
+		buf.append(eol);
 		logger.info(buf.toString());
 	}
-
-	private Logger initLogger(Properties props) {
-		Logger _logger = LogManager.getLogger(Log4jBizLogger.class.getName() + "." + thread);
-		_logger.setAdditivity(false);
-		
-		DailyRollingFileAppender myAppender = new DailyRollingFileAppender();
-		myAppender.setFile(PropertiesConstants.getString(props,
-				"file",
-				"${bizlog.home}/bizlog${server.port}_${thread}.log",true));
-		myAppender.setDatePattern(PropertiesConstants.getString(props,
-				"datePattern", "'.'yyyy-MM-dd-HH-mm",true));
-		myAppender.setEncoding(PropertiesConstants.getString(props,
-				"encoding", "${http.encoding}",true));
-		myAppender.setBufferSize(PropertiesConstants.getInt(props,
-				"bufferSize", 10240,true));
-		myAppender.setBufferedIO(PropertiesConstants.getBoolean(props,
-				"bufferedIO", true,true));
-		myAppender.setImmediateFlush(PropertiesConstants.getBoolean(props,
-				"immediateFlush", false,true));
-		myAppender.setLayout(new MyLayout());
-		myAppender.setName(Log4jBizLogger.class.getName() + "." + thread);
-		
-		myAppender.activateOptions();
-		_logger.addAppender(myAppender);
-		
-		return _logger;
-	}
-
 	
 	protected void onFlush(long t) {
 		//no buffer
-	}
-	
-	/**
-	 * 自定义的Layout
-	 * 
-	 * <br>
-	 * BizLog输出格式固定，因此自定义一个Layout提高效率。
-	 * 
-	 * @author duanyy
-	 *
-	 * @since 1.2.3
-	 */
-	public static class MyLayout extends Layout{
-		protected static String lineSeperator = System.getProperty("line.separator");
-		
-		public void activateOptions() {
-		}
-
-		
-		public String format(LoggingEvent e) {
-			return e.getRenderedMessage() + lineSeperator;
-		}
-
-		
-		public boolean ignoresThrowable() {
-			return true;
-		}
-	}
-	
-	public static void main(String [] args){
-		System.out.println(BizLogger.Dispatch.class.getName());
 	}
 }

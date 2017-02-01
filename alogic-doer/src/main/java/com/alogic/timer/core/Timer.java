@@ -5,12 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import com.alogic.timer.matcher.Crontab;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
@@ -41,6 +42,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.5.36 [duanyy 20160729] <br>
  * - 增加reload接口，可以刷新配置 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	/**
@@ -121,7 +125,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		/**
 		 * logger of log4j
 		 */
-		protected static final Logger logger = LogManager.getLogger(Timer.class);
+		protected static final Logger logger = LoggerFactory.getLogger(Timer.class);
 		
 		/**
 		 * 上次调度时间

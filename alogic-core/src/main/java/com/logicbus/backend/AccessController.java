@@ -2,8 +2,8 @@ package com.logicbus.backend;
 
 import java.io.InputStream;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -49,6 +49,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.7.4 [20170118 duanyy] <br>
  * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface AccessController extends Reportable,MetricsReportable,XMLConfigurable,Configurable{
 	
@@ -107,7 +110,7 @@ public interface AccessController extends Reportable,MetricsReportable,XMLConfig
 		/**
 		 * a logger of log4j
 		 */
-		protected static final Logger LOG = LogManager.getLogger(AccessController.class);
+		protected static final Logger LOG = LoggerFactory.getLogger(AccessController.class);
 		
 		/**
 		 * 根据module映射类名

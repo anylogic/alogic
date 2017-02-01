@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
@@ -35,12 +35,15 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.6.13 [20170112 duanyy] <br>
  * - 主容器由hashtable改为ConcurrentHashMap，增强并发性 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class QueuedServantFactory implements ServantFactory {
 	/**
 	 * a logger of log4j
 	 */
-	protected Logger logger = LogManager.getLogger(QueuedServantFactory.class);
+	protected Logger logger = LoggerFactory.getLogger(QueuedServantFactory.class);
 	
 	/**
 	 * 服务资源池列表

@@ -2,8 +2,8 @@ package com.alogic.doer.core;
 
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.alogic.timer.core.ContextHolder;
@@ -25,6 +25,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  * @since 1.6.3.4
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface TaskRobber extends TaskDispatcher,Runnable{
 	/**
@@ -70,7 +73,7 @@ public interface TaskRobber extends TaskDispatcher,Runnable{
 		/**
 		 * a logger of log4j
 		 */
-		protected static final Logger logger = LogManager.getLogger(TaskRobber.class);
+		protected static final Logger logger = LoggerFactory.getLogger(TaskRobber.class);
 		
 		/**
 		 * 线程句柄

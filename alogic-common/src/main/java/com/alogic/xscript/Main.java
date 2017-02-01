@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anysoft.batch.Process;
 import com.anysoft.util.CommandLine;
@@ -21,7 +21,9 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * 命令行脚本入口
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class Main implements Process {
 	/**
@@ -37,7 +39,7 @@ public class Main implements Process {
 	/**
 	 * a logger of log4j
 	 */
-	protected static Logger logger = LogManager.getLogger(Main.class);
+	protected static Logger logger = LoggerFactory.getLogger(Main.class);
 	
 	/**
 	 * 入口

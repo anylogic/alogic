@@ -3,8 +3,8 @@ package com.alogic.blob.core;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.BaseException;
@@ -28,6 +28,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.4.18 [duanyy 20151218] <br>
  * - 增加自动图标集 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface BlobRegister extends XMLConfigurable,Configurable,Reportable{
 	/**
@@ -68,7 +71,7 @@ public interface BlobRegister extends XMLConfigurable,Configurable,Reportable{
 		/**
 		 * a logger of log4j
 		 */
-		protected static final Logger logger = LogManager.getLogger(BlobRegister.class);
+		protected static final Logger logger = LoggerFactory.getLogger(BlobRegister.class);
 		
 		@Override
 		public void configure(Element e, Properties props){

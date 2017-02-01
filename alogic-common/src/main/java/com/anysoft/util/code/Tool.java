@@ -1,7 +1,8 @@
 package com.anysoft.util.code;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.anysoft.batch.Process;
 import com.anysoft.util.CommandLine;
 import com.anysoft.util.Copyright;
@@ -16,12 +17,15 @@ import com.anysoft.util.SystemProperties;
  * 
  * @author duanyy
  * @since 1.6.3.35
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class Tool implements Process {
 	/**
 	 * a logger of log4j
 	 */
-	protected static Logger logger = LogManager.getLogger(Tool.class);
+	protected static Logger logger = LoggerFactory.getLogger(Tool.class);
 
 	protected String text;
 	

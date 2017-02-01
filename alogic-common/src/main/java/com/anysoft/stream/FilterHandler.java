@@ -2,8 +2,6 @@ package com.anysoft.stream;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import com.anysoft.util.Factory;
@@ -17,9 +15,11 @@ import com.anysoft.util.XmlTools;
  * @author duanyy
  *
  * @param <data>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public abstract class FilterHandler <data extends Flowable> extends AbstractHandler<data> {
-	protected static Logger logger = LogManager.getLogger(FilterHandler.class);
 	protected Handler<data> handler = null;
 	
 	@Override
@@ -74,7 +74,7 @@ public abstract class FilterHandler <data extends Flowable> extends AbstractHand
 			try {
 				handler = factory.newInstance(child,p);
 			}catch (Exception ex){
-				logger.error("Can not create handler instance",ex);
+				LOG.error("Can not create handler instance",ex);
 			}			
 		}
 	}

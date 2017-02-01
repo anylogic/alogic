@@ -6,8 +6,8 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alogic.metrics.Fragment;
 import com.alogic.metrics.stream.MetricsHandlerFactory;
@@ -71,12 +71,15 @@ import com.logicbus.backend.bizlog.BizLogger;
  * 
  * @version 1.6.5.20 [20160715 duanyy] <br>
  * - 服务器启动和关闭时可触发脚本执行 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class LogicBusApp implements WebApp {
 	/**
 	 * a logger of log4j
 	 */
-	protected static Logger logger = LogManager.getLogger(LogicBusApp.class);
+	protected static Logger logger = LoggerFactory.getLogger(LogicBusApp.class);
 		
 	protected void onInit(Settings settings){	
 		XmlTools.setDefaultEncoding(settings.GetValue("http.encoding","utf-8"));

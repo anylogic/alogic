@@ -7,8 +7,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -37,12 +37,15 @@ import com.logicbus.redis.context.RedisSource;
  * @version 1.0.0.2 [20141108 duanyy] <br>
  * - 补充Reportable实现. <br>
  * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
+ * 
  */
 public class RedisSchema implements Schema {
 	/**
 	 * logger of log4j
 	 */
-	protected final static Logger logger = LogManager.getLogger(RedisSchema.class);
+	protected final static Logger logger = LoggerFactory.getLogger(RedisSchema.class);
 	
 	/**
 	 * the id of the schema

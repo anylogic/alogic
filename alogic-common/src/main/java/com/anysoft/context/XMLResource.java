@@ -3,10 +3,11 @@ package com.anysoft.context;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
@@ -29,10 +30,13 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.4.20 [20151222 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public abstract class XMLResource<O extends Reportable> implements Context<O> {
 	
-	protected static final Logger logger = LogManager.getLogger(XMLResource.class);
+	protected static final Logger logger = LoggerFactory.getLogger(XMLResource.class);
 	
 	protected String configFile;
 	protected String secondaryConfigFile;	

@@ -121,7 +121,7 @@ public class SqlQuery extends Servant {
 			dataset.appendChild(datarows);
 			root.appendChild(dataset);
 		}catch (Exception ex){
-			logger.error(ex);
+			logger.error(ex.getMessage());
 			throw new ServantException("core.sql_error","在执行SQL语句过程中发生错误:" + ex.getMessage());
 		}
 		finally{

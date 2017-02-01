@@ -6,24 +6,16 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-
-
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-
-
-
-
-
 
 import com.anysoft.util.resource.ResourceFactory;
 
@@ -50,12 +42,15 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.5.4 [20160515 duanyy] <br>
  * - XML配置文件的变量可以写入到SystemProperties之中 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class Settings extends DefaultProperties implements XmlSerializer,Reportable{
 	/**
 	 * logger of log4j
 	 */
-	protected static Logger logger = LogManager.getLogger(Settings.class);
+	protected static Logger logger = LoggerFactory.getLogger(Settings.class);
 	/**
 	 * JRE环境变量集，作为本变量集的父节点
 	 */

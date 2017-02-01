@@ -2,8 +2,8 @@ package com.anysoft.selector;
 
 import java.util.HashMap;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.anysoft.formula.DataProvider;
@@ -28,13 +28,16 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.1.1 [20141118 duanyy] <br>
  * - 修改缺省值为空字符串 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 abstract public class Selector implements XMLConfigurable {
 	
 	/**
 	 * a logger of log4j
 	 */
-	protected Logger logger = LogManager.getLogger(FieldList.class);
+	protected Logger logger = LoggerFactory.getLogger(FieldList.class);
 	
 	/**
 	 * id

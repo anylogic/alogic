@@ -1,7 +1,7 @@
 package com.alogic.xscript.log;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.alogic.xscript.Logiclet;
@@ -13,13 +13,14 @@ import com.anysoft.util.Properties;
  * 缺省处理器
  * 
  * @author duanyy
- *
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class Default extends AbstractHandler<LogInfo>{
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger logger = LogManager.getLogger(Logiclet.class);
+	protected static final Logger logger = LoggerFactory.getLogger(Logiclet.class);
 
 	@Override
 	protected void onHandle(LogInfo _data, long timestamp) {

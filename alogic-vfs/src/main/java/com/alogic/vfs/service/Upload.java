@@ -23,7 +23,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * 向vfs上传文件
  * 
  * @author duanyy
- *
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class Upload extends Servant implements FileItemHandler{
 	protected byte [] buffer = null;
@@ -84,7 +85,7 @@ public class Upload extends Servant implements FileItemHandler{
 			}catch (Exception ex){
 				result.put("sucessful", false);
 				result.put("reason", ex.getMessage());				
-				logger.error(ex);
+				logger.error(ex.getMessage());
 			}finally{
 				IOTools.close(in);
 				fs.finishWrite(newFile, out);

@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,13 +42,16 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.3.35 [20150728 duanyy] <br>
  * - 增加密文形式的密码 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class ConnectionModel implements Cacheable{
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger logger 
-		= LogManager.getLogger(ConnectionModel.class);	
+	protected static final Logger logger = LoggerFactory.getLogger(ConnectionModel.class);	
+	
 	/**
 	 * 名称
 	 */

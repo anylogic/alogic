@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
@@ -19,6 +17,8 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,6 +41,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  * @since 1.6.4.1
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface Indexer extends Configurable,XMLConfigurable,Reportable{
 	
@@ -104,7 +107,7 @@ public interface Indexer extends Configurable,XMLConfigurable,Reportable{
 		/**
 		 * a logger of log4j
 		 */
-		protected static Logger logger = LogManager.getLogger(Indexer.class);
+		protected static Logger logger = LoggerFactory.getLogger(Indexer.class);
 		
 		/**
 		 * index builders

@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,6 +33,8 @@ import com.anysoft.util.XmlTools;
  * 
  * @since 1.6.6.8
  * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class XmlObjectList<O extends Reportable> implements XMLConfigurable, AutoCloseable,Reportable {
 	
@@ -44,7 +46,7 @@ public class XmlObjectList<O extends Reportable> implements XMLConfigurable, Aut
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger LOG = LogManager.getLogger(XmlObjectList.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(XmlObjectList.class);
 	
 	/**
 	 * 对象在配置XML节点中的tag名

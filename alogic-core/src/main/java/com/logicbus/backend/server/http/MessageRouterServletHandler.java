@@ -7,8 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
@@ -56,6 +56,9 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.6.5.6 [20160523 duanyy] <br>
  * - 在MessageRouter中提前写出报文 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class MessageRouterServletHandler implements ServletHandler {
 	/**
@@ -76,7 +79,7 @@ public class MessageRouterServletHandler implements ServletHandler {
 	/**
 	 * a logger of log4j
 	 */
-	protected static Logger logger = LogManager.getLogger(MessageRouterServletHandler.class);
+	protected static Logger logger = LoggerFactory.getLogger(MessageRouterServletHandler.class);
 	
 	/**
 	 * 是否已经获取服务器信息

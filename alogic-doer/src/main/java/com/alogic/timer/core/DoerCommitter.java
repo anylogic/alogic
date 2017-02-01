@@ -3,8 +3,8 @@ package com.alogic.timer.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -22,6 +22,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @author duanyy
  * @since 1.6.3.37
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface DoerCommitter extends Reportable,Configurable,XMLConfigurable{
 	
@@ -42,7 +45,7 @@ public interface DoerCommitter extends Reportable,Configurable,XMLConfigurable{
 		/**
 		 * a logger of log4j
 		 */
-		protected static final Logger logger = LogManager.getLogger(DoerCommitter.class);
+		protected static final Logger logger = LoggerFactory.getLogger(DoerCommitter.class);
 		
 		/**
 		 * 计数器

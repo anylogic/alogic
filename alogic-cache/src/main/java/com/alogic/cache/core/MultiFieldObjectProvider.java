@@ -3,8 +3,8 @@ package com.alogic.cache.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -31,6 +31,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.4.19 [duanyy 20151218] <br>
  * - 按照SONAR建议修改代码 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface MultiFieldObjectProvider extends Provider<MultiFieldObject>,XMLConfigurable,Reportable {
 	
@@ -86,7 +89,7 @@ public interface MultiFieldObjectProvider extends Provider<MultiFieldObject>,XML
 	 */
 	 public abstract static class Abstract implements MultiFieldObjectProvider {
 		protected Counter counter = null;
-		protected static final Logger LOG = LogManager.getLogger(MultiFieldObjectProvider.class);
+		protected static final Logger LOG = LoggerFactory.getLogger(MultiFieldObjectProvider.class);
 		
 		@Override
 		public MultiFieldObject load(String id, boolean cacheAllowed) {

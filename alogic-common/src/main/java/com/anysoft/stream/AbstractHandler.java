@@ -10,8 +10,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -44,13 +44,16 @@ import com.anysoft.util.XmlTools;
  * @version 1.6.4.44 [20160414 duanyy] <br>
  * - 修正Report输出的bug，并增加统计数据的分页功能 <br>
  * - 不再保存全部数据，只保存当前周期数据 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public abstract class AbstractHandler<data extends Flowable> implements Handler<data> {
 	
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger LOG = LogManager.getLogger(AbstractHandler.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(AbstractHandler.class);
 	
 	/**
 	 * 当前的时间周期，缺省半个小时

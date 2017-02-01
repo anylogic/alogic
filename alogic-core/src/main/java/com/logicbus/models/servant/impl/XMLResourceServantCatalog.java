@@ -32,6 +32,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  * @version 1.6.4.46 [20160425 duanyy] <br>
  * - 从ServantCatalog.Abstract上进行继承。 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class XMLResourceServantCatalog extends XMLDocumentServantCatalog {
 
@@ -54,7 +57,7 @@ public class XMLResourceServantCatalog extends XMLDocumentServantCatalog {
 			Class<?> clazz = cl.loadClass(className);
 			doc = XmlTools.loadFromInputStream(clazz.getResourceAsStream(fileName));
 		} catch (Exception ex){
-			logger.fatal("Can not load xml config file:" + fileName, ex);
+			logger.error("Can not load xml config file:" + fileName);
 		}
 	}
 	

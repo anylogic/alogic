@@ -1,7 +1,6 @@
 package com.logicbus.backend.bizlog;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.anysoft.stream.AbstractHandler;
@@ -12,7 +11,7 @@ public class Debug extends AbstractHandler<BizLogItem> implements BizLogger {
 	/**
 	 * a logger of log4j
 	 */
-	private static final Logger LOG = LogManager.getLogger(Debug.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Debug.class);
 	
 	/**
 	 * 单条记录的缓存

@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.Vector;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -50,10 +48,6 @@ import com.logicbus.models.servant.ServiceDescriptionWatcher;
  * 
  */
 public class FileSystemServantCatalog extends ServantCatalog.Abstract {
-	/**
-	 * a logger of log4j
-	 */
-	protected static Logger logger = LogManager.getLogger(FileSystemServantCatalog.class);
 
 	/**
 	 * 路径

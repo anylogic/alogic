@@ -2,8 +2,8 @@ package com.alogic.tracer;
 
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.alogic.tlog.TLog;
@@ -33,6 +33,9 @@ import com.anysoft.util.XmlTools;
  * @version 1.6.7.3 [20170118 duanyy] <br>
  * - trace日志的时长单位改为ns <br>
  * - 新增com.alogic.tlog，替代com.alogic.tracer.log包;
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 	
@@ -88,7 +91,7 @@ public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 		/**
 		 * a logger of log4j
 		 */
-		protected static final Logger LOG = LogManager.getLogger(Tracer.class);
+		protected static final Logger LOG = LoggerFactory.getLogger(Tracer.class);
 		
 		/**
 		 * 是否开放

@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,6 +34,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * @author duanyy
  * @version 1.6.5.13 [20160612 duanyy] <br>
  * - 增加对象过期判断功能 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable,Reportable{
 	
@@ -70,7 +73,7 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 		/**
 		 * a logger of log4j
 		 */
-		protected static final Logger LOG = LogManager.getLogger(Loader.class);
+		protected static final Logger LOG = LoggerFactory.getLogger(Loader.class);
 		
 		@Override
 		public void configure(Properties p) {

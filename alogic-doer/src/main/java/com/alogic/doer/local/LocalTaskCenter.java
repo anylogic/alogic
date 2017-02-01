@@ -7,8 +7,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,12 +32,14 @@ import com.anysoft.util.XmlTools;
  * 
  * @since 1.6.3.4
  * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class LocalTaskCenter implements TaskCenter {
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger logger = LogManager.getLogger(TaskCenter.class);
+	protected static final Logger logger = LoggerFactory.getLogger(TaskCenter.class);
 	
 	public TaskReport getTaskReport(String id, String queue) {
 		TaskQueue q = queues == null ? null:queues.get(queue);

@@ -18,6 +18,9 @@ import com.logicbus.dbcp.sql.DBTools;
  * @since 1.6.4.6
  * @version 1.6.4.19 [duanyy 20151218] <br>
  * - 按照SONAR建议修改代码 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class MySQLSequence extends SequenceGenerator.Abstract{
 	protected int stringWidth = 20;
@@ -50,12 +53,12 @@ public class MySQLSequence extends SequenceGenerator.Abstract{
 			conn.commit();
 			conn.setAutoCommit(true);
 		} catch (SQLException e) {
-			LOG.error("SQL Error:",e);
+			LOG.error("SQL Error:" + e.getMessage());
 			try {
 				conn.rollback();
 				conn.setAutoCommit(true);
 			}catch (Exception ex){
-				LOG.error("SQL Error:",ex);
+				LOG.error("SQL Error:" + ex.getMessage());
 			}
 		} finally {
 			pool.recycle(conn);

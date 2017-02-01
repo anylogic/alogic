@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -49,11 +49,13 @@ import com.logicbus.remote.util.CallStat;
  * - 增加结果数据的ID和Path映射
  * @version 1.6.3.21 [20150507 duanyy] <br>
  * - 增加全局序列号的支持 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class HttpCall implements Call {
-	protected static Logger logger = LogManager.getLogger(HttpCall.class);
-	
-	
+	protected static Logger logger = LoggerFactory.getLogger(HttpCall.class);
+
 	public void close() throws Exception {
 		// nothing to do
 	}

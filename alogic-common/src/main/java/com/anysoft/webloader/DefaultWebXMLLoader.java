@@ -7,8 +7,8 @@ import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -29,12 +29,14 @@ import com.anysoft.util.XmlTools;
  * @version 1.6.0.6 [20141116 duanyy] <br>
  * - 修正日志输出级别 <br>
  * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class DefaultWebXMLLoader implements WebXMLLoader {
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger logger = LogManager.getLogger(DefaultWebXMLLoader.class);
+	protected static final Logger logger = LoggerFactory.getLogger(DefaultWebXMLLoader.class);
 	/**
 	 * 构造函数
 	 * 

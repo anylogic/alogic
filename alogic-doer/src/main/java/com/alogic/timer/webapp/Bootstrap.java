@@ -3,8 +3,8 @@ package com.alogic.timer.webapp;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alogic.timer.core.Scheduler;
 import com.alogic.timer.core.SchedulerFactory;
@@ -14,12 +14,15 @@ import com.alogic.timer.core.SchedulerFactory;
  * 
  * @author duanyy
  * @since 1.6.3.37
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class Bootstrap implements ServletContextListener {
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger logger = LogManager.getLogger(Bootstrap.class);
+	protected static final Logger logger = LoggerFactory.getLogger(Bootstrap.class);
 	
 	public void contextInitialized(ServletContextEvent sce) {
 		logger.info("the scheduler will start..");

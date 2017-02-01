@@ -1,13 +1,17 @@
 package com.alogic.terminal;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * 指令输出解析器
  * 
  * @author duanyy
- * @since 1.1.10.10 
+ * @since 1.6.7.8 
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface Resolver {
 	
@@ -42,7 +46,7 @@ public interface Resolver {
 		/**
 		 * a logger of log4j
 		 */
-		protected static final Logger logger = LogManager.getLogger(Resolver.class.getName());
+		protected static final Logger logger = LoggerFactory.getLogger(Resolver.class.getName());
 		
 		/**
 		 * 指令编号

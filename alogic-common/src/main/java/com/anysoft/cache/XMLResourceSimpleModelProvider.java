@@ -2,8 +2,8 @@ package com.anysoft.cache;
 
 import java.io.InputStream;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,11 +35,14 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.4.20 [20151222 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 
 public abstract class XMLResourceSimpleModelProvider<M extends Cacheable> implements Provider<M> {
 	
-	protected static Logger logger = LogManager.getLogger(Provider.class);	
+	protected static Logger logger = LoggerFactory.getLogger(Provider.class);	
 	protected Document doc = null;	
 	private Set<String> allModels = new HashSet<String>();	 // NOSONAR
 	

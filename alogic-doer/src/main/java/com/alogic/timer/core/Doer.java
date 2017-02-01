@@ -1,9 +1,11 @@
 package com.alogic.timer.core;
 
 import java.util.Map;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Properties;
@@ -19,6 +21,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.4.16 [duanyy 20151110] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	
@@ -95,7 +100,7 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		/**
 		 * a logger of log4j
 		 */
-		protected static final Logger LOG = LogManager.getLogger(Doer.class);
+		protected static final Logger LOG = LoggerFactory.getLogger(Doer.class);
 		/**
 		 * 任务状态
 		 */
@@ -158,7 +163,7 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 					execute(task);
 				}
 			}catch (Exception t){
-				LOG.fatal("Exception when executing the task:" + task.id(),t);
+				LOG.error("Exception when executing the task:" + task.id());
 			}finally{
 				complete();
 			}

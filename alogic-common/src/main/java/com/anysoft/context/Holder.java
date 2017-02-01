@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
@@ -44,6 +45,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.4.20 [20151222 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class Holder<O extends Reportable> implements XMLConfigurable, AutoCloseable,Reportable {
 	
@@ -55,13 +59,12 @@ public class Holder<O extends Reportable> implements XMLConfigurable, AutoClosea
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger logger = LogManager.getLogger(Holder.class);
+	protected static final Logger logger = LoggerFactory.getLogger(Holder.class);
 	
 	/**
 	 * 对象在配置XML节点中的tag名
 	 */
 	protected String objName = "object";
-	
 	
 	/**
 	 * 对象的缺省类名

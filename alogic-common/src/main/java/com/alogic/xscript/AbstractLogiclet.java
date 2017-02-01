@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.alogic.xscript.log.LogInfo;
@@ -76,13 +76,16 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.7.3 [20170118 duanyy] <br>
  * - 对tlog的开启开关进行了统一 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
 	/**
 	 * a logger of log4j
 	 */
-	public static final Logger logger = LogManager.getLogger(Logiclet.class);	
+	public static final Logger logger = LoggerFactory.getLogger(Logiclet.class);	
 	
 	/**
 	 * 父节点

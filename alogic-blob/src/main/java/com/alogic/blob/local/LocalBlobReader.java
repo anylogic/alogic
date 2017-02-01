@@ -6,8 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alogic.blob.core.BlobInfo;
 import com.alogic.blob.core.BlobReader;
@@ -20,12 +20,15 @@ import com.alogic.blob.core.BlobReader;
  * 
  * @version 1.6.4.18 [duanyy 20151218] <br>
  * - 增加自动图标集 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class LocalBlobReader implements BlobReader{
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger logger = LogManager.getLogger(BlobReader.class);
+	protected static final Logger logger = LoggerFactory.getLogger(BlobReader.class);
 	
 	/**
 	 * 注册器中的文件信息

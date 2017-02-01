@@ -3,11 +3,6 @@ package com.logicbus.models.servant.impl;
 
 import java.io.InputStream;
 import java.util.Vector;
-
-
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -50,13 +45,11 @@ import com.logicbus.models.servant.ServiceDescriptionWatcher;
  * @author duanyy
  * @version 1.6.4.46 [20160425 duanyy] <br>
  * - 从ServantCatalog.Abstract上进行继承。 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class XMLDocumentServantCatalog extends ServantCatalog.Abstract {
-	
-	/**
-	 * a logger of log4j
-	 */
-	protected static Logger logger = LogManager.getLogger(XMLDocumentServantCatalog.class);
 	
 	/**
 	 * XML文档

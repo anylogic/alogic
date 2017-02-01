@@ -6,8 +6,8 @@ import com.logicbus.models.servant.Argument;
 import com.logicbus.models.servant.ServiceDescription;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 服务员(所有服务实现的基类)
@@ -37,6 +37,9 @@ import org.apache.log4j.LogManager;
  * 
  * @version 1.6.7.4 [20170118 duanyy] <br>
  * - 服务耗时单位改为ns <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public abstract class Servant implements Pooled{
 	/**
@@ -67,7 +70,7 @@ public abstract class Servant implements Pooled{
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger logger = LogManager.getLogger(Servant.class);	
+	protected static final Logger logger = LoggerFactory.getLogger(Servant.class);	
 	
 	/**
 	 * 构造函数

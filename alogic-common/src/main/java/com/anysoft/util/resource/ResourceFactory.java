@@ -4,8 +4,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Hashtable;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.anysoft.util.BaseException;
@@ -17,13 +17,15 @@ import com.anysoft.util.URLocation;
  * 
  * 
  * @author duanyy
- *
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
+ * 
  */
 public class ResourceFactory {
 	/**
 	 * a logger of log4j
 	 */
-	protected static Logger logger = LogManager.getLogger(ResourceFactory.class);
+	protected static Logger logger = LoggerFactory.getLogger(ResourceFactory.class);
 	
 	/**
 	 * 装入资源的输入流

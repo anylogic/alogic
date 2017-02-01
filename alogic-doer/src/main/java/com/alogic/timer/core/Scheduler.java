@@ -16,8 +16,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,6 +51,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.4.42 [duanyy 20160407] <br>
  * - 增加Linked实现 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface Scheduler extends Timer,Runnable {
 	/**
@@ -120,7 +123,7 @@ public interface Scheduler extends Timer,Runnable {
 	 *
 	 */
 	abstract public static class Abstract implements Scheduler{
-		protected static final Logger logger = LogManager.getLogger(Timer.class);
+		protected static final Logger logger = LoggerFactory.getLogger(Timer.class);
 		protected State state = State.Init;
 		protected DoerCommitter comitter = null;
 		protected long interval = 1000;

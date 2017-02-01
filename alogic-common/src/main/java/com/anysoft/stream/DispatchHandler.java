@@ -4,12 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
@@ -25,11 +21,13 @@ import com.anysoft.util.XmlTools;
  * @param <data>
  * @since 1.4.0
  * 
- * @version 1.4.4 [20140917 duanyy]
- * - Handler:handle和flush方法增加timestamp参数，以便进行时间同步
+ * @version 1.4.4 [20140917 duanyy] <br>
+ * - Handler:handle和flush方法增加timestamp参数，以便进行时间同步 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class DispatchHandler<data extends Flowable> extends AbstractHandler<data> {
-
 	protected Handler<data>[] children = null;
 	
 	protected int threadCnt = 10;
@@ -125,10 +123,10 @@ public class DispatchHandler<data extends Flowable> extends AbstractHandler<data
 					Handler<data> newHandler = factory.newInstance(template, child);
 					children[i] = newHandler;
 				}catch (Exception ex){
-					logger.error("Can not create handler instance.",ex);
+					LOG.error("Can not create handler instance.",ex);
 				}
 			}
 		}
 	}
-	protected static Logger logger = LogManager.getLogger(DispatchHandler.class);
+	
 }

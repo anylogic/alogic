@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -27,12 +27,15 @@ import com.anysoft.util.XmlTools;
  * @author duanyy
  * @version 1.0.0.2 [20141108 duanyy] <br>
  * - 补充Reportable实现. <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 abstract public class AbstractPartitioner implements Partitioner {
 	/**
 	 * a logger of log4j
 	 */
-	protected final static Logger logger = LogManager.getLogger(Partitioner.class);
+	protected final static Logger logger = LoggerFactory.getLogger(Partitioner.class);
 	
 	/**
 	 * 缺省的分区

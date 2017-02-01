@@ -6,9 +6,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servlet代理
@@ -29,15 +28,15 @@ import org.apache.log4j.Logger;
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
  * @author duanyy
- * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class ServletAgent extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * a logger of log4j
 	 */
-	protected static Logger logger = LogManager
-			.getLogger(WebAppContextListener.class);
+	protected static Logger logger = LoggerFactory.getLogger(WebAppContextListener.class);
 
 	/**
 	 * Servlet处理器

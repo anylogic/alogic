@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.BaseException;
@@ -32,12 +32,14 @@ import com.anysoft.util.PropertiesConstants;
  * @version 1.3.7 [20140826 duanyy]
  * - 增加Pooled对象自关闭的支持
  * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<pooled>,CloseAware<pooled> {
 	/**
 	 * a logger of log4j
 	 */
-	protected Logger logger = LogManager.getLogger(QueuedPool.class);
+	protected static Logger logger = LoggerFactory.getLogger(QueuedPool.class);
 	/**
 	 * 正在工作的对象个数
 	 */

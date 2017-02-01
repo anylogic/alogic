@@ -7,12 +7,13 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
@@ -41,14 +42,17 @@ import com.anysoft.util.XmlTools;
  * - 根据sonar建议优化代码 <br>
  * 
  * @version 1.6.6.5 [20161121 duanyy] <br>
- * - 增加allChanged方法，以便通知Watcher所有对象已经改变
+ * - 增加allChanged方法，以便通知Watcher所有对象已经改变  <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public abstract class Source<O extends Reportable> implements Context<O>,Watcher<O> {
 	
 	/**
 	 * logger of log4j
 	 */
-	protected static final Logger logger = LogManager.getLogger(Source.class);	
+	protected static final Logger logger = LoggerFactory.getLogger(Source.class);	
 	
 	/**
 	 * Watcher Hub

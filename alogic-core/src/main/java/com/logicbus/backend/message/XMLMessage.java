@@ -4,10 +4,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Settings;
 import com.anysoft.util.XmlTools;
@@ -42,9 +44,11 @@ import com.logicbus.backend.Context;
  * @version 1.6.5.6 [20160523 duanyy] <br>
  * - 淘汰MessageDoc，采用Context替代 <br>
  * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class XMLMessage implements Message {
-	protected static final Logger logger = LogManager.getLogger(XMLMessage.class);		
+	protected static final Logger logger = LoggerFactory.getLogger(XMLMessage.class);		
 	protected Document xmlDoc = null;
 	protected Element root = null;
 	protected String contentType = "text/xml;charset=utf-8";

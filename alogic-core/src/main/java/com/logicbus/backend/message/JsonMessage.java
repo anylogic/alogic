@@ -5,8 +5,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.IOTools;
 import com.anysoft.util.JsonTools;
@@ -41,9 +41,12 @@ import com.logicbus.backend.message.Message;
  * @version 1.6.5.6 [20160523 duanyy] <br>
  * - 淘汰MessageDoc，采用Context替代 <br>
  * - 增加getContentType和getContentLength <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class JsonMessage implements Message {
-	protected static final Logger logger = LogManager.getLogger(JsonMessage.class);
+	protected static final Logger logger = LoggerFactory.getLogger(JsonMessage.class);
 	protected static JsonProvider provider = null;	
 	static {
 		provider = JsonProviderFactory.createProvider();

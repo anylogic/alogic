@@ -6,8 +6,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 空的ServletContextListener,用于测试
@@ -15,9 +15,13 @@ import org.apache.log4j.Logger;
  * @author duanyy
  *
  * @since 1.0.0
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class NullWebContextListener implements ServletContextListener {
-	protected static Logger logger = LogManager.getLogger(NullWebContextListener.class);
+	protected static Logger logger = LoggerFactory.getLogger(NullWebContextListener.class);
+	
 	public void contextDestroyed(ServletContextEvent e) {
 
 	}

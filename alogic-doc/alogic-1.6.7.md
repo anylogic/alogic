@@ -38,4 +38,5 @@ alogic-1.6.7
 - alogic-vfs:增加文件内容读取，保存，文件删除等xscript插件
 - alogic-vfs:增加terminal框架，提供local和ssh两种实现
 
-
+### 1.6.7.9 [20170201 duanyy]
+- 采用SLF4j日志框架输出日志

@@ -6,8 +6,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.Configurable;
@@ -21,7 +21,9 @@ import com.anysoft.util.XmlElementProperties;
  * 远程文件系统
  * 
  * @author duanyy
- *
+
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigurable,Reportable{
 	
@@ -149,7 +151,7 @@ public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigu
 		/**
 		 * a logger of log4j
 		 */
-		protected final Logger LOG = LogManager.getLogger(VirtualFileSystem.class);
+		protected final Logger LOG = LoggerFactory.getLogger(VirtualFileSystem.class);
 		
 		/**
 		 * 缺省的文件名模板

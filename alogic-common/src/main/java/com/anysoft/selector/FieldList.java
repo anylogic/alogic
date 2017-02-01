@@ -2,8 +2,8 @@ package com.anysoft.selector;
 
 import java.util.Vector;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -20,12 +20,13 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @since 1.5.2
  * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 
 public class FieldList implements XMLConfigurable {
-	protected Logger logger = LogManager.getLogger(FieldList.class);
-	
-	
+	protected Logger logger = LoggerFactory.getLogger(FieldList.class);
+
 	public void configure(Element _e, Properties _properties)
 			throws BaseException {
 		XmlElementProperties p = new XmlElementProperties(_e, _properties);

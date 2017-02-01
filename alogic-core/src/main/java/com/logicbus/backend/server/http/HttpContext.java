@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.IOTools;
 import com.anysoft.util.KeyGen;
@@ -51,13 +51,16 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.7.1 [20170117 duanyy] <br>
  * - trace日志调用链中的调用次序采用xx.xx.xx.xx字符串模式 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 
 public class HttpContext extends Context {
 	/**
 	 * a logger of log4j
 	 */
-	protected final Logger logger = LogManager.getLogger(HttpContext.class);
+	protected final Logger logger = LoggerFactory.getLogger(HttpContext.class);
 	
 	/**
 	 * request

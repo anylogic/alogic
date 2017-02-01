@@ -3,8 +3,8 @@ package com.alogic.cache.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -27,12 +27,15 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.4.19 [duanyy 20151218] <br>
  * - 按照SONAR建议修改代码 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public abstract class AbstractCacheStore implements CacheStore {
 	/**
 	 * a logger of log4j
 	 */
-	protected Logger logger = LogManager.getLogger(CacheStore.class);
+	protected Logger logger = LoggerFactory.getLogger(CacheStore.class);
 	
 	/**
 	 * cache的过期策略

@@ -3,8 +3,8 @@ package com.alogic.doer.client;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alogic.doer.core.TaskCenter;
 import com.alogic.doer.core.TaskReport;
@@ -23,13 +23,16 @@ import com.anysoft.util.DefaultProperties;
  * 
  * @version 1.6.3.37 [20150806 duanyy] <br>
  * - 修改submit方法，增加任务ID的返回 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class TaskSubmitter{
 	
 	/**
 	 * a logger of log4j
 	 */
-	public static Logger logger = LogManager.getLogger(TaskSubmitter.class);
+	public static Logger logger = LoggerFactory.getLogger(TaskSubmitter.class);
 	
 	/**
 	 * 提交任务

@@ -21,6 +21,8 @@ import com.anysoft.util.StringMatcher;
  * 
  * @author duanyy
  *
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public class LocalFileSystem extends VirtualFileSystem.Abstract {
 	
@@ -178,7 +180,7 @@ public class LocalFileSystem extends VirtualFileSystem.Abstract {
 			try {
 				return new FileInputStream(file);
 			} catch (FileNotFoundException e) {
-				LOG.error(e);
+				LOG.error(e.getMessage());
 				return null;
 			}
 		}
@@ -200,9 +202,9 @@ public class LocalFileSystem extends VirtualFileSystem.Abstract {
 				file.createNewFile();
 				return new FileOutputStream(file);
 			} catch (FileNotFoundException e) {
-				LOG.error(e);
+				LOG.error(e.getMessage());
 			} catch (IOException e) {
-				LOG.error(e);
+				LOG.error(e.getMessage());
 			}
 		}
 		return null;

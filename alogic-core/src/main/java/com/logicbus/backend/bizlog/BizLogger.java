@@ -2,8 +2,8 @@ package com.logicbus.backend.bizlog;
 
 import java.io.InputStream;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -37,6 +37,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.5.6 [20160523 duanyy] <br>
  * - 增加过滤器插件 <br>
+ * 
+ * @version 1.6.7.9 [20170201 duanyy] <br>
+ * - 采用SLF4j日志框架输出日志 <br>
  */
 public interface BizLogger extends Handler<BizLogItem>{	
 	
@@ -92,7 +95,7 @@ public interface BizLogger extends Handler<BizLogItem>{
 		/**
 		 * a logger of log4j
 		 */
-		protected static final Logger logger = LogManager.getLogger(BizLogger.class);
+		protected static final Logger logger = LoggerFactory.getLogger(BizLogger.class);
 		
 		/**
 		 * 根据环境变量中的配置来创建BizLogger
