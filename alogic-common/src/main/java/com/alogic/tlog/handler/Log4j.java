@@ -20,6 +20,9 @@ import com.anysoft.util.Settings;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.10 [20170202 duanyy] <br>
+ * - 修正tlog作为logger输出时的缓冲区并发问题 <br>
  */
 public class Log4j extends AbstractHandler<TLog>{
 
@@ -42,11 +45,6 @@ public class Log4j extends AbstractHandler<TLog>{
 	 * 行间隔符
 	 */
 	protected String eol = "$$";
-		
-	/**
-	 * 单条记录的缓存
-	 */
-	protected StringBuffer buf = new StringBuffer();
 	
 	/**
 	 * 应用
@@ -78,7 +76,10 @@ public class Log4j extends AbstractHandler<TLog>{
 		if (host == null){
 			host = Settings.get().transform(hostPattern);
 		}
-		buf.setLength(0);
+		/**
+		 * 单条记录的缓存
+		 */
+		StringBuffer buf = new StringBuffer();
 
 		String reason= item.reason();
 		if (StringUtils.isEmpty(reason)){

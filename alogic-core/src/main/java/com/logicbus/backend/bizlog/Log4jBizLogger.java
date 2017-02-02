@@ -28,6 +28,9 @@ import com.logicbus.models.servant.ServiceDescription.LogType;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.10 [20170202 duanyy] <br>
+ * - 修正bizlog作为logger输出时的缓冲区并发问题 <br>
  */
 public class Log4jBizLogger extends AbstractHandler<BizLogItem> implements BizLogger {
 
@@ -52,12 +55,7 @@ public class Log4jBizLogger extends AbstractHandler<BizLogItem> implements BizLo
 	 * 计费标志
 	 */
 	protected boolean isBilling = true;
-	
-	/**
-	 * 单条记录的缓存
-	 */
-	protected StringBuffer buf = new StringBuffer();
-	
+		
 	/**
 	 * 应用
 	 * 
@@ -96,7 +94,10 @@ public class Log4jBizLogger extends AbstractHandler<BizLogItem> implements BizLo
 			host = Settings.get().transform(hostPattern);
 		}
 		
-		buf.setLength(0);
+		/**
+		 * 单条记录的缓存
+		 */
+		StringBuffer buf = new StringBuffer();
 		
 		buf.append(isBilling?1:0).append(delimeter)
 		.append(item.sn).append(delimeter)
