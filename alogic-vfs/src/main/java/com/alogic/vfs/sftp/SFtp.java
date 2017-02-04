@@ -32,6 +32,9 @@ import ch.ethz.ssh2.SFTPv3FileHandle;
  * @author weibj
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.11 [20170203 duanyy] <br>
+ * - 增加toString实现 <br>
  */
 
 public class SFtp extends VirtualFileSystem.Abstract {
@@ -48,7 +51,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 	/*
 	 * sftp的主机
 	 */
-	protected String host = "10.128.91.3";
+	protected String host;
 
 	/*
 	 * sftp的端口号
@@ -58,7 +61,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 	/*
 	 * sftp的登录用户名
 	 */
-	protected String username = "root";
+	protected String username;
 
 	/*
 	 * 创建目录的权限值
@@ -69,7 +72,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 	 * sftp的登录密码
 	 */
 	// protected String password = "ecld_at2n1";
-	protected String password = "LPoUSQSbfDwcAce9HX18BQ==";
+	protected String password;
 	/*
 	 * 加密的coder
 	 */
@@ -80,7 +83,11 @@ public class SFtp extends VirtualFileSystem.Abstract {
 	public SFtp() {
 
 	}
-
+	
+	public String toString(){
+		return String.format("%s[sftp://%s:%d%s]",id,host,port,root);
+	}
+	
 	@Override
 	public void configure(Properties p) {
 		host = PropertiesConstants.getString(p, "host", host);
@@ -464,47 +471,5 @@ public class SFtp extends VirtualFileSystem.Abstract {
 		if (conn != null) {
 			conn.close();
 		}
-	}
-
-	public static void main(String[] args) throws IOException {
-		//SFtp sftp = new SFtp();
-		Coder des3Coder = CoderFactory.newCoder("DES3");
-		System.out.println(des3Coder.encode("ecld_at2n1", "alogic"));
-		Coder md5Coder = CoderFactory.newCoder("MD5");
-		String expressPassword = des3Coder.decode("1234", "chenxuj");
-		String _password = md5Coder.encode(expressPassword, "chenxuj");
-		System.out.println(_password);
-
-		// sftp.makeDirs("/root/test1/test2/test3");
-
-		// sftp.makeDirs("/root/test1");
-		// sftp.deleteFile("/root/test.txt");
-		//sftp.deleteFile("/root/test");
-		// System.out.println(sftp.getFileSize("/root/maven-metadata.xml"));
-		// System.out.println(sftp.isDir("root/test.txt")?"exits":"not exits");
-		// System.out.println(sftp.isDir("/root/test")?"exits":"not exits");
-		// System.out.println(sftp.exist("/root/test.txt")?"exits":"not exits");
-		// Map<String,Object> json = new HashMap<String,Object>();
-		// sftp.getFileInfo("/root", json);
-		// sftp.listFiles("/root","", json, 0, 10);
-		// sftp.listFiles("/root", 0, 10);
-		// sftp.deleteFile("/root/local.xml");
-
-		/*
-		 * InputStream is = sftp.readFile("/root/test.pdf"); InputStreamReader a
-		 * = new InputStreamReader(is); BufferedReader b = new
-		 * BufferedReader(a); String line; while ((line = b.readLine()) != null)
-		 * { System.out.println(line); }
-		 */
-
-		// sftp.writeFileTest("/root/test.txt");
-		// OutputStream os = sftp.writeFile("/root/test.txt");
-		// String test = "hahhahahahahhahahahha";
-		// byte[] test2 = test.getBytes();
-		// os.write(test2, 0, 10);
-		// os.write(test2, 10, 10);
-		// os.write(test.getBytes());
-		// os.write(8);
-		// os.flush();
 	}
 }

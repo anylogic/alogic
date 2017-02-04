@@ -29,6 +29,9 @@ import com.anysoft.util.XmlElementProperties;
  *
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.11 [20170203 duanyy] <br>
+ * - 增加部分条件下缺失的文件信息 <br>
  */
 public class ToolImpl implements Tool {
 	/**
@@ -153,6 +156,11 @@ public class ToolImpl implements Tool {
 					if (destFileInfo == null) {
 						// 不可能出现
 					} else {
+						String destPath = JsonTools.getString(destFileInfo, "path", "");
+						long destFileLength = fsSrc.getFileSize(destPath);
+						String destMd5 = getFileDigest(fsSrc, destPath);
+						JsonTools.setLong(destFileInfo, "length", destFileLength);
+						JsonTools.setString(destFileInfo, "md5", destMd5);						
 						progress(watcher, fileInfo, Result.Less, progress / total);
 					}
 				} else {
@@ -352,6 +360,11 @@ public class ToolImpl implements Tool {
 					if (destFileInfo == null) {
 						// 不可能出现
 					} else {
+						String destPath = JsonTools.getString(destFileInfo, "path", "");
+						long destFileLength = fsSrc.getFileSize(destPath);
+						String destMd5 = getFileDigest(fsSrc, destPath);
+						JsonTools.setLong(destFileInfo, "length", destFileLength);
+						JsonTools.setString(destFileInfo, "md5", destMd5);							
 						delete(watcher, fsSrc, pathSrc, fsDest, pathDest, fileInfo, progress / total);
 					}
 				} else {

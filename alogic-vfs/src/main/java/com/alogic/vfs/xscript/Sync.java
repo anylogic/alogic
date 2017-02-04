@@ -20,7 +20,8 @@ import com.anysoft.util.XmlElementProperties;
 /**
  * 目录同步
  * @author yyduan
- *
+ * @version 1.6.7.11 [20170203 duanyy] <br>
+ * - 增加toString实现 <br>
  */
 public class Sync extends AbstractLogiclet {
 	protected String srcId = "$vfs-src";
@@ -105,6 +106,10 @@ public class Sync extends AbstractLogiclet {
 		public String getPath() {
 			return path;
 		}
-		
+	
+		@Override
+		public String toString(){
+			return String.format("%s-%s", vfs,path);
+		}
 	}
 }

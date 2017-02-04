@@ -14,6 +14,7 @@ import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.anysoft.util.DefaultProperties;
+import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Factory;
@@ -22,7 +23,8 @@ import com.anysoft.util.Factory;
  * 打开一个VFS文件系统
  * 
  * @author yyduan
- *
+ * @version 1.6.7.11 [20170203 duanyy] <br>
+ * - 修正属性列表取值问题 <br>
  */
 public class FileSystem extends VFS{
 	
@@ -80,6 +82,7 @@ public class FileSystem extends VFS{
 					super.onExecute(root, current, ctx, watcher);
 				}finally{
 					ctx.removeObject(cid);
+					IOTools.close(filesystem);					
 				}
 			}
 		}finally{

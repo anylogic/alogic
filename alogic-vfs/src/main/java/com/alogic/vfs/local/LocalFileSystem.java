@@ -23,11 +23,18 @@ import com.anysoft.util.StringMatcher;
  *
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.11 [20170203 duanyy] <br>
+ * - 增加toString实现 <br>
  */
 public class LocalFileSystem extends VirtualFileSystem.Abstract {
 	
 	public LocalFileSystem(){
 		
+	}
+	
+	public String toString(){
+		return String.format("%s[file://%s]",id,root);
 	}
 	
 	protected void getFileInfo(File file,Map<String,Object> json){

@@ -16,6 +16,8 @@ import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.code.Coder;
+import com.anysoft.util.code.CoderFactory;
 
 import ch.ethz.ssh2.ChannelCondition;
 import ch.ethz.ssh2.Connection;
@@ -29,6 +31,9 @@ import ch.ethz.ssh2.StreamGobbler;
  * 
  * @author duanyy
  * @since 1.1.10.10
+ * 
+ * @version 1.6.7.11 [20170203 duanyy] <br>
+ * - 支持采用coder加密后的密码 <br>
  */
 public class SSH extends Terminal.Abstract{
 
@@ -41,6 +46,11 @@ public class SSH extends Terminal.Abstract{
 	 * 密码
 	 */
 	protected String password;
+	
+	/**
+	 * 密码编码器
+	 */
+	protected String coder = "DES3";
 	
 	/**
 	 * 端口
@@ -223,7 +233,7 @@ public class SSH extends Terminal.Abstract{
 		password = PropertiesConstants.getString(p,"password",password,true);
 		host = PropertiesConstants.getString(p,"host",host,true);
 		port = PropertiesConstants.getInt(p,"port",port,true);
-		
+		coder = PropertiesConstants.getString(p, "coder", coder);
 		proxyEnable = PropertiesConstants.getBoolean(p, "proxy.enable", proxyEnable,true);
 		
 		proxyUser = PropertiesConstants.getString(p,"proxy.user",null,true);
@@ -256,7 +266,18 @@ public class SSH extends Terminal.Abstract{
 		
 		try {
 			conn.connect();
-            boolean isAuthenticated = conn.authenticateWithPassword(username, password);  
+			
+			String pwd = password;
+			if (StringUtils.isNotEmpty(coder)) {
+				// 通过coder进行密码解密
+				try {
+					Coder c = CoderFactory.newCoder(coder);
+					pwd = c.decode(password, username);
+				} catch (Exception ex) {
+					LOG.error(String.format("Can not encrypt password:%s with %s",password,coder));
+				}
+			}			
+            boolean isAuthenticated = conn.authenticateWithPassword(username, pwd);  
             
             if (!isAuthenticated){ 
             	throw new BaseException("core.ssh_auth","Authentication failed.");			

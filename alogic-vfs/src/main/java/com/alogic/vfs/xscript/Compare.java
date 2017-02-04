@@ -20,7 +20,8 @@ import com.anysoft.util.XmlElementProperties;
 /**
  * 目录比较
  * @author yyduan
- *
+ * @version 1.6.7.11 [20170203 duanyy] <br>
+ * - 增加toString实现 <br>
  */
 public class Compare extends AbstractLogiclet {
 	protected String srcId = "$vfs-src";
@@ -106,5 +107,9 @@ public class Compare extends AbstractLogiclet {
 			return path;
 		}
 		
+		@Override
+		public String toString(){
+			return String.format("%s-%s", vfs,path);
+		}
 	}
 }

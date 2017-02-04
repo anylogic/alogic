@@ -2,6 +2,8 @@ package com.alogic.terminal;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.Configurable;
@@ -16,6 +18,9 @@ import com.anysoft.util.XmlTools;
  * Shell
  * @author duanyy
  * @since 1.1.10.10
+ * 
+ * @version 1.6.7.11 [20170203 duanyy] <br>
+ * - Abstract基类增加公共的Logger <br>
  */
 public interface Terminal extends Configurable,XMLConfigurable,AutoCloseable,Reportable{
 	
@@ -52,7 +57,10 @@ public interface Terminal extends Configurable,XMLConfigurable,AutoCloseable,Rep
 	 *
 	 */
 	public abstract static class Abstract implements Terminal{
-
+		/**
+		 * a logger of slf4j
+		 */
+		protected static final Logger LOG = LoggerFactory.getLogger(Terminal.class);
 		@Override
 		public void configure(Element e, Properties p) {
 			Properties props = new XmlElementProperties(e,p);

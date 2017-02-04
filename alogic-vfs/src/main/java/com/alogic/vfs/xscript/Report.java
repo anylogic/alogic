@@ -1,9 +1,11 @@
 package com.alogic.vfs.xscript;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,7 +23,8 @@ import com.anysoft.util.PropertiesConstants;
 /**
  * 报告实现
  * @author yyduan
- *
+ * @version 1.6.7.11 [20170203 duanyy] <br>
+ * - 支持按结果过滤输出 <br>
  */
 public class Report extends VFS implements Tool.Watcher{
 	/**
@@ -37,6 +40,11 @@ public class Report extends VFS implements Tool.Watcher{
 	 */
 	protected boolean detail = true;
 	
+	/**
+	 * 结果输出的集合
+	 */
+	protected Set<String> logResult = new HashSet<String>();
+	
 	public Report(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -47,6 +55,12 @@ public class Report extends VFS implements Tool.Watcher{
 		
 		cid = PropertiesConstants.getString(p,"cid",cid,true);
 		detail = PropertiesConstants.getBoolean(p, "detail", detail);
+		
+		String result = PropertiesConstants.getString(p,"results","Differ,More,Less,New,Overwrite,Del,Failed",true);
+		String[] results = result.split(",");
+		for (String s:results){
+			logResult.add(s);
+		}
 	}
 	
 	@Override
@@ -74,8 +88,8 @@ public class Report extends VFS implements Tool.Watcher{
 	@Override
 	public void begin(Directory src, Directory dest) {
 		currentStat.clear();
-		log(String.format("SOURCE = %s:%s",src.getFileSystem().id(),src.getPath()));
-		log(String.format("DESTINATION = %s:%s",dest.getFileSystem().id(),dest.getPath()));
+		log(String.format("SOURCE = %s",src));
+		log(String.format("DESTINATION = %s",dest));
 		
 		if (detail){
 			log(String.format("%6s\t|%4s\t|%-32s|%-32s|%-16s|%-16s|%s","Prog","Result","MD5(SRC)","MD5(DEST)","LEN(SRC)","LEN(DEST","FileName"));
@@ -85,7 +99,7 @@ public class Report extends VFS implements Tool.Watcher{
 	@Override
 	public void progress(Directory src, Directory dest, FileInfo fileInfo,
 			Result result, float progress) {
-		if (detail){
+		if (detail && logResult.contains(result.name())){
 			String srcMd5 = fileInfo.srcAttrs() == null ? "":JsonTools.getString(fileInfo.srcAttrs(), "md5", "");
 			String srcLen = fileInfo.srcAttrs() == null ? "":JsonTools.getString(fileInfo.srcAttrs(), "length", "");
 			String destMd5 = fileInfo.destAttrs() == null ? "":JsonTools.getString(fileInfo.destAttrs(), "md5", "");

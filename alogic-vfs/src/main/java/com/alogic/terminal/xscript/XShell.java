@@ -22,13 +22,13 @@ import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
 
 /**
  * Shell插件
  * @author duanyy
- *
+ * @version 1.6.7.11 [20170203 duanyy] <br>
+ * - 指令为空时将忽略，不执行 <br>
  */
 public class XShell extends AbstractLogiclet implements Resolver{
 	
@@ -48,9 +48,7 @@ public class XShell extends AbstractLogiclet implements Resolver{
 
 	@Override
 	public void configure(Element e, Properties p) {
-		Properties props = new XmlElementProperties(e,p);
-		configure(props);
-	
+		super.configure(e, p);
 		//将element的配置保存下来
 		props.Clear();
 		props.loadFromElementAttrs(e);		
@@ -68,7 +66,12 @@ public class XShell extends AbstractLogiclet implements Resolver{
 			
 			String c = elem.getAttribute("value");
 			if (StringUtils.isNotEmpty(c)){
-				cmds.add(c);
+				String [] list = c.split(";");
+				for (String one:list){
+					if (StringUtils.isNotEmpty(one)){
+						cmds.add(one);
+					}
+				}
 			}
 		}		
 	}	
@@ -107,7 +110,9 @@ public class XShell extends AbstractLogiclet implements Resolver{
 					t.connect();
 					for (String cmd:cmds){
 						String transformed = ctx.transform(cmd);
-						t.exec(this,transformed);
+						if (StringUtils.isNotEmpty(transformed)){
+							t.exec(this,transformed);
+						}
 					}
 				}finally{
 					t.disconnect();

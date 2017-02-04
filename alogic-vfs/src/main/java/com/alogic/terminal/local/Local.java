@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alogic.terminal.Command;
 import com.alogic.terminal.Resolver;
 import com.alogic.terminal.Terminal;
@@ -18,7 +20,9 @@ import com.anysoft.util.PropertiesConstants;
  * 本地ProcessBuilder实现
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.7.11 [20170203 duanyy] <br>
+ * - 修正linux操作系统下无cmd指令问题 <br>
  */
 public class Local extends Terminal.Abstract{
 	protected String encoding = "gbk";
@@ -34,19 +38,20 @@ public class Local extends Terminal.Abstract{
 		String[] cmds = command.getCommands();
 		int ret = 0;
 		for (String cmd:cmds){
-			try {
-				cmd = cmd.startsWith("cmd /c")?cmd:"cmd /c " + cmd;
-				ProcessBuilder pb = new ProcessBuilder(cmd.split(" "));
-				
-				pb.redirectErrorStream(true);
-				Process p = pb.start();
-				resolveResult(command,cmd,p.getInputStream());
-				
-				ret = p.waitFor();
-			} catch (IOException e) {
-				throw new BaseException("core.process_error",String.format("Command[%s] execute error:%s",cmd,e.getMessage()));
-			} catch (InterruptedException e) {
-				throw new BaseException("core.process_error",String.format("Command[%s] execute error:%s",cmd,e.getMessage()));
+			if (StringUtils.isNotEmpty(cmd)){
+				try {
+					ProcessBuilder pb = new ProcessBuilder(cmd.split(" "));
+					
+					pb.redirectErrorStream(true);
+					Process p = pb.start();
+					resolveResult(command,cmd,p.getInputStream());
+					
+					ret = p.waitFor();
+				} catch (IOException e) {
+					throw new BaseException("core.process_error",String.format("Command[%s] execute error:%s",cmd,e.getMessage()));
+				} catch (InterruptedException e) {
+					throw new BaseException("core.process_error",String.format("Command[%s] execute error:%s",cmd,e.getMessage()));
+				}
 			}
 		}
 		return ret;
