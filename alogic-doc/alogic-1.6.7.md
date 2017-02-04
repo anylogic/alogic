@@ -47,3 +47,6 @@ alogic-1.6.7
 ### 1.6.7.11 [20170202 duanyy] 
 - alogic-vfs:SSH实现支持密码加密
 
+### 1.6.7.12 [20170204 duanyy] 
+- alogic-core:增加bizlog的handler
+
