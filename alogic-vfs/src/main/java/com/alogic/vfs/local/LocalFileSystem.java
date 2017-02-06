@@ -26,6 +26,9 @@ import com.anysoft.util.StringMatcher;
  * 
  * @version 1.6.7.11 [20170203 duanyy] <br>
  * - 增加toString实现 <br>
+ * 
+ * @version 1.6.7.13 [20170206 duanyy] <br>
+ * - 写文件接口增加permissions参数，以便在创建文件时指定文件的权限 <br>
  */
 public class LocalFileSystem extends VirtualFileSystem.Abstract {
 	
@@ -43,6 +46,17 @@ public class LocalFileSystem extends VirtualFileSystem.Abstract {
 		json.put("executable", file.canExecute());
 		json.put("writable", file.canWrite());
 		json.put("readable", file.canRead());
+		int permission = 0;
+		if (file.canExecute()){
+			permission = permission | 00111;
+		}
+		if (file.canRead()){
+			permission = permission | 00444;
+		}
+		if (file.canWrite()){
+			permission = permission | 00222;
+		}
+		json.put("permission",permission);
 		json.put("lastModified", file.lastModified());
 		json.put("length", file.length());		
 	}
@@ -202,11 +216,19 @@ public class LocalFileSystem extends VirtualFileSystem.Abstract {
 	
 	@Override
 	public OutputStream writeFile(String path) {
+		return writeFile(path,0755);
+	}
+
+	@Override
+	public OutputStream writeFile(String path, int permissions) {
 		String realPath = getRealPath(path);
 		File file = new File(realPath);
 		if (!file.exists()){
 			try {
 				file.createNewFile();
+				file.setExecutable((permissions & 00100) == 00100);
+				file.setReadable((permissions & 00400) == 00400);
+				file.setWritable((permissions & 00200) == 00200);
 				return new FileOutputStream(file);
 			} catch (FileNotFoundException e) {
 				LOG.error(e.getMessage());
@@ -215,11 +237,13 @@ public class LocalFileSystem extends VirtualFileSystem.Abstract {
 			}
 		}
 		return null;
-	}
-
+	}	
+	
 	@Override
 	public void finishWrite(String path, OutputStream out) {
 		IOTools.close(out);
 	}
+
+
 
 }

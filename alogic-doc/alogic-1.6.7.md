@@ -50,3 +50,6 @@ alogic-1.6.7
 ### 1.6.7.12 [20170204 duanyy] 
 - alogic-core:增加bizlog的handler
 
+### 1.6.7.13 [20170206 duanyy]
+- alogic-vfs:写文件接口增加permissions参数，以便在创建文件时指定文件的权限
+

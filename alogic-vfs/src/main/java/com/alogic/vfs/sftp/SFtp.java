@@ -35,6 +35,9 @@ import ch.ethz.ssh2.SFTPv3FileHandle;
  * 
  * @version 1.6.7.11 [20170203 duanyy] <br>
  * - 增加toString实现 <br>
+ * 
+ * @version 1.6.7.13 [20170206 duanyy] <br>
+ * - 写文件接口增加permissions参数，以便在创建文件时指定文件的权限 <br>
  */
 
 public class SFtp extends VirtualFileSystem.Abstract {
@@ -390,12 +393,14 @@ public class SFtp extends VirtualFileSystem.Abstract {
 	}
 
 	@Override
-	public OutputStream writeFile(String path) {
+	public OutputStream writeFile(String path, int permissions) {
 		final SFTPv3Client client = getClient();
 		String realPath = getRealPath(path);
 		try {
 			if (!exist(path)) {
-				final SFTPv3FileHandle handle = client.createFile(realPath);
+				SFTPv3FileAttributes fileAttr = new SFTPv3FileAttributes();
+				fileAttr.permissions = permissions;
+				final SFTPv3FileHandle handle = client.createFile(realPath,fileAttr);
 
 				OutputStream out = new OutputStream() {
 					private boolean isClosed = false;
@@ -455,7 +460,12 @@ public class SFtp extends VirtualFileSystem.Abstract {
 		} catch (IOException e) {
 			LOG.error(e.getMessage());
 			return null;
-		}
+		}		
+	}	
+	
+	@Override
+	public OutputStream writeFile(String path) {
+		return writeFile(path,0755);
 	}
 
 	@Override

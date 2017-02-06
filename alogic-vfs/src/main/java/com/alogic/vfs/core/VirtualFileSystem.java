@@ -24,6 +24,9 @@ import com.anysoft.util.XmlElementProperties;
 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.13 [20170206 duanyy] <br>
+ * - 写文件接口增加permissions参数，以便在创建文件时指定文件的权限 <br>
  */
 public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigurable,Reportable{
 	
@@ -136,6 +139,14 @@ public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigu
 	public OutputStream writeFile(String path);
 	
 	/**
+	 * 写入文件
+	 * @param path 文件的路径
+	 * @param permissions 文件权限
+	 * @return 文件的输出流，如果不允许创建新的文件 ，返回为空
+	 */
+	public OutputStream writeFile(String path,int permissions);	
+	
+	/**
 	 * 完成文件写入
 	 * @param path 文件的路径
 	 * @param out 文件的输出流
@@ -196,7 +207,12 @@ public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigu
 		public void listFiles(String path,
 				Map<String, Object> json, int offset, int limit) {
 			listFiles(path,dftPattern,json,offset,limit);
-		}		
+		}	
+		
+		@Override
+		public OutputStream writeFile(String path, int permissions) {
+			return writeFile(path);
+		}
 		
 		@Override
 		public void report(Element xml) {

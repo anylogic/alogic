@@ -32,6 +32,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.7.11 [20170203 duanyy] <br>
  * - 增加部分条件下缺失的文件信息 <br>
+ * 
+ * @version 1.6.7.13 [20170206 duanyy] <br>
+ * - 支持按照源文件的权限来创建目的文件 <br>
  */
 public class ToolImpl implements Tool {
 	/**
@@ -466,7 +469,9 @@ public class ToolImpl implements Tool {
 					if (!fsDest.exist(destParent)) {
 						fsDest.makeDirs(destPath);
 					}
-					OutputStream out = fsDest.writeFile(destPath);
+					
+					int permissions = JsonTools.getInt(fileInfo.srcAttrs, "permission", 0755);
+					OutputStream out = fsDest.writeFile(destPath,permissions);
 					if (out != null) {
 						try {
 							byte[] buffer = new byte[10240];
@@ -518,7 +523,8 @@ public class ToolImpl implements Tool {
 				if (!fsDest.exist(destParent)) {
 					fsDest.makeDirs(destParent);
 				}
-				OutputStream out = fsDest.writeFile(destPath);
+				int permissions = JsonTools.getInt(fileInfo.srcAttrs, "permission", 0755);
+				OutputStream out = fsDest.writeFile(destPath,permissions);
 				if (out != null) {
 					try {
 						byte[] buffer = new byte[10240];
