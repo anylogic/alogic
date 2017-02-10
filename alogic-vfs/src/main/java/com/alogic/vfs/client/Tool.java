@@ -9,7 +9,8 @@ import com.anysoft.util.XMLConfigurable;
  * 工具
  * 
  * @author duanyy
- *
+ * @version 1.6.7.14 [20170210 duanyy] <br>
+ * - 增加{@link #addSource(Directory)}方法，以便支持多来源目录 <br>
  */
 public interface Tool extends Configurable,XMLConfigurable{	
 	/**
@@ -17,6 +18,12 @@ public interface Tool extends Configurable,XMLConfigurable{
 	 * @param src 源目录
 	 */
 	public void setSource(Directory src);
+	
+	/**
+	 * 增加扩展的源目录
+	 * @param src 源目录
+	 */
+	public void addSource(Directory src);
 	
 	/**
 	 * 获取源目录

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -26,20 +27,10 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @author duanyy
  *
- * @version 1.6.7.9 [20170201 duanyy] <br>
- * - 采用SLF4j日志框架输出日志 <br>
- * 
- * @version 1.6.7.11 [20170203 duanyy] <br>
- * - 增加部分条件下缺失的文件信息 <br>
- * 
- * @version 1.6.7.13 [20170206 duanyy] <br>
- * - 支持按照源文件的权限来创建目的文件 <br>
- * 
- * @version 1.6.7.14 [20170210 duanyy] <br>
- * - 修正文件比较和文件同步时信息填入问题 <br>
+ * @since 1.6.7.14
  * 
  */
-public class ToolImpl implements Tool {
+public class ToolImpl2 implements Tool {
 	/**
 	 * a logger of log4j
 	 */
@@ -54,6 +45,11 @@ public class ToolImpl implements Tool {
 	 * 目的目录
 	 */
 	private Directory destination;
+	
+	/**
+	 * 扩展的源目录
+	 */
+	private List<Directory> extSources = new ArrayList<Directory>();
 
 	@Override
 	public void configure(Properties p) {
@@ -73,7 +69,11 @@ public class ToolImpl implements Tool {
 
 	@Override
 	public void addSource(Directory src){
-		source = src;
+		if (source == null){
+			source = src;
+		}else{
+			extSources.add(src);
+		}
 	}
 	
 	@Override
@@ -117,35 +117,23 @@ public class ToolImpl implements Tool {
 			progress(watcher, "Destination directory is null, i can not go..", "error", 1.0f);
 			return;
 		}
-
-		VirtualFileSystem fsSrc = theSrc.getFileSystem();
-		if (fsSrc == null) {
-			progress(watcher, "Source vfs is null, i can not go ...", "error", 1.0f);
-			return;
-		}
-		String pathSrc = theSrc.getPath();
-
-		VirtualFileSystem fsDest = theDest.getFileSystem();
-		if (fsDest == null) {
-			progress(watcher, "Destination vfs is null, i can not go ...", "error", 1.0f);
-			return;
-		}
-		String pathDest = theDest.getPath();
-
-		compare(watcher, fsSrc, pathSrc, fsDest, pathDest);
+		compare(watcher,theSrc,theDest,extSources);
 	}
 
-	private void compare(Watcher watcher, VirtualFileSystem fsSrc, String pathSrc, VirtualFileSystem fsDest,
-			String pathDest) {
+	private void compare(Watcher watcher, Directory theSrc, Directory theDest,
+			List<Directory> extSrcs) {
 		if (watcher != null) {
-			watcher.begin(source, destination);
+			watcher.begin(theSrc, theDest);
 		}
 
 		FileList fileList = new FileList();
 
 		try {
-			buildSrcFileList(fileList, "", fsSrc, pathSrc);
-			buildDestFileList(fileList, "", fsDest, pathDest);
+			buildSrcFileList(fileList, "", theSrc,theSrc.getPath());
+			for (Directory extSrc:extSrcs){
+				buildSrcFileList(fileList, "", extSrc,extSrc.getPath());
+			}
+			buildDestFileList(fileList, "", theDest,theDest.getPath());
 		} catch (Exception e) {
 			progress(watcher, "Getting FileList is error,please check your parameters...", "error", 1.0f);
 		}
@@ -167,6 +155,7 @@ public class ToolImpl implements Tool {
 					if (destFileInfo == null) {
 						// 不可能出现
 					} else {
+						VirtualFileSystem fsDest = fileInfo.getDestDirectory().getFileSystem();
 						String destPath = JsonTools.getString(destFileInfo, "path", "");
 						long destFileLength = fsDest.getFileSize(destPath);
 						String destMd5 = getFileDigest(fsDest, destPath);
@@ -177,6 +166,7 @@ public class ToolImpl implements Tool {
 				} else {
 					if (destFileInfo == null) {
 						// 增加源端的md5和文件大小信息
+						VirtualFileSystem fsSrc = fileInfo.getSrcDirectory().getFileSystem();
 						String srcPath = JsonTools.getString(srcFileInfo, "path", "");
 						long srcFileLength = fsSrc.getFileSize(srcPath);
 						String srcMd5 = getFileDigest(fsSrc, srcPath);
@@ -191,6 +181,8 @@ public class ToolImpl implements Tool {
 						if (StringUtils.isEmpty(srcPath) || StringUtils.isEmpty(destPath)) {
 							// 不可能出现
 						} else {
+							VirtualFileSystem fsDest = fileInfo.getDestDirectory().getFileSystem();
+							VirtualFileSystem fsSrc = fileInfo.getSrcDirectory().getFileSystem();
 							long srcFileLength = fsSrc.getFileSize(srcPath);
 							long destFileLength = fsDest.getFileSize(destPath);
 
@@ -219,7 +211,82 @@ public class ToolImpl implements Tool {
 		}
 
 		if (watcher != null) {
-			watcher.end(source, destination);
+			watcher.end(theSrc, theDest);
+		}		
+	}
+	
+	private void buildDestFileList(FileList fileList, String uPath,
+			Directory theDest,String path) {
+		VirtualFileSystem fs = theDest.getFileSystem();
+		if (fs == null) {
+			return;
+		}			
+		List<Map<String, Object>> srcList = getFileList(fs, path);
+		if (srcList != null) {
+			for (Map<String, Object> fileInfo : srcList) {
+				String name = JsonTools.getString(fileInfo, "name", "");
+				if (StringUtils.isEmpty(name)) {
+					LOG.warn("Can not find name attr in file info.");
+					continue;
+				}
+				String uid = uPath + File.separator + name;
+				boolean isDir = JsonTools.getBoolean(fileInfo, "dir", false);
+				if (isDir) {
+					buildDestFileList(fileList, uid, theDest, path + File.separator + name);
+				} else {
+					fileInfo.put("path", path + File.separator + name);
+					// 文件在fileList中是否已经存在
+					TheFileInfo found = fileList.get(uid);
+					if (found == null) {
+						// 不存在，新建
+						found = new TheFileInfo(uid, uPath);
+						found.destAttrs(fileInfo);
+						found.setDestDirectory(theDest);
+						fileList.put(uid, found);
+					} else {
+						found.destAttrs(fileInfo);
+						found.setDestDirectory(theDest);
+					}
+				}
+			}
+		}
+	}
+
+	private void buildSrcFileList(FileList fileList, String uPath,
+			Directory theSrc,String path) {
+		// 先扫描源目录的文件列表
+		VirtualFileSystem fs = theSrc.getFileSystem();
+		if (fs == null) {
+			return;
+		}	
+		List<Map<String, Object>> srcList = getFileList(fs, path);
+		if (srcList != null) {
+			for (Map<String, Object> fileInfo : srcList) {
+				String name = JsonTools.getString(fileInfo, "name", "");
+				if (StringUtils.isEmpty(name)) {
+					LOG.warn("Can not find name attr in file info.");
+					continue;
+				}
+				String uid = uPath + File.separator + name;
+				boolean isDir = JsonTools.getBoolean(fileInfo, "dir", false);
+				if (isDir) {
+					buildSrcFileList(fileList, uid, theSrc, path + File.separator + name);
+				} else {
+					fileInfo.put("path", path + File.separator + name);
+					// 文件在fileList中是否已经存在
+					TheFileInfo found = fileList.get(uid);
+					if (found == null) {
+						// 不存在，新建
+						found = new TheFileInfo(uid, uPath);
+						found.srcAttrs(fileInfo);
+						found.setSrcDirectory(theSrc);
+						fileList.put(uid, found);
+					} else {
+						found.srcAttrs(fileInfo);
+						found.setSrcDirectory(theSrc);
+					}
+				}
+			}
 		}
 	}
 
@@ -236,68 +303,6 @@ public class ToolImpl implements Tool {
 			fs.finishRead(path, in);
 		}
 		return null;
-	}
-
-	private void buildSrcFileList(FileList fileList, String uPath, VirtualFileSystem fs, String path) {
-		// 先扫描源目录的文件列表
-		List<Map<String, Object>> srcList = getFileList(fs, path);
-		if (srcList != null) {
-			for (Map<String, Object> fileInfo : srcList) {
-				String name = JsonTools.getString(fileInfo, "name", "");
-				if (StringUtils.isEmpty(name)) {
-					LOG.warn("Can not find name attr in file info.");
-					continue;
-				}
-				String uid = uPath + File.separator + name;
-				boolean isDir = JsonTools.getBoolean(fileInfo, "dir", false);
-				if (isDir) {
-					buildSrcFileList(fileList, uid, fs, path + File.separator + name);
-				} else {
-					fileInfo.put("path", path + File.separator + name);
-					// 文件在fileList中是否已经存在
-					TheFileInfo found = fileList.get(uid);
-					if (found == null) {
-						// 不存在，新建
-						found = new TheFileInfo(uid, uPath);
-						found.srcAttrs(fileInfo);
-						fileList.put(uid, found);
-					} else {
-						found.srcAttrs(fileInfo);
-					}
-				}
-			}
-		}
-	}
-
-	private void buildDestFileList(FileList fileList, String uPath, VirtualFileSystem fs, String path) {
-		// 先扫描源目录的文件列表
-		List<Map<String, Object>> srcList = getFileList(fs, path);
-		if (srcList != null) {
-			for (Map<String, Object> fileInfo : srcList) {
-				String name = JsonTools.getString(fileInfo, "name", "");
-				if (StringUtils.isEmpty(name)) {
-					LOG.warn("Can not find name attr in file info.");
-					continue;
-				}
-				String uid = uPath + File.separator + name;
-				boolean isDir = JsonTools.getBoolean(fileInfo, "dir", false);
-				if (isDir) {
-					buildDestFileList(fileList, uid, fs, path + File.separator + name);
-				} else {
-					fileInfo.put("path", path + File.separator + name);
-					// 文件在fileList中是否已经存在
-					TheFileInfo found = fileList.get(uid);
-					if (found == null) {
-						// 不存在，新建
-						found = new TheFileInfo(uid, uPath);
-						found.destAttrs(fileInfo);
-						fileList.put(uid, found);
-					} else {
-						found.destAttrs(fileInfo);
-					}
-				}
-			}
-		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -322,34 +327,22 @@ public class ToolImpl implements Tool {
 			return;
 		}
 
-		VirtualFileSystem fsSrc = theSrc.getFileSystem();
-		if (fsSrc == null) {
-			progress(watcher, "Source vfs is null, i can not go ...", "error", 1.0f);
-			return;
-		}
-		String pathSrc = theSrc.getPath();
-
-		VirtualFileSystem fsDest = theDest.getFileSystem();
-		if (fsDest == null) {
-			progress(watcher, "Destination vfs is null, i can not go ...", "error", 1.0f);
-			return;
-		}
-		String pathDest = theDest.getPath();
-
-		sync(watcher, fsSrc, pathSrc, fsDest, pathDest);
+		sync(watcher, theSrc,theDest,extSources);
 	}
 
-	private void sync(Watcher watcher, VirtualFileSystem fsSrc, String pathSrc, VirtualFileSystem fsDest,
-			String pathDest) {
+	private void sync(Watcher watcher, Directory theSrc,Directory theDest,List<Directory> extSrcs) {
 		if (watcher != null) {
-			watcher.begin(source, destination);
+			watcher.begin(theSrc, theDest);
 		}
 
 		FileList fileList = new FileList();
 
 		try {
-			buildSrcFileList(fileList, "", fsSrc, pathSrc);
-			buildDestFileList(fileList, "", fsDest, pathDest);
+			buildSrcFileList(fileList, "", theSrc,theSrc.getPath());
+			for (Directory extSrc:extSrcs){
+				buildSrcFileList(fileList, "", extSrc,extSrc.getPath());
+			}
+			buildDestFileList(fileList, "", theDest,theDest.getPath());
 		} catch (Exception e) {
 			progress(watcher, "Getting FileList is error,please check your parameters...", "error", 1.0f);
 		}
@@ -371,23 +364,25 @@ public class ToolImpl implements Tool {
 					if (destFileInfo == null) {
 						// 不可能出现
 					} else {
+						VirtualFileSystem fsDest = fileInfo.getDestDirectory().getFileSystem();					
 						String destPath = JsonTools.getString(destFileInfo, "path", "");
 						long destFileLength = fsDest.getFileSize(destPath);
 						String destMd5 = getFileDigest(fsDest, destPath);
 						JsonTools.setLong(destFileInfo, "length", destFileLength);
 						JsonTools.setString(destFileInfo, "md5", destMd5);							
-						delete(watcher, fsSrc, pathSrc, fsDest, pathDest, fileInfo, progress / total);
+						delete(watcher, fileInfo, progress / total);
 					}
 				} else {
 					if (destFileInfo == null) {
 						// 增加源端的md5和文件大小信息
+						VirtualFileSystem fsSrc = fileInfo.getSrcDirectory().getFileSystem();						
 						String srcPath = JsonTools.getString(srcFileInfo, "path", "");
 						long srcFileLength = fsSrc.getFileSize(srcPath);
 						String srcMd5 = getFileDigest(fsSrc, srcPath);
 						JsonTools.setLong(srcFileInfo, "length", srcFileLength);
 						JsonTools.setString(srcFileInfo, "md5", srcMd5);
 
-						add(watcher, fsSrc, pathSrc, fsDest, pathDest, fileInfo, progress / total);
+						add(watcher,fileInfo, progress / total);
 					} else {
 						String srcPath = JsonTools.getString(srcFileInfo, "path", "");
 						String destPath = JsonTools.getString(destFileInfo, "path", "");
@@ -395,6 +390,8 @@ public class ToolImpl implements Tool {
 						if (StringUtils.isEmpty(srcPath) || StringUtils.isEmpty(destPath)) {
 							// 不可能出现
 						} else {
+							VirtualFileSystem fsDest = fileInfo.getDestDirectory().getFileSystem();
+							VirtualFileSystem fsSrc = fileInfo.getSrcDirectory().getFileSystem();						
 							long srcFileLength = fsSrc.getFileSize(srcPath);
 							long destFileLength = fsDest.getFileSize(destPath);
 
@@ -414,9 +411,9 @@ public class ToolImpl implements Tool {
 							JsonTools.setString(destFileInfo, "md5", destMd5);
 
 							if (!same) {
-								overwrite(watcher, fsSrc, pathSrc, fsDest, pathDest, fileInfo, progress / total);
+								overwrite(watcher, fileInfo, progress / total);
 							} else {
-								keep(watcher, fsSrc, pathSrc, fsDest, pathDest, fileInfo, progress / total);
+								keep(watcher,fileInfo, progress / total);
 							}
 						}
 					}
@@ -431,13 +428,11 @@ public class ToolImpl implements Tool {
 		}
 	}
 
-	private void keep(Watcher watcher, VirtualFileSystem fsSrc, String pathSrc, VirtualFileSystem fsDest,
-			String pathDest, TheFileInfo fileInfo, float f) {
+	private void keep(Watcher watcher,TheFileInfo fileInfo, float f) {
 		progress(watcher, fileInfo, Result.Keep, f);
 	}
 
-	protected void overwrite(Watcher watcher, VirtualFileSystem fsSrc, String pathSrc, VirtualFileSystem fsDest,
-			String pathDest, TheFileInfo fileInfo, float f) {
+	protected void overwrite(Watcher watcher, TheFileInfo fileInfo, float f) {
 		Map<String, Object> destAttrs = fileInfo.destAttrs();
 		if (destAttrs == null) {
 			// 不可能发生
@@ -451,9 +446,10 @@ public class ToolImpl implements Tool {
 			progress(watcher, fileInfo, Result.Failed, f);
 			return;
 		}
-
+		VirtualFileSystem fsDest = fileInfo.getDestDirectory().getFileSystem();
+		VirtualFileSystem fsSrc = fileInfo.getSrcDirectory().getFileSystem();
 		boolean delete = fsDest.deleteFile(delPath);
-
+		String pathDest = fileInfo.getDestDirectory().getPath();
 		if (delete) {
 			Map<String, Object> fileAttrs = fileInfo.srcAttrs();
 			if (fileAttrs == null) {
@@ -507,8 +503,7 @@ public class ToolImpl implements Tool {
 		}
 	}
 
-	protected void add(Watcher watcher, VirtualFileSystem fsSrc, String pathSrc, VirtualFileSystem fsDest,
-			String pathDest, TheFileInfo fileInfo, float f) {
+	protected void add(Watcher watcher, TheFileInfo fileInfo, float f) {
 		Map<String, Object> fileAttrs = fileInfo.srcAttrs();
 		if (fileAttrs == null) {
 			// 不可能发生
@@ -522,7 +517,13 @@ public class ToolImpl implements Tool {
 			progress(watcher, fileInfo, Result.Failed, f);
 			return;
 		}
-
+		Directory destDir = fileInfo.getDestDirectory();
+		if (destDir == null){
+			destDir = getDestination();
+		}
+		VirtualFileSystem fsDest = destDir.getFileSystem();
+		VirtualFileSystem fsSrc = fileInfo.getSrcDirectory().getFileSystem();
+		String pathDest = destDir.getPath();
 		InputStream in = fsSrc.readFile(srcPath);
 		if (in != null) {
 			try {
@@ -557,8 +558,7 @@ public class ToolImpl implements Tool {
 		}
 	}
 
-	protected void delete(Watcher watcher, VirtualFileSystem fsSrc, String pathSrc, VirtualFileSystem fsDest,
-			String pathDest, TheFileInfo fileInfo, float f) {
+	protected void delete(Watcher watcher,TheFileInfo fileInfo, float f) {
 		Map<String, Object> fileAttrs = fileInfo.destAttrs();
 		if (fileAttrs == null) {
 			// 不可能发生
@@ -573,6 +573,7 @@ public class ToolImpl implements Tool {
 			return;
 		}
 
+		VirtualFileSystem fsDest = fileInfo.getDestDirectory().getFileSystem();
 		boolean delete = fsDest.deleteFile(path);
 
 		if (delete) {
@@ -591,6 +592,8 @@ public class ToolImpl implements Tool {
 	public static class TheFileInfo implements FileInfo {
 		private String uid;
 		private String uParent;
+		private Directory srcDir;
+		private Directory destDir;
 
 		private Map<String, Object> srcAttrs;
 		private Map<String, Object> destAttrs;
@@ -600,6 +603,22 @@ public class ToolImpl implements Tool {
 			uParent = parent;
 		}
 
+		public void setSrcDirectory(Directory src){
+			srcDir = src;
+		}
+		
+		public void setDestDirectory(Directory dest){
+			destDir = dest;
+		}
+		
+		public Directory getSrcDirectory(){
+			return srcDir;
+		}
+		
+		public Directory getDestDirectory(){
+			return destDir;
+		}
+		
 		@Override
 		public String uPath() {
 			return uid;
@@ -639,4 +658,5 @@ public class ToolImpl implements Tool {
 	public static class FileList extends Hashtable<String, TheFileInfo> {
 		private static final long serialVersionUID = 1L;
 	}
+
 }

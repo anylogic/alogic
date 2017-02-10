@@ -53,3 +53,7 @@ alogic-1.6.7
 ### 1.6.7.13 [20170206 duanyy]
 - alogic-vfs:写文件接口增加permissions参数，以便在创建文件时指定文件的权限
 
+### 1.6.7.14 [20170210 duanyy]
+- alogic-vfs:修正文件比较和文件同步时信息填入问题
+- alogic-vfs:支持多来源的check和sync操作
+

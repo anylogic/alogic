@@ -2,11 +2,12 @@ package com.alogic.vfs.xscript;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import com.alogic.vfs.client.Directory;
 import com.alogic.vfs.client.Tool;
-import com.alogic.vfs.client.ToolImpl;
+import com.alogic.vfs.client.ToolImpl2;
 import com.alogic.vfs.core.VirtualFileSystem;
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
@@ -27,8 +28,8 @@ public class Sync extends AbstractLogiclet {
 	protected String srcId = "$vfs-src";
 	protected String destId = "$vfs-dest";
 	protected String reportId = "$vfs-report";
-	protected String srcPath = "/";
-	protected String destPath = "/";
+	protected String srcPath = "$vfs-src:/";
+	protected String destPath = "$vfs-dest:/";
 	
 	public Sync(String tag, Logiclet p) {
 		super(tag, p);
@@ -49,29 +50,57 @@ public class Sync extends AbstractLogiclet {
 	protected void onExecute(Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
-		
-		VirtualFileSystem src = ctx.getObject(srcId);
-		if (src == null){
-			throw new BaseException("core.no_vfs_context",String.format("Can not find vfs:%s", srcId));
-		}
-		VirtualFileSystem dest = ctx.getObject(destId);
-		if (dest == null){
-			throw new BaseException("core.no_vfs_context",String.format("Can not find vfs:%s", destId));
-		}
-		
 		String srcPathValue = ctx.transform(srcPath);
 		String destPathValue = ctx.transform(destPath);
 		
 		Tool.Watcher report = ctx.getObject(reportId);
 		
-		Tool tool = new ToolImpl();
+		Tool tool = new ToolImpl2();
 		
-		tool.setSource(new Dir(srcPathValue,src));
-		tool.setDestination(new Dir(destPathValue,dest));
+		String [] paths = srcPathValue.split(";");
+		for (String path:paths){
+			String vfsId = getVFSId(path,srcId);
+			String vfsPath = getVFSPath(path,"/");
+			
+			VirtualFileSystem src = ctx.getObject(vfsId);
+			if (src == null){
+				throw new BaseException("core.no_vfs_context",String.format("Can not find vfs:%s", vfsId));
+			}
+			
+			tool.addSource(new Dir(vfsPath,src));
+		}
+		
+		String destVFSId = getVFSId(destPathValue,destId);
+		String destVFSPath = getVFSPath(destPathValue,"/");
+		
+		VirtualFileSystem dest = ctx.getObject(destVFSId);
+		if (dest == null){
+			throw new BaseException("core.no_vfs_context",String.format("Can not find vfs:%s", destVFSId));
+		}
+		
+		tool.setDestination(new Dir(destVFSPath,dest));
 		
 		tool.sync(report);
 	}
+	
+	protected String getVFSId(String path,String dft){
+		String [] vals = path.split(":");
+		if (vals.length == 1){
+			return dft;
+		}
+		
+		return StringUtils.isEmpty(vals[0])?dft:vals[0];
+	}
 
+	protected String getVFSPath(String path,String dft){
+		String [] vals = path.split(":");
+		if (vals.length == 1){
+			return StringUtils.isEmpty(vals[0])?dft:vals[0];
+		}
+		
+		return StringUtils.isEmpty(vals[1])?dft:vals[1];
+	}
+	
 	/**
 	 * 目录
 	 * @author yyduan
