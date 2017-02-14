@@ -82,7 +82,7 @@ public class Compare extends AbstractLogiclet {
 		
 		tool.setDestination(new Dir(destVFSPath,dest));
 		
-		tool.sync(report);
+		tool.compare(report);
 	}
 
 	protected String getVFSId(String path,String dft){

@@ -57,3 +57,4 @@ alogic-1.6.7
 - alogic-vfs:修正文件比较和文件同步时信息填入问题
 - alogic-vfs:支持多来源的check和sync操作
 
+
