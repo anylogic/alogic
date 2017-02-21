@@ -57,4 +57,10 @@ alogic-1.6.7
 - alogic-vfs:修正文件比较和文件同步时信息填入问题
 - alogic-vfs:支持多来源的check和sync操作
 
+### 1.6.7.15 [20170216 duanyy]
+- alogic-rpc:增加rpc框架
+- alogic-core:为部分Message增加Content-Length字段，以便支持keep-alive
+- alogic-core:增加bizlog.enable环境变量，以便关闭bizlog
+- alogic-core:增加acm.enable环境变量，以便关闭ac控制器
+
 

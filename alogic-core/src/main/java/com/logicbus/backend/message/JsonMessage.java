@@ -44,6 +44,9 @@ import com.logicbus.backend.message.Message;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.15 [20170221 duanyy] <br>
+ * - 输出时设置Content-Length以便支持keepalive <br>
  */
 public class JsonMessage implements Message {
 	protected static final Logger logger = LoggerFactory.getLogger(JsonMessage.class);
@@ -135,6 +138,7 @@ public class JsonMessage implements Message {
 			ctx.setResponseContentType(contentType);
 			byte [] bytes = data.getBytes(ctx.getEncoding());
 			contentLength += bytes.length;
+			ctx.setResponseContentLength(bytes.length);
 			Context.writeToOutpuStream(out, bytes);
 			out.flush();
 		}catch (Exception ex){

@@ -260,6 +260,11 @@ public class HttpContext extends Context {
 	public void setResponseContentType(String contentType) {
 		response.setContentType(contentType);
 	}
+	
+	@Override
+	public void setResponseContentLength(int contentLength) {
+		response.setContentLength(contentLength);
+	}
 
 	@Override
 	public InputStream getInputStream() throws IOException{
@@ -331,4 +336,6 @@ public class HttpContext extends Context {
 		
 		return bos.toByteArray();
 	}
+
+
 }

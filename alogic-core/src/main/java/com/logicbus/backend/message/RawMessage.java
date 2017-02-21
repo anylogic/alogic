@@ -35,6 +35,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.15 [20170221 duanyy] <br>
+ * - 输出时设置Content-Length以便支持keepalive <br>
  */
 public class RawMessage implements Message {
 	protected static final Logger logger = LoggerFactory.getLogger(RawMessage.class);	
@@ -98,6 +101,7 @@ public class RawMessage implements Message {
 			ctx.setResponseContentType(contentType);
 			out = ctx.getOutputStream();
 			byte [] bytes = buf.toString().getBytes(ctx.getEncoding());
+			ctx.setResponseContentLength(bytes.length);
 			contentLength += bytes.length;
 			Context.writeToOutpuStream(out, bytes);
 			out.flush();

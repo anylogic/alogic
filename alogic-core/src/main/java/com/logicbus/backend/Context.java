@@ -49,6 +49,9 @@ import com.logicbus.backend.message.Message;
  * 
  * @version 1.6.7.4 [20170118 duanyy] <br>
  * - 服务耗时单位改为ns <br>
+ * 
+ * @version 1.6.7.15 [20170221 duanyy] <br>
+ * - 增加设置Content-Length接口 <br>
  */
 public abstract class Context extends DefaultProperties implements DataProvider{
 	/**
@@ -275,6 +278,8 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	 * @param contentType
 	 */
 	abstract public void setResponseContentType(String contentType);
+	
+	abstract public void setResponseContentLength(int contentLength);
 	
 	abstract public String getQueryString();
 	

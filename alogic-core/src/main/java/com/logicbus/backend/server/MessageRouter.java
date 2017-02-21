@@ -83,6 +83,10 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.15 [20170221 duanyy] <br>
+ * - 增加bizlog.enable环境变量，以便关闭bizlog <br>
+ * - 增加acm.enable环境变量，以便关闭ac控制器 <br>
  */
 public class MessageRouter {
 	
@@ -121,7 +125,7 @@ public class MessageRouter {
 
 			//通过访问控制器获取访问优先级
 			int priority = 0;			
-			if (null != ac){
+			if (acmEnable && null != ac){
 				sessionId = ac.createSessionId(id, pool.getDescription(), ctx);
 				priority = ac.accessStart(sessionId,id, pool.getDescription(), ctx);
 				if (priority < 0){
@@ -170,11 +174,11 @@ public class MessageRouter {
 					pool.returnObject(servant);		
 				}				
 				pool.visited(ctx.getDuration(),ctx.getReturnCode());
-				if (ac != null){
+				if (acmEnable && ac != null){
 					ac.accessEnd(sessionId,id, pool.getDescription(), ctx);
 				}				
 			}						
-			if (bizLogger != null){				
+			if (bizlogEnable && bizLogger != null){				
 				//需要记录日志
 				log(id,sessionId,pool == null ? null : pool.getDescription(),ctx);
 			}
@@ -222,12 +226,16 @@ public class MessageRouter {
 	protected static boolean tracerEnable = false;
 	protected static BizLogger bizLogger = null;
 	protected static ServantFactory servantFactory = null;
+	protected static boolean bizlogEnable = true;
+	protected static boolean acmEnable = true;
 	static {
 		Settings settings = Settings.get();
 		
 		//初始化threadMode
 		threadMode = PropertiesConstants.getBoolean(settings, "servant.threadMode", true);
 		tracerEnable = PropertiesConstants.getBoolean(settings, "tracer.servant.enable", false);
+		bizlogEnable = PropertiesConstants.getBoolean(settings, "bizlog.enable", true);
+		acmEnable = PropertiesConstants.getBoolean(settings, "acm.enable", true);
 		bizLogger = (BizLogger) settings.get("bizLogger");
 		
 		servantFactory = (ServantFactory) settings.get("servantFactory");
