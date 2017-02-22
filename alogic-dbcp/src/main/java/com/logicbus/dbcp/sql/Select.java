@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import com.alogic.tracer.Tool;
+import com.alogic.tracer.TraceContext;
 import com.anysoft.util.BaseException;
 
 /**
@@ -46,7 +48,9 @@ public class Select extends DBOperation {
 	 */
 	public Select execute(String sql,Object... params) throws BaseException{
 		close();
-		
+		TraceContext tc = traceEnable()?Tool.start():null;
+		boolean error = false;	
+		String msg = sql;
 		try {
 			stmt = conn.prepareStatement(sql);
 			
@@ -60,7 +64,13 @@ public class Select extends DBOperation {
 			return this;
 		}
 		catch (SQLException ex){
+			error = true;
+			msg = sql + "->" + ex.getMessage();
 			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+		}finally{
+			if (traceEnable() && tc != null){
+				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", msg);
+			}
 		}
 	}
 	

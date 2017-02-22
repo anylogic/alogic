@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.alogic.tracer.Tool;
+import com.alogic.tracer.TraceContext;
 import com.anysoft.util.BaseException;
 
 
@@ -41,6 +43,9 @@ public class Update extends DBOperation {
 	 */
 	public int execute(String sql,Object...params) throws BaseException{
 		PreparedStatement stmt = null;
+		TraceContext tc = traceEnable()?Tool.start():null;
+		boolean error = false;
+		String msg = sql;
 		try {
 			stmt = conn.prepareStatement(sql);
 			
@@ -52,10 +57,15 @@ public class Update extends DBOperation {
 			
 			return stmt.executeUpdate();
 		}catch (SQLException ex){
+			error = true;
+			msg = msg + "->" + ex.getMessage();
 			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
 		}
 		finally{
 			close(stmt);
+			if (traceEnable() && tc != null){
+				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", sql);
+			}
 		}
 	}
 	
@@ -67,6 +77,9 @@ public class Update extends DBOperation {
 	 */
 	public int[] executeBatch(String...sqls) throws BaseException{
 		Statement stmt = null;
+		TraceContext tc = traceEnable()?Tool.start():null;
+		boolean error = false;
+		String msg = sqls.toString();
 		try {
 			stmt = conn.createStatement();
 			
@@ -75,10 +88,15 @@ public class Update extends DBOperation {
 			}			
 			return stmt.executeBatch();
 		}catch (SQLException ex){
+			error = true;
+			msg = msg + "->" + ex.getMessage();
 			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
 		}
 		finally{
 			close(stmt);
+			if (traceEnable() && tc != null){
+				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", msg);
+			}
 		}
 	}
 }

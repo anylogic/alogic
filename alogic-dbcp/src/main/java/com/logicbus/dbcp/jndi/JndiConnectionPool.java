@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
 
 import com.alogic.metrics.stream.MetricsCollector;
 import com.logicbus.dbcp.core.ConnectionPool;
-import com.logicbus.dbcp.sql.SQLTools;
+import com.logicbus.dbcp.sql.DBTools;
 import com.logicbus.dbcp.util.ConnectionPoolStat;
 
 /**
@@ -78,11 +78,11 @@ public class JndiConnectionPool implements ConnectionPool {
 	
 	
 	public void recycle(Connection conn) {
-		SQLTools.close(conn);
+		DBTools.close(conn);
 	}
 	
 	public void recycle(Connection conn, boolean hasError) {
-		SQLTools.close(conn);
+		DBTools.close(conn);
 	}
 	
 	public String getName() {

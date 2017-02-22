@@ -1,8 +1,11 @@
 package com.logicbus.dbcp.sql;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
+import com.anysoft.util.BaseException;
 
 /**
  * DB相关的一些工具
@@ -127,6 +130,22 @@ public class DBTools {
 	public static int delete(Connection conn, String sql, Object... args) {
 		return update(conn, sql, args);
 	}
+	
+	/**
+	 * 批量执行DML语句
+	 * @param conn 数据库连接
+	 * @param sqls SQL语句连接
+	 * @return 每个SQL执行的状态
+	 * @throws ServantException 当SQL语句执行错误时，抛出此异常
+	 */
+	public static int [] batch(Connection conn,String [] sqls) throws BaseException{
+		Update update = new Update(conn);
+		try {
+			return update.executeBatch(sqls);
+		} finally {
+			Update.close(update);
+		}
+	}	
 	
 	/**
 	 * Select单行数据
@@ -285,4 +304,46 @@ public class DBTools {
 	private static boolean isNotNull(String value){
 		return value != null && value.length() > 0;
 	}
+	
+	/**
+	 * 提交事务
+	 * @param conn 连接
+	 * @throws ServantException
+	 */
+	public static void commit(Connection conn) throws BaseException{
+		try {
+			conn.commit();
+		} catch (SQLException ex) {
+			throw new BaseException("core.sql_error",ex.getMessage());
+		}
+	}
+	
+	/**
+	 * 回滚事务
+	 * @param conn
+	 * @throws ServantException
+	 */
+	public static void rollback(Connection conn) throws BaseException{
+		try {
+			conn.rollback();
+		} catch (SQLException ex) {
+			throw new BaseException("core.sql_error",ex.getMessage());
+		}
+	}	
+	
+	/**
+	 * 关闭所有句柄
+	 * @param autoCloseables 句柄列表
+	 */
+	public static void close(AutoCloseable... autoCloseables){
+		for (AutoCloseable c:autoCloseables){
+			if (null != c){
+				try{
+					c.close();
+				}catch (Exception ex){
+					
+				}
+			}
+		}
+	}	
 }

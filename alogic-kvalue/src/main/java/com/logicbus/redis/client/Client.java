@@ -121,11 +121,6 @@ public class Client extends Connection implements PooledCloseable{
 		closeAware = null;
 	}		
 	
-	/**
-	 * to create a toolkit using clazz
-	 * @param clazz 工
-	 * @return
-	 */
 	public Toolkit getToolKit(Class<? extends Toolkit> clazz){
 		try {
 			Constructor<? extends Toolkit> c = clazz.getConstructor(Connection.class);

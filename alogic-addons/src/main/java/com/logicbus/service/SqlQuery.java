@@ -15,7 +15,7 @@ import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.dbcp.core.ConnectionPool;
 import com.logicbus.dbcp.context.DbcpSource;
-import com.logicbus.dbcp.sql.SQLTools;
+import com.logicbus.dbcp.sql.DBTools;
 import com.logicbus.models.servant.ServiceDescription;
 
 public class SqlQuery extends Servant {
@@ -125,7 +125,7 @@ public class SqlQuery extends Servant {
 			throw new ServantException("core.sql_error","在执行SQL语句过程中发生错误:" + ex.getMessage());
 		}
 		finally{
-			SQLTools.close(stmt);
+			DBTools.close(stmt);
 			pool.recycle(conn);
 		}
 		return 0;

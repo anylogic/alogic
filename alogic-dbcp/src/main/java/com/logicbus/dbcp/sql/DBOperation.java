@@ -2,6 +2,10 @@ package com.logicbus.dbcp.sql;
 
 import java.sql.Connection;
 
+import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Settings;
+
 /**
  * 数据库操作
  * 
@@ -12,10 +16,15 @@ import java.sql.Connection;
 abstract public class DBOperation implements AutoCloseable{
 	
 	protected Connection conn = null;
+	protected static boolean traceEnable = false;
 	protected DBOperation(Connection _conn){
 		conn = _conn;
 	}
 
+	public boolean traceEnable(){
+		return traceEnable;
+	}
+	
 	/**
 	 * 关闭所有句柄
 	 * @param autoCloseables 句柄列表
@@ -31,4 +40,9 @@ abstract public class DBOperation implements AutoCloseable{
 			}
 		}
 	}	
+	
+	static {
+		Properties p = Settings.get();
+		traceEnable = PropertiesConstants.getBoolean(p, "tracer.dbcp.enable", false);
+	}
 }

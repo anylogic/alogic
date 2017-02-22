@@ -63,4 +63,9 @@ alogic-1.6.7
 - alogic-core:增加bizlog.enable环境变量，以便关闭bizlog
 - alogic-core:增加acm.enable环境变量，以便关闭ac控制器
 
+### 1.6.7.16 [20170222 duanyy] 
+- alogic-dbcp:增加tlog埋点
+- alogic-dbcp:淘汰SQLTools工具类
+- alogic-kvalue:增加info指令，以便于获取redis的状态信息
+
 
