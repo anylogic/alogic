@@ -68,4 +68,7 @@ alogic-1.6.7
 - alogic-dbcp:淘汰SQLTools工具类
 - alogic-kvalue:增加info指令，以便于获取redis的状态信息
 
+### 1.6.7.17 [20170223 duanyy] 
+- alogic-rpc:设置kryo的类加载器，避免某些情况下kryo无法找到CLASS
+
 

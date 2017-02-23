@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.objenesis.strategy.StdInstantiatorStrategy;
 
+import com.anysoft.util.Settings;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigDecimalSerializer;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigIntegerSerializer;
@@ -37,6 +38,9 @@ import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
  * kryo wrapper
  * @author yyduan
  * @since 1.6.7.15
+ * 
+ * @version 1.6.7.17 [20170223 duanyy] <br>
+ * - 设置kryo的类加载器，避免某些情况下kryo无法找到CLASS <br>
  */
 public class KryoWrapper implements AutoCloseable {
 
@@ -44,6 +48,7 @@ public class KryoWrapper implements AutoCloseable {
 
 	public KryoWrapper() {
 		kryo = new Kryo();
+		kryo.setClassLoader(Settings.getClassLoader());
 		kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
 		kryo.setRegistrationRequired(false);
 		kryo.register(Arrays.asList("").getClass(), new ArraysAsListSerializer());
