@@ -71,4 +71,6 @@ alogic-1.6.7
 ### 1.6.7.17 [20170223 duanyy] 
 - alogic-rpc:设置kryo的类加载器，避免某些情况下kryo无法找到CLASS
 
+### 1.6.7.18 [20170227 duanyy]
+- alogic-vfs:修正SFtp的java.lang.NegativeArraySizeException异常
 

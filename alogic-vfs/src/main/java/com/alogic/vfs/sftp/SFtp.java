@@ -38,6 +38,9 @@ import ch.ethz.ssh2.SFTPv3FileHandle;
  * 
  * @version 1.6.7.13 [20170206 duanyy] <br>
  * - 写文件接口增加permissions参数，以便在创建文件时指定文件的权限 <br>
+ * 
+ * @version 1.6.7.18 [20170227 duanyy] <br>
+ * - 修正SFtp的java.lang.NegativeArraySizeException异常 <br>
  */
 
 public class SFtp extends VirtualFileSystem.Abstract {
@@ -374,9 +377,11 @@ public class SFtp extends VirtualFileSystem.Abstract {
 					startid += len;
 					len = client.read(handle, startid, tempResult, 0, ONCE_MAX_BYTES);
 				}
-				byte[] lastResult = new byte[len];
-				System.arraycopy(tempResult, 0, lastResult, 0, len);
-				result = byteMerger(result, lastResult);
+				if (len > 0){
+					byte[] lastResult = new byte[len];
+					System.arraycopy(tempResult, 0, lastResult, 0, len);
+					result = byteMerger(result, lastResult);
+				}
 				client.closeFile(handle);
 				return new ByteArrayInputStream(result);
 			}
