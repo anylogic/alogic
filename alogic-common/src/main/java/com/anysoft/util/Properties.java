@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -32,6 +34,10 @@ import com.anysoft.formula.DataProvider;
  * - 增加loadFrom系列方法，用于从Json对象，Element节点，Element属性列表中装入变量列表 <br>
  */
 abstract public class Properties implements DataProvider{
+	/**
+	 * logger of log4j
+	 */
+	protected static Logger logger = LoggerFactory.getLogger(Properties.class);	
 	/**
 	 * 变量域
 	 */
@@ -203,22 +209,35 @@ abstract public class Properties implements DataProvider{
 			if (node.getNodeType() != Node.ELEMENT_NODE){
 				continue;
 			}
-			if (node.getNodeName().equals("parameter")){
+			if ("parameter".equals(node.getNodeName())){
 				Element e = (Element)node;
-				String id = e.getAttribute("id");
-				String value = e.getAttribute("value");
+				String id = XmlTools.getString(e,"id","");
+				String value = XmlTools.getString(e,"value","");
+				if (StringUtils.isEmpty(id) || StringUtils.isEmpty(value)){
+					continue;
+				}
 				//支持final标示,如果final为true,则不覆盖原有的取值
-				boolean isFinal = e.getAttribute("final").equals("true")?true:false;
+				boolean isFinal = XmlTools.getBoolean(e, "final", false);
 				if (isFinal){
-					String oldValue = this._GetValue(id);
-					if (oldValue == null || oldValue.length() <= 0){
+					String oldValue = GetValue(id, "", false,false);
+					if (StringUtils.isEmpty(oldValue)){
 						SetValue(id,value);
+						boolean system = XmlTools.getBoolean(e, "system", false);
+						if (system){
+							System.setProperty(id, value);
+							logger.info(String.format("Set system property:%s=%s", id,value));
+						}
 					}
 				}else{
 					SetValue(id,value);
+					boolean system = XmlTools.getBoolean(e, "system", false);
+					if (system){
+						System.setProperty(id, value);
+						logger.info(String.format("Set system property:%s=%s", id,value));
+					}					
 				}
 			}
-		}
+		}	
 	}	
 	
 	/**

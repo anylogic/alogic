@@ -1,11 +1,14 @@
 package com.anysoft.util;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.Map.Entry;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.anysoft.util.resource.ResourceFactory;
 
 /**
  * 缺省的变量集实现
@@ -108,6 +111,47 @@ public class DefaultProperties extends Properties implements JsonSerializer,XmlS
 	 */
 	public void Clear() {
 		content.clear();		
+	}
+	
+	/**
+	 * 装入指定的xrc文件，并读入xrc文件中的变量信息
+	 * @param _url xrc文件的url
+	 * @param secondary xrc文件的备用url
+	 * @param _rm ResourceFactory实例
+	 * @see #loadFromDocument(Document)
+	 */
+	public void addSettings(String _url,String secondary,ResourceFactory _rm){
+		ResourceFactory rm = _rm;
+		if (null == _rm){
+			rm = new ResourceFactory();
+		}
+		
+		InputStream in = null;
+		try {
+			in = rm.load(_url,secondary, null);
+			Document doc = XmlTools.loadFromInputStream(in);	
+			if (doc != null){
+				loadFrom(doc.getDocumentElement());
+			}
+		}catch (Exception ex){
+			logger.error("Error occurs when load xml file,source=" + _url, ex);
+		}finally {
+			IOTools.closeStream(in);
+		}
+	}
+	
+	/**
+	 * 从一个DefaultProperties复制变量列表
+	 * @param p DefaultProperties实例
+	 */
+	public void addSettings(DefaultProperties p){
+		Enumeration<String> keys = p.keys();
+		while (keys.hasMoreElements()){
+			String name = (String)keys.nextElement();
+			String value = p.GetValue(name,"",false,true);
+			if (value != null && value.length() > 0)
+				SetValue(name, value);
+		}
 	}
 	
 	/**

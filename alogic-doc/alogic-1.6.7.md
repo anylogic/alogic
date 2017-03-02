@@ -74,3 +74,7 @@ alogic-1.6.7
 ### 1.6.7.18 [20170227 duanyy]
 - alogic-vfs:修正SFtp的java.lang.NegativeArraySizeException异常
 
+### 1.6.7.19 [20170228 duanyy]
+- alogic-common:增加路径规范化工具Path
+- alogic-common:为DefaultProperties增加装入功能
+

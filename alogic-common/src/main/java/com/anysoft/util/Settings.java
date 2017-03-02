@@ -1,22 +1,13 @@
 package com.anysoft.util;
 
-
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.anysoft.util.resource.ResourceFactory;
 
 
@@ -47,10 +38,7 @@ import com.anysoft.util.resource.ResourceFactory;
  * - 采用SLF4j日志框架输出日志 <br>
  */
 public class Settings extends DefaultProperties implements XmlSerializer,Reportable{
-	/**
-	 * logger of log4j
-	 */
-	protected static Logger logger = LoggerFactory.getLogger(Settings.class);
+
 	/**
 	 * JRE环境变量集，作为本变量集的父节点
 	 */
@@ -114,44 +102,16 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 	}
 	
 	/**
-	 * 装入指定的xrc文件，并读入xrc文件中的变量信息
-	 * @param _url xrc文件的url
-	 * @param secondary xrc文件的备用url
-	 * @param _rm ResourceFactory实例
-	 * @see #loadFromDocument(Document)
+	 * 将变量集写出到XML文档
+	 * @param doc XML文档实例
+	 * @see #toXML(Element)
 	 */
-	public void addSettings(String _url,String secondary,ResourceFactory _rm){
-		ResourceFactory rm = _rm;
-		if (null == _rm){
-			rm = new ResourceFactory();
-		}
-		
-		InputStream in = null;
-		try {
-			in = rm.load(_url,secondary, null);
-			Document doc = XmlTools.loadFromInputStream(in);		
-			loadFromDocument(doc);			
-		}catch (Exception ex){
-			logger.error("Error occurs when load xml file,source=" + _url, ex);
-		}finally {
-			IOTools.closeStream(in);
-		}
+	protected void saveToDocument(Document doc){
+		if (doc == null)return ;
+		Element root = doc.getDocumentElement();
+		toXML(root);
 	}
-	
-	/**
-	 * 从一个DefaultProperties复制变量列表
-	 * @param p DefaultProperties实例
-	 */
-	public void addSettings(DefaultProperties p){
-		Enumeration<String> keys = p.keys();
-		while (keys.hasMoreElements()){
-			String name = (String)keys.nextElement();
-			String value = p.GetValue(name,"",false,true);
-			if (value != null && value.length() > 0)
-				SetValue(name, value);
-		}
-	}
-	
+
 	/**
 	 * 从XML文档中读入变量信息
 	 * @param doc XML文档实例
@@ -163,19 +123,8 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 		}		
 		Element root = doc.getDocumentElement();
 		fromXML(root);
-	}
+	}		
 	
-	/**
-	 * 将变量集写出到XML文档
-	 * @param doc XML文档实例
-	 * @see #toXML(Element)
-	 */
-	protected void saveToDocument(Document doc){
-		if (doc == null)return ;
-		Element root = doc.getDocumentElement();
-		toXML(root);
-	}
-
 	@Override
 	public void report(Element xml) {
 		if (xml != null){
@@ -281,41 +230,7 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 	 */
 	@Override
 	public void fromXML(Element root) {
-		NodeList nodeList = root.getChildNodes();	
-		for (int i = 0 ; i < nodeList.getLength() ; i ++){
-			Node node = nodeList.item(i);
-			if (node.getNodeType() != Node.ELEMENT_NODE){
-				continue;
-			}
-			if ("parameter".equals(node.getNodeName())){
-				Element e = (Element)node;
-				String id = XmlTools.getString(e,"id","");
-				String value = XmlTools.getString(e,"value","");
-				if (StringUtils.isEmpty(id) || StringUtils.isEmpty(value)){
-					continue;
-				}
-				//支持final标示,如果final为true,则不覆盖原有的取值
-				boolean isFinal = XmlTools.getBoolean(e, "final", false);
-				if (isFinal){
-					String oldValue = GetValue(id, "", false,false);
-					if (StringUtils.isEmpty(oldValue)){
-						SetValue(id,value);
-						boolean system = XmlTools.getBoolean(e, "system", false);
-						if (system){
-							System.setProperty(id, value);
-							logger.info(String.format("Set system property:%s=%s", id,value));
-						}
-					}
-				}else{
-					SetValue(id,value);
-					boolean system = XmlTools.getBoolean(e, "system", false);
-					if (system){
-						System.setProperty(id, value);
-						logger.info(String.format("Set system property:%s=%s", id,value));
-					}					
-				}
-			}
-		}		
+		loadFrom(root);
 	}
 	
 	/**
