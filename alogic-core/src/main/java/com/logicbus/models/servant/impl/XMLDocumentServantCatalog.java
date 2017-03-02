@@ -3,6 +3,7 @@ package com.logicbus.models.servant.impl;
 
 import java.io.InputStream;
 import java.util.Vector;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -48,6 +49,9 @@ import com.logicbus.models.servant.ServiceDescriptionWatcher;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.20 [20170302 duanyy] <br>
+ * - 增加注销ServiceDescriptionWatcher的接口 <br>
  */
 public class XMLDocumentServantCatalog extends ServantCatalog.Abstract {
 	
@@ -286,11 +290,15 @@ public class XMLDocumentServantCatalog extends ServantCatalog.Abstract {
 		return node.findService(serviceId);
 	}
 	
-
-	
+	@Override	
 	public void addWatcher(ServiceDescriptionWatcher watcher) {
 		//do nothing
 	}
+
+	@Override
+	public void removeWatcher(ServiceDescriptionWatcher watcher) {
+		// do noting
+	}	
 
 
 }

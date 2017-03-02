@@ -5,16 +5,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
 import com.logicbus.models.catalog.Path;
-import com.logicbus.models.servant.ServantManager;
 import com.logicbus.models.servant.ServiceDescription;
 
 /**
@@ -39,17 +34,16 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
  */
-public class QueuedServantFactory implements ServantFactory {
-	/**
-	 * a logger of log4j
-	 */
-	protected Logger logger = LoggerFactory.getLogger(QueuedServantFactory.class);
-	
+public class QueuedServantFactory extends ServantFactory.Abstract {
+
 	/**
 	 * 服务资源池列表
 	 */
 	private Map<String, ServantPool> m_pools = null;
 	
+	/**
+	 * 资源池的Class
+	 */
 	protected Class<? extends ServantPool> poolClazz = null;
 
 	/**
@@ -57,32 +51,25 @@ public class QueuedServantFactory implements ServantFactory {
 	 */
 	protected ReentrantLock lockPools = new ReentrantLock();	
 	
-	/**
-	 * constructor
-	 */
+	public QueuedServantFactory(){
+		
+	}
+
 	@SuppressWarnings("unchecked")
-	public QueuedServantFactory(Properties props){
-		ServantManager sm = ServantManager.get();
-		sm.addWatcher(this);
+	@Override
+	public void configure(Properties props){
 		m_pools = new ConcurrentHashMap<String, ServantPool>();
 		
 		String poolClass = PropertiesConstants.getString(props, 
-				"servant.pool", 
-				"com.logicbus.backend.QueuedServantPool2");
+				"servant.pool","com.logicbus.backend.QueuedServantPool2",false);
 		
-		ClassLoader cl = getClassLoader();
+		ClassLoader cl = Settings.getClassLoader();
 		try {
 			poolClazz = (Class<? extends ServantPool>)cl.loadClass(poolClass);
 		}catch (Throwable t){
 			poolClazz = QueuedServantPool2.class;
 			logger.error("Can not load servant pool class,using default:" + QueuedServantPool2.class.getName(),t);
 		}
-	}
-	
-	protected ClassLoader getClassLoader(){
-		Settings settings = Settings.get();
-		ClassLoader cl = (ClassLoader) settings.get("classLoader");
-		return cl != null ? cl : Thread.currentThread().getContextClassLoader();
 	}
 	
 	/**
@@ -101,7 +88,7 @@ public class QueuedServantFactory implements ServantFactory {
 	 */
 	protected ServantPool getServantPool(Path id)throws ServantException
 	{
-		ServantManager sm = ServantManager.get();
+		ServantRegistry sm = getServantRegistry();
 		ServiceDescription sd = sm.get(id);
 		if (sd == null){
 			throw new ServantException("core.service_not_found","No service desc is found:" + id);
@@ -130,7 +117,7 @@ public class QueuedServantFactory implements ServantFactory {
 			ServantPool temp = m_pools.get(_id.getPath());
 			if (temp != null){
 				//重新装入的目的是因为更新了服务描述信息			
-				ServantManager sm = ServantManager.get();
+				ServantRegistry sm = getServantRegistry();
 				ServiceDescription sd = sm.get(_id);
 				temp.reload(sd);
 			}
@@ -170,6 +157,7 @@ public class QueuedServantFactory implements ServantFactory {
 	 * 关闭
 	 */
 	public void close(){
+		super.close();
 		lockPools.lock();
 		try {
 			Iterator<ServantPool> iter = m_pools.values().iterator();
@@ -182,7 +170,6 @@ public class QueuedServantFactory implements ServantFactory {
 			lockPools.unlock();
 		}
 	}
-	
 	
 	public void changed(Path id, ServiceDescription desc) {
 		lockPools.lock();

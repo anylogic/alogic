@@ -8,14 +8,16 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.anysoft.util.Settings;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
+import com.logicbus.backend.ServantFactory;
+import com.logicbus.backend.ServantRegistry;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.catalog.CatalogNode;
 import com.logicbus.models.servant.ServantCatalog;
 import com.logicbus.models.servant.ServantCatalogNode;
-import com.logicbus.models.servant.ServantManager;
 import com.logicbus.models.servant.ServiceDescription;
 
 /**
@@ -23,7 +25,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author duanyy
  * @since 1.6.4.4
- * 
+ * @version 1.6.7.20 <br>
+ * - 改造ServantManager模型,增加服务配置监控机制 <br>
  */
 public class ServiceList extends AbstractServant {
 	@Override
@@ -40,7 +43,9 @@ public class ServiceList extends AbstractServant {
 		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
 		Element root = msg.getRoot();
 		Document doc = root.getOwnerDocument();
-		ServantManager sm = ServantManager.get();
+		Settings settings = Settings.get();
+		ServantFactory sf = (ServantFactory)settings.get("servantFactory");		
+		ServantRegistry sm = sf.getServantRegistry();
 		ServantCatalog [] catalog = sm.getServantCatalog();
 		Element services = doc.createElement("service");	// NOSONAR
 		for (int i = 0 ; i < catalog.length ; i ++){
@@ -57,7 +62,9 @@ public class ServiceList extends AbstractServant {
 	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
-		ServantManager sm = ServantManager.get();
+		Settings settings = Settings.get();
+		ServantFactory sf = (ServantFactory)settings.get("servantFactory");		
+		ServantRegistry sm = sf.getServantRegistry();
 		ServantCatalog [] catalog = sm.getServantCatalog();
 		
 		List<Object> services = new ArrayList<Object>(); // NOSONAR

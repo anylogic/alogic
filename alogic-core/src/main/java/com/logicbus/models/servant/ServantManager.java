@@ -3,8 +3,6 @@ package com.logicbus.models.servant;
 import java.io.InputStream;
 import java.util.Vector;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -12,11 +10,13 @@ import org.w3c.dom.NodeList;
 
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
+import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
-import com.logicbus.models.catalog.CatalogNode;
 import com.logicbus.models.catalog.Path;
+import com.logicbus.backend.ServantRegistry;
 
 /**
  * 服务规格管理器
@@ -52,22 +52,30 @@ import com.logicbus.models.catalog.Path;
  *
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.20 <br>
+ * - 改造ServantManager模型,增加服务配置监控机制 <br>
  */
-public class ServantManager {
-	/**
-	 * 全局唯一实例
-	 */
-	protected static ServantManager instance = null;
+public class ServantManager extends ServantRegistry.Abstract{
 	
 	/**
-	 * a logger of log4j
+	 * 缺省配置文件
 	 */
-	protected static Logger logger = LoggerFactory.getLogger(ServantManager.class);
-	
+	protected static final String DEFAULT 
+		= "java:///com/logicbus/models/servant/servantcatalog.default.xml#com.logicbus.backend.server.LogicBusApp"; 
+
 	/**
 	 * 服务目录列表
 	 */
 	protected Vector<ServantCatalog> catalogs = new Vector<ServantCatalog>();
+
+	/**
+	 * Constructor
+	 *  
+	 */
+	public ServantManager(){
+	
+	}
 	
 	/**
 	 * 查询指定服务的服务规格
@@ -87,77 +95,35 @@ public class ServantManager {
 		}
 		return null;
 	}
+		
+	@Override
+	public void configure(Properties p) {
+		String configFile = PropertiesConstants.getString(p,"servant.config.master",DEFAULT,false);
+		String secondaryFile = PropertiesConstants.getString(p,"servant.config.secondary",DEFAULT,false);
 	
-	/**
-	 * 按路径得到目录节点
-	 * 
-	 * @param path 目录节点的路径
-	 * @return 目录节点
-	 */
-	public CatalogNode getCatalogNode(Path path){
-		for (int i = 0 ; i < catalogs.size() ; i ++){
-			ServantCatalog __catalog = catalogs.elementAt(i);
-			if (__catalog == null){
-				continue;
-			}
-			CatalogNode found = __catalog.getChildByPath(null, path);
-			if (found != null)
-				return found;
-		}
-		return null;
-	}
-	
-	/**
-	 * Class Loader
-	 */
-	protected ClassLoader classLoader = null;
-	
-	/**
-	 * Constructor
-	 *  
-	 */
-	public ServantManager(){
-		Document doc = null;
-		
-		Settings profile = Settings.get();
-		String configFile = profile.GetValue("servant.config.master", 
-				"java:///com/logicbus/models/servant/servantcatalog.default.xml#com.logicbus.backend.server.LogicBusApp");
-
-		String secondaryFile = profile.GetValue("servant.config.secondary", 
-				"java:///com/logicbus/models/servant/servantcatalog.default.xml#com.logicbus.backend.server.LogicBusApp");
-		
-		ResourceFactory rm = (ResourceFactory) profile.get("ResourceFactory");
-		if (null == rm){
-			rm = new ResourceFactory();
-		}
-		
-		classLoader = (ClassLoader) profile.get("classLoader");
-		if (classLoader == null){
-			classLoader = ServantManager.class.getClassLoader();
-		}
-		
 		InputStream in = null;
 		try {
-			in = rm.load(configFile,secondaryFile, null);
-			doc = XmlTools.loadFromInputStream(in);		
-			loadConfig(doc);
+			ResourceFactory rf = Settings.getResourceFactory();
+			in = rf.load(configFile,secondaryFile, null);
+			Document doc = XmlTools.loadFromInputStream(in);		
+			loadConfig(p,doc);
 		} catch (Exception ex){
 			logger.error("Error occurs when load xml file,source=" + configFile, ex);
 		}finally {
 			IOTools.closeStream(in);
-		}
-	}
+		}	
+	}	
 	
 	/**
 	 * 读取配置信息
 	 * 
 	 * <br>
-	 * 在{@link #ServantManager()}中调用.<br>
+	 * 在{@link #configure(Properties)}中调用.<br>
 	 * 
 	 * @param doc 配置文档
 	 * 
 	 */
-	private void loadConfig(Document doc) {
+	private void loadConfig(Properties p,Document doc) {
 		if (doc == null) return;
 		
 		Element root = doc.getDocumentElement();
@@ -176,7 +142,7 @@ public class ServantManager {
 			}
 			
 			try {
-				ServantCatalog servantCatalog = factory.newInstance(e, Settings.get(), "module");
+				ServantCatalog servantCatalog = factory.newInstance(e, p, "module");
 				if (servantCatalog != null){
 					catalogs.add(servantCatalog);
 				}
@@ -196,29 +162,20 @@ public class ServantManager {
 		return (ServantCatalog[]) catalogs.toArray(new ServantCatalog[0]);
 	}
 	
-	/**
-	 * 获取唯一实例
-	 * @return 唯一实例
-	 */
-	public static ServantManager get(){
-		if (instance == null){
-			synchronized (ServantManager.class){
-				if (instance == null){
-					instance = new ServantManager();
-				}
-			}
-		}
-		return instance;
-	}
-	
-	/**
-	 * 增加监听器,在服务信息变更的时候触发
-	 * @param watcher
-	 */
+	@Override
 	public void addWatcher(ServiceDescriptionWatcher watcher){
 		for (ServantCatalog catalog:catalogs){
 			if (catalog != null){
 				catalog.addWatcher(watcher);
+			}
+		}
+	}
+
+	@Override
+	public void removeWatcher(ServiceDescriptionWatcher watcher) {
+		for (ServantCatalog catalog:catalogs){
+			if (catalog != null){
+				catalog.removeWatcher(watcher);
 			}
 		}
 	}

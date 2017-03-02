@@ -46,6 +46,9 @@ import com.logicbus.models.servant.ServiceDescriptionWatcher;
  * @version 1.6.4.46 [20160425 duanyy] <br>
  * - 从ServantCatalog.Abstract上进行继承。 <br>
  * 
+ * @version 1.6.7.20 [20170302 duanyy] <br>
+ * - 增加注销ServiceDescriptionWatcher的接口 <br>
+ * 
  */
 public class FileSystemServantCatalog extends ServantCatalog.Abstract {
 
@@ -231,6 +234,11 @@ public class FileSystemServantCatalog extends ServantCatalog.Abstract {
 	public void addWatcher(ServiceDescriptionWatcher watcher) {
 		// do nothing
 	}
+
+	@Override
+	public void removeWatcher(ServiceDescriptionWatcher watcher) {
+		// do noting
+	}	
 	
 	public static void main(String [] args){				
 		Settings settings = Settings.get();
@@ -272,5 +280,4 @@ public class FileSystemServantCatalog extends ServantCatalog.Abstract {
 			scanCatalog(sc, child);
 		}
 	}
-
 }

@@ -12,10 +12,10 @@ import com.logicbus.backend.Context;
 import com.logicbus.backend.ServantException;
 import com.logicbus.backend.ServantFactory;
 import com.logicbus.backend.ServantPool;
+import com.logicbus.backend.ServantRegistry;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.catalog.Path;
-import com.logicbus.models.servant.ServantManager;
 import com.logicbus.models.servant.ServiceDescription;
 
 /**
@@ -62,6 +62,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 将MessageDoc和Context进行合并整合 <br>
+ * 
+ * @version 1.6.7.20 <br>
+ * - 改造ServantManager模型,增加服务配置监控机制 <br>
  */
 public class ServiceDetailQuery extends AbstractServant {
 	
@@ -80,7 +83,11 @@ public class ServiceDetailQuery extends AbstractServant {
 		
 		String id = getArgument("service", ctx);		
 		Path path = new Path(id);
-		ServantManager sm = ServantManager.get();
+		
+		Settings settings = Settings.get();
+		ServantFactory sf = (ServantFactory)settings.get("servantFactory");		
+		
+		ServantRegistry sm = sf.getServantRegistry();
 		ServiceDescription sd = sm.get(path);
 		if (sd == null){
 			throw new ServantException("user.data_not_found","Service does not exist:" + id);
@@ -90,12 +97,9 @@ public class ServiceDetailQuery extends AbstractServant {
 		Document doc = root.getOwnerDocument();
 		
 		Element service = doc.createElement("service");
-		
 		sd.report(service);
 		
 		//关联服务的实时统计信息
-		Settings settings = Settings.get();
-		ServantFactory sf = (ServantFactory)settings.get("servantFactory");
 		ServantPool pool = sf.getPool(path);
 		if (pool != null) {
 			pool.report(service);
@@ -110,7 +114,9 @@ public class ServiceDetailQuery extends AbstractServant {
 		
 		String id = getArgument("service", ctx);		
 		Path path = new Path(id);
-		ServantManager sm = ServantManager.get();
+		Settings settings = Settings.get();
+		ServantFactory sf = (ServantFactory)settings.get("servantFactory");		
+		ServantRegistry sm = sf.getServantRegistry();
 		ServiceDescription sd = sm.get(path);
 		if (sd == null){
 			throw new ServantException("user.data_not_found","Service does not exist:" + id);
@@ -121,10 +127,8 @@ public class ServiceDetailQuery extends AbstractServant {
 		Map<String,Object> service = new HashMap<String,Object>();
 		
 		sd.report(service);
-		
 		//关联服务的实时统计信息
-		Settings settings = Settings.get();
-		ServantFactory sf = (ServantFactory)settings.get("servantFactory");
+
 		ServantPool pool = sf.getPool(path);
 		if (pool != null) {
 			pool.report(service);

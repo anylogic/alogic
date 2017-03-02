@@ -12,7 +12,6 @@ import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
 import com.logicbus.backend.AccessController;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.QueuedServantFactory;
 import com.logicbus.backend.Servant;
 import com.logicbus.backend.ServantException;
 import com.logicbus.backend.ServantFactory;
@@ -87,6 +86,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.6.7.15 [20170221 duanyy] <br>
  * - 增加bizlog.enable环境变量，以便关闭bizlog <br>
  * - 增加acm.enable环境变量，以便关闭ac控制器 <br>
+ * 
+ * @version 1.6.7.20 <br>
+ * - 改造ServantManager模型,增加服务配置监控机制 <br>
  */
 public class MessageRouter {
 	
@@ -237,10 +239,6 @@ public class MessageRouter {
 		bizlogEnable = PropertiesConstants.getBoolean(settings, "bizlog.enable", true);
 		acmEnable = PropertiesConstants.getBoolean(settings, "acm.enable", true);
 		bizLogger = (BizLogger) settings.get("bizLogger");
-		
 		servantFactory = (ServantFactory) settings.get("servantFactory");
-		if (servantFactory == null){
-			servantFactory = new QueuedServantFactory(settings);
-		}
 	}
 }

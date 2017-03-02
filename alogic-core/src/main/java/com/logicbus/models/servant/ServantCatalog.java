@@ -27,6 +27,9 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.20 [20170302 duanyy] <br>
+ * - 增加注销ServiceDescriptionWatcher的接口 <br>
  */
 public interface ServantCatalog extends CatalogModel,Reportable,Configurable,XMLConfigurable {
 	/**
@@ -37,6 +40,8 @@ public interface ServantCatalog extends CatalogModel,Reportable,Configurable,XML
 	public ServiceDescription findService(Path id);
 	
 	public void addWatcher(ServiceDescriptionWatcher watcher);
+	
+	public void removeWatcher(ServiceDescriptionWatcher watcher);
 	
 	/**
 	 * 虚基类

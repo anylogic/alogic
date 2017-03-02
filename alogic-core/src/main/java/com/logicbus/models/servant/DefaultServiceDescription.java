@@ -25,7 +25,10 @@ import com.anysoft.util.XmlTools;
  * @since 1.2.5.4
  * 
  * @version 1.2.8.2 [20141015 duanyy]
- * - 实现Reportable
+ * - 实现Reportable <br>
+ * 
+ * @version 1.6.7.20 <br>
+ * - 改造ServantManager模型,增加服务配置监控机制 <br>
  */
 public class DefaultServiceDescription implements ServiceDescription{
 	/**
@@ -57,11 +60,21 @@ public class DefaultServiceDescription implements ServiceDescription{
 	 */
 	private String visible = "public";
 
+	private boolean guard = false;
 	
 	/**
 	 * 日志类型
 	 */
 	private LogType logType = LogType.none;
+	
+	/**
+	 * constructor
+	 * @param id 服务ID
+	 */
+	public DefaultServiceDescription(String id){
+		m_service_id = id;
+		m_properties = new DefaultProperties("Default",Settings.get());
+	}	
 	
 	/**
 	 * 获取日志类型
@@ -85,14 +98,10 @@ public class DefaultServiceDescription implements ServiceDescription{
 	 */
 	public void setLogType(String type){logType = parseLogType(type);}
 	
-	/**
-	 * constructor
-	 * @param id 服务ID
-	 */
-	public DefaultServiceDescription(String id){
-		m_service_id = id;
-		m_properties = new DefaultProperties("Default",Settings.get());
-	}
+	@Override
+	public boolean guard() {
+		return guard;
+	}	
 	
 	/**
 	 * 获得服务ID
@@ -275,6 +284,8 @@ public class DefaultServiceDescription implements ServiceDescription{
 		//Properties
 		root.setAttribute("log", logType.toString());
 		
+		root.setAttribute("guard", Boolean.toString(guard));
+		
 		{
 			DefaultProperties properties = (DefaultProperties) getProperties();
 			Enumeration<?> __keys = properties.keys();
@@ -352,6 +363,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 		setVisible(root.getAttribute("visible"));
 		setPath(root.getAttribute("path"));
 		logType = parseLogType(root.getAttribute("log"));
+		guard = Boolean.parseBoolean(root.getAttribute("guard"));
 				
 		NodeList eProperties = XmlTools.getNodeListByPath(root, "properties/parameter");
 		if (eProperties != null){
@@ -424,6 +436,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 		setNote((String)json.get("note"));
 		setVisible((String)json.get("visible"));
 		setPath((String)json.get("path"));
+		guard = Boolean.parseBoolean((String)json.get("guard"));
 		logType = parseLogType((String)json.get("log"));
 		
 		Object propertiesObj = json.get("properties");
@@ -489,6 +502,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 		json.put("visible", getVisible());
 		json.put("path",getPath());
 		json.put("log", logType.toString());
+		json.put("guard",Boolean.toString(guard));
 		{
 			DefaultProperties properties = (DefaultProperties) getProperties();
 			Enumeration<?> __keys = properties.keys();
@@ -540,5 +554,6 @@ public class DefaultServiceDescription implements ServiceDescription{
 	public void report(Map<String, Object> json) {
 		toJson(json);
 	}
+
 
 }

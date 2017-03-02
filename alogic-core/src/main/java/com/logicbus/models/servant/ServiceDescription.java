@@ -17,17 +17,20 @@ import com.anysoft.util.JsonSerializer;
  * - 修正{@link com.logicbus.models.servant.ServiceDescription#getArgument(String) getArgument(String)}空指针错误. <br>
  * 
  * @version 1.2.3 [20140617 duanyy]<br>
- * - 增加日志的相关属性
+ * - 增加日志的相关属性 <br>
  * 
  * @version 1.2.4.4 [20140709 duanyy]<br>
- * - 增加LogType的设置方法
- * - 增加properties和arguments的设置方法
+ * - 增加LogType的设置方法 <br>
+ * - 增加properties和arguments的设置方法 <br>
  * 
  * @version 1.2.5.4 [20140801 duanyy]<br>
- * - ServiceDescription变更为interface
+ * - ServiceDescription变更为interface <br>
  * 
  * @version 1.2.8.2 [20141015 duanyy]<br>
- * - 实现Reportable
+ * - 实现Reportable <br>
+ * 
+ * @version 1.6.7.20 <br>
+ * - 改造ServantManager模型,增加服务配置监控机制 <br>
  */
 public interface ServiceDescription extends XmlSerializer,JsonSerializer,Reportable{
 	/**
@@ -50,6 +53,12 @@ public interface ServiceDescription extends XmlSerializer,JsonSerializer,Reporta
 	 * @return 日志类型
 	 */
 	public LogType getLogType();
+	
+	/**
+	 * 启动配置监控
+	 * @return 是否启用
+	 */
+	public boolean guard();
 	
 	/**
 	 * 获得服务ID

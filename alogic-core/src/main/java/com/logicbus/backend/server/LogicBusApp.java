@@ -24,7 +24,6 @@ import com.anysoft.util.resource.ResourceFactory;
 import com.anysoft.webloader.WebApp;
 import com.logicbus.backend.AccessController;
 import com.logicbus.backend.IpAndServiceAccessController;
-import com.logicbus.backend.QueuedServantFactory;
 import com.logicbus.backend.ServantFactory;
 import com.logicbus.backend.bizlog.BizLogger;
 
@@ -74,6 +73,9 @@ import com.logicbus.backend.bizlog.BizLogger;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.20 <br>
+ * - 改造ServantManager模型,增加服务配置监控机制 <br>
  */
 public class LogicBusApp implements WebApp {
 	/**
@@ -122,9 +124,6 @@ public class LogicBusApp implements WebApp {
 			logger.error("Can not create a bizlogger instance..");
 		}
 		
-		//初始化MetricsHandler
-		// since 1.2.8
-		
 		Handler<Fragment> handler = MetricsHandlerFactory.getClientInstance();
 		if (handler != null) {
 			logger.info("MetricsHandler is initalized,module:"
@@ -134,21 +133,13 @@ public class LogicBusApp implements WebApp {
 			logger.error("Can not create a metrics handler instance.");
 		}
 
-		//初始化servantFactory		
-		String sfClass = PropertiesConstants.getString(settings,
-				"servant.factory", "com.logicbus.backend.QueuedServantFactory");
-		logger.info("Servant Factory is initializing,module:" + sfClass);
-		ServantFactory sf = null;
-		try {
-			ServantFactory.TheFactory sfFactory = new ServantFactory.TheFactory();
-			sf = sfFactory.newInstance(sfClass, settings);
-		} catch (Exception ex) {
-			sf = new QueuedServantFactory(settings);
-			logger.error("Failed to initialize servantFactory.Using default:"
-					+ QueuedServantFactory.class.getName(), ex);
+		ServantFactory sf = ServantFactory.TheFactory.get(settings);
+		if (sf != null){
+			logger.info("Servant Factory is initializing,module:" + sf.getClass().getName());
+			settings.registerObject("servantFactory", sf);
+		}else{
+			logger.error("Can not create a servant factory instance.");
 		}
-		settings.registerObject("servantFactory", sf);
-		
 	}
 	
 	@Override

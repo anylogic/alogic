@@ -78,3 +78,6 @@ alogic-1.6.7
 - alogic-common:增加路径规范化工具Path
 - alogic-common:为DefaultProperties增加装入功能
 
+### 1.6.7.20 [20170302 duanyy]
+- alogic-core:改造ServantManager模型,增加服务配置监控机制
+
