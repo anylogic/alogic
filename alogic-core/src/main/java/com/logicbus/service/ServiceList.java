@@ -106,6 +106,8 @@ public class ServiceList extends AbstractServant {
 			svc.setAttribute("visible",sd.getVisible());
 			//path
 			svc.setAttribute("path",sd.getPath());
+			// guard
+			svc.setAttribute("guard", Boolean.toString(sd.guard()));
 			//Properties
 			svc.setAttribute("log", sd.getLogType().toString());
 			
@@ -140,6 +142,7 @@ public class ServiceList extends AbstractServant {
 			map.put("visible",sd.getVisible());
 			//path
 			map.put("path",sd.getPath());
+			map.put("guard", Boolean.toString(sd.guard()));
 			//Properties
 			map.put("log", sd.getLogType().toString());
 			

@@ -157,6 +157,7 @@ public class ServantCatalogNodeImpl implements ServantCatalogNode {
 						map.put("visible",sd.getVisible());
 						//path
 						map.put("path",sd.getPath());
+						map.put("guard", Boolean.toString(sd.guard()));
 						//Properties
 						map.put("log", sd.getLogType().toString());
 						
@@ -199,6 +200,7 @@ public class ServantCatalogNodeImpl implements ServantCatalogNode {
 					service.setAttribute("module",sd.getModule());
 					//visible
 					service.setAttribute("visible",sd.getVisible());
+					service.setAttribute("guard", Boolean.toString(sd.guard()));
 					//path
 					service.setAttribute("path",sd.getPath());
 					//Properties

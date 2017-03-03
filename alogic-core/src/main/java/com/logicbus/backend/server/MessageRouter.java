@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
+import com.anysoft.util.BaseException;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
 import com.logicbus.backend.AccessController;
@@ -157,6 +158,9 @@ public class MessageRouter {
 				}
 			}
 		}catch (ServantException ex){
+			ctx.setReturn(ex.getCode(), ex.getMessage());
+			logger.error(ex.getCode() + ":" + ex.getMessage());
+		}catch (BaseException ex){
 			ctx.setReturn(ex.getCode(), ex.getMessage());
 			logger.error(ex.getCode() + ":" + ex.getMessage());
 		}catch (Exception ex){

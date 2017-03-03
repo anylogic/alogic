@@ -24,7 +24,10 @@ import com.anysoft.util.Settings;
  * 
  * @version 1.6.7.3 [20170118 duanyy] <br>
  * - trace日志的时长单位改为ns <br>
- * - 新增com.alogic.tlog，替代com.alogic.tracer.log包;
+ * - 新增com.alogic.tlog，替代com.alogic.tracer.log包; <br>
+ * 
+ * @version 1.6.7.21 [20170303 duanyy] <br>
+ * - TLog增加parameter字段，便于调用者记录个性化参数 <br>
  */
 public class Tool {
 	
@@ -93,6 +96,23 @@ public class Tool {
 			tracer.endProcedure(ctx, type, name, result, note, contentLength);
 		}
 	}
+	
+	/**
+	 * 结束过程
+	 * @param ctx 上下文
+	 * @param type 过程类型
+	 * @param name 过程名称
+	 * @param result 过程调用结果
+	 * @param note 结果说明
+	 * @param parameter 参数，参数的内容和编码由类型确定
+	 * @param contentLength 内容大小
+	 */
+	public static void end(TraceContext ctx,String type,String name,String result,String note,String parameter,long contentLength){
+		Tracer tracer = get();
+		if (tracer != null && tracer.enable()){
+			tracer.endProcedure(ctx, type, name, result, note, parameter, contentLength);
+		}
+	}	
 	
 	/**
 	 * 结束过程

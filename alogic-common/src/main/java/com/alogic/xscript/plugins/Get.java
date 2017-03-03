@@ -18,12 +18,16 @@ import com.anysoft.util.PropertiesConstants;
  * @author duanyy
  * 
  * @version 1.6.6.11 [duanyy 20161227] <br>
- * - 增加类型
+ * - 增加类型<br>
+ * 
+ * @version 1.6.7.21 [duanyy 20170303] <br>
+ * - 修改xscript的Get插件，可支持为空时忽略 <br>
  */
 public class Get extends AbstractLogiclet {
 	protected String id;
 	protected String value;
 	protected String type;
+	protected boolean ignoreIfNull = false;
 	public Get(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -34,6 +38,7 @@ public class Get extends AbstractLogiclet {
 		id = PropertiesConstants.getRaw(p,"id","");
 		value = PropertiesConstants.getRaw(p,"value","");
 		type = PropertiesConstants.getString(p,"type","string",true);
+		ignoreIfNull = PropertiesConstants.getBoolean(p,"ignoreIfNull",ignoreIfNull,true);
 	}
 
 	@Override
@@ -66,7 +71,9 @@ public class Get extends AbstractLogiclet {
 					}
 				}
 			}else{
-				current.remove(idValue);
+				if (!ignoreIfNull){
+					current.remove(idValue);
+				}
 			}
 		}
 	}

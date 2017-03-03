@@ -36,6 +36,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.7.21 [20170303 duanyy] <br>
+ * - TLog增加parameter字段，便于调用者记录个性化参数 <br>
  */
 public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 	
@@ -71,6 +74,18 @@ public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 	 * @param contentLength 内容长度
 	 */
 	public void endProcedure(TraceContext ctx,String type,String name,String result,String note,long contentLength);
+	
+	/**
+	 * 结束过程
+	 * @param ctx 上下文实例
+	 * @param type 过程类型
+	 * @param name 过程名称
+	 * @param result 结果
+	 * @param note 说明
+	 * @param parameter 参数，参数的内容和编码由type确定
+	 * @param contentLength 内容长度
+	 */	
+	public void endProcedure(TraceContext ctx,String type,String name,String result,String note,String parameter,long contentLength);
 	
 	/**
 	 * 虚基类

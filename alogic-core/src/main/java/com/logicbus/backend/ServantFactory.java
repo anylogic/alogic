@@ -97,7 +97,7 @@ public interface ServantFactory extends ServiceDescriptionWatcher,AutoCloseable,
 					servantRegistry = f.newInstance(registry, props, "module", ServantManager.class.getName());
 					servantRegistry.addWatcher(this);
 				}catch (Exception ex){
-					logger.error("Can not create servent registry,Using default.");
+					logger.error("Can not create servent registry,Using default.",ex);
 				}
 			}
 			

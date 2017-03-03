@@ -81,3 +81,7 @@ alogic-1.6.7
 ### 1.6.7.20 [20170302 duanyy]
 - alogic-core:改造ServantManager模型,增加服务配置监控机制
 
+### 1.6.7.21 [20170303 duanyy]
+- alogic-common:tlog日志增加parameter字段，便于调用者记录个性化参数
+- alogic-common:修改xscript的Get插件，可支持为空时忽略
+

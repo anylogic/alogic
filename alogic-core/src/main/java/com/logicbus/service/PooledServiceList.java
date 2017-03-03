@@ -60,6 +60,7 @@ public class PooledServiceList extends AbstractServant {
 			svc.setAttribute("path",sd.getPath());
 			//Properties
 			svc.setAttribute("log", sd.getLogType().toString());
+			svc.setAttribute("guard", Boolean.toString(sd.guard()));
 			
 			svc.setAttribute("healthScore", String.valueOf(pool.getHealthScore()));
 			svc.setAttribute("activeScore", String.valueOf(pool.getActiveScore()));
@@ -101,7 +102,7 @@ public class PooledServiceList extends AbstractServant {
 			map.put("path",sd.getPath());
 			//Properties
 			map.put("log", sd.getLogType().toString());		
-			
+			map.put("guard", Boolean.toString(sd.guard()));
 			map.put("healthScore", pool.getHealthScore());
 			map.put("activeScore", pool.getActiveScore());
 			

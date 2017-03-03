@@ -19,7 +19,10 @@ import com.anysoft.util.Properties;
  * 
  * @version 1.6.7.3 [20170118 duanyy] <br>
  * - trace日志的时长单位改为ns <br>
- * - 新增com.alogic.tlog，替代com.alogic.tracer.log包;
+ * - 新增com.alogic.tlog，替代com.alogic.tracer.log包; <br>
+ * 
+ * @version 1.6.7.21 [20170303 duanyy] <br>
+ * - TLog增加parameter字段，便于调用者记录个性化参数 <br>
  */
 public class StackTracer extends Tracer.Abstract{
 	/**
@@ -61,6 +64,13 @@ public class StackTracer extends Tracer.Abstract{
 
 	@Override
 	public void endProcedure(TraceContext ctx, String type, String name, String result, String note,long contentLength) {
+		endProcedure(ctx,type,name,result,note,"",contentLength);
+	}
+	
+
+	@Override
+	public void endProcedure(TraceContext ctx, String type, String name,
+			String result, String note, String parameter, long contentLength) {
 		long thread = Thread.currentThread().getId();
 		
 		TraceContext current = contexts.get(thread);
@@ -79,6 +89,7 @@ public class StackTracer extends Tracer.Abstract{
 			traceLog.reason(note);
 			traceLog.code(result);
 			traceLog.type(type);
+			traceLog.parameter(parameter);
 			traceLog.startDate(current.timestamp());
 			traceLog.duration(System.nanoTime()-current.startTime());			
 			traceLog.contentLength(contentLength);
@@ -88,11 +99,12 @@ public class StackTracer extends Tracer.Abstract{
 			//如果为空，恐怕出了问题			
 			LOG.error("It is impossible,something is wrong.");
 		}
-	}
+	}	
 
 	@Override
 	public void configure(Properties p) {
 		super.configure(p);
 	}
+
 
 }

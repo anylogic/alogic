@@ -23,6 +23,9 @@ import com.anysoft.util.Settings;
  * 
  * @version 1.6.7.10 [20170202 duanyy] <br>
  * - 修正tlog作为logger输出时的缓冲区并发问题 <br>
+ * 
+ * @version 1.6.7.21 [20170303 duanyy] <br>
+ * - 增加parameter字段，便于调用者记录个性化参数 <br>
  */
 public class Log4j extends AbstractHandler<TLog>{
 
@@ -100,6 +103,7 @@ public class Log4j extends AbstractHandler<TLog>{
 		.append(item.duration()).append(delimeter)
 		.append(item.contentLength()).append(delimeter)
 		.append(item.code()).append(delimeter)
+		.append(item.parameter()).append(delimeter)
 		.append(reason).append(eol);
 		
 		logger.info(buf.toString());

@@ -10,10 +10,13 @@ import com.anysoft.stream.Flowable;
  * @author yyduan
  *
  * @since 1.6.7.3
+ * 
+ * @version 1.6.7.21 [20170303 duanyy] <br>
+ * - 增加parameter字段，便于调用者记录个性化参数 <br>
  */
 public class TLog implements Comparable<TLog>,Flowable{
 	protected static final String PATTERN = 
-			"%s|%s|%s|%s|%d|%d|%d|%s|%s";
+			"%s|%s|%s|%s|%d|%d|%d|%s|%s|%s";
 	/**
 	 * 序列号
 	 */
@@ -55,6 +58,11 @@ public class TLog implements Comparable<TLog>,Flowable{
 	public String reason;
 	
 	/**
+	 * 参数
+	 */
+	public String parameter;
+	
+	/**
 	 * 内容长度
 	 */
 	public long contentLength;
@@ -65,7 +73,7 @@ public class TLog implements Comparable<TLog>,Flowable{
 	}	
 	
 	public String toString(){
-		return String.format(PATTERN, sn,order,type,method,startDate,duration,contentLength,code,reason);
+		return String.format(PATTERN, sn,order,type,method,startDate,duration,contentLength,code,parameter,reason);
 	}	
 	
 	@Override
@@ -143,6 +151,14 @@ public class TLog implements Comparable<TLog>,Flowable{
 		return method;
 	}
 
+	public String parameter(){
+		return parameter;
+	}
+	
+	public void parameter(String p){
+		parameter = p;
+	}
+	
 	public TLog startDate(long startDate) {
 		this.startDate = startDate;
 		return this;
