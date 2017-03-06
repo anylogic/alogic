@@ -85,3 +85,6 @@ alogic-1.6.7
 - alogic-common:tlog日志增加parameter字段，便于调用者记录个性化参数
 - alogic-common:修改xscript的Get插件，可支持为空时忽略
 
+### 1.6.7.22 [20170306 duanyy]
+- alogic-common:xscrtip插件get不再将当前文档节点的属性作为变量
+- alogic-common:xscript插件repeat当jsonPath语法错误或者节点不存在时，不再抛出异常

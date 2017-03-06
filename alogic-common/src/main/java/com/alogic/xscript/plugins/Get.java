@@ -8,7 +8,6 @@ import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
-import com.alogic.xscript.util.MapProperties;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -22,6 +21,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.7.21 [duanyy 20170303] <br>
  * - 修改xscript的Get插件，可支持为空时忽略 <br>
+ * 
+ * @version 1.6.7.22 [duanyy 20170306] <br>
+ * - 不再将当前文档节点的属性作为变量 <br>
  */
 public class Get extends AbstractLogiclet {
 	protected String id;
@@ -44,10 +46,9 @@ public class Get extends AbstractLogiclet {
 	@Override
 	protected void onExecute(Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
-		MapProperties p = new MapProperties(current,ctx);
-		String idValue = p.transform(id);
+		String idValue = ctx.transform(id);
 		if (StringUtils.isNotEmpty(idValue)){
-			String v = p.transform(value);
+			String v = ctx.transform(value);
 			if (StringUtils.isNotEmpty(v)){
 				if (type.equals("string")){
 					current.put(idValue, v);

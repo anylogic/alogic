@@ -13,6 +13,8 @@ import com.anysoft.stream.Flowable;
  * 
  * @version 1.6.7.21 [20170303 duanyy] <br>
  * - 增加parameter字段，便于调用者记录个性化参数 <br>
+ * 
+ * 
  */
 public class TLog implements Comparable<TLog>,Flowable{
 	protected static final String PATTERN = 
