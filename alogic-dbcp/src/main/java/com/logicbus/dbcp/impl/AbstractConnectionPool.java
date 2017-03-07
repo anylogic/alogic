@@ -59,11 +59,12 @@ import com.logicbus.dbcp.util.ConnectionPoolStat;
 abstract public class AbstractConnectionPool extends Queued implements ConnectionPool{
 	protected Counter stat = null;
 	protected LoadBalance<ReadOnlySource> loadBalance = null;
+	protected boolean testConn = true;
 	
 	@Override
 	public void configure(Properties props){
 		boolean enableStat = true;
-		
+		testConn = PropertiesConstants.getBoolean(props, "dbcp.test", testConn);
 		enableStat = PropertiesConstants.getBoolean(props, "dbcp.stat.enable", enableStat);
 		
 		if (enableStat){
@@ -146,25 +147,27 @@ abstract public class AbstractConnectionPool extends Queued implements Connectio
 		}
 		
 		if (conn == null){
-			long start = System.currentTimeMillis();
+			long start = System.nanoTime();
 			try {
 				int _timeout = timeout > getMaxWait() ? getMaxWait() : timeout;
 				conn = borrowObject(0,_timeout);		
 				
-				try {
-					if (!conn.isValid(1)){
-						//如果该Connection无效，关闭，并直接创建一个
-						logger.info("Connection is not valid , to create one");
-						conn.close();
+				if (testConn){
+					try {
+						if (!conn.isValid(1)){
+							//如果该Connection无效，关闭，并直接创建一个
+							logger.info("Connection is not valid , to create one");
+							conn.close();
+							conn = createObject();
+						}
+					}catch (Exception ex){
+						logger.error("Failed to test the connection,to create one",ex);
 						conn = createObject();
 					}
-				}catch (Exception ex){
-					logger.error("Failed to test the connection,to create one",ex);
-					conn = createObject();
 				}
 			}finally{
 				if (stat != null){
-					stat.count(System.currentTimeMillis() - start, conn == null);
+					stat.count(System.nanoTime() - start, conn == null);
 				}
 			}
 		}
@@ -181,7 +184,7 @@ abstract public class AbstractConnectionPool extends Queued implements Connectio
 		
 		List<ReadOnlySource> ross = getReadOnlySources();
 		if (ross != null && ross.size() > 0 && loadBalance != null){
-			long start = System.currentTimeMillis();
+			long start = System.nanoTime();
 			boolean error = false;
 			ReadOnlySource dest = null;
 			try {	
@@ -194,7 +197,7 @@ abstract public class AbstractConnectionPool extends Queued implements Connectio
 			} catch (Exception e) {
 				error = true;
 			}finally{
-				long _duration = System.currentTimeMillis() - start;
+				long _duration = System.nanoTime() - start;
 				if (dest != null){
 					dest.count(_duration, error);
 				}

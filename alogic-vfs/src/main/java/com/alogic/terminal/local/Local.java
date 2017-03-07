@@ -105,7 +105,7 @@ public class Local extends Terminal.Abstract{
 		
 		try {
 			shell.connect();
-			System.out.println(shell.exec(new Command.Simple("java")));
+			System.out.println(shell.exec(new Command.Simple("echo 0")));
 			shell.disconnect();
 		}finally{
 			IOTools.close(shell);

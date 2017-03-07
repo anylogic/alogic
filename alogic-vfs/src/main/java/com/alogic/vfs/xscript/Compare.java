@@ -7,10 +7,8 @@ import org.w3c.dom.Element;
 
 import com.alogic.vfs.client.Directory;
 import com.alogic.vfs.client.Tool;
-import com.alogic.vfs.client.ToolImpl;
 import com.alogic.vfs.client.ToolImpl2;
 import com.alogic.vfs.core.VirtualFileSystem;
-import com.alogic.vfs.xscript.Sync.Dir;
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;

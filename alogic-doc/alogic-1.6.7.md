@@ -88,3 +88,6 @@ alogic-1.6.7
 ### 1.6.7.22 [20170306 duanyy]
 - alogic-common:xscrtip插件get不再将当前文档节点的属性作为变量
 - alogic-common:xscript插件repeat当jsonPath语法错误或者节点不存在时，不再抛出异常
+
+### 1.6.7.23 [20170307 duanyy]
+- alogic-dbcp:增加开关，为了提高效率，可以不在交付Connection之前进行有效性测试
