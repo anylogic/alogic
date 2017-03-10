@@ -1,8 +1,11 @@
 package com.alogic.tlog;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 
 import com.anysoft.stream.Flowable;
+import com.anysoft.util.JsonSerializer;
+import com.anysoft.util.JsonTools;
 
 /**
  * Trace日志记录
@@ -14,11 +17,12 @@ import com.anysoft.stream.Flowable;
  * @version 1.6.7.21 [20170303 duanyy] <br>
  * - 增加parameter字段，便于调用者记录个性化参数 <br>
  * 
- * 
+ * @version 1.6.7.24 [20170310 duanyy] <br>
+ * - 增加app和host字段 <br>
  */
-public class TLog implements Comparable<TLog>,Flowable{
+public class TLog implements Comparable<TLog>,Flowable,JsonSerializer{
 	protected static final String PATTERN = 
-			"%s|%s|%s|%s|%d|%d|%d|%s|%s|%s";
+			"%s|%s|%s|%s|%s|%s|%d|%d|%d|%s|%s|%s";
 	/**
 	 * 序列号
 	 */
@@ -28,6 +32,16 @@ public class TLog implements Comparable<TLog>,Flowable{
 	 * 调用次序
 	 */
 	public String order;
+	
+	/**
+	 * 应用id
+	 */
+	public String app;
+	
+	/**
+	 * 主机(ip:port)
+	 */
+	public String host;
 	
 	/**
 	 * 方法类型
@@ -75,7 +89,7 @@ public class TLog implements Comparable<TLog>,Flowable{
 	}	
 	
 	public String toString(){
-		return String.format(PATTERN, sn,order,type,method,startDate,duration,contentLength,code,parameter,reason);
+		return String.format(PATTERN, sn,order,type,app,host,method,startDate,duration,contentLength,code,parameter,reason);
 	}	
 	
 	@Override
@@ -137,6 +151,24 @@ public class TLog implements Comparable<TLog>,Flowable{
 	
 	public String type(){
 		return type;
+	}
+	
+	public TLog app(String app){
+		this.app = app;
+		return this;
+	}
+	
+	public String app(){
+		return this.app;
+	}
+	
+	public TLog host(String host){
+		this.host = host;
+		return this;
+	}
+	
+	public String host(){
+		return this.host;
 	}
 	
 	public TLog type(String type){
@@ -204,6 +236,42 @@ public class TLog implements Comparable<TLog>,Flowable{
 	
 	public long contentLength(){
 		return this.contentLength;
+	}
+
+	@Override
+	public void toJson(Map<String, Object> json) {
+		if (json != null){
+			JsonTools.setString(json, "sn", sn());
+			JsonTools.setString(json, "order", order());
+			JsonTools.setString(json, "type", type());
+			JsonTools.setString(json, "app", app());
+			JsonTools.setString(json, "host", host());
+			JsonTools.setString(json, "method", method());
+			JsonTools.setLong(json, "startDate", startDate());
+			JsonTools.setLong(json, "duration", duration());
+			JsonTools.setLong(json, "contentLength", contentLength());
+			JsonTools.setString(json, "code", code());
+			JsonTools.setString(json, "parameter", parameter());
+			JsonTools.setString(json, "reason", reason());
+		}
+	}
+
+	@Override
+	public void fromJson(Map<String, Object> json) {
+		if (json != null){
+			sn = JsonTools.getString(json,"sn","");
+			order = JsonTools.getString(json,"order","");
+			type = JsonTools.getString(json,"type","");
+			app = JsonTools.getString(json,"app","");
+			host = JsonTools.getString(json,"host","");
+			method = JsonTools.getString(json,"method","");
+			startDate = JsonTools.getLong(json,"startDate",0);
+			duration = JsonTools.getLong(json,"duration",0);
+			contentLength = JsonTools.getLong(json,"contentLength",0);
+			code = JsonTools.getString(json,"code","");
+			parameter = JsonTools.getString(json,"parameter","");
+			reason = JsonTools.getString(json,"reason","");
+		}
 	}
 
 }

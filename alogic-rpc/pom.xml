@@ -18,10 +18,10 @@
 			<version>3.20.0-GA</version>
 		</dependency>
 		<dependency>
-			<groupId>com.esotericsoftware</groupId>
-			<artifactId>kryo</artifactId>
-			<version>3.0.1</version>
-		</dependency>
+		    <groupId>com.esotericsoftware</groupId>
+		    <artifactId>kryo</artifactId>
+		    <version>4.0.0</version>
+		</dependency>		
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -35,6 +35,10 @@
 				<exclusion>
 					<artifactId>protobuf-java</artifactId>
 					<groupId>com.google.protobuf</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>kryo</artifactId>
+					<groupId>com.esotericsoftware</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>

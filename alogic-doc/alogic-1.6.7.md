@@ -91,3 +91,7 @@ alogic-1.6.7
 
 ### 1.6.7.23 [20170307 duanyy]
 - alogic-dbcp:增加开关，为了提高效率，可以不在交付Connection之前进行有效性测试
+
+### 1.6.7.24 [20170310 duanyy] 
+- alogic-rpc:升级kryo库到4.0.0
+- alogic-common:tlog增加app和host字段

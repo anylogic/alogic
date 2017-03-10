@@ -383,6 +383,7 @@ public class Main implements CommandHelper,Process{
 	@Override
 	public int init(DefaultProperties p) {
 		commandLine = new DefaultProperties("default",p);
+		commandLine.addSettings(p);
 		//从配置文件中装入
 		loadConfig(commandLine);
 		command = PropertiesConstants.getString(p, "cmd", CMD_HELP);

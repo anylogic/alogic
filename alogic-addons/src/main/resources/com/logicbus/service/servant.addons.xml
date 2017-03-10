@@ -771,6 +771,7 @@
 				name="Simulator" 
 				note="模拟服务调用过程,耗时按正态进行分布,用于系统框架的并发测试" 
 				visible="public"
+				guard="true"
 				module="com.logicbus.service.Simulator"
 				log="detail"
 			/>			
