@@ -9,9 +9,12 @@
 			log = "none" 
 			module="com.logicbus.service.ServiceDetailQuery">
 			<properties>
-				<parameter id="jsonDefault" value="true"/>
-				<parameter id="servant.maxActive" value="10"/>
-				<parameter id="servant.maxIdle" value="1"/>
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 			</properties>
 		</service>		
 		<service 
@@ -23,10 +26,13 @@
 			visible="system"
 		>
 			<properties>
-				<parameter id="jsonDefault" value="true"/>
-				<parameter id="servant.maxActive" value="10"/>
-				<parameter id="servant.maxIdle" value="1"/>
-			</properties>			
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>		
 		</service>	
 		
 		<service 
@@ -38,10 +44,13 @@
 			visible="system"
 		>
 			<properties>
-				<parameter id="jsonDefault" value="true"/>
-				<parameter id="servant.maxActive" value="10"/>
-				<parameter id="servant.maxIdle" value="1"/>
-			</properties>			
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>		
 		</service>	
 		
 		<service 
@@ -53,10 +62,13 @@
 			visible="system"
 		>
 			<properties>
-				<parameter id="jsonDefault" value="true"/>
-				<parameter id="servant.maxActive" value="10"/>
-				<parameter id="servant.maxIdle" value="1"/>
-			</properties>			
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>		
 		</service>
 		
 		<service 
@@ -68,10 +80,13 @@
 			module="com.logicbus.service.ServiceQuery"
 		>
 			<properties>
-				<parameter id="jsonDefault" value="true"/>
-				<parameter id="servant.maxActive" value="10"/>
-				<parameter id="servant.maxIdle" value="1"/>
-			</properties>			
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>		
 		</service>	
 			
 		<service 
@@ -83,10 +98,13 @@
 			module="com.logicbus.service.ServiceList"
 		>
 			<properties>
-				<parameter id="jsonDefault" value="true"/>
-				<parameter id="servant.maxActive" value="10"/>
-				<parameter id="servant.maxIdle" value="1"/>
-			</properties>			
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>		
 		</service>	
 		
 		<service 
@@ -98,10 +116,13 @@
 			module="com.logicbus.service.PooledServiceList"
 		>
 			<properties>
-				<parameter id="jsonDefault" value="true"/>
-				<parameter id="servant.maxActive" value="10"/>
-				<parameter id="servant.maxIdle" value="1"/>
-			</properties>			
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>		
 		</service>			
 			
 		<service 
@@ -113,10 +134,13 @@
 			module="com.logicbus.service.AclQuery"
 		>
 			<properties>
-				<parameter id="jsonDefault" value="true"/>
-				<parameter id="servant.maxActive" value="10"/>
-				<parameter id="servant.maxIdle" value="1"/>
-			</properties>			
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>		
 		</service>
 		
 		<service 
@@ -128,10 +152,13 @@
 			module="com.logicbus.service.AclReload"
 		>
 			<properties>
-				<parameter id="jsonDefault" value="true"/>
-				<parameter id="servant.maxActive" value="10"/>
-				<parameter id="servant.maxIdle" value="1"/>
-			</properties>			
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>		
 		</service>	
 				
 		<catalog name="util">
@@ -144,10 +171,13 @@
 				module="com.logicbus.service.GC"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
-				</properties>			
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+				</properties>		
 			</service>
 					
 			<service 
@@ -159,13 +189,16 @@
 				module="com.logicbus.service.Proxy"
 			>
 					<properties>
-						<parameter id="proxy.path" value="/services/"/>
-						<parameter id="proxy.forwarded" value="false"/>
+						<parameter id="proxy.path" value="/services/" name="代理服务路径前缀" />
+						<parameter id="proxy.forwarded" value="false" />
 						<parameter id="proxy.forwarded.header" value="${http.forwardedheader}"/>
 						<parameter id="proxy.scheme" value="http"/>
-						<parameter id="jsonDefault" value="true"/>
-						<parameter id="servant.maxActive" value="10"/>
-						<parameter id="servant.maxIdle" value="1"/>					
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>				
 					</properties>
 			</service>	
 			
@@ -178,9 +211,12 @@
 				module="com.logicbus.service.SettingsQuery"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>	
 			
@@ -193,9 +229,12 @@
 				module="com.logicbus.service.EnvQuery"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>					
 		</catalog>
@@ -210,9 +249,12 @@
 				module="com.logicbus.service.BizLogReport"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>		
 			<service 
@@ -224,9 +266,12 @@
 				module="com.logicbus.service.BizLoggerPause"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>		
 			<service 
@@ -238,9 +283,12 @@
 				module="com.logicbus.service.BizLoggerResume"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>	
 		</catalog>
@@ -254,9 +302,12 @@
 				module="com.logicbus.service.MetricsReport"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>		
 			<service 
@@ -268,9 +319,12 @@
 				module="com.logicbus.service.MetricsPause"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>		
 			<service 
@@ -282,9 +336,12 @@
 				module="com.logicbus.service.MetricsResume"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>	
 		</catalog>										
@@ -300,10 +357,13 @@
 					log = "none" 
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
-				</properties>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+				</properties>	
 			</service>
 			<service 
 					id="List" 
@@ -314,10 +374,13 @@
 					log = "none" 
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
-				</properties>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+				</properties>	
 			</service>		
 			<service 
 					id="Query" 
@@ -328,10 +391,13 @@
 					log = "none" 
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
-				</properties>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+				</properties>	
 			</service>	
 			<service 
 					id="CachedObject" 
@@ -342,10 +408,13 @@
 					log = "none" 
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
-				</properties>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+				</properties>	
 			</service>			
 			<service 
 					id="Expire" 
@@ -356,10 +425,13 @@
 					log = "none" 
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
-				</properties>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+				</properties>	
 			</service>			
 		</catalog>
 		<catalog name="dbcp">	
@@ -372,9 +444,12 @@
 				module="com.logicbus.dbcp.service.DbcpSourceReport"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>
 			<service 
@@ -386,9 +461,12 @@
 				module="com.logicbus.dbcp.service.DbcpList"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>	
 			<service 
@@ -400,10 +478,13 @@
 				module="com.logicbus.dbcp.service.DbcpQuery"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
-				</properties>		
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+				</properties>	
 			</service>					
 		</catalog>
 		<catalog name="remote">
@@ -416,9 +497,12 @@
 				module="com.logicbus.remote.service.CallSourceReport"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>		
 			<service 
@@ -430,9 +514,12 @@
 				module="com.logicbus.remote.service.CallList"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>	
 			<service 
@@ -444,9 +531,12 @@
 				module="com.logicbus.remote.service.CallQuery"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>						
 		</catalog>
@@ -460,9 +550,12 @@
 				module="com.logicbus.kvalue.service.SchemaSourceReport"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>
 			<service 
@@ -474,9 +567,12 @@
 				module="com.logicbus.kvalue.service.SchemaList"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>
 			<service 
@@ -488,9 +584,12 @@
 				module="com.logicbus.kvalue.service.SchemaQuery"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>						
 		</catalog>	
@@ -504,9 +603,12 @@
 				module="com.alogic.sequence.service.SeqSourceReport"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>
 			<service 
@@ -518,9 +620,12 @@
 				module="com.alogic.sequence.service.SeqList"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>
 			<service 
@@ -532,9 +637,12 @@
 				module="com.alogic.sequence.service.SeqQuery"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>						
 		</catalog>	
@@ -548,9 +656,12 @@
 				module="com.alogic.blob.service.BlobSourceReport"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>
 			<service 
@@ -562,9 +673,12 @@
 				module="com.alogic.blob.service.BlobList"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>
 			<service 
@@ -576,9 +690,12 @@
 				module="com.alogic.blob.service.BlobQuery"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
+					<parameter id="jsonDefault" value="true" 
+						name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 				</properties>		
 			</service>
 			<service 
@@ -590,10 +707,11 @@
 				module="com.alogic.blob.service.BlobFileList"
 			>
 				<properties>
-					<parameter id="jsonDefault" value="true"/>
-					<parameter id="servant.maxActive" value="100"/>
-					<parameter id="servant.maxIdle" value="5"/>
-				</properties>		
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+				</properties>	
 			</service>			
 			<service 
 				id = "Download" 
@@ -603,29 +721,67 @@
 				log = "brief" 
 				module="com.alogic.blob.service.Download">
 				<properties>
-					<parameter id="servant.maxActive" value="200"/>
-					<parameter id="servant.maxIdle" value="5"/>
-				</properties>
+					<parameter id="servant.maxActive" value="10" 
+						name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+					<parameter id="servant.maxIdle" value="1"
+						name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+				</properties>	
 			</service>									
 		</catalog>	
 		<catalog name="vfs">
 				<service id="FileList" name="List" note="文件列表" visible="public"
 					log="brief" module="com.alogic.vfs.service.FileList">
+					<properties>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>						
 				</service>	
 				<service id="Download" name="Download" note="下载文件" visible="public"
 					log="brief" module="com.alogic.vfs.service.Download">
+					<properties>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>						
 				</service>		
 				<service id="Upload" name="Upload" note="下载文件" visible="public"
 					log="brief" module="com.alogic.vfs.service.Upload">
+					<properties>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>						
 				</service>	
 				<service id="Source" name="Report" note="来源报告" visible="public"
 					log="brief" module="com.alogic.vfs.service.VFSSourceReport">
+					<properties>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>						
 				</service>	
 				<service id="Query" name="Query" note="查询指定的vfs" visible="public"
 					log="brief" module="com.alogic.vfs.service.VFSQuery">
+					<properties>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>						
 				</service>	
 				<service id="List" name="List" note="查询活跃的vfs" visible="public"
 					log="brief" module="com.alogic.vfs.service.VFSList">
+					<properties>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>						
 				</service>											
 		</catalog>		
 		<catalog name="scheduler">
@@ -638,9 +794,12 @@
 					log = "none" 
 					module="com.alogic.doer.service.TaskCenterReport">
 					<properties>
-						<parameter id="jsonDefault" value="false"/>
-						<parameter id="servant.maxActive" value="10"/>
-						<parameter id="servant.maxIdle" value="1"/>
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
 					</properties>		    
 				</service>
 				<service 
@@ -651,10 +810,13 @@
 					log = "none" 
 					module="com.alogic.doer.service.TaskReportReport">
 					<properties>
-						<parameter id="jsonDefault" value="false"/>
-						<parameter id="servant.maxActive" value="10"/>
-						<parameter id="servant.maxIdle" value="1"/>
-					</properties>		    
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>		   	    
 				</service>			
 			</catalog>
 			<service 
@@ -664,11 +826,14 @@
 				visible="protected"
 				log = "none" 
 				module="com.alogic.timer.service.SchedulerReport">
-				<properties>
-					<parameter id="jsonDefault" value="false"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
-				</properties>		    
+					<properties>
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>		   	    
 			</service>
 			<service 
 				id = "Pause" 
@@ -677,11 +842,14 @@
 				visible="protected"
 				log = "none" 
 				module="com.alogic.timer.service.SchedulerPause">
-				<properties>
-					<parameter id="jsonDefault" value="false"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
-				</properties>		    
+					<properties>
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>		   	    
 			</service>
 			<service 
 				id = "Reload" 
@@ -690,11 +858,14 @@
 				visible="protected"
 				log = "none" 
 				module="com.alogic.timer.service.SchedulerReload">
-				<properties>
-					<parameter id="jsonDefault" value="false"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
-				</properties>		    
+					<properties>
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>		   		    
 			</service>			
 			<service 
 				id = "Resume" 
@@ -703,11 +874,14 @@
 				visible="protected"
 				log = "none" 
 				module="com.alogic.timer.service.SchedulerResume">
-				<properties>
-					<parameter id="jsonDefault" value="false"/>
-					<parameter id="servant.maxActive" value="10"/>
-					<parameter id="servant.maxIdle" value="1"/>
-				</properties>		    
+					<properties>
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>		   	    
 			</service>		
 			<catalog name="timer">
 				<service 
@@ -718,10 +892,13 @@
 					log = "none" 
 					module="com.alogic.timer.service.TimerReport">
 					<properties>
-						<parameter id="jsonDefault" value="false"/>
-						<parameter id="servant.maxActive" value="10"/>
-						<parameter id="servant.maxIdle" value="1"/>
-					</properties>		    
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>		   	    
 				</service>
 				<service 
 					id = "Pause" 
@@ -731,10 +908,13 @@
 					log = "none" 
 					module="com.alogic.timer.service.TimerPause">
 					<properties>
-						<parameter id="jsonDefault" value="false"/>
-						<parameter id="servant.maxActive" value="10"/>
-						<parameter id="servant.maxIdle" value="1"/>
-					</properties>		    
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>		   	    
 				</service>
 				<service 
 					id = "Reload" 
@@ -744,10 +924,13 @@
 					log = "none" 
 					module="com.alogic.timer.service.TimerReload">
 					<properties>
-						<parameter id="jsonDefault" value="false"/>
-						<parameter id="servant.maxActive" value="10"/>
-						<parameter id="servant.maxIdle" value="1"/>
-					</properties>		    
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>		   	    
 				</service>				
 				<service 
 					id = "Resume" 
@@ -757,10 +940,13 @@
 					log = "none" 
 					module="com.alogic.timer.service.TimerResume">
 					<properties>
-						<parameter id="jsonDefault" value="false"/>
-						<parameter id="servant.maxActive" value="10"/>
-						<parameter id="servant.maxIdle" value="1"/>
-					</properties>		    
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="10" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+					</properties>		   	    
 				</service>						
 			</catalog>
 		</catalog>								
@@ -774,6 +960,17 @@
 				guard="true"
 				module="com.logicbus.service.Simulator"
 				log="detail"
-			/>			
+			>
+					<properties>
+						<parameter id="jsonDefault" value="true" 
+							name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+						<parameter id="servant.maxActive" value="4000" 
+							name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+						<parameter id="servant.maxIdle" value="1000"
+							name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+						<parameter id="avg" value="10" 
+							name="模拟服务的平均耗时(ms)" editor="Integer" note="模拟服务的平均耗时(ms)"/>							
+					</properties>		   			
+			</service>			
 	</catalog>
 </catalog>

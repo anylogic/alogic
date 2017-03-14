@@ -95,3 +95,8 @@ alogic-1.6.7
 ### 1.6.7.24 [20170310 duanyy] 
 - alogic-rpc:升级kryo库到4.0.0
 - alogic-common:tlog增加app和host字段
+
+### 1.6.7.25 [20170314 duanyy]
+- alogic-core:缺省服务描述DefaultServiceDescription增加配置参数规格功能
+
+

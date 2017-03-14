@@ -7,14 +7,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.anysoft.util.DefaultProperties;
+import com.anysoft.util.JsonSerializer;
+import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Settings;
+import com.anysoft.util.XmlSerializer;
 import com.anysoft.util.XmlTools;
 
 /**
@@ -29,6 +33,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.7.20 <br>
  * - 改造ServantManager模型,增加服务配置监控机制 <br>
+ * 
+ * @version 1.6.7.25 <br>
+ * - 增加配置参数规格功能 <br>
  */
 public class DefaultServiceDescription implements ServiceDescription{
 	/**
@@ -55,6 +62,12 @@ public class DefaultServiceDescription implements ServiceDescription{
 	 * 服务参数
 	 */
 	private DefaultProperties m_properties;
+	
+	/**
+	 * 服务参数规格
+	 */
+	private Map<String,PropertySpec> m_property_specs;
+	
 	/**
 	 * 服务的可见性(public,login,limited)
 	 */
@@ -74,6 +87,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	public DefaultServiceDescription(String id){
 		m_service_id = id;
 		m_properties = new DefaultProperties("Default",Settings.get());
+		m_property_specs = new HashMap<String,PropertySpec>();
 	}	
 	
 	/**
@@ -298,6 +312,12 @@ public class DefaultServiceDescription implements ServiceDescription{
 					Element e = doc.createElement("parameter");
 					e.setAttribute("id",__name);
 					e.setAttribute("value",__value);
+					
+					PropertySpec spec = m_property_specs.get(__name);
+					if (spec != null){
+						spec.toXML(e);
+					}
+					
 					propertiesElem.appendChild(e);
 				}
 				root.appendChild(propertiesElem);
@@ -375,7 +395,13 @@ public class DefaultServiceDescription implements ServiceDescription{
 				Element e = (Element)n;
 				String _id = e.getAttribute("id");
 				String _value = e.getAttribute("value");
-				getProperties().SetValue(_id,_value);
+				if (StringUtils.isNotEmpty(_id) && StringUtils.isNotEmpty(_value)){
+					PropertySpec spec = new PropertySpec();
+					spec.fromXML(e);
+					m_property_specs.put(_id, spec);
+					
+					getProperties().SetValue(_id,_value);
+				}
 			}
 		}
 		
@@ -451,7 +477,12 @@ public class DefaultServiceDescription implements ServiceDescription{
 					String id = (String)paraMap.get("id");
 					String value = (String)paraMap.get("value");
 					
-					if (id != null && value != null){
+					if (StringUtils.isNotEmpty(id) && StringUtils.isNotEmpty(value)){
+
+						PropertySpec spec = new PropertySpec();
+						spec.fromJson(paraMap);
+						m_property_specs.put(id, spec);						
+						
 						getProperties().SetValue(id,value);
 					}
 				}catch (Exception ex){
@@ -514,7 +545,13 @@ public class DefaultServiceDescription implements ServiceDescription{
 					String __value = properties.GetValue(__name,"",false,true);					
 					Map<String,Object> pair = new HashMap<String,Object>();
 					pair.put("id", __name);
-					pair.put("value", __value);					
+					pair.put("value", __value);		
+			
+					PropertySpec spec = m_property_specs.get(__name);
+					if (spec != null){
+						spec.toJson(pair);
+					}					
+					
 					propertiesList.add(pair);
 				}
 				
@@ -555,5 +592,51 @@ public class DefaultServiceDescription implements ServiceDescription{
 		toJson(json);
 	}
 
-
+	/**
+	 * 参数规格
+	 * @author yyduan
+	 *
+	 */
+	public static class PropertySpec implements JsonSerializer,XmlSerializer{
+		protected String editor = "Default";
+		protected String name = "";
+		protected String note = "";
+		protected String template = "";
+		@Override
+		public void toJson(Map<String, Object> json) {
+			if (json != null){
+				JsonTools.setString(json,"editor",editor);
+				JsonTools.setString(json,"name",name);
+				JsonTools.setString(json,"note",note);
+				JsonTools.setString(json,"template",template);
+			}
+		}
+		@Override
+		public void fromJson(Map<String, Object> json) {
+			if (json != null){
+				editor = JsonTools.getString(json,"editor","Default");
+				name = JsonTools.getString(json,"name","");
+				note = JsonTools.getString(json,"note","");
+				template = JsonTools.getString(json,"template","");
+			}
+		}
+		@Override
+		public void toXML(Element e) {
+			if (e != null){
+				XmlTools.setString(e,"editor",editor);
+				XmlTools.setString(e,"name",name);
+				XmlTools.setString(e,"note",note);
+				XmlTools.setString(e,"template",template);
+			}
+		}
+		@Override
+		public void fromXML(Element e) {
+			if (e != null){
+				editor = XmlTools.getString(e,"editor","Default");
+				name = XmlTools.getString(e,"name","");
+				note = XmlTools.getString(e,"note","");
+				template = XmlTools.getString(e,"template","");
+			}
+		}
+	}
 }
