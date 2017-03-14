@@ -99,4 +99,7 @@ alogic-1.6.7
 ### 1.6.7.25 [20170314 duanyy]
 - alogic-core:缺省服务描述DefaultServiceDescription增加配置参数规格功能
 
+### 1.6.7 [20170314 duanyy]
+- 发布1.6.7版本
+
 
