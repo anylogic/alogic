@@ -15,6 +15,8 @@ import com.anysoft.util.PropertiesConstants;
  * 增加量度
  * @author yyduan
  *
+ * @version 1.6.8.1 [20170320 duanyy] <br>
+ * - 修正switch语句没有break的bug <br>
  */
 public class AddMeasure extends MetricsBuilder {
 	protected String id = "";
@@ -54,7 +56,8 @@ public class AddMeasure extends MetricsBuilder {
 						meas.set(id, longValue,method);
 					}catch (NumberFormatException ex){
 						
-					}					
+					}	
+					break;
 				case L:
 					try {
 						long longValue = Long.parseLong(valueValue);
@@ -62,6 +65,7 @@ public class AddMeasure extends MetricsBuilder {
 					}catch (NumberFormatException ex){
 						
 					}
+					break;
 				default:
 					meas.set(id, valueValue);
 				}

@@ -47,6 +47,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.8.1 [20170321 duanyy] <br>
+ * - 增加配置参数abandonWhenFull,当异步队列满的时候，可选择抛弃后续的数据; <br>
  */
 public abstract class AbstractHandler<data extends Flowable> implements Handler<data> {
 	
@@ -346,9 +349,11 @@ public abstract class AbstractHandler<data extends Flowable> implements Handler<
 		/**
 		 * 当前队列长度
 		 */
-		protected int currentQueueLength = 0;
+		protected volatile int currentQueueLength = 0;
 		
 		private boolean stopped = false;
+		
+		private boolean abandonWhenFull = true;
 		
 		private Thread thread = null;
 		
@@ -356,6 +361,7 @@ public abstract class AbstractHandler<data extends Flowable> implements Handler<
 			handler = _handler;
 			interval = PropertiesConstants.getLong(p,"async.interval", interval,true);
 			maxQueueLength = PropertiesConstants.getInt(p,"async.maxQueueLength", maxQueueLength,true);
+			abandonWhenFull = PropertiesConstants.getBoolean(p,"async.abandonWhenFull", abandonWhenFull,true);
 			currentQueueLength = 0;
 			queue = new ConcurrentLinkedQueue<data>();
 			
@@ -391,32 +397,28 @@ public abstract class AbstractHandler<data extends Flowable> implements Handler<
 		}
 		
 		public void handle(data _data,long timestamp){
-			queue.offer(_data);
-		
-			synchronized (this){
-				currentQueueLength ++;
-				if (currentQueueLength > maxQueueLength){
-					//如果缓冲区满了，同步处理
-					data item = queue.poll();
-					if (item != null){
-						handler.onHandle(item,timestamp);
-						currentQueueLength --;
-					}
+			if (abandonWhenFull){
+				//开启了abandonWhenFull
+				if (currentQueueLength <= maxQueueLength){
+					queue.offer(_data);
+					currentQueueLength ++;
 				}
+			}else{
+				if (currentQueueLength > maxQueueLength){
+					flush(timestamp);
+				}
+				queue.offer(_data);
+				currentQueueLength ++;
 			}
 		}
 		
 		public void flush(long timestamp){
 			if (!queue.isEmpty()){
-				data item = queue.poll();		
-				int count = 0;
-				while (item != null){
+				data item = null;	
+				while ((item = queue.poll()) != null){
 					handler.onHandle(item,timestamp);
-					item = queue.poll();
-					count ++;
+					currentQueueLength --;
 				}
-				
-				currentQueueLength -= count;
 				handler.onFlush(timestamp);
 			}
 		}
