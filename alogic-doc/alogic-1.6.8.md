@@ -13,4 +13,9 @@ alogic-1.6.8
 - 修正com.alogic.metrics.xscript.AddMeasure的bug;
 - 流处理基类AbstractHandler增加配置参数abandonWhenFull,当异步队列满的时候，可选择抛弃后续的数据;
 
+### 1.6.8.2 [20170324 duanyy]
+
+- 修正公式解析器中double值的比较问题;
+
+
 

@@ -10,6 +10,9 @@ import java.util.Date;
  * @version 1.0.0 
  * @version 1.6.4.21 [20160103 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.4.22 [20170324 duanyy] <br>
+ * - 修正公式解析器中double值的比较问题 <br>
  */
 public class ExprValue implements Comparable<ExprValue>{
 	/**
@@ -384,7 +387,7 @@ public class ExprValue implements Comparable<ExprValue>{
 				if (compare){
 					return 1;
 				}else{
-					return getDouble() > other.getLong() ? -1 : 0;
+					return getDouble() < other.getLong() ? -1 : 0;
 				}
 			default:
 			}
