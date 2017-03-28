@@ -90,6 +90,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.7.20 <br>
  * - 改造ServantManager模型,增加服务配置监控机制 <br>
+ * 
+ * @version 1.6.8.3 [20170328 duanyy] <br>
+ * - 修正tlog输出，将参数和错误原因分离开来 <br>
  */
 public class MessageRouter {
 	
@@ -190,7 +193,7 @@ public class MessageRouter {
 			}
 			if (tracerEnable){
 				boolean ok = ctx.getReturnCode().equals("core.ok");
-				Tool.end(tc, "ALOGIC", id.getPath(), ok ?"OK":"FAILED", ok ? ctx.getQueryString() : ctx.getReason(), ctx.getContentLength());
+				Tool.end(tc, "ALOGIC", id.getPath(), ok ?"OK":"FAILED", ctx.getReason(),ctx.getQueryString(), ctx.getContentLength());
 			}
 		}
 		return 0;

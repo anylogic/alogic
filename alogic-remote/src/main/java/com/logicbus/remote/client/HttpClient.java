@@ -27,6 +27,9 @@ import com.anysoft.util.XmlTools;
  * - 优化Http头的读写机制
  * 
  * @version 1.2.4.1 可以根据Response的Content-Type调整encoding
+ * 
+ * @version 1.6.8.3 [20170328 duanyy] <br>
+ * - 修正服务请求URL的并发性问题<br>
  */
 public class HttpClient extends Client {
 	/**
@@ -68,11 +71,8 @@ public class HttpClient extends Client {
 		return new HttpParameter(defaultEncoding);
 	}	
 	
-	private StringBuffer urlBuf = new StringBuffer();
-	
 	public int invoke(String id,Parameter p,Response res,Request req) throws ClientException{
-		urlBuf.setLength(0);
-		urlBuf.append(id);		
+		StringBuffer urlBuf = new StringBuffer(id);
 		if (p != null){
 			urlBuf.append('?');
 			urlBuf.append(p.toString());

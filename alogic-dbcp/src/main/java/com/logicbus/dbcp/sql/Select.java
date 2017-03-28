@@ -29,6 +29,9 @@ import com.anysoft.util.BaseException;
  * 
  * @version 1.6.2.4 [20150112 duanyy] <br>
  * - 增加RowRenderer支持<br>
+ * 
+ * @version 1.6.8.3 [20170328 duanyy] <br>
+ * - 修正tlog输出，将参数和错误原因分离开来 <br>
  */
 public class Select extends DBOperation {
 
@@ -50,7 +53,7 @@ public class Select extends DBOperation {
 		close();
 		TraceContext tc = traceEnable()?Tool.start():null;
 		boolean error = false;	
-		String msg = sql;
+		String msg = "ok";
 		try {
 			stmt = conn.prepareStatement(sql);
 			
@@ -65,11 +68,11 @@ public class Select extends DBOperation {
 		}
 		catch (SQLException ex){
 			error = true;
-			msg = sql + "->" + ex.getMessage();
+			msg = ex.getMessage();
 			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
 		}finally{
 			if (traceEnable() && tc != null){
-				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", msg);
+				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", msg,sql,0);
 			}
 		}
 	}

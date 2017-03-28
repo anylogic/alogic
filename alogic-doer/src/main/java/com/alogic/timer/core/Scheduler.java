@@ -1,7 +1,6 @@
 package com.alogic.timer.core;
 
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,8 +12,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +19,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
+import com.alogic.ha.FailoverController;
+import com.alogic.ha.FailoverListener;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
@@ -54,6 +52,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.8.3 [20170328 duanyy] <br>
+ * - 采用新的ha框架来进行分布式全局锁控制 <br>
  */
 public interface Scheduler extends Timer,Runnable {
 	/**
@@ -122,12 +123,12 @@ public interface Scheduler extends Timer,Runnable {
 	 * @author duanyy
 	 *
 	 */
-	abstract public static class Abstract implements Scheduler{
+	abstract public static class Abstract implements Scheduler,FailoverListener{
 		protected static final Logger logger = LoggerFactory.getLogger(Timer.class);
 		protected State state = State.Init;
 		protected DoerCommitter comitter = null;
 		protected long interval = 1000;
-		protected Lock lock = null;
+		protected FailoverController fc = null;
 		protected Future<?> future = null;
 		
 		protected String id = "root";
@@ -139,7 +140,10 @@ public interface Scheduler extends Timer,Runnable {
 		public void configure(Properties p){
 			interval = PropertiesConstants.getLong(p,"interval",interval,true);
 			id = PropertiesConstants.getString(p, "id", "root");
-			lock = getLock(p);
+			fc = getFailoverController(p);
+			if (fc != null){
+				fc.start(this);
+			}
 		}
 
 		public void configure(Element _e, Properties _properties){
@@ -251,24 +255,9 @@ public interface Scheduler extends Timer,Runnable {
 					new Runnable(){
 						@Override
 						public void run() {
-							try {
-								//首先，scheduler的状态为idle
-								state = State.Idle;
-								logger.info(String.format("Start scheduler[%s]....",getId()));
-								
-								if (lock != null){
-									logger.info("Getting the lock....[" + state.toString() + "]");
-									lock.lockInterruptibly();
-								}
-								//取的lock之后，状态为Running
-								state = State.Running;
-								logger.info(String.format("Scheduler[%s] is working now....[%s]", getId(),state.toString()));
-								
-								future = service.scheduleAtFixedRate(self, 5000, interval, TimeUnit.MILLISECONDS);				
-							}catch (InterruptedException ex){
-								state = State.Stopped;
-								logger.info("Schdule thread has been interrupted,exit",ex);
-							}
+							logger.info(String.format("Start scheduler[%s]....",getId()));
+							state = State.Idle;							
+							future = service.scheduleAtFixedRate(self, 5000, interval, TimeUnit.MILLISECONDS);	
 						}}, 
 					0, TimeUnit.MILLISECONDS);
 		}		
@@ -283,10 +272,10 @@ public interface Scheduler extends Timer,Runnable {
 		
 		public void stop(){
 			state = State.Stopping;
-			logger.info(String.format("Try to stop the scheduler[%s]....[%s]",getId(),state.toString()));
-			if (lock != null){
-				lock.unlock();
+			if (fc != null){
+				fc.stop();
 			}			
+			logger.info(String.format("Try to stop the scheduler[%s]....[%s]",getId(),state.toString()));			
 			if (future != null){
 				//等待2秒钟，再打断线程
 				try {
@@ -302,8 +291,19 @@ public interface Scheduler extends Timer,Runnable {
 		}
 		
 		public void run(){
-			if (state == State.Running){
-				scheduleOnce();
+			if (state == State.Idle){
+				state = State.Running;
+				try {
+					if (fc != null){
+						if (fc.isActive()){
+							scheduleOnce();
+						}
+					}else{
+						scheduleOnce();
+					}
+				}finally{
+					state = State.Idle;
+				}
 			}
 		}
 		
@@ -325,30 +325,28 @@ public interface Scheduler extends Timer,Runnable {
 		
 		public boolean isTimeToClear(){return true;}
 		
-		private Lock getLock(Properties p) {
-			Lock lock = null;
-			String module = PropertiesConstants.getString(p,"lock","",true);
-			if (module != null && module.length() > 0){
+		private FailoverController getFailoverController(Properties p) {
+			FailoverController controller = null;
+			String module = PropertiesConstants.getString(p,"failover","",true);
+			if (StringUtils.isNotEmpty(module)){
+				Factory<FailoverController> factory = new Factory<FailoverController>();
 				try {
-					ClassLoader cl = Settings.getClassLoader();
-					
-					@SuppressWarnings("unchecked")
-					Constructor<Lock> constructor = (Constructor<Lock>) cl.loadClass(module).getConstructor(
-							new Class[]{String.class,Properties.class}
-							);
-					
-					String lockName = PropertiesConstants.getString(p,"lock.name", "${server.app}",true);
-					if (lockName == null || lockName.length() <= 0){
-						lockName = "global";
-					}
-					
-					lock = (Lock)constructor.newInstance(new Object[]{lockName,p});
-				} catch (Exception e) {
-					logger.error("Can not create Lock instance,module:" + module);
+					controller = factory.newInstance(module, p);
+				}catch (Exception ex){
+					logger.error("Can not create FailoverController instance:" + module);
 				}
 			}
-			return lock;
+			return controller;
 		}
+		
+		@Override
+		public void becomeActive() {
+			logger.info("Scheduler is active now.");
+		}
+		@Override
+		public void becomeStandby() {
+			logger.info("Scheduler is standby now.");
+		}		
 	}
 	
 	/**

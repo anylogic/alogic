@@ -57,6 +57,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.7.4 [20170118 duanyy] <br>
  * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
+ * 
+ * @version 1.6.8.3 [20170328 duanyy] <br>
+ * - 访问控制对象取SessionId <br>
  */
 public abstract class ACMAccessController implements AccessController {
 	/**
@@ -126,7 +129,7 @@ public abstract class ACMAccessController implements AccessController {
 	
 	protected String getACMObject(String sessionId,Path serviceId, ServiceDescription servant,
 			Context ctx){
-		return sessionId + ":" + serviceId.getPath();
+		return sessionId;
 	}
 	
 	protected AccessControlModel getACM(String sessionId,Path serviceId, ServiceDescription servant,

@@ -18,6 +18,9 @@ import com.anysoft.util.BaseException;
  * 
  * @version 1.3.0.2 [20141106 duanyy] <br>
  * - List,Map等类采用泛型 <br>
+ * 
+ * @version 1.6.8.3 [20170328 duanyy] <br>
+ * - 修正tlog输出，将参数和错误原因分离开来 <br>
  */
 public class Update extends DBOperation {
 
@@ -45,7 +48,7 @@ public class Update extends DBOperation {
 		PreparedStatement stmt = null;
 		TraceContext tc = traceEnable()?Tool.start():null;
 		boolean error = false;
-		String msg = sql;
+		String msg = "OK";
 		try {
 			stmt = conn.prepareStatement(sql);
 			
@@ -58,13 +61,13 @@ public class Update extends DBOperation {
 			return stmt.executeUpdate();
 		}catch (SQLException ex){
 			error = true;
-			msg = msg + "->" + ex.getMessage();
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+			msg = ex.getMessage();
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + sql);
 		}
 		finally{
 			close(stmt);
 			if (traceEnable() && tc != null){
-				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", sql);
+				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", msg ,sql, 0);
 			}
 		}
 	}
@@ -79,7 +82,7 @@ public class Update extends DBOperation {
 		Statement stmt = null;
 		TraceContext tc = traceEnable()?Tool.start():null;
 		boolean error = false;
-		String msg = sqls.toString();
+		String msg = "OK";
 		try {
 			stmt = conn.createStatement();
 			
@@ -89,13 +92,13 @@ public class Update extends DBOperation {
 			return stmt.executeBatch();
 		}catch (SQLException ex){
 			error = true;
-			msg = msg + "->" + ex.getMessage();
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+			msg = ex.getMessage();
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + sqls.toString());
 		}
 		finally{
 			close(stmt);
 			if (traceEnable() && tc != null){
-				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", msg);
+				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", msg,sqls.toString(),0);
 			}
 		}
 	}
