@@ -10,32 +10,27 @@ import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-
+import com.anysoft.util.StringMatcher;
 
 /**
- * 对取值取子字符串，然后设为变量
- * 
- * @author duanyy
- * @version 1.6.8.4 [20170329 duanyy] <br>
- * - 只取context变量，不取文档属性变量 <br>
+ * 字符串匹配插件
+ * @author yyduan
+ * @since 1.6.8.4
  */
-public class Substr extends AbstractLogiclet {
-	protected String id;
-	protected String value;
-	protected String begin;
-	protected String length;
-	
-	public Substr(String tag, Logiclet p) {
+public class Match extends AbstractLogiclet {
+	protected String id = "$match";
+	protected String value = "";
+	protected StringMatcher matcher = null;
+	public Match(String tag, Logiclet p) {
 		super(tag, p);
 	}
 
 	public void configure(Properties p){
 		super.configure(p);
 		
-		id = PropertiesConstants.getString(p,"id","",true);
-		value = PropertiesConstants.getRaw(p,"value", "");
-		begin = PropertiesConstants.getRaw(p,"start", "0");
-		length = PropertiesConstants.getRaw(p, "length", "-1");
+		id = PropertiesConstants.getString(p,"id","$" + getXmlTag(),true);
+		value = PropertiesConstants.getRaw(p,"value",value);
+		matcher = new StringMatcher(PropertiesConstants.getString(p,"pattern", "*",true));
 	}
 
 	@Override
@@ -43,12 +38,7 @@ public class Substr extends AbstractLogiclet {
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
 		if (StringUtils.isNotEmpty(id)){
 			String v = ctx.transform(value);
-			int start = getInt(ctx,begin,0);
-			int len = getInt(ctx,length,-1);
-			
-			start = start < 0 || start > v.length() ? 0 : start;
-			len = len < 0 || start + len > v.length() ? v.length() - start : len;
-			ctx.SetValue(id, v.substring(start,start + len));
+			ctx.SetValue(id, Boolean.toString(matcher.match(v)));
 		}
 	}
 

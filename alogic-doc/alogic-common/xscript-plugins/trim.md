@@ -53,6 +53,12 @@ com.alogic.xscript.plugins.Trim
  
         <substr id="result" value="${str}" start="-1" length="123"/>
         <log msg="result=${result}"/>
+        
+        <match id="result" value="anylogic" pattern="any*"/>
+        <log msg="result=${result}"/>
+        
+        <match id="result" value="anylogic" pattern="anyb*"/>
+        <log msg="result=${result}"/>        
    </script>
 ```
 
@@ -69,4 +75,6 @@ com.alogic.xscript.plugins.Trim
 	result=sdasdasdDDasdasd13213
 	result=  asdasdas
 	result=  asdasdasdDDasdasd13213
+	result=true
+	result=false
 ```

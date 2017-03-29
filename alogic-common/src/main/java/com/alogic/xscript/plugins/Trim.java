@@ -8,7 +8,6 @@ import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
-import com.alogic.xscript.util.MapProperties;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -16,7 +15,8 @@ import com.anysoft.util.PropertiesConstants;
  * 对取值进行trim操作，然后设置为变量
  * 
  * @author duanyy
- *
+ * @version 1.6.8.4 [20170329 duanyy] <br>
+ * - 只取context变量，不取文档属性变量 <br>
  */
 public class Trim extends AbstractLogiclet {
 	protected String id;
@@ -37,8 +37,7 @@ public class Trim extends AbstractLogiclet {
 	protected void onExecute(Map<String, Object> root,
 			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
 		if (StringUtils.isNotEmpty(id)){
-			MapProperties p = new MapProperties(current,ctx);
-			ctx.SetValue(id, p.transform(value).trim());
+			ctx.SetValue(id, ctx.transform(value).trim());
 		}
 	}
 

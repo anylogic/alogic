@@ -30,6 +30,7 @@ import com.alogic.xscript.plugins.Include;
 import com.alogic.xscript.plugins.Location;
 import com.alogic.xscript.plugins.Log;
 import com.alogic.xscript.plugins.Lowercase;
+import com.alogic.xscript.plugins.Match;
 import com.alogic.xscript.plugins.Message;
 import com.alogic.xscript.plugins.Obj;
 import com.alogic.xscript.plugins.Now;
@@ -79,6 +80,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.8.4 [20170329 duanyy] <br>
+ * - 增加match插件 <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -159,6 +163,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_GETASJSON = "getAsJson";
 	public static final String STMT_SETASJSON = "setAsJson";
 	public static final String STMT_HASH = "hash";
+	public static final String STMT_MATCH = "match";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -203,6 +208,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_GETASJSON, GetAsJson.class);
 		staticModules.put(STMT_SETASJSON, SetAsJson.class);
 		staticModules.put(STMT_HASH, Hash.class);
+		staticModules.put(STMT_MATCH, Match.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	

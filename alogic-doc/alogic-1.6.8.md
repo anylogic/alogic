@@ -21,6 +21,13 @@ alogic-1.6.8
 
 - 增加com.alogic.ha包，用于高可用控制;
 
+### 1.6.8.4 [20170329 duanyy]
+
+- xscript插件repeat现在可以对对象的属性进行循环处理;
+- xsccrip插件lowercase,uppercase,substr,trim等将只取context变量，不取文档属性变量;
+- xscript插件增加match插件，提供字符串匹配功能;
+
+
 
 
 
