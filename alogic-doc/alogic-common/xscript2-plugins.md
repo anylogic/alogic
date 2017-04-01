@@ -32,6 +32,7 @@ xscript提供了灵活的插件机制，并提供了相应的内置插件，并�
         - [创建数组，输出到文档array](xscript-plugins/array.md)
         - [创建数组项，输出到文档array-item](xscript-plugins/array-item.md)
         - [从变量值中解析Json对象，并输出到文档getAsJson](xscript-plugins/getAsJson.md)
+        - [删除当前节点的指定子节点](xscript-plugins/rem.md)
     - 日志
         - [日志输出log](xscript-plugins/log.md)
         - [定义日志处理器logger](xscript-plugins/logger.md)

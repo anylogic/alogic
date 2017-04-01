@@ -34,6 +34,7 @@ import com.alogic.xscript.plugins.Match;
 import com.alogic.xscript.plugins.Message;
 import com.alogic.xscript.plugins.Obj;
 import com.alogic.xscript.plugins.Now;
+import com.alogic.xscript.plugins.Remove;
 import com.alogic.xscript.plugins.Repeat;
 import com.alogic.xscript.plugins.Scope;
 import com.alogic.xscript.plugins.Segment;
@@ -83,6 +84,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.8.4 [20170329 duanyy] <br>
  * - 增加match插件 <br>
+ * 
+ * @version 1.6.8.5 [20170331 duanyy] <br>
+ * - 增加rem插件 <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -164,6 +168,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_SETASJSON = "setAsJson";
 	public static final String STMT_HASH = "hash";
 	public static final String STMT_MATCH = "match";
+	public static final String STMT_REM = "rem";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -209,6 +214,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_SETASJSON, SetAsJson.class);
 		staticModules.put(STMT_HASH, Hash.class);
 		staticModules.put(STMT_MATCH, Match.class);
+		staticModules.put(STMT_REM,Remove.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	

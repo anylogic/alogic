@@ -27,6 +27,10 @@ alogic-1.6.8
 - xsccrip插件lowercase,uppercase,substr,trim等将只取context变量，不取文档属性变量;
 - xscript插件增加match插件，提供字符串匹配功能;
 
+### 1.6.8.5 [20170331 duanyy]
+
+- xscript：增加remove插件，用于删除工作文档的当前节点下指定子节点;
+- alogic-vfs: 增加vfs-mkdir指令，用于在VFS中构建目录;
 
 
 
