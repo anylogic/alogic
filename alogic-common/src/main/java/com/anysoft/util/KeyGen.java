@@ -164,5 +164,8 @@ public class KeyGen {
 		
 		// 10位大小写
 		System.out.println(uuid(10,0,61));
+		
+		// 64为数字(16进制)
+		System.out.println(uuid(8,0,16));
 	}
 }

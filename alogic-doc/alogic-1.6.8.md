@@ -32,6 +32,9 @@ alogic-1.6.8
 - xscript：增加remove插件，用于删除工作文档的当前节点下指定子节点;
 - alogic-vfs: 增加vfs-mkdir指令，用于在VFS中构建目录;
 
+### 1.6.8.6 [20170406 duanyy]
 
-
+- alogic-vfs:客户端可指定下载文件名，如果没有指定，则取路径之中的文件名.
+- alogic-core:服务调用全局序列号采用随机64位数字(16进制).
+- alogic-core:增加Options方法的实现
 

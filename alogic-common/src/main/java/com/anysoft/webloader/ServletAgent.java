@@ -1,10 +1,14 @@
 package com.anysoft.webloader;
 
 
+import java.io.IOException;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +34,9 @@ import org.slf4j.LoggerFactory;
  * @author duanyy
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.8.6 [20170410 duanyy] <br>
+ * - 增加Options方法的实现 <br>
  */
 public class ServletAgent extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -115,6 +122,17 @@ public class ServletAgent extends HttpServlet {
 			throws javax.servlet.ServletException, java.io.IOException {
 		if (handler != null)
 			handler.doService(req, resp, "delete");
+	}
+	
+	protected void doTrace(HttpServletRequest req, HttpServletResponse resp) 
+	        throws ServletException, IOException{
+		super.doTrace(req, resp);
+	}
+	
+	protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+	        throws ServletException, IOException{
+		if (handler != null)
+			handler.doService(req, resp, "options");		
 	}
 
 	/**

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alogic.vfs.context.FileSystemSource;
 import com.alogic.vfs.core.VirtualFileSystem;
 import com.anysoft.util.IOTools;
@@ -18,7 +20,8 @@ import com.logicbus.models.servant.ServiceDescription;
 /**
  * vfs的文件下载
  * @author duanyy
- *
+ * @version 1.6.8.6
+ * - 客户端可指定下载文件名，如果没有指定，则取路径之中的文件名 <br>
  */
 public class Download extends Servant {
 	protected byte [] buffer = null;
@@ -50,12 +53,18 @@ public class Download extends Servant {
 		OutputStream out = ctx.getOutputStream();
 		
 		try {
+			
 			in = fs.readFile(path);
 			if (in == null){
 				throw new ServantException("core.data_not_found","Can not find the file: " +  path);
 			}
+			
+			String filename = getArgument("file",path.substring(path.lastIndexOf("/")+1),ctx);
+			if (StringUtils.isNotEmpty(filename)){
+				ctx.setResponseHeader("Content-Disposition", String.format("attachment; filename=%s",filename));
+			}
+			
 	        int size=0;  
-	        
 	        while((size=in.read(buffer))!=-1)  
 	        {  
 	        	out.write(buffer, 0, size);

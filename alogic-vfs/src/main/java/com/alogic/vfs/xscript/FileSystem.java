@@ -25,6 +25,9 @@ import com.anysoft.util.Factory;
  * @author yyduan
  * @version 1.6.7.11 [20170203 duanyy] <br>
  * - 修正属性列表取值问题 <br>
+ * 
+ * @version 1.6.8.6 [20170410 duanyy] <br>
+ * - 在globalId模式下，FileSystem不应该被关闭 <br>
  */
 public class FileSystem extends VFS{
 	
@@ -82,7 +85,9 @@ public class FileSystem extends VFS{
 					super.onExecute(root, current, ctx, watcher);
 				}finally{
 					ctx.removeObject(cid);
-					IOTools.close(filesystem);					
+					if (StringUtils.isEmpty(globalId)){
+						IOTools.close(filesystem);			
+					}
 				}
 			}
 		}finally{

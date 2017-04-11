@@ -54,6 +54,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.8.6 [20170410 duanyy] <br>
+ * - 服务调用全局序列号采用随机64位数字(16进制) <br>
  */
 
 public class HttpContext extends Context {
@@ -222,7 +225,7 @@ public class HttpContext extends Context {
 		if (sample){
 			return "s" + KeyGen.uuid(9,36);
 		}else{
-			return KeyGen.uuid(10, 36);
+			return KeyGen.uuid(8,0,16);
 		}
 	}	
 	

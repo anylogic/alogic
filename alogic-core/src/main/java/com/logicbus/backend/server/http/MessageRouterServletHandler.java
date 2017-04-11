@@ -59,6 +59,9 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.8.6 [20170410 duanyy] <br>
+ * - 增加Options方法的实现 <br>
  */
 public class MessageRouterServletHandler implements ServletHandler {
 	/**
@@ -95,6 +98,8 @@ public class MessageRouterServletHandler implements ServletHandler {
 	 * Access-Control-Allow-Origin
 	 */
 	protected static String defaultAllowOrigin = "*";
+	
+	protected String methodAllow = "GET,PUT,POST";
 
 	protected boolean cacheAllowed = false; 
 	
@@ -107,7 +112,8 @@ public class MessageRouterServletHandler implements ServletHandler {
 				defaultAllowOrigin);
 		corsSupport = PropertiesConstants.getBoolean(settings, "http.cors", corsSupport);
 		
-
+		methodAllow = PropertiesConstants.getString(settings, "http.method.allow", methodAllow);
+		
 		ac = (AccessController) settings.get("accessController");
 
 		String _cacheAllowed = servletConfig.getInitParameter("cacheAllowed");
@@ -165,9 +171,13 @@ public class MessageRouterServletHandler implements ServletHandler {
 			response.setHeader("Access-Control-Allow-Credentials", "true");
 		}
 		
-		HttpContext ctx = new HttpContext(request,response,encoding,interceptMode);
-		Path id = normalizer.normalize(ctx, request);
-		MessageRouter.action(id,ctx,ac);
+		if (method.equals("options")){
+			response.setHeader("Allow", methodAllow);
+		}else{
+			HttpContext ctx = new HttpContext(request,response,encoding,interceptMode);
+			Path id = normalizer.normalize(ctx, request);
+			MessageRouter.action(id,ctx,ac);
+		}
 	}
 
 	public void destroy() {

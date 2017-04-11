@@ -22,6 +22,9 @@ import com.anysoft.util.XmlTools;
  * @version 1.6.7.3 [20170118 duanyy] <br>
  * - trace日志的时长单位改为ns <br>
  * - 新增com.alogic.tlog，替代com.alogic.tracer.log包;
+ * 
+ * @version 1.6.8.6 [20170410 duanyy] <br>
+ * - 服务调用全局序列号采用随机64位数字(16进制) <br>
  */
 public interface TraceContext extends Reportable{
 	/**
@@ -104,7 +107,7 @@ public interface TraceContext extends Reportable{
 		
 		public Default(TraceContext p,String n,String o){
 			parent = p;
-			sn = StringUtils.isEmpty(n)?KeyGen.uuid(10, 64):n;
+			sn = StringUtils.isEmpty(n)?KeyGen.uuid(8,0,16):n;
 			order = o;
 		}		
 		
