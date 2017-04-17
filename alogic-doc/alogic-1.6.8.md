@@ -38,3 +38,9 @@ alogic-1.6.8
 - alogic-core:服务调用全局序列号采用随机64位数字(16进制).
 - alogic-core:增加Options方法的实现
 
+### 1.6.8.7 [20170412 duanyy]
+
+- alogic-common:DefaultProperties容器由Hashtable更改为HashMap;
+- alogic-rpc:增加gson序列化器的实现;
+- alogic-rpc:支持基于spring4.1.6的bean的服务实现;
+

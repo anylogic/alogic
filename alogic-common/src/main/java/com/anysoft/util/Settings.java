@@ -1,13 +1,15 @@
 package com.anysoft.util;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.anysoft.util.resource.ResourceFactory;
 
 
@@ -36,6 +38,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.8.7 [20170412 duanyy] <br>
+ * - DefaultProperties容器由Hashtable更改为HashMap <br>
  */
 public class Settings extends DefaultProperties implements XmlSerializer,Reportable{
 
@@ -47,7 +52,7 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 	/**
 	 * 全局对象列表
 	 */
-	protected Hashtable<String, Object> objects = new Hashtable<String, Object>();
+	protected Map<String, Object> objects = new ConcurrentHashMap<String, Object>();
 	
 	/**
 	 * 构造函数
@@ -140,9 +145,9 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 			{
 				Element _objects = doc.createElement("objects");
 
-				Enumeration<String> _keys = objects.keys();
-				while (_keys.hasMoreElements()){
-					String key = _keys.nextElement();
+				Iterator<String> _keys = objects.keySet().iterator();
+				while (_keys.hasNext()){
+					String key = _keys.next();
 					Object obj = objects.get(key);
 					
 					Element _object = doc.createElement("object");
@@ -162,9 +167,9 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 			{
 				List<Object> _parameters = new ArrayList<Object>();
 
-				Enumeration<String> keys = keys();
-				while (keys.hasMoreElements()){
-					String key = keys.nextElement();
+				Iterator<String> keys = keys().iterator();
+				while (keys.hasNext()){
+					String key = keys.next();
 					String value = _GetValue(key);
 					
 					Map<String,Object> _parameter = new HashMap<String,Object>(2);
@@ -180,10 +185,10 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 			{
 				List<Object> _objects = new ArrayList<Object>();
 
-				Enumeration<String> _keys = objects.keys();
+				Iterator<String> _keys = objects.keySet().iterator();
 				
-				while (_keys.hasMoreElements()){
-					String key = _keys.nextElement();
+				while (_keys.hasNext()){
+					String key = _keys.next();
 					Object obj = objects.get(key);
 					
 					Map<String,Object> _object = new HashMap<String,Object>(2);
@@ -207,10 +212,10 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 		//为了输出文件的美观，添加一个\n文件节点
 		Document doc = root.getOwnerDocument();
 		root.appendChild(doc.createTextNode("\n"));
-		Enumeration<?> ids = keys();
+		Iterator<String> ids = keys().iterator();
 		
-		while (ids.hasMoreElements()){
-			String id = (String)ids.nextElement();
+		while (ids.hasNext()){
+			String id = (String)ids.next();
 			String value = _GetValue(id);
 			if (value.length() <= 0 || id.length() <= 0){
 				continue;

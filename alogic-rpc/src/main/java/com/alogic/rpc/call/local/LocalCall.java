@@ -67,7 +67,7 @@ public class LocalCall extends Call.Abstract {
 	public Result invoke(String id, String method, Parameters params) {
 		Result result = new Result.Default();
 
-		long now = System.currentTimeMillis();
+		long now = System.nanoTime();
 		String code = "core.ok";
 		String reason = "It is ok";
 
@@ -101,7 +101,7 @@ public class LocalCall extends Call.Abstract {
 			result.setThrowable(e.getTargetException());
 		} finally {
 			// 输出结果(代码，原因，时长等)
-			result.result(code, reason, System.currentTimeMillis() - now);
+			result.result(code, reason, System.nanoTime() - now);
 			if (code.equals("core.ok")) {
 				Tool.end(ctx, "LocalCall", method + "@" + id, "OK", "");
 			} else {

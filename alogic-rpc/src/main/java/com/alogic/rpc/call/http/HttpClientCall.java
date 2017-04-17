@@ -18,6 +18,7 @@ import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+
 import com.alogic.rpc.Call;
 import com.alogic.rpc.CallException;
 import com.alogic.rpc.InvokeContext;
@@ -28,15 +29,20 @@ import com.alogic.rpc.serializer.Serializer;
 import com.alogic.rpc.serializer.kryo.KryoSerializer;
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
+import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Settings;
 
 /**
  * 基于apache http client的Call
  * 
  * @author yyduan
  * @since 1.6.7.15
+ * 
+ * @version 1.6.8.7 [20170417 duanyy]<br>
+ * - 序列化接口增加上下文 <br>
  */
 public class HttpClientCall extends Call.Abstract {
 	
@@ -74,6 +80,8 @@ public class HttpClientCall extends Call.Abstract {
 	
 	protected RequestConfig requestConfig = null;
 	
+	protected Properties callContext = null;
+	
 	public HttpClientCall(){
 		
 	}
@@ -93,7 +101,7 @@ public class HttpClientCall extends Call.Abstract {
 				httppost.setHeader("Cookie", cookies);
 			}
 
-			SerializerEntity entity = new SerializerEntity(serializer, params);
+			SerializerEntity entity = new SerializerEntity(serializer,params,callContext);
 			entity.setContentEncoding(defaultEncoding);
 			entity.setContentType(defaultContentType);
 
@@ -116,7 +124,7 @@ public class HttpClientCall extends Call.Abstract {
 			HttpEntity result = httpResponse.getEntity();
 			InputStream in = result.getContent();
 			if (in != null){
-				return serializer.readObject(in, Result.Default.class);
+				return serializer.readObject(in, Result.Default.class,callContext);
 			}else{
 				throw new CallException("core.invoke_error","the inputstream from server is null");				
 			}
@@ -178,6 +186,7 @@ public class HttpClientCall extends Call.Abstract {
 	
 	@Override
 	public void configure(Properties p) {
+		callContext = new DefaultProperties("default",Settings.get());
 		address = PropertiesConstants.getString(p,"rpc.http.address","");
 		
 		if (serializer == null){
@@ -205,9 +214,11 @@ public class HttpClientCall extends Call.Abstract {
 	public static class SerializerEntity extends AbstractHttpEntity{
 		protected Serializer serializer = null;
 		protected Object data = null; 
-		public SerializerEntity(Serializer s,Object d){
+		protected Properties context = null;
+		public SerializerEntity(Serializer s,Object d,Properties ctx){
 			serializer = s;
 			data = d;
+			context = ctx;
 		}
 		
 		@Override
@@ -225,14 +236,14 @@ public class HttpClientCall extends Call.Abstract {
 		public InputStream getContent() throws IOException,
 				UnsupportedOperationException {
 			ByteArrayOutputStream baos = new   ByteArrayOutputStream();
-			serializer.writeObject(baos, data);
+			serializer.writeObject(baos, data,context);
 			baos.flush();			
 			return new ByteArrayInputStream(baos.toByteArray());
 		}
 
 		@Override
 		public void writeTo(OutputStream outstream) throws IOException {
-			serializer.writeObject(outstream, data);
+			serializer.writeObject(outstream, data,context);
 			outstream.flush();
 		}
 

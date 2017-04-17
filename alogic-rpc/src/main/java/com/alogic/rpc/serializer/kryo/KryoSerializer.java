@@ -15,6 +15,9 @@ import com.esotericsoftware.kryo.io.Output;
  * 
  * @author duanyy
  * @since 1.6.7.15
+ * 
+ * @version 1.6.8.7 [20170417 duanyy]<br>
+ * - 序列化接口增加上下文 <br>
  */
 public class KryoSerializer extends Serializer.Abstract {
 	protected KryoPool pool = null;
@@ -29,7 +32,7 @@ public class KryoSerializer extends Serializer.Abstract {
 	}
 
 	@Override
-	public <D> D readObject(InputStream in,Class<D> clazz){
+	public <D> D readObject(InputStream in,Class<D> clazz,Properties ctx){
 		KryoWrapper kyro = pool.borrowObject(priority, timeout);
 		if (kyro != null){
 			try {
@@ -43,7 +46,7 @@ public class KryoSerializer extends Serializer.Abstract {
 	}
 
 	@Override
-	public void writeObject(OutputStream out, Object object) {
+	public void writeObject(OutputStream out, Object object,Properties ctx) {
 		KryoWrapper kyro = pool.borrowObject(priority, timeout);
 		if (kyro != null){
 			try {

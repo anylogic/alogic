@@ -1,7 +1,5 @@
 package com.alogic.rpc;
 
-import com.anysoft.util.KeyGen;
-
 /**
  * 调用结果
  * 
@@ -62,6 +60,18 @@ public interface Result {
 	 */
 	public Result result(String code,String reason,long duration);
 	
+	/**
+	 * 设置调用序号
+	 * @param sn 全局序列号
+	 * @param order 调用次序
+	 * @return 结果实例
+	 */
+	public Result sn(String sn,String order);
+	
+	public String sn();
+	
+	public String order();
+	
 	/** 返回服务调用异常
 	 * @return 异常
 	 */
@@ -83,12 +93,12 @@ public interface Result {
 		protected String reason = "It is ok.";
 		protected long duration = 0;
 		protected String host;
-		protected String sn;
 		protected Object returnObject;
 		protected Throwable t;
+		protected String sn;
+		protected String order;
 		
 		public Default(){
-			sn = KeyGen.uuid(10, 64);
 		}
 		
 		@Override
@@ -144,6 +154,23 @@ public interface Result {
 		@Override
 		public void setThrowable(Throwable t) {
 			this.t = t;
+		}
+
+		@Override
+		public Result sn(String sn, String order) {
+			this.sn = sn;
+			this.order = order;
+			return this;
+		}
+
+		@Override
+		public String sn() {
+			return this.sn;
+		}
+
+		@Override
+		public String order() {
+			return this.order;
 		}
 
 	}

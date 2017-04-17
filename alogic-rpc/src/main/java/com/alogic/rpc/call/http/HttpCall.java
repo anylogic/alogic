@@ -17,16 +17,21 @@ import com.alogic.rpc.serializer.Serializer;
 import com.alogic.rpc.serializer.kryo.KryoSerializer;
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
+import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Settings;
 
 /**
  * 基于Http的调用
  * 
  * @author duanyy
  * @since 1.6.7.15
+ * 
+ * @version 1.6.8.7 [20170417 duanyy]<br>
+ * - 序列化接口增加上下文 <br>
  */
 public class HttpCall extends Call.Abstract {
 	
@@ -56,6 +61,8 @@ public class HttpCall extends Call.Abstract {
 	protected String defaultContentType = "text/plain;charset=utf-8";
 	
 	protected Serializer serializer = null;
+	
+	protected Properties callContext = null;
 	
 	public HttpCall(){
 		
@@ -114,7 +121,7 @@ public class HttpCall extends Call.Abstract {
 			encoding = encoding == null || encoding.length() <= 0 ? defaultEncoding : encoding;
 			contentType = contentType == null ? defaultContentType : contentType;	
 			
-			return serializer.readObject(conn.getInputStream(), Result.Default.class);	
+			return serializer.readObject(conn.getInputStream(), Result.Default.class,callContext);	
 		}catch (IOException ex){
 			throw new CallException("core.io_error","Can not read data from network.",ex);
 		}
@@ -127,7 +134,7 @@ public class HttpCall extends Call.Abstract {
 		OutputStream out = null;
 		try {		
 			out = conn.getOutputStream();
-			serializer.writeObject(out, params);			
+			serializer.writeObject(out, params,callContext);			
 		}catch (IOException ex){
 			throw new CallException("core.io_error","Can not write data to network.",ex);
 		}finally {
@@ -190,6 +197,7 @@ public class HttpCall extends Call.Abstract {
 	
 	@Override
 	public void configure(Properties p) {
+		callContext = new DefaultProperties("default",Settings.get());
 		address = PropertiesConstants.getString(p,"rpc.http.address","");
 		
 		if (serializer == null){

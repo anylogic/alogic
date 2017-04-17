@@ -1,7 +1,6 @@
 package com.alogic.rpc;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <p>
@@ -31,23 +30,28 @@ public interface InvokeContext {
 	
 	public boolean isEmpty();
 
-	public static class Default implements InvokeContext {
+	/**
+	 * 缺省实现
+	 * @author yyduan
+	 *
+	 */
+	public static class Default extends HashMap<String,Object> implements InvokeContext {
 
-		private Map<String, Object> attrs = new HashMap<String, Object>();
+		private static final long serialVersionUID = -3450580766769038106L;
 
 		@Override
 		public void setAttribute(String key, Object value) {
-			attrs.put(key, value);
+			super.put(key, value);
 		}
 
 		@Override
 		public Object getAttribute(String key) {
-			return attrs.get(key);
+			return super.get(key);
 		}
 
 		@Override
 		public boolean isEmpty() {
-			return attrs.isEmpty();
+			return super.isEmpty();
 		}
 
 	}

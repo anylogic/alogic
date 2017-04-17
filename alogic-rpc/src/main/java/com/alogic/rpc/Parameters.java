@@ -3,8 +3,7 @@ package com.alogic.rpc;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.anysoft.util.DefaultProperties;
-import com.anysoft.util.Properties;
+import com.anysoft.util.KeyGen;
 
 /**
  * 调用参数
@@ -32,15 +31,6 @@ public interface Parameters {
 	 * @return 参数实例
 	 */
 	public Parameters params(Object... params);	
-	
-	/**
-	 * 获取属性变量集
-	 * 
-	 * <p>变量集用于传递一些控制性参数
-	 * 
-	 * @return 变量集
-	 */
-	public Properties getProperties();
 	
 	/**
 	 * 获取序列号
@@ -86,7 +76,7 @@ public interface Parameters {
 		/**
 		 * 序列号
 		 */
-		protected String sn = null;
+		protected String sn = KeyGen.uuid(8, 0, 16);
 		
 		protected InvokeContext ctx = null;
 		
@@ -94,11 +84,6 @@ public interface Parameters {
 		 * 调用序号
 		 */
 		protected String order = "1";
-		
-		/**
-		 * 变量集
-		 */
-		protected Properties props = new DefaultProperties();
 		
 		public Default(){
 		}
@@ -131,11 +116,6 @@ public interface Parameters {
 		public Parameters sn(String sno) {
 			sn = sno;
 			return this;
-		}
-
-		@Override
-		public Properties getProperties() {
-			return props;
 		}
 
 		@Override

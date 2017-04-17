@@ -1,8 +1,8 @@
 package com.logicbus.models.servant;
 
 import java.io.PrintStream;
-import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -36,6 +36,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.7.25 <br>
  * - 增加配置参数规格功能 <br>
+ * 
+ * @version 1.6.8.7 [20170412 duanyy] <br>
+ * - DefaultProperties容器由Hashtable更改为HashMap <br>
  */
 public class DefaultServiceDescription implements ServiceDescription{
 	/**
@@ -302,11 +305,11 @@ public class DefaultServiceDescription implements ServiceDescription{
 		
 		{
 			DefaultProperties properties = (DefaultProperties) getProperties();
-			Enumeration<?> __keys = properties.keys();
-			if (__keys.hasMoreElements()){
+			Iterator<String> __keys = properties.keys().iterator();
+			if (__keys.hasNext()){
 				Element propertiesElem = doc.createElement("properties");
-				while (__keys.hasMoreElements()){
-					String __name = (String)__keys.nextElement();
+				while (__keys.hasNext()){
+					String __name = (String)__keys.next();
 					String __value = properties.GetValue(__name,"",false,true);
 					
 					Element e = doc.createElement("parameter");
@@ -536,12 +539,12 @@ public class DefaultServiceDescription implements ServiceDescription{
 		json.put("guard",Boolean.toString(guard));
 		{
 			DefaultProperties properties = (DefaultProperties) getProperties();
-			Enumeration<?> __keys = properties.keys();
-			if (__keys.hasMoreElements()){
+			Iterator<String> __keys = properties.keys().iterator();
+			if (__keys.hasNext()){
 				
 				List<Object> propertiesList = new Vector<Object>();				
-				while (__keys.hasMoreElements()){
-					String __name = (String)__keys.nextElement();
+				while (__keys.hasNext()){
+					String __name = (String)__keys.next();
 					String __value = properties.GetValue(__name,"",false,true);					
 					Map<String,Object> pair = new HashMap<String,Object>();
 					pair.put("id", __name);

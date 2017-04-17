@@ -34,6 +34,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author duanyy
  * @since 1.6.7.15
+ * 
+ * @version 1.6.8.7 [20170417 duanyy]<br>
+ * - 序列化接口增加上下文 <br>
  */
 public class RPCServant extends Servant {
 	protected Object instance = null;
@@ -52,8 +55,10 @@ public class RPCServant extends Servant {
 
 		RPCMessage msg = (RPCMessage) ctx.asMessage(RPCMessage.class);
 		InputStream in = msg.getInputStream();
-		Parameters params = (Parameters) serializer.readObject(in, Parameters.Default.class);	
-		
+		Parameters params = (Parameters) serializer.readObject(in, Parameters.Default.class,ctx);	
+		if (params == null){
+			params = new Parameters.Default();
+		}
 		if (filter != null){
 			InvokeContext invokeContext = params.context();
 			if (invokeContext != null){
@@ -64,7 +69,7 @@ public class RPCServant extends Servant {
 		Result result = theCall.invoke(instance.getClass().getName(),method, params);
 		result.host(ctx.getHost());
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		serializer.writeObject(out, result);
+		serializer.writeObject(out, result,ctx);
 		byte[] data = out.toByteArray();
 		ctx.setResponseContentLength(data.length);
 		if (keepAliveEnable){
@@ -92,6 +97,7 @@ public class RPCServant extends Servant {
 		List<Object> methodList = new ArrayList<Object>();
 		
 		Method [] methods = clazz.getDeclaredMethods();
+		
 		for (Method m:methods){
 			if (Modifier.isPublic(m.getModifiers())){
 				//只发布public的方法

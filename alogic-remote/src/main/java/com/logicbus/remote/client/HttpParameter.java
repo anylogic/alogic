@@ -2,7 +2,7 @@ package com.logicbus.remote.client;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import com.anysoft.util.DefaultProperties;
 
@@ -15,6 +15,9 @@ import com.anysoft.util.DefaultProperties;
  * 
  * @version 1.2.4.2 [20140709 duanyy]
  * - encoding成为{@link com.logicbus.remote.client.Parameter Parameter}的方法.
+ * 
+ * @version 1.6.8.7 [20170412 duanyy] <br>
+ * - DefaultProperties容器由Hashtable更改为HashMap <br>
  */
 public class HttpParameter extends DefaultProperties implements Parameter{
 	/**
@@ -71,9 +74,9 @@ public class HttpParameter extends DefaultProperties implements Parameter{
 	
 	public String toString(){
 		outputBuffer.setLength(0);				
-		Enumeration<?> __keys = keys();
-		while (__keys.hasMoreElements()){
-			String __name = (String)__keys.nextElement();
+		Iterator<String> __keys = keys().iterator();
+		while (__keys.hasNext()){
+			String __name = (String)__keys.next();
 			String __value = _GetValue(__name);
 			outputBuffer.append(__name);
 			if (__value.length() > 0){
@@ -83,7 +86,7 @@ public class HttpParameter extends DefaultProperties implements Parameter{
 				} catch (UnsupportedEncodingException e) {
 				}
 			}
-			if (__keys.hasMoreElements()){
+			if (__keys.hasNext()){
 				outputBuffer.append("&");
 			}
 		}

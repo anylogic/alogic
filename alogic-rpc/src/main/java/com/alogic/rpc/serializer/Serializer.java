@@ -19,7 +19,8 @@ import com.anysoft.util.XmlElementProperties;
  * @author duanyy
  * 
  * @since 1.6.7.15
- *
+ * @version 1.6.8.7 [20170417 duanyy]<br>
+ * - 序列化接口增加上下文 <br>
  */
 public interface Serializer extends Reportable,Configurable,XMLConfigurable{
 	
@@ -28,17 +29,19 @@ public interface Serializer extends Reportable,Configurable,XMLConfigurable{
 	 * 
 	 * @param in 输入流
 	 * @param clazz 对象的类
+	 * @param ctx 上下文变量
 	 * 
 	 * @return 对象实例
 	 */
-	public <D> D readObject(InputStream in,Class<D> clazz);
+	public <D> D readObject(InputStream in,Class<D> clazz,Properties ctx);
 	
 	/**
 	 * 向输出流中写出对象
 	 * @param out 输出流
 	 * @param object 对象
+	 * @param ctx 上下文变量
 	 */
-	public void writeObject(OutputStream out,Object object);
+	public void writeObject(OutputStream out,Object object,Properties ctx);
 	
 	/**
 	 * 虚基类

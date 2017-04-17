@@ -20,12 +20,15 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.7.7 [20170126 duanyy] <br>
  * - 迁移loadFrom系列方法到父类 <br>
+ * 
+ * @version 1.6.8.7 [20170412 duanyy] <br>
+ * - DefaultProperties容器由Hashtable更改为HashMap <br>
  */
 public class DefaultProperties extends Properties implements JsonSerializer,XmlSerializer{
 	/**
 	 * 变量集内容
 	 */
-	protected Hashtable<String, String> content = new Hashtable<String, String>();
+	protected Map<String, String> content = new HashMap<String, String>();
 	
 	/**
 	 * 构造函数
@@ -57,7 +60,7 @@ public class DefaultProperties extends Properties implements JsonSerializer,XmlS
 	 * 获取变量集的内容
 	 * @return 内容
 	 */
-	public Hashtable<String, String> getContent(){
+	public Map<String, String> getContent(){
 		return content;
 	}
 	
@@ -89,16 +92,16 @@ public class DefaultProperties extends Properties implements JsonSerializer,XmlS
 	 * 获取变量集中所有的变量名列表
 	 * @return 变量名列表
 	 */
-	public Enumeration<String> keys(){return content.keys();} 
+	public Set<String> keys(){return content.keySet();} 
 	
 	/**
 	 * 打印出变量集中的内容
 	 * @param out 输出打印流
 	 */
 	public void list(PrintStream out){
-		Enumeration<?> __keys = keys();
-		while (__keys.hasMoreElements()){
-			String __name = (String)__keys.nextElement();
+		Iterator<String> __keys = keys().iterator();
+		while (__keys.hasNext()){
+			String __name = (String)__keys.next();
 			String __value = _GetValue(__name);
 			out.print(__name);
 			out.print("=");
@@ -118,7 +121,6 @@ public class DefaultProperties extends Properties implements JsonSerializer,XmlS
 	 * @param _url xrc文件的url
 	 * @param secondary xrc文件的备用url
 	 * @param _rm ResourceFactory实例
-	 * @see #loadFromDocument(Document)
 	 */
 	public void addSettings(String _url,String secondary,ResourceFactory _rm){
 		ResourceFactory rm = _rm;
@@ -145,9 +147,9 @@ public class DefaultProperties extends Properties implements JsonSerializer,XmlS
 	 * @param p DefaultProperties实例
 	 */
 	public void addSettings(DefaultProperties p){
-		Enumeration<String> keys = p.keys();
-		while (keys.hasMoreElements()){
-			String name = (String)keys.nextElement();
+		Iterator<String> keys = p.keys().iterator();
+		while (keys.hasNext()){
+			String name = (String)keys.next();
 			String value = p.GetValue(name,"",false,true);
 			if (value != null && value.length() > 0)
 				SetValue(name, value);
@@ -159,10 +161,10 @@ public class DefaultProperties extends Properties implements JsonSerializer,XmlS
 	 * @param other 另一实例
 	 */
 	public void copyFrom(DefaultProperties other){
-		Enumeration<?> __keys = other.keys();
+		Iterator<String> keys = other.keys().iterator();
 		Clear();
-		while (__keys.hasMoreElements()){
-			String __name = (String)__keys.nextElement();
+		while (keys.hasNext()){
+			String __name = (String)keys.next();
 			String __value = other._GetValue(__name);
 			SetValue(__name, __value);
 		}
@@ -172,10 +174,10 @@ public class DefaultProperties extends Properties implements JsonSerializer,XmlS
 		//为了输出文件的美观，添加一个\n文件节点
 		Document doc = root.getOwnerDocument();
 		root.appendChild(doc.createTextNode("\n"));
-		Enumeration<?> ids = keys();
+		Iterator<String> ids = keys().iterator();
 		
-		while (ids.hasMoreElements()){
-			String id = (String)ids.nextElement();
+		while (ids.hasNext()){
+			String id = (String)ids.next();
 			String value = _GetValue(id);
 			if (value.length() <= 0 || id.length() <= 0){
 				continue;
