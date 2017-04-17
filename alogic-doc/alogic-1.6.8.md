@@ -44,3 +44,7 @@ alogic-1.6.8
 - alogic-rpc:增加gson序列化器的实现;
 - alogic-rpc:支持基于spring4.1.6的bean的服务实现;
 
+### 1.6.8.8 [20170417 duanyy]
+
+- alogic-common:修正AddMeasure处理double值的bug;
+- alogic-rpc:优化代码;

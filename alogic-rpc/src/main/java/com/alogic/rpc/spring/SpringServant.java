@@ -73,7 +73,6 @@ public class SpringServant extends Servant {
 			((HttpContext) ctx).getResponse().setHeader("Content-Length", String.valueOf(bytes.length));
 			OutputStream out = msg.getOutputStream();
 			out.write(bytes);
-			System.out.println(new String(bytes));
 		} catch (IOException e) {
 			logger.error("Action process error!", e);
 		} finally {

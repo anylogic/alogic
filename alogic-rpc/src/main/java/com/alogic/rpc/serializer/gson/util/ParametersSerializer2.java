@@ -19,6 +19,9 @@ import com.google.gson.JsonSerializationContext;
  * 
  * @author yyduan
  * @since 1.6.8.7
+ * 
+ * @version 1.6.8.8 [20170417 duanyy] <br>
+ * - 修正bug
  */
 public class ParametersSerializer2 extends Serializer<Parameters>{
 	protected Class<?> requestClazz = null;
@@ -54,6 +57,8 @@ public class ParametersSerializer2 extends Serializer<Parameters>{
 			svcCont.add("requestObject", context.serialize(params[0]));
 			setAttr(svcCont,"requestType",params[0].getClass().getName());
 		}
+		
+		contractRoot.add("svcCont", svcCont);
 		
 		ret.add("contractRoot", contractRoot);
 		

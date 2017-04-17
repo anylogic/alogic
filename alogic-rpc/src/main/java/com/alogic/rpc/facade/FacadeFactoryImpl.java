@@ -28,6 +28,9 @@ import javassist.NotFoundException;
  * 
  * @author duanyy
  * @since 1.6.7.15
+ * 
+ * @version 1.6.8.8 [20170417 duanyy] <br>
+ * - 对象缓存改为基于callId+className缓存 <br>
  */
 public class FacadeFactoryImpl extends FacadeFactory.Abstract{
 	/**
@@ -59,7 +62,7 @@ public class FacadeFactoryImpl extends FacadeFactory.Abstract{
 	public <I> I getInterface(String callId, String service, Class<I> clazz) {
 		try {
 			String className = clazz.getName() + "Facade" + service;
-			Facade facade = cachedObject.get(className);
+			Facade facade = cachedObject.get(className + callId);
 			if (facade == null){
 				synchronized(this){
 					facade = cachedObject.get(className);
@@ -71,7 +74,7 @@ public class FacadeFactoryImpl extends FacadeFactory.Abstract{
 						Class<I> facadeClass = makeFacadeClass(StringUtils.isEmpty(service)?clazz.getName():service,className,clazz);
 						facade = (Facade) facadeClass.newInstance();
 						facade.setCall(call);	
-						cachedObject.put(className, facade);
+						cachedObject.put(className + callId, facade);
 					}
 				}
 			}

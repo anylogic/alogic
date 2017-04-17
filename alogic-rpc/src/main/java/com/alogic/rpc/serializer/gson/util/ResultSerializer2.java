@@ -1,9 +1,7 @@
 package com.alogic.rpc.serializer.gson.util;
 
 import java.lang.reflect.Type;
-
 import org.apache.commons.lang3.StringUtils;
-
 import com.alogic.rpc.Result;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -19,6 +17,9 @@ import com.google.gson.JsonSerializationContext;
  * 
  * @author yyduan
  * @since 1.6.8.7
+ * 
+ * @version 1.6.8.8 [20170417 duanyy] <br>
+ * - 修正bug
  */
 public class ResultSerializer2 extends Serializer<Result>{
 	protected String sign = "${server.app}:${server.ip}:${server.port}";
@@ -50,7 +51,11 @@ public class ResultSerializer2 extends Serializer<Result>{
 				}else{
 					LOG.error("I do not known the result type");
 				}
+			}else{
+				LOG.error("Can not find svcCont node");
 			}
+		}else{
+			LOG.error("Can not find contractRoot node");
 		}
 		return ret;
 	}
