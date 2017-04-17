@@ -5,6 +5,9 @@
     <artifactId>alogic</artifactId>
     <version>1.6.8-SNAPSHOT</version>
   </parent>
+	<properties>
+		<spring.version>4.1.6.RELEASE</spring.version>
+	</properties>  
   <artifactId>alogic-rpc</artifactId>
 	<dependencies>
 		<dependency>
@@ -35,13 +38,33 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>4.1.6.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-web</artifactId>
-		    <version>4.1.6.RELEASE</version>
-		</dependency>							
+		    <version>${spring.version}</version>
+		</dependency>	
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>								
 		<dependency>
 			<groupId>de.javakaffee</groupId>
 			<artifactId>kryo-serializers</artifactId>
@@ -58,4 +81,5 @@
 			</exclusions>
 		</dependency>
 	</dependencies>  
+
 </project>

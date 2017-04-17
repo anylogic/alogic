@@ -48,3 +48,9 @@ alogic-1.6.8
 
 - alogic-common:修正AddMeasure处理double值的bug;
 - alogic-rpc:优化代码;
+
+### 1.6.8.9 [20170417 duanyy]
+
+- 增加对spring系列包的依赖;
+
+
