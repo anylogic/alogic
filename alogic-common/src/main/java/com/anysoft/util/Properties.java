@@ -32,6 +32,10 @@ import com.anysoft.formula.DataProvider;
  * 
  * @version 1.6.7.7 [20170126 duanyy] <br>
  * - 增加loadFrom系列方法，用于从Json对象，Element节点，Element属性列表中装入变量列表 <br>
+ * 
+ * @version 1.6.8.10 [20170418 duanyy] <br>
+ * - 在装入xml配置文件时，可从env中获取变量 <br>
+ * 
  */
 abstract public class Properties implements DataProvider{
 	/**
@@ -216,6 +220,23 @@ abstract public class Properties implements DataProvider{
 				if (StringUtils.isEmpty(id) || StringUtils.isEmpty(value)){
 					continue;
 				}
+				
+				boolean fromEnv = XmlTools.getBoolean(e, "fromEnv", false);
+				if (fromEnv){
+					value = System.getenv(value);
+					if (StringUtils.isEmpty(value)){
+						value = XmlTools.getString(e, "dft", "");
+					}
+				}else{
+					boolean fromProperties = XmlTools.getBoolean(e, "fromProperties", false);
+					if (fromProperties){
+						value = System.getProperty(value);
+						if (StringUtils.isEmpty(value)){
+							value = XmlTools.getString(e, "dft", "");
+						}
+					}
+				}
+				
 				//支持final标示,如果final为true,则不覆盖原有的取值
 				boolean isFinal = XmlTools.getBoolean(e, "final", false);
 				if (isFinal){

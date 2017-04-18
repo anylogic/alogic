@@ -61,6 +61,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.8.10 [20170418 duanyy] <br>
+ * - 在装入xml配置文件时，可从env中获取变量 <br>
  */
 public class Main implements CommandHelper,Process{
 	
@@ -232,14 +235,31 @@ public class Main implements CommandHelper,Process{
 				
 				String id = parameter.getAttribute("id");
 				String value = parameter.getAttribute("value");
-				boolean system = "true".equals(e.getAttribute("system"))?true:false;
+				
+				boolean fromEnv = XmlTools.getBoolean(e, "fromEnv", false);
+				if (fromEnv){
+					value = System.getenv(value);
+					if (StringUtils.isEmpty(value)){
+						value = XmlTools.getString(e, "dft", "");
+					}
+				}else{
+					boolean fromProperties = XmlTools.getBoolean(e, "fromProperties", false);
+					if (fromProperties){
+						value = System.getProperty(value);
+						if (StringUtils.isEmpty(value)){
+							value = XmlTools.getString(e, "dft", "");
+						}
+					}
+				}
+				
+				boolean system =  XmlTools.getBoolean(e, "system", false);
 				if (system){
 					if (id != null && value != null){ // NOSONAR
 						System.setProperty(id, value);
 					}
 				}else{
 					// 支持final标示,如果final为true,则不覆盖原有的取值
-					boolean isFinal = "true".equals(e.getAttribute("final")) ? true	: false;
+					boolean isFinal = XmlTools.getBoolean(e, "final", false);
 					if (isFinal) { // NOSONAR
 						String oldValue = p.GetValue(id, "", false, true);
 						if (oldValue == null || oldValue.length() <= 0) {

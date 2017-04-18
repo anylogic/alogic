@@ -53,4 +53,6 @@ alogic-1.6.8
 
 - 增加对spring系列包的依赖;
 
+### 1.6.8.10 [20170418 duanyy]
+- alogic-common:Properties在装入xml配置文件时，可从env中获取变量;
 
