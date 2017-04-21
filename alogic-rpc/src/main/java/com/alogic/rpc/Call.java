@@ -17,6 +17,7 @@ import org.w3c.dom.NodeList;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
@@ -53,6 +54,25 @@ public interface Call extends Reportable,Configurable,XMLConfigurable{
 	public CallFuture invokeAsync(String id,String method,Parameters params);
 	
 	/**
+	 * 异步过程调用
+	 * @param id id
+	 * @param method 调用方法
+	 * @param params 参数列表
+	 * @param callback 回调方法
+	 */
+	public void invokeAsync(String id,String method,Parameters params,Callback callback);
+	
+	/**
+	 * 异步过程调用
+	 * @param id id
+	 * @param method 调用方法
+	 * @param params 参数列表
+	 * @param callback 回调方法
+	 * @param ctx 调用上下文
+	 */
+	public void invokeAsync(String id,String method,Parameters params,Callback callback,Object ctx);
+	
+	/**
 	 * 创建新的参数
 	 * @return 参数对象实例
 	 */
@@ -65,8 +85,8 @@ public interface Call extends Reportable,Configurable,XMLConfigurable{
 	 *
 	 */
 	public abstract static class Abstract implements Call{
-		protected ScheduledThreadPoolExecutor exec = new  ScheduledThreadPoolExecutor(5);
-		protected long timeout = 1000;
+		protected ScheduledThreadPoolExecutor exec = null;
+		
 		protected List<InvokeFilter> filters = new ArrayList<InvokeFilter>();
 		
 		@Override
@@ -87,6 +107,8 @@ public interface Call extends Reportable,Configurable,XMLConfigurable{
 		public void configure(Element e, Properties p) {
 			XmlElementProperties props = new XmlElementProperties(e,p);
 			configure(props);
+			
+			exec = new ScheduledThreadPoolExecutor(PropertiesConstants.getInt(p, "rpc.async.poolsize", 100));
 			
 			NodeList nodeList = XmlTools.getNodeListByPath(e, "filter");
 			
@@ -126,6 +148,31 @@ public interface Call extends Reportable,Configurable,XMLConfigurable{
 			
 			return new CallFutureImpl(f);
 		}	
+		
+		@Override
+		public void invokeAsync(final String id,final String method,final Parameters params,final Callback callback,final Object ctx){
+			exec.schedule(new Runnable(){
+				@Override
+				public void run() {
+					Result result = null;
+					try {
+						result = invoke(id,method,params);
+						if (callback != null){
+							callback.onFinish(id,method,result,params,ctx);
+						}
+					}catch (Exception ex){
+						if (callback != null){
+							callback.onException(id, method, result,params, ctx, ex);
+						}
+					}
+				}
+			}, 0, TimeUnit.MICROSECONDS);
+		}
+		
+		@Override
+		public void invokeAsync(String id,String method,Parameters params,Callback callback){
+			invokeAsync(id,method,params,callback,null);
+		}
 	}
 	
 	/**

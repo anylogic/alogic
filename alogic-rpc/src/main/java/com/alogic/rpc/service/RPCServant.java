@@ -47,8 +47,8 @@ public class RPCServant extends Servant {
 	
 	@Override
 	public int actionProcess(Context ctx){
-		String method = getArgument("method","list",ctx);
-		if (method.equals("list")){
+		String method = getArgument("method","$list",ctx);
+		if (method.equals("$list")){
 			list(ctx);
 			return 0;
 		}

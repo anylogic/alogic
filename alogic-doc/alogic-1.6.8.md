@@ -56,3 +56,6 @@ alogic-1.6.8
 ### 1.6.8.10 [20170418 duanyy]
 - alogic-common:Properties在装入xml配置文件时，可从env中获取变量;
 
+### 1.6.8.11 [20170421 duanyy]
+- alogic-rpc:增加远程调用基础类库(未完待续)
+

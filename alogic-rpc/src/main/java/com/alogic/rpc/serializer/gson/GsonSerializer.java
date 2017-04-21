@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 
 import com.alogic.rpc.Parameters;
 import com.alogic.rpc.Result;
@@ -12,6 +13,7 @@ import com.alogic.rpc.serializer.gson.util.ParametersSerializer;
 import com.alogic.rpc.serializer.gson.util.ResultSerializer;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
+import com.esotericsoftware.minlog.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -24,11 +26,17 @@ import com.google.gson.GsonBuilder;
  */
 public class GsonSerializer extends Serializer.Abstract {
 	protected Gson gson = null;
+	protected String encoding = "utf-8";
+	
 	@Override
 	public <D> D readObject(InputStream in, Class<D> clazz,Properties ctx) {
-		InputStreamReader reader = new InputStreamReader(in);
+		InputStreamReader reader = null;
 		try {
+			reader = new InputStreamReader(in,encoding);
 			return gson.fromJson(reader, clazz);
+		} catch (UnsupportedEncodingException e) {
+			Log.error(String.format("Encoding %s is not supported.",encoding));
+			return null;
 		} finally {
 			IOTools.close(reader);
 		}
@@ -36,10 +44,13 @@ public class GsonSerializer extends Serializer.Abstract {
 
 	@Override
 	public void writeObject(OutputStream out, Object object,Properties ctx) {
-		OutputStreamWriter writer = new OutputStreamWriter(out);
+		OutputStreamWriter writer = null;
 		try {
+			writer = new OutputStreamWriter(out,encoding);
 			gson.toJson(object, writer);
-		} finally {
+		} catch (UnsupportedEncodingException e) {
+			Log.error(String.format("Encoding %s is not supported.",encoding));
+		}finally {
 			IOTools.close(writer);
 		}
 	}
