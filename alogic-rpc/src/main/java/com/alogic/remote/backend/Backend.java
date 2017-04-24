@@ -21,7 +21,7 @@ import com.anysoft.util.XmlTools;
  * 远程调用的后端节点信息
  * 
  * @author yyduan
- *
+ * @since 1.6.8.12
  */
 public interface Backend extends Load {
 	
@@ -48,6 +48,12 @@ public interface Backend extends Load {
 	 * @return 版本
 	 */
 	public String getVersion();
+	
+	/**
+	 * Web context路径
+	 * @return
+	 */
+	public String getContextPath();
 	
 	/**
 	 * 虚基类实现
@@ -91,6 +97,8 @@ public interface Backend extends Load {
 		 */
 		protected int priority;
 		
+		protected String contextPath;
+		
 		@Override
 		public LoadCounter getCounter(boolean create) {
 			if (counter == null && create){
@@ -113,7 +121,8 @@ public interface Backend extends Load {
 
 		@Override
 		public boolean isValid() {
-			return counter == null ? true:counter.isValid();
+			boolean valid = counter == null ? true:counter.isValid();
+			return valid;
 		}
 
 		@Override
@@ -126,6 +135,7 @@ public interface Backend extends Load {
 				XmlTools.setString(xml, "version", version);
 				XmlTools.setInt(xml, "weight", weight);
 				XmlTools.setInt(xml, "priority", priority);
+				XmlTools.setString(xml, "contextPath", contextPath);
 			}
 		}
 
@@ -139,12 +149,17 @@ public interface Backend extends Load {
 				JsonTools.setString(json, "version", version);
 				JsonTools.setInt(json, "weight", weight);
 				JsonTools.setInt(json, "priority", priority);
+				JsonTools.setString(json, "contextPath", contextPath);
 			}
 		}
 
 		@Override
 		public String getId() {
-			return String.format("%s:%s", ip,port);
+			if (StringUtils.isEmpty(contextPath)){
+				return ip + ':' + port;
+			}else{
+				return ip + ':' + port + '$' + contextPath;
+			}
 		}
 
 		@Override
@@ -165,6 +180,9 @@ public interface Backend extends Load {
 			version = PropertiesConstants.getString(p,"version","");
 			weight = PropertiesConstants.getInt(p,"weight",1);
 			priority = PropertiesConstants.getInt(p,"priority",1);
+			contextPath = PropertiesConstants.getString(p,"contextPath","");
+			
+			counter = new DefaultCounter(p);
 		}
 
 		@Override
@@ -193,5 +211,9 @@ public interface Backend extends Load {
 			return version;
 		}
 		
+		@Override
+		public String getContextPath(){
+			return contextPath;
+		}
 	}
 }

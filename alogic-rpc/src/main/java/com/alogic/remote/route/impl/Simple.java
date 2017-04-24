@@ -21,7 +21,7 @@ import com.alogic.remote.route.Route;
  * 简单路由模式
  * 
  * @author duanyy
- *
+ * @since 1.6.8.12
  */
 public class Simple extends Route.Abstract{
 	

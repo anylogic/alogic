@@ -59,3 +59,7 @@ alogic-1.6.8
 ### 1.6.8.11 [20170421 duanyy]
 - alogic-rpc:增加远程调用基础类库(未完待续)
 
+### 1.6.8.12 [20170421 duanyy]
+- alogic-rpc:增加远程调用基础类库
+- alogic-common:增加工具类MapProperties
+

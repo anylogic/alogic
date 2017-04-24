@@ -16,8 +16,7 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  *
- * @version 1.1.10.23 [20161118 duanyy] <br>
- * - 支持超时，只能缓存30分钟 <br>
+ * @since 1.6.8.12
  */
 public class AppBackends implements Reportable{
 	/**

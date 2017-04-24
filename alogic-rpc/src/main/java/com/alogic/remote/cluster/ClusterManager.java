@@ -18,7 +18,7 @@ import com.anysoft.util.resource.ResourceFactory;
 /**
  * 集群管理器
  * @author yyduan
- *
+ * @since 1.6.8.12
  */
 public interface ClusterManager extends Reportable,Configurable,XMLConfigurable,AutoCloseable{
 	

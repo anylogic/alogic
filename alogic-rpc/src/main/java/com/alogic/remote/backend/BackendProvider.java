@@ -8,7 +8,7 @@ import com.anysoft.util.XMLConfigurable;
 /**
  * 后端提供者
  * @author yyduan
- *
+ * @since 1.6.8.12
  */
 public interface BackendProvider extends Reportable,XMLConfigurable,Configurable{
 	

@@ -25,7 +25,7 @@ import com.anysoft.util.XmlTools;
 /**
  * 集群管理器实现
  * @author yyduan
- *
+ * @since 1.6.8.12
  */
 public class ClusterManagerImpl implements ClusterManager {
 	/**

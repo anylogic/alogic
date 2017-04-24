@@ -23,7 +23,7 @@ import com.anysoft.util.XmlTools;
 /**
  * 尝试接口
  * @author yyduan
- *
+ * @since 1.6.8.12
  */
 public interface Attempt extends Reportable,Configurable,XMLConfigurable{
 	

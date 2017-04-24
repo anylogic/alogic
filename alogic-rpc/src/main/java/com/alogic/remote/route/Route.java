@@ -27,7 +27,7 @@ import com.anysoft.util.XmlTools;
 /**
  * 应用路由
  * @author duanyy
- *
+ * @since 1.6.8.12
  */
 public interface Route extends Reportable,Configurable,XMLConfigurable,AutoCloseable{
 	

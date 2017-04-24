@@ -9,7 +9,7 @@ import com.anysoft.util.Properties;
 /**
  * Failfast
  * @author yyduan
- *
+ * @since 1.6.8.12
  */
 public class Failfast extends Attempt.Abstract{
 	

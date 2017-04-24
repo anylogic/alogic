@@ -1,11 +1,12 @@
 package com.alogic.remote;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
  * 请求的响应
  * @author yyduan
- *
+ * @since 1.6.8.12
  */
 public interface Response {
 	/**
@@ -32,17 +33,17 @@ public interface Response {
 	 * 响应正文作为String
 	 * @return 响应正文
 	 */
-	public String asString();
+	public String asString() throws IOException;
 	
 	/**
 	 * 响应正文作为byte数组
 	 * @return 响应正文
 	 */
-	public byte[] asBytes();
+	public byte[] asBytes() throws IOException;
 	
 	/**
 	 * 响应正文作为输入流
 	 * @return 响应正文
 	 */
-	public InputStream asStream();
+	public InputStream asStream() throws IOException;
 }

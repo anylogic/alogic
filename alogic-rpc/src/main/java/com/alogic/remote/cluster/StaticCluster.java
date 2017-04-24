@@ -14,7 +14,7 @@ import com.anysoft.util.XmlTools;
  * 静态配置的集群
  * 
  * @author yyduan
- *
+ * @since 1.6.8.12
  */
 public class StaticCluster extends Cluster.Abstract{
 	/**

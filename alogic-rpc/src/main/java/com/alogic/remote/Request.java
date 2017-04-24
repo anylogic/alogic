@@ -2,10 +2,12 @@ package com.alogic.remote;
 
 import java.io.InputStream;
 
+import com.anysoft.util.Properties;
+
 /**
  * 调用Client
  * @author yyduan
- *
+ * @since 1.6.8.12
  */
 public interface Request {
 	/**
@@ -15,13 +17,6 @@ public interface Request {
 	 * @return Request
 	 */
 	public Request setHeader(String name,String value);
-	
-	/**
-	 * 设置服务路径
-	 * @param path 服务路径
-	 * @return Request
-	 */
-	public Request setPath(String path);
 
 	/**
 	 * 设置调用正文
@@ -47,7 +42,7 @@ public interface Request {
 	/**
 	 * 执行调用，获取响应
 	 */
-	public Response execute();
+	public Response execute(String path,String key,Properties ctx);
 		
 	/**
 	 * 释放Client

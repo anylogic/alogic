@@ -1,6 +1,5 @@
 package com.alogic.remote;
 
-import com.alogic.remote.backend.Backend;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
@@ -9,7 +8,7 @@ import com.anysoft.util.XMLConfigurable;
  * Client
  *
  * @author yyduan
- *
+ * @since 1.6.8.12
  */
 public interface Client extends Reportable,Configurable,XMLConfigurable{
 	
@@ -19,11 +18,4 @@ public interface Client extends Reportable,Configurable,XMLConfigurable{
 	 * @return Request
 	 */
 	public Request build(String method);
-	
-	/**
-	 * 为指定的应用增加后端节点
-	 * @param backend 后端节点
-	 * @return Client
-	 */
-	public Client addBackend(String appId,Backend backend);
 }

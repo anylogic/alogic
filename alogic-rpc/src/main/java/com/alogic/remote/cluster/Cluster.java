@@ -39,6 +39,8 @@ import com.anysoft.util.XmlTools;
  * @author duanyy
  * @version 1.1.11.3 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @since 1.6.8.12
  */
 public interface Cluster extends Reportable,Configurable,XMLConfigurable,AutoCloseable{
 	/**

@@ -12,7 +12,7 @@ import com.alogic.remote.route.Route;
  * 基于标签的路由模式
  * 
  * @author duanyy
- *
+ * @since 1.6.8.12
  */
 public class Label extends Route.Indexed{
 	protected static final String pattern = "${label}";

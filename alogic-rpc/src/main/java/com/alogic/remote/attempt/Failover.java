@@ -10,7 +10,7 @@ import com.anysoft.util.PropertiesConstants;
 /**
  * Failover
  * @author yyduan
- *
+ * @since 1.6.8.12
  */
 public class Failover extends Attempt.Abstract{
 	/**
