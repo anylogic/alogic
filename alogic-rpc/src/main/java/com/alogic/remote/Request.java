@@ -1,6 +1,8 @@
 package com.alogic.remote;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import com.anysoft.util.Properties;
 
@@ -9,7 +11,7 @@ import com.anysoft.util.Properties;
  * @author yyduan
  * @since 1.6.8.12
  */
-public interface Request {
+public interface Request extends AutoCloseable{
 	/**
 	 * 设置请求header
 	 * @param name name
@@ -40,12 +42,28 @@ public interface Request {
 	public Request setBody(InputStream in);
 	
 	/**
+	 * 设置直接输出
+	 * @param out 输出接口
+	 * @return Request
+	 */
+	public Request setBody(DirectOutput out);
+	
+	/**
 	 * 执行调用，获取响应
 	 */
 	public Response execute(String path,String key,Properties ctx);
 		
 	/**
-	 * 释放Client
+	 * 输出流直接输出
+	 * @author yyduan
+	 *
 	 */
-	public void release();
+	public static interface DirectOutput {
+		/**
+		 * 输出到OutputStream
+		 * @param outstream output stream
+		 * @throws IOException
+		 */
+		public void writeTo(OutputStream outstream) throws IOException;
+	}
 }

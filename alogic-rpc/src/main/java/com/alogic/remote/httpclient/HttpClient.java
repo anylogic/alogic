@@ -1,10 +1,21 @@
 package com.alogic.remote.httpclient;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
+import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
 
 import com.alogic.remote.AbstractClient;
 import com.alogic.remote.Request;
@@ -36,12 +47,38 @@ public class HttpClient extends AbstractClient{
 		
 		encoding = PropertiesConstants.getString(p,"http.encoding",encoding);
 		
-		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+		final long keepAliveTime = PropertiesConstants.getInt(p,"rpc.http.keepAlive.ttl",60000);
+		ConnectionKeepAliveStrategy kaStrategy = new DefaultConnectionKeepAliveStrategy() {
+		    @Override
+		    public long getKeepAliveDuration(final HttpResponse response, final HttpContext context) {
+		    	long keepAlive = super.getKeepAliveDuration(response, context);
+				if (keepAlive == -1) {
+					keepAlive = keepAliveTime;
+				}
+				return keepAlive;
+		    }
+		};
 		
-		cm.setDefaultMaxPerRoute(PropertiesConstants.getInt(p, "rpc.http.maxConnPerHost", 200));
-		cm.setMaxTotal(PropertiesConstants.getInt(p,"rpc.http.maxConn",2000));
-				
-		httpClient = HttpClients.custom().setConnectionManager(cm).build();
+		List<Header> headers = new ArrayList<Header>();
+		boolean keepAliveEnable = PropertiesConstants.getBoolean(p,"rpc.http.keepAlive.enable", true);
+		if (keepAliveEnable){
+			headers.add(new BasicHeader("Connection",HTTP.CONN_KEEP_ALIVE));
+		}else{
+			headers.add(new BasicHeader("Connection",HTTP.CONN_CLOSE));
+		}
+		
+		int maxConnPerRoute = PropertiesConstants.getInt(p, "rpc.http.maxConnPerHost", 200);
+		int maxConn = PropertiesConstants.getInt(p,"rpc.http.maxConn",2000);
+		int ttlOfConn = PropertiesConstants.getInt(p,"rpc.http.keepalive.ttl",60000);
+		
+		httpClient = HttpClients.custom().
+				useSystemProperties().
+				setMaxConnPerRoute(maxConnPerRoute).
+				setConnectionReuseStrategy(DefaultClientConnectionReuseStrategy.INSTANCE).
+				setMaxConnTotal(maxConn).
+				setDefaultHeaders(headers).
+				setConnectionTimeToLive(ttlOfConn,TimeUnit.MILLISECONDS).
+				setKeepAliveStrategy(kaStrategy).build();
 		
 		int timeOut = PropertiesConstants.getInt(p, "rpc.http.timeout", 10000);
 		requestConfig = RequestConfig.custom().setConnectionRequestTimeout(timeOut)
@@ -50,6 +87,8 @@ public class HttpClient extends AbstractClient{
 	
 	@Override
 	public Request build(String method) {
-		return new HttpClientRequest(httpClient,new HttpPost(),this,encoding);
+		HttpPost request = new HttpPost();
+		request.setConfig(requestConfig);
+		return new HttpClientRequest(httpClient,request,this,encoding);
 	}
 }

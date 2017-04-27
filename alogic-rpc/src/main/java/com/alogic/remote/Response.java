@@ -8,7 +8,7 @@ import java.io.InputStream;
  * @author yyduan
  * @since 1.6.8.12
  */
-public interface Response {
+public interface Response extends AutoCloseable{
 	/**
 	 * 获取响应头
 	 * @param name name
@@ -16,6 +16,18 @@ public interface Response {
 	 * @return value
 	 */
 	public String getHeader(String name,String dft);
+	
+	/**
+	 * 获取content-type
+	 * @return content-type
+	 */
+	public String getContentType();
+	
+	/**
+	 * 获取content-length
+	 * @return content-length
+	 */
+	public int getContentLength();
 	
 	/**
 	 * 获取结果代码

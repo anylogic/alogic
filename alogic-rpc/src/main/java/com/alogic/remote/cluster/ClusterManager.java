@@ -48,14 +48,27 @@ public interface ClusterManager extends Reportable,Configurable,XMLConfigurable,
 	 *
 	 */
 	public static class TheFactory extends Factory<ClusterManager>{
+		
 		/**
 		 * a logger of log4j
 		 */
 		protected static final Logger logger = LoggerFactory.getLogger(ClusterManager.class);
 		
-		private static final String DEFAULT = "java:///com/ketty/core/route/clusters.xml#" + ClusterManager.class.getName();
+		/**
+		 * 缺省的配置文件
+		 */
+		private static final String DEFAULT = "java:///com/alogic/remote/cluster/clusters.xml#" 
+				+ ClusterManager.class.getName();
 		
+		/**
+		 * 唯一实例
+		 */
 		protected static ClusterManager instance = null;
+		
+		/**
+		 * 获取实例
+		 * @return 唯一实例
+		 */
 		public static ClusterManager get(){
 			if (instance == null){
 				synchronized (TheFactory.class){
@@ -71,7 +84,8 @@ public interface ClusterManager extends Reportable,Configurable,XMLConfigurable,
 						Document doc = XmlTools.loadFromInputStream(in);		
 						if (doc != null){
 							TheFactory factory = new TheFactory();
-							instance = factory.newInstance(doc.getDocumentElement(), settings,"module",ClusterManagerImpl.class.getName());
+							instance = factory.newInstance(doc.getDocumentElement(), settings,"module",
+									ClusterManagerImpl.class.getName());
 						}
 					}catch (Exception ex){
 						logger.error("Error occurs when load xml file,source=" + master, ex);

@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -85,6 +87,11 @@ public interface Call extends Reportable,Configurable,XMLConfigurable{
 	 *
 	 */
 	public abstract static class Abstract implements Call{
+		/**
+		 * a logger of slf4j
+		 */
+		protected static final Logger LOG = LoggerFactory.getLogger(Call.class);
+		
 		protected ScheduledThreadPoolExecutor exec = null;
 		
 		protected List<InvokeFilter> filters = new ArrayList<InvokeFilter>();

@@ -36,7 +36,7 @@ public class ClusterManagerImpl implements ClusterManager {
 	/**
 	 * 缺省的集群类名
 	 */
-	protected String dftClusterClazz = null;
+	protected String dftClusterClazz = StaticCluster.class.getName();
 	
 	/**
 	 * 缺省集群的id

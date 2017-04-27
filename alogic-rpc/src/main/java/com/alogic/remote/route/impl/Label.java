@@ -15,7 +15,7 @@ import com.alogic.remote.route.Route;
  * @since 1.6.8.12
  */
 public class Label extends Route.Indexed{
-	protected static final String pattern = "${label}";
+	protected static final String pattern = "${$label}";
 	
 	public Label(){
 		

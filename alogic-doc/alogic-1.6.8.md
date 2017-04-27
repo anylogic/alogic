@@ -63,3 +63,7 @@ alogic-1.6.8
 - alogic-rpc:增加远程调用基础类库
 - alogic-common:增加工具类MapProperties
 
+### 1.6.8.13 [20170427 duanyy]
+- alogic-remote:淘汰alogic-remote,将功能合并到alogic-rpc模块;
+- alogic-common:增加tlog处理器插件:SetDims，用于设置tlog的应用id和主机端口等;
+

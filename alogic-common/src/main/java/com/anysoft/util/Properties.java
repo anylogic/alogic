@@ -76,7 +76,6 @@ abstract public class Properties implements DataProvider{
 	 */
 	public Properties(String _domain){
 		this(_domain,null);
-		
 	}
 	
 	/**

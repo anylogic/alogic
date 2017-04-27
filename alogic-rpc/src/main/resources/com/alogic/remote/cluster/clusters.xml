@@ -1,0 +1,10 @@
+<?xml version = "1.0"?>
+<clusterManager>
+	<cluster id="default" module="com.alogic.remote.cluster.StaticCluster">
+		<route id="default" />
+		<route id="label" module="Label" />
+		<route id="version" module="Version" />
+		
+		<backend id="localhost" ip="127.0.0.1" port="${server.port}"/>
+	</cluster>
+</clusterManager>

@@ -2,7 +2,7 @@ package com.alogic.rpc.naming;
 
 import com.alogic.naming.context.XmlInner;
 import com.alogic.rpc.Call;
-import com.alogic.rpc.call.http.HttpCall;
+import com.alogic.rpc.call.http.RemoteCall;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -14,7 +14,7 @@ import com.anysoft.util.PropertiesConstants;
  */
 public class Inner extends XmlInner<Call> {
 
-	protected String dftClass = HttpCall.class.getName();
+	protected String dftClass = RemoteCall.class.getName();
 	
 	@Override
 	public String getObjectName() {

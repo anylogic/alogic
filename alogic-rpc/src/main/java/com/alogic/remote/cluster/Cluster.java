@@ -164,7 +164,7 @@ public interface Cluster extends Reportable,Configurable,XMLConfigurable,AutoClo
 			Factory<Route> factory = new Factory<Route>(){
 				public String getClassName(String module){
 					if (module.indexOf(".") < 0){
-						return "com.ketty.core.route.impl." + module;
+						return "com.alogic.remote.route.impl." + module;
 					}
 					return module;
 				}			

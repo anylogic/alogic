@@ -24,9 +24,9 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.anylogic</groupId>
-			<artifactId>alogic-remote</artifactId>
+			<artifactId>alogic-rpc</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+		</dependency>		
 		<dependency>
 			<groupId>com.github.anylogic</groupId>
 			<artifactId>alogic-blob</artifactId>

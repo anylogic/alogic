@@ -6,16 +6,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.w3c.dom.Element;
+
 import com.alogic.metrics.Fragment;
 import com.alogic.metrics.stream.MetricsSummaryWriter;
+import com.alogic.remote.call.BuilderFactory;
+import com.alogic.remote.call.Call;
+import com.alogic.remote.call.Parameters;
 import com.anysoft.util.Factory;
+import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
-import com.logicbus.remote.core.BuilderFactory;
-import com.logicbus.remote.core.Call;
-import com.logicbus.remote.core.Parameters;
 
 
 /**
@@ -31,6 +34,9 @@ import com.logicbus.remote.core.Parameters;
  * 
  * @version 1.6.6.13 [duanyy 20170112] <br>
  * - 采用新的指标框架 <br>
+ * 
+ * @version 1.6.8.13 [duanyy 20170427] <br>
+ * - 采用alogic-rpc中提供的远程调用框架 <br>
  */
 public class RemoteWriter extends MetricsSummaryWriter{
 	
@@ -38,6 +44,8 @@ public class RemoteWriter extends MetricsSummaryWriter{
 	 * 远程调用
 	 */
 	protected Call theCall = null;
+	
+	protected int logCnt = 0;
 	
 	@Override
 	protected void write(Map<String, Fragment> fragments, long t) {
@@ -60,7 +68,11 @@ public class RemoteWriter extends MetricsSummaryWriter{
 				
 				theCall.execute(paras);
 			}catch (Exception ex){
-				
+				if (logCnt % 120 == 0){
+					LOG.warn("Failed to send metrics to insight.Cnt="+logCnt);
+					LOG.warn(fragments.toString());
+				}
+				logCnt ++;				
 			}			
 		}
 	}
@@ -78,6 +90,11 @@ public class RemoteWriter extends MetricsSummaryWriter{
 						XmlTools.node2String(callElem)));
 			}
 		}
+	}
+	
+	public void close() throws Exception {
+		IOTools.close(theCall);
+		super.close();
 	}
 
 }
