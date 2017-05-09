@@ -3,15 +3,20 @@ package com.alogic.remote.httpclient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alogic.remote.Request;
 import com.alogic.remote.Response;
@@ -24,18 +29,24 @@ import com.anysoft.util.Properties;
  * 
  * @author yyduan
  * @since 1.6.8.12
+ * 
+ * @version 1.6.8.14 <br>
+ * - 优化http远程调用的超时机制 <br>
  */
 public class HttpClientRequest implements Request{
+	protected static final Logger LOG = LoggerFactory.getLogger(HttpClientRequest.class);
 	protected HttpRequestBase httpRequest = null;
 	protected CloseableHttpClient httpClient = null;
 	protected HttpClient client = null;
 	protected String encoding = "utf-8";
+	protected int autoRetryCnt = 3;
 	
-	public HttpClientRequest(CloseableHttpClient httpClient,HttpRequestBase request,HttpClient client,String encoding){
+	public HttpClientRequest(CloseableHttpClient httpClient,HttpRequestBase request,HttpClient client,String encoding,int autoRetryCnt){
 		this.httpClient = httpClient;
 		this.httpRequest = request;
 		this.client = client;
 		this.encoding = encoding;
+		this.autoRetryCnt = autoRetryCnt;
 	}
 	
 	@Override
@@ -88,6 +99,7 @@ public class HttpClientRequest implements Request{
 	@Override
 	public Response execute(String path,String key,Properties ctx) {
 		int retryCount = 0;
+		int autoRetry = 0;
 		Response result = null;
 		String lastErrorCode = "core.io_error";
 		String lastErrorMsg = "";
@@ -97,8 +109,7 @@ public class HttpClientRequest implements Request{
 			long start = System.nanoTime();
 			boolean error = false;
 			try {
-				backend = client.getBackend(key,ctx, retryCount ++ );
-				
+				backend = client.getBackend(key,ctx, autoRetry > 0 ? 0 : retryCount ++ );				
 				if (backend != null){
 					result = execute(path,backend);
 				}
@@ -107,8 +118,18 @@ public class HttpClientRequest implements Request{
 				error = true;
 				lastErrorCode = ex.getCode();
 				lastErrorMsg = ex.getMessage();
-				if (!lastErrorCode.startsWith("core")){
-					throw ex;
+				if (lastErrorCode.startsWith("internal")){
+					//对于internal错误，属于连接错误，可以重试
+					LOG.error("Internal error occurs,Retry " + autoRetry);
+					autoRetry ++;
+					if (autoRetry > autoRetryCnt){
+						//自动重试3次
+						autoRetry = 0;
+					}
+				}else{
+					if (!lastErrorCode.startsWith("core")){
+						throw ex;
+					}
 				}
 			}finally{
 				if (backend != null){
@@ -128,6 +149,12 @@ public class HttpClientRequest implements Request{
 		try {			
 			httpRequest.setURI(URI.create(url));
 			return new HttpClientResponse(httpClient.execute(httpRequest),encoding);			
+		}catch (SocketTimeoutException ex){
+			throw new CallException("core.socket_timeout",url, ex);
+		}catch (ConnectTimeoutException ex){
+			throw new CallException("internal.conn_timeout",url, ex);
+		}catch (ConnectException ex){
+			throw new CallException("internal.conn_refused",url, ex);
 		}catch (Exception ex){
 			throw new CallException("core.io_error",url, ex);
 		}

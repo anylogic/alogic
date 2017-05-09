@@ -1,7 +1,6 @@
 package com.alogic.xscript.plugins;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +11,7 @@ import com.alogic.xscript.Block;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -19,7 +19,8 @@ import com.anysoft.util.PropertiesConstants;
  * 异步执行块
  * 
  * @author duanyy
- *
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  */
 public class Asynchronized extends Block {
 	protected long timeout = 1000L;	
@@ -36,8 +37,7 @@ public class Asynchronized extends Block {
 	}
 
 	@Override
-	protected void onExecute(final Map<String, Object> root,
-			final Map<String, Object> current, final LogicletContext ctx, final ExecuteWatcher watcher) {
+	protected void onExecute(final XsObject root,final XsObject current, final LogicletContext ctx, final ExecuteWatcher watcher) {
 		List<Logiclet> list = children;
 		
 		final CountDownLatch latch = new CountDownLatch(list.size());

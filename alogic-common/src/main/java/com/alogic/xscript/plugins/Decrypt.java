@@ -1,10 +1,7 @@
 package com.alogic.xscript.plugins;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
-
-import com.alogic.xscript.util.MapProperties;
+import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
@@ -19,7 +16,8 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @author duanyy
  * @since 1.6.5.13
- * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  */
 public class Decrypt extends AbstractLogiclet{
 	protected String in = "in";
@@ -43,18 +41,15 @@ public class Decrypt extends AbstractLogiclet{
 	}		
 	
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx,
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		
-		MapProperties p = new MapProperties(current,ctx);
-		
-		String inData = p.transform(in);
-		String keyData = p.transform(key);
+		String inData = ctx.transform(in);
+		String keyData = ctx.transform(key);
 		
 		if (StringUtils.isNotEmpty(inData)&&StringUtils.isNotEmpty(keyData)){
 			String outData = coder.decode(inData, keyData);
-			String outId = p.transform(out);
+			String outId = ctx.transform(out);
 			if (StringUtils.isNotEmpty(outData) && StringUtils.isNotEmpty(outId)){
 				ctx.SetValue(out, outData);
 			}

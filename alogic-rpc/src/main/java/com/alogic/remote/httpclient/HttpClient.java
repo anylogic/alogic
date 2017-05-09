@@ -27,6 +27,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @author yyduan
  * @since 1.6.8.12
+ * 
+ * @version 1.6.8.14 <br>
+ * - 优化http远程调用的超时机制 <br>
  */
 public class HttpClient extends AbstractClient{
 	/**
@@ -41,11 +44,14 @@ public class HttpClient extends AbstractClient{
 	
 	protected String encoding = "utf-8";
 	
+	protected int autoRetryCnt = 2;
+	
 	@Override
 	public void configure(Properties p) {
 		super.configure(p);
 		
 		encoding = PropertiesConstants.getString(p,"http.encoding",encoding);
+		autoRetryCnt = PropertiesConstants.getInt(p, "rpc.ketty.autoRetryTimes", autoRetryCnt);
 		
 		final long keepAliveTime = PropertiesConstants.getInt(p,"rpc.http.keepAlive.ttl",60000);
 		ConnectionKeepAliveStrategy kaStrategy = new DefaultConnectionKeepAliveStrategy() {
@@ -81,14 +87,16 @@ public class HttpClient extends AbstractClient{
 				setKeepAliveStrategy(kaStrategy).build();
 		
 		int timeOut = PropertiesConstants.getInt(p, "rpc.http.timeout", 10000);
-		requestConfig = RequestConfig.custom().setConnectionRequestTimeout(timeOut)
-                .setConnectTimeout(timeOut).setSocketTimeout(timeOut).build();
+		requestConfig = RequestConfig.custom().
+				setConnectionRequestTimeout(PropertiesConstants.getInt(p, "rpc.http.timeout.request", timeOut))
+                .setConnectTimeout(PropertiesConstants.getInt(p, "rpc.http.timeout.conn", timeOut))
+                .setSocketTimeout(PropertiesConstants.getInt(p, "rpc.http.timeout.socket", timeOut)).build();
 	}
 	
 	@Override
 	public Request build(String method) {
 		HttpPost request = new HttpPost();
 		request.setConfig(requestConfig);
-		return new HttpClientRequest(httpClient,request,this,encoding);
+		return new HttpClientRequest(httpClient,request,this,encoding,autoRetryCnt);
 	}
 }

@@ -8,6 +8,8 @@ import org.w3c.dom.Element;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.Script;
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
 import com.alogic.xscript.log.LogInfo;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XmlElementProperties;
@@ -22,8 +24,12 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.3.38 [duanyy 20150812] <br>
  * - 去掉编译和执行日志 <br>
+ * 
  * @version 1.6.4.16 [duanyy 20151110] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  */
 public class ScriptDoer extends Doer.Abstract{
 	protected Logiclet stmt = null;
@@ -37,10 +43,12 @@ public class ScriptDoer extends Doer.Abstract{
 		try {
 			// 向队列报告任务已经开始
 			reportState(Task.State.Running, 0);
-			Map<String, Object> root = new HashMap<String, Object>();
+			Map<String,Object> root = new HashMap<String,Object>();
+			XsObject doc = new JsonObject("root",root);
+			
 			LogicletContext ctx = new LogicletContext(task.getParameters());
 			// 执行任务
-			stmt.execute(root, root, ctx, null);
+			stmt.execute(doc, doc, ctx, null);
 			// 任务完成
 			reportState(Task.State.Done, 10000);
 		} catch (Exception t) {

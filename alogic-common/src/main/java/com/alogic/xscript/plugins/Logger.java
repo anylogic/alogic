@@ -1,13 +1,11 @@
 package com.alogic.xscript.plugins;
 
-import java.util.Map;
-
 import org.w3c.dom.Element;
-
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.log.Default;
 import com.alogic.xscript.log.LogInfo;
 import com.anysoft.util.Properties;
@@ -21,7 +19,10 @@ import com.anysoft.util.Factory;
  * 定义日志处理器
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
  */
 public class Logger extends AbstractLogiclet{
 
@@ -30,7 +31,7 @@ public class Logger extends AbstractLogiclet{
 	}
 
 	@Override
-	protected void onExecute(Map<String, Object> root, Map<String, Object> current, LogicletContext ctx,
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		// 不会被执行
 	}

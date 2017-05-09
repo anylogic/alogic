@@ -2,15 +2,12 @@ package com.alogic.xscript.plugins;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
-
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
-import com.alogic.xscript.util.MapProperties;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -22,7 +19,8 @@ import com.anysoft.util.PropertiesConstants;
  * @author duanyy
  *
  * @since 1.6.6.14
- * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  */
 public class Hash extends AbstractLogiclet {
 	protected String id = "$hash";
@@ -42,11 +40,9 @@ public class Hash extends AbstractLogiclet {
 	}
 
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 		if (StringUtils.isNotEmpty(id)){
-			MapProperties p = new MapProperties(current,ctx);
-			ctx.SetValue(id, String.valueOf((hash(p.transform(value)) & Long.MAX_VALUE) % limit ));
+			ctx.SetValue(id, String.valueOf((hash(ctx.transform(value)) & Long.MAX_VALUE) % limit ));
 		}
 	}
 	

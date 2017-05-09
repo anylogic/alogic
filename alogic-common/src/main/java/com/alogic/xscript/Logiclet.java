@@ -1,7 +1,6 @@
 package com.alogic.xscript;
 
-import java.util.Map;
-
+import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.log.LogInfo;
 import com.anysoft.stream.Handler;
 import com.anysoft.util.Configurable;
@@ -12,7 +11,10 @@ import com.anysoft.util.XMLConfigurable;
  * 微服务单元
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
  */
 public interface Logiclet extends Configurable,XMLConfigurable,Reportable{
 	
@@ -21,8 +23,8 @@ public interface Logiclet extends Configurable,XMLConfigurable,Reportable{
 	 * @param root 结果文档根目录
 	 * @param current 结果文档当前目录
 	 * @param ctx 服务上下文
-	 */
-	public void execute(Map<String,Object> root,Map<String,Object> current,LogicletContext ctx,ExecuteWatcher watcher);
+	 */	
+	public void execute(XsObject root,XsObject current,LogicletContext ctx,ExecuteWatcher watcher);
 	
 	/**
 	 * 记录日志

@@ -1,20 +1,20 @@
 package com.alogic.xscript.plugins;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
-
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.Properties;
 
 /**
  * 在当前文档增加一个对象
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
  */
 public class Obj extends Segment {
 	protected String tag = "data";
@@ -30,13 +30,11 @@ public class Obj extends Segment {
 		tag = p.GetValue("tag", tag, false, true);
 	}
 	
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 		String tagValue = ctx.transform(tag);
 		if (StringUtils.isNotEmpty(tagValue)){
-			Map<String,Object> template = new HashMap<String,Object>();
-			current.put(tagValue, template);
-			super.onExecute(root, (Map<String,Object>)template, ctx, watcher);
+			XsObject template = current.getObjectChild(tagValue, true);
+			super.onExecute(root,template, ctx, watcher);
 		}
 	}	
 }

@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
 import com.anysoft.batch.Process;
 import com.anysoft.util.CommandLine;
 import com.anysoft.util.Copyright;
@@ -24,6 +26,10 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
  */
 public class Main implements Process {
 	/**
@@ -87,9 +93,9 @@ public class Main implements Process {
 	public int run() {
 		if (script != null){
 			Map<String,Object> root = new HashMap<String,Object>();
+			XsObject doc = new JsonObject("root",root);
 			LogicletContext ctx = new LogicletContext(props);
-			script.execute(root, root, ctx, new ExecuteWatcher.Quiet());
-			
+			script.execute(doc, doc, ctx, new ExecuteWatcher.Quiet());
 			JsonProvider provider = JsonProviderFactory.createProvider();
 			logger.info(provider.toJson(root));
 		}

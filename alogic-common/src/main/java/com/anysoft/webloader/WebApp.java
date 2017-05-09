@@ -57,6 +57,16 @@ public interface WebApp {
 	public void init(DefaultProperties props,ServletContext servletContext);
 	
 	/**
+	 * 启动应用
+	 */
+	public void start();
+	
+	/**
+	 * 停止应用
+	 */
+	public void stop();
+	
+	/**
 	 * 销毁应用
 	 */
 	public void destroy(ServletContext servletContext);

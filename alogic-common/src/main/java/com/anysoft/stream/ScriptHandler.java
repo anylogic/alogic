@@ -11,6 +11,8 @@ import org.w3c.dom.Element;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.Script;
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
 import com.anysoft.util.DataProviderProperties;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
@@ -27,6 +29,10 @@ import com.anysoft.util.resource.ResourceFactory;
  * @param <data>
  * 
  * @since 1.6.6.13
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
  */
 public class ScriptHandler <data extends Flowable> extends AbstractHandler<data> {
 	/**
@@ -62,10 +68,11 @@ public class ScriptHandler <data extends Flowable> extends AbstractHandler<data>
 		try {
 			// 向队列报告任务已经开始
 			Map<String, Object> root = new HashMap<String, Object>();
+			XsObject doc = new JsonObject("root",root);
 			DataProviderProperties p = new DataProviderProperties(_data);
 			LogicletContext ctx = new LogicletContext(p);
 			// 执行任务
-			stmt.execute(root, root, ctx, null);
+			stmt.execute(doc, doc, ctx, null);
 		} catch (Exception t) {
 			LOG.error("Failed to execute script", t);
 		}

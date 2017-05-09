@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.alogic.xscript.util.MapProperties;
+import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
@@ -19,7 +19,10 @@ import com.anysoft.util.XmlElementProperties;
 /**
  * 条件语句
  * @author duanyy
- *
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
  */
 public class Switch extends AbstractLogiclet{
 
@@ -67,13 +70,11 @@ public class Switch extends AbstractLogiclet{
 	}	
 
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx,
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		String caseValue = "default";
 		if (StringUtils.isNotEmpty(pattern)){
-			MapProperties p = new MapProperties(current,ctx);
-			caseValue = p.transform(pattern);
+			caseValue = ctx.transform(pattern);
 		}
 		
 		Logiclet stmt = children.get(caseValue);

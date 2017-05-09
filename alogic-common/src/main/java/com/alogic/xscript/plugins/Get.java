@@ -1,13 +1,11 @@
 package com.alogic.xscript.plugins;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
-
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -24,6 +22,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.7.22 [duanyy 20170306] <br>
  * - 不再将当前文档节点的属性作为变量 <br>
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  */
 public class Get extends AbstractLogiclet {
 	protected String id;
@@ -44,30 +45,29 @@ public class Get extends AbstractLogiclet {
 	}
 
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 		String idValue = ctx.transform(id);
 		if (StringUtils.isNotEmpty(idValue)){
 			String v = ctx.transform(value);
 			if (StringUtils.isNotEmpty(v)){
 				if (type.equals("string")){
-					current.put(idValue, v);
+					current.addProperty(idValue, v);
 				}else{
 					if (type.equals("long")){
 						try{
-							current.put(idValue,Long.parseLong(v));
+							current.addProperty(idValue, Long.parseLong(v));
 						}catch (NumberFormatException ex){
-							current.put(idValue, v);
+							current.addProperty(idValue, v);
 						}
 					}else{
 						if (type.equals("double")){
 							try{
-								current.put(idValue,Double.parseDouble(v));
+								current.addProperty(idValue, Double.parseDouble(v));
 							}catch (NumberFormatException ex){
-								current.put(idValue, v);
+								current.addProperty(idValue, v);
 							}							
 						}else{
-							current.put(idValue, v);
+							current.addProperty(idValue, v);
 						}
 					}
 				}

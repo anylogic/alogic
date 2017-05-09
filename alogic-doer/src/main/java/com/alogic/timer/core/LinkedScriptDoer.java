@@ -18,6 +18,8 @@ import com.anysoft.util.Settings;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
 import com.alogic.xscript.log.LogInfo;
 
 /**
@@ -26,7 +28,8 @@ import com.alogic.xscript.log.LogInfo;
  * @author duanyy
  *
  * @since 1.6.4.34
- * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  */
 public class LinkedScriptDoer extends Doer.Abstract{
 	
@@ -42,9 +45,10 @@ public class LinkedScriptDoer extends Doer.Abstract{
 			// 向队列报告任务已经开始
 			reportState(Task.State.Running, 0);
 			Map<String,Object> root = new HashMap<String,Object>();
+			XsObject doc = new JsonObject("root",root);
 			LogicletContext ctx = new LogicletContext(task.getParameters());
 			// 执行任务
-			stmt.execute(root,root,ctx, null);
+			stmt.execute(doc,doc,ctx, null);
 			// 任务完成
 			reportState(Task.State.Done, 10000);
 		} catch (Exception t) {

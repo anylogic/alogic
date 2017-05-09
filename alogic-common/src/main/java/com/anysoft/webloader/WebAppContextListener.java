@@ -55,7 +55,25 @@ public class WebAppContextListener implements ServletContextListener {
 	protected static Logger logger = LoggerFactory.getLogger(WebAppContextListener.class);
 	protected WebApp app = null;
 	
+	/**
+	 * 触发destroy事件
+	 * @param e 事件
+	 */
+	protected void onContextDestroyed(ServletContextEvent e){
+		// nothing to do
+	}
+	
+	protected void onContextInitialized(ServletContextEvent e){
+		// nothing to do
+	}
+	
 	public void contextDestroyed(ServletContextEvent e) {
+		if (app != null){
+			app.stop();
+		}
+		
+		onContextDestroyed(e);
+		
 		if (app != null){
 			app.destroy(e.getServletContext());
 		}
@@ -91,9 +109,27 @@ public class WebAppContextListener implements ServletContextListener {
 		
 		try {
 			app = (WebApp) classLoader.loadClass(appClass).newInstance();
-			app.init(props,e.getServletContext());
 		} catch (Exception ex){
-			logger.error("Can not init app",ex);
+			logger.error("Can not load app",ex);
+		}
+		
+		/**
+		 * 初始化应用
+		 */
+		if (app != null){
+			app.init(props,e.getServletContext());
+		}		
+		
+		/**
+		 * 装入其他context
+		 */
+		onContextInitialized(e);
+		
+		/**
+		 * 启动应用
+		 */
+		if (app != null){
+			app.start();
 		}
 	}
 }

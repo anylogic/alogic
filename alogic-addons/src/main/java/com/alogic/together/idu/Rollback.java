@@ -2,17 +2,19 @@ package com.alogic.together.idu;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Map;
-
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 
 /**
  * 回滚事务
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
  */
 public class Rollback extends DBOperation {
 
@@ -21,7 +23,7 @@ public class Rollback extends DBOperation {
 	}
 
 	@Override
-	protected void onExecute(Connection conn, Map<String, Object> root, Map<String, Object> current,
+	protected void onExecute(Connection conn, XsObject root,XsObject current,
 			LogicletContext ctx, ExecuteWatcher watcher) {
 		try {
 			conn.rollback();

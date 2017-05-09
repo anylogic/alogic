@@ -1,11 +1,10 @@
 package com.alogic.xscript.plugins;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsArray;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -13,7 +12,8 @@ import com.anysoft.util.PropertiesConstants;
  * 为数组增加子项
  * 
  * @author duanyy
- *
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  */
 public class ArrayItem extends Segment {
 	protected String id = "$array";
@@ -28,13 +28,12 @@ public class ArrayItem extends Segment {
 		id = PropertiesConstants.getString(p,"id",id,true);
 	}
 	
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
-		List<Object> list = ctx.getObject(id);
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
+		XsArray list = ctx.getObject(id);
 		if (list != null){
-			Map<String,Object> template = new HashMap<String,Object>();
+			XsObject template = list.newObject();
 			list.add(template);
-			super.onExecute(root, (Map<String,Object>)template, ctx, watcher);			
+			super.onExecute(root, template, ctx, watcher);			
 		}
 	}	
 }

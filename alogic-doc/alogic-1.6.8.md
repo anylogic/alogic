@@ -67,3 +67,9 @@ alogic-1.6.8
 - alogic-remote:淘汰alogic-remote,将功能合并到alogic-rpc模块;
 - alogic-common:增加tlog处理器插件:SetDims，用于设置tlog的应用id和主机端口等;
 
+### 1.6.8.14 [20170502 duanyy]
+- alogic-common:增加xscript的中间文档模型,以便支持多种报文协议;
+- alogic-common:xscipt框架采用新的中间文档模型;
+- alogic-core:调整初始化时各组件的启动次序;
+- alogic-rpc:优化http远程调用的超时机制;
+

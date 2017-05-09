@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
+import com.alogic.xscript.doc.xml.XmlObject;
 import com.alogic.xscript.log.LogInfo;
 import com.alogic.xscript.plugins.Array;
 import com.alogic.xscript.plugins.ArrayItem;
@@ -87,6 +90,10 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.8.5 [20170331 duanyy] <br>
  * - 增加rem插件 <br>
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -276,9 +283,8 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 			json.put("module", getClass().getName());
 		}
 	}
-
-	@Override
-	public void execute(final Map<String, Object> root, final Map<String, Object> current,final LogicletContext ctx,final ExecuteWatcher watcher) {
+	
+	public void execute(XsObject root,XsObject current,LogicletContext ctx,ExecuteWatcher watcher){
 		long start = System.currentTimeMillis();
 		boolean error = false;
 		String msg = "OK";
@@ -301,8 +307,27 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 			}			
 		}
 	}
-
-	protected abstract void onExecute(final Map<String, Object> root, final Map<String, Object> current,final LogicletContext ctx,final ExecuteWatcher watcher);
+	
+	@SuppressWarnings("unchecked")
+	protected void onExecute(XsObject root,XsObject current,final LogicletContext ctx,final ExecuteWatcher watcher){
+		if (root instanceof JsonObject){
+			onExecute((Map<String, Object>)root.getContent(),(Map<String, Object>)current.getContent(),ctx,watcher);
+		}else{
+			if (root instanceof XmlObject){
+				onExecute((Element)root.getContent(),(Element)current.getContent(),ctx,watcher);
+			}else{
+				throw new BaseException("core.not_supported",String.format("Tag %s does not support protocol %s",this.xmlTag,root.getClass().getName()));	
+			}
+		}
+	}
+	
+	protected void onExecute(final Map<String, Object> root, final Map<String, Object> current,final LogicletContext ctx,final ExecuteWatcher watcher){
+		throw new BaseException("core.not_supported",String.format("Tag %s does not support protocol %s",this.xmlTag,root.getClass().getName()));	
+	}
+	
+	protected void onExecute(final Element root, final Element current,final LogicletContext ctx,final ExecuteWatcher watcher){
+		throw new BaseException("core.not_supported",String.format("Tag %s does not support protocol %s",this.xmlTag,root.getClass().getName()));	
+	}
 	
 	public String getArgument(String id,String dftValue,LogicletContext ctx){
 		return ctx.GetValue(id, dftValue);

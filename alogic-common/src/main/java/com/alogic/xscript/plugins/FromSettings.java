@@ -1,13 +1,12 @@
 package com.alogic.xscript.plugins;
 
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
@@ -18,6 +17,9 @@ import com.anysoft.util.Settings;
  * @author duanyy
  *
  * @since 1.6.5.39
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  */
 public class FromSettings extends AbstractLogiclet {
 	protected String id;
@@ -35,8 +37,7 @@ public class FromSettings extends AbstractLogiclet {
 	}
 
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 		if (StringUtils.isNotEmpty(id)){
 			Settings settings = Settings.get();
 			ctx.SetValue(id, settings.transform(value));

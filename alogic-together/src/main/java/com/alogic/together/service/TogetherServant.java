@@ -4,11 +4,15 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.Script;
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
+import com.alogic.xscript.doc.xml.XmlObject;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.message.JsonMessage;
+import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
 
 /**
@@ -53,7 +57,8 @@ public class TogetherServant extends AbstractServant {
 			logicletContext.setObject("$context", ctx);
 			logicletContext.SetValue("$service", service);
 			try {
-				script.execute(msg.getRoot(),msg.getRoot(), logicletContext, null);
+				XsObject doc = new JsonObject("root",msg.getRoot());
+				script.execute(doc,doc, logicletContext, null);
 			}finally{
 				logicletContext.removeObject("$context");
 			}
@@ -63,4 +68,22 @@ public class TogetherServant extends AbstractServant {
 		return 0;
 	}
 
+	protected int onXml(Context ctx) throws Exception{ 
+		if (script != null){
+			XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
+			
+			LogicletContext logicletContext = new SevantLogicletContext(ctx);
+			logicletContext.setObject("$context", ctx);
+			logicletContext.SetValue("$service", service);
+			try {
+				XsObject doc = new XmlObject("root",msg.getRoot());
+				script.execute(doc,doc, logicletContext, null);
+			}finally{
+				logicletContext.removeObject("$context");
+			}
+		}else{
+			ctx.asMessage(JsonMessage.class);
+		}
+		return 0;	
+	}
 }

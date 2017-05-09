@@ -1,13 +1,11 @@
 package com.alogic.xscript.plugins;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
-
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.StringMatcher;
@@ -16,6 +14,10 @@ import com.anysoft.util.StringMatcher;
  * 字符串匹配插件
  * @author yyduan
  * @since 1.6.8.4
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
  */
 public class Match extends AbstractLogiclet {
 	protected String id = "$match";
@@ -34,8 +36,7 @@ public class Match extends AbstractLogiclet {
 	}
 
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 		if (StringUtils.isNotEmpty(id)){
 			String v = ctx.transform(value);
 			ctx.SetValue(id, Boolean.toString(matcher.match(v)));

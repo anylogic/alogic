@@ -1,13 +1,11 @@
 package com.alogic.xscript.plugins;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
-
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -19,6 +17,10 @@ import com.anysoft.util.PropertiesConstants;
  *
  * @version 1.6.6.13 [20170112 duanyy] <br>
  * - 支持按字符区间取值 <br>
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
  */
 public class UUid extends AbstractLogiclet {
 	protected String id = "$uuid";
@@ -42,8 +44,7 @@ public class UUid extends AbstractLogiclet {
 	}
 
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 		if (StringUtils.isNotEmpty(id)){
 			if (redix >= 0){
 				ctx.SetValue(id, KeyGen.uuid(length,redix));

@@ -2,11 +2,10 @@ package com.alogic.together.idu;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Map;
-
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.plugins.Segment;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
@@ -21,6 +20,9 @@ import com.logicbus.dbcp.core.ConnectionPool;
  *
  * @version 1.6.5.30 [duanyy 20160720] <br>
  * - 将事务操作交给事务语句去做 <br>
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
  */
 public class DBConnection extends Segment {
@@ -42,8 +44,7 @@ public class DBConnection extends Segment {
 	}
 
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 		ConnectionPool pool = DbcpSource.getPool(dbcpId);
 		if (pool == null) {
 			logger.error("Can't get connection pool by dbcpId:" + dbcpId + ", The database connection pool is null!");

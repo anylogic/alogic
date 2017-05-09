@@ -43,9 +43,7 @@ public class WebAppMain extends WebAppContextListener implements HttpSessionList
 	protected List<HttpSessionListener> sessionListeners = null;
 	
 	@Override
-	public void contextDestroyed(ServletContextEvent e) {
-		super.contextDestroyed(e);
-		
+	public void onContextDestroyed(ServletContextEvent e) {
 		//销毁所创建的ServletContextListener
 		if (listeners != null){
 			for (ServletContextListener l:listeners){
@@ -57,9 +55,7 @@ public class WebAppMain extends WebAppContextListener implements HttpSessionList
 	}
 
 	@Override
-	public void contextInitialized(ServletContextEvent e) {
-		super.contextInitialized(e);
-		
+	public void onContextInitialized(ServletContextEvent e) {
 		Settings settings = Settings.get();
 		
 		String addons = settings.GetValue("webcontext.addons", "");

@@ -14,6 +14,8 @@ import com.alogic.metrics.stream.MetricsHandlerFactory;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.Script;
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
 import com.anysoft.stream.Handler;
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.IOTools;
@@ -76,6 +78,9 @@ import com.logicbus.backend.bizlog.BizLogger;
  * 
  * @version 1.6.7.20 <br>
  * - 改造ServantManager模型,增加服务配置监控机制 <br>
+ * 
+ * @version 1.6.8.14 <br>
+ * - 调整init及destroy时各组件的启动次序 <br>
  */
 public class LogicBusApp implements WebApp {
 	/**
@@ -210,7 +215,11 @@ public class LogicBusApp implements WebApp {
 		logger.info("Load xml settings..OK!");
 
 		onInit(settings);
-		
+	}
+	
+	@Override
+	public void start(){
+		Settings settings = Settings.get();
 		String script = settings.GetValue("script.bootup","");
 		if (StringUtils.isNotEmpty(script)){
 			logger.info("Execute script:" + script);
@@ -218,12 +227,32 @@ public class LogicBusApp implements WebApp {
 				Script logiclet = Script.create(script, settings);
 				if (logiclet != null){
 					Map<String,Object> root = new HashMap<String,Object>();
-					logiclet.execute(root, root, new LogicletContext(settings), new ExecuteWatcher.Quiet());
+					XsObject doc = new JsonObject("root",root);
+					logiclet.execute(doc, doc, new LogicletContext(settings), new ExecuteWatcher.Quiet());
 				}
 			}catch (Exception ex){
 				logger.error("Failed to execute script:" + script);
 			}
-		}
+		}		
+	}
+	
+	@Override
+	public void stop(){
+		Settings settings = Settings.get();
+		String script = settings.GetValue("script.shutdown","");
+		if (StringUtils.isNotEmpty(script)){
+			logger.info("Execute script:" + script);
+			try {
+				Script logiclet = Script.create(script, settings);
+				if (logiclet != null){
+					Map<String,Object> root = new HashMap<String,Object>();
+					XsObject doc = new JsonObject("root",root);
+					logiclet.execute(doc, doc, new LogicletContext(settings), new ExecuteWatcher.Quiet());
+				}
+			}catch (Exception ex){
+				logger.error("Failed to execute script:" + script);
+			}
+		}		
 	}
 
 	protected void onDestroy(Settings settings){		
@@ -256,24 +285,9 @@ public class LogicBusApp implements WebApp {
 	}
 	
 	@Override
-	public void destroy(ServletContext sc) {		
+	public void destroy(ServletContext sc) {			
 		Settings settings = Settings.get();		
-		String script = settings.GetValue("script.shutdown","");
-		if (StringUtils.isNotEmpty(script)){
-			logger.info("Execute script:" + script);
-			try {
-				Script logiclet = Script.create(script, settings);
-				if (logiclet != null){
-					Map<String,Object> root = new HashMap<String,Object>();
-					logiclet.execute(root, root, new LogicletContext(settings), new ExecuteWatcher.Quiet());
-				}
-			}catch (Exception ex){
-				logger.error("Failed to execute script:" + script);
-			}
-		}
-
 		onDestroy(settings);
-		
 		settings.unregisterObject("classLoader");
 		settings.unregisterObject("ResourceFactory");
 	}

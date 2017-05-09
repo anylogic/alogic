@@ -1,15 +1,13 @@
 package com.alogic.metrics.xscript;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
-
 import com.alogic.metrics.Fragment;
 import com.alogic.metrics.impl.DefaultFragment;
 import com.alogic.metrics.stream.MetricsHandlerFactory;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.plugins.Segment;
 import com.anysoft.stream.Handler;
 import com.anysoft.util.Properties;
@@ -19,7 +17,10 @@ import com.anysoft.util.PropertiesConstants;
  * 通过脚本发送指标
  * 
  * @author yyduan
- *
+ * 
+ * @version 1.6.8.14 [20170509 duanyy] <br>
+ * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
  */
 public class SendMetrics extends Segment{
 	/**
@@ -50,8 +51,7 @@ public class SendMetrics extends Segment{
 	}
 	
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx,
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		String idValue = ctx.transform(id);
 		
