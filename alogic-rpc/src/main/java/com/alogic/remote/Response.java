@@ -7,6 +7,9 @@ import java.io.InputStream;
  * 请求的响应
  * @author yyduan
  * @since 1.6.8.12
+ * 
+ * @version 1.6.8.15 [20170511 duanyy] <br>
+ * - 增加绝对路径调用功能 <br>
  */
 public interface Response extends AutoCloseable{
 	/**
@@ -58,4 +61,9 @@ public interface Response extends AutoCloseable{
 	 * @return 响应正文
 	 */
 	public InputStream asStream() throws IOException;
+	
+	/**
+	 * 抛弃响应结果
+	 */
+	public void discard();
 }

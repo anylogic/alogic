@@ -40,6 +40,9 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * @author yyduan
  * @version 1.6.8.13 [duanyy 20170427] <br>
  * - 从alogic-remote中迁移过来 <br>
+ * 
+ * @version 1.6.8.15 [20170511 duanyy] <br>
+ * - 增加绝对路径调用功能 <br>
  */
 public class HttpCall implements Call {
 	/**
@@ -80,7 +83,7 @@ public class HttpCall implements Call {
 	/**
 	 * 服务调用根路径
 	 */
-	protected String path = "/services";
+	protected String rootPath = "/services";
 	
 	@Override
 	public void close() throws Exception {
@@ -89,7 +92,7 @@ public class HttpCall implements Call {
 	@Override
 	public void configure(Properties p){
 		callContext = new DefaultProperties("default",Settings.get());		
-		path = PropertiesConstants.getString(p,"rpc.ketty.root",path);
+		rootPath = PropertiesConstants.getString(p,"rpc.ketty.root",rootPath);
 	}
 	
 	@Override
@@ -169,11 +172,27 @@ public class HttpCall implements Call {
 
 	@Override
 	public Result execute(Parameters paras) throws CallException {
-		return execute(paras,null,null);
+		return execute(false,this.rootPath,paras,null,null);
 	}
 
 	@Override
 	public Result execute(Parameters paras, String sn,String order)throws CallException {
+		return execute(false,this.rootPath,paras,sn,order);
+	}
+
+	@Override
+	public Result execute(String fullPath, Parameters paras) throws CallException {
+		return execute(true,fullPath,paras,null,null);
+	}
+	
+	@Override
+	public Result execute(String fullPath, Parameters paras, String sn, String order)
+			throws CallException {
+		return execute(true,fullPath,paras,sn,order);
+	}	
+
+	protected Result execute(boolean isFullPath,String path, Parameters paras, String sn, String order)
+			throws CallException {
 		HttpQuery query = new HttpQuery(path);
 		
 		if (paras != null && queryParameters != null){
@@ -219,8 +238,13 @@ public class HttpCall implements Call {
 			
 			request.setBody(jsonProvider.toJson(docRoot));
 			
-			Response response = request.execute(query.toString(), sn, callContext);
-		
+			Response response = null;
+			if (isFullPath){ 
+				response = request.execute(query.toString());	
+			}else{
+				response = request.execute(query.toString(), sn, callContext);
+			}
+					
 			if (response.getStatusCode() != HttpURLConnection.HTTP_OK) {
 				throw new CallException("core.invoke_error",
 						"Error occurs when invoking service :"
@@ -245,5 +269,4 @@ public class HttpCall implements Call {
 			IOTools.close(request);
 		}
 	}
-
 }

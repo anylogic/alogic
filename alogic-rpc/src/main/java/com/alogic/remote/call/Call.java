@@ -20,6 +20,9 @@ import com.anysoft.util.XMLConfigurable;
  * 
  * @version 1.6.8.13 [duanyy 20170427] <br>
  * - 从alogic-remote中迁移过来 <br>
+ * 
+ * @version 1.6.8.15 [20170511 duanyy] <br>
+ * - 增加绝对路径调用功能 <br>
  */
 public interface Call extends AutoCloseable,XMLConfigurable,Reportable,Configurable{
 	
@@ -39,6 +42,15 @@ public interface Call extends AutoCloseable,XMLConfigurable,Reportable,Configura
 	
 	/**
 	 * 执行运程调用
+	 * @param path 调用路径
+	 * @param paras 调用参数
+	 * @return 调用结果
+	 * @throws CallException
+	 */
+	public Result execute(String path,Parameters paras) throws CallException;
+	
+	/**
+	 * 执行运程调用
 	 * @param paras 调用参数
 	 * @param sn 全局序列号
 	 * @param order 调用序号
@@ -46,4 +58,14 @@ public interface Call extends AutoCloseable,XMLConfigurable,Reportable,Configura
 	 * @throws CallException
 	 */
 	public Result execute(Parameters paras,String sn,String order) throws CallException;	
+	
+	/**
+	 * 执行运程调用
+	 * @param paras 调用路径
+	 * @param sn 全局序列号
+	 * @param order 调用序号
+	 * @return 调用结果
+	 * @throws CallException
+	 */
+	public Result execute(String path,Parameters paras,String sn,String order) throws CallException;
 }

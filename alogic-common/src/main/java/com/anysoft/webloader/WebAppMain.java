@@ -77,7 +77,7 @@ public class WebAppMain extends WebAppContextListener implements HttpSessionList
 					//在装入其他
 					WebXMLLoader loader = createXMLLoader(settings);
 					if (loader != null){ // NOSONAR
-							loader.load(settings,doc.getDocumentElement(), e.getServletContext());
+						loader.load(settings,doc.getDocumentElement(), e.getServletContext());
 					}
 				}
 			}catch (Exception ex){

@@ -73,3 +73,7 @@ alogic-1.6.8
 - alogic-core:调整初始化时各组件的启动次序;
 - alogic-rpc:优化http远程调用的超时机制;
 
+### 1.6.8.15 [20170511 duanyy]
+- alogic-rpc:增加绝对路径调用功能
+
+

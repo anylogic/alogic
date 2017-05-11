@@ -32,6 +32,9 @@ import com.anysoft.util.Properties;
  * 
  * @version 1.6.8.14 <br>
  * - 优化http远程调用的超时机制 <br>
+ * 
+ * @version 1.6.8.15 [20170511 duanyy] <br>
+ * - 增加绝对路径调用功能 <br>
  */
 public class HttpClientRequest implements Request{
 	protected static final Logger LOG = LoggerFactory.getLogger(HttpClientRequest.class);
@@ -120,11 +123,9 @@ public class HttpClientRequest implements Request{
 				lastErrorMsg = ex.getMessage();
 				if (lastErrorCode.startsWith("internal")){
 					//对于internal错误，属于连接错误，可以重试
-					LOG.error("Internal error occurs,Retry " + autoRetry);
-					autoRetry ++;
-					if (autoRetry > autoRetryCnt){
-						//自动重试3次
-						autoRetry = 0;
+					autoRetry = autoRetry >= autoRetryCnt ? 0 : autoRetry + 1;
+					if (autoRetry > 0){
+						LOG.error("Internal error occurs,Retry " + autoRetry);
 					}
 				}else{
 					if (!lastErrorCode.startsWith("core")){
@@ -143,6 +144,24 @@ public class HttpClientRequest implements Request{
 		}
 		return result;
 	}
+	
+
+	@Override
+	public Response execute(String fullPath) {
+		String url = fullPath;
+		try {			
+			httpRequest.setURI(URI.create(url));
+			return new HttpClientResponse(httpClient.execute(httpRequest),encoding);			
+		}catch (SocketTimeoutException ex){
+			throw new CallException("core.socket_timeout",url, ex);
+		}catch (ConnectTimeoutException ex){
+			throw new CallException("internal.conn_timeout",url, ex);
+		}catch (ConnectException ex){
+			throw new CallException("internal.conn_refused",url, ex);
+		}catch (Exception ex){
+			throw new CallException("core.io_error",url, ex);
+		}
+	}	
 
 	protected Response execute(String path,Backend backend) {
 		String url = client.getInvokeURL(backend, path);
@@ -204,4 +223,5 @@ public class HttpClientRequest implements Request{
 		}
 		
 	}
+
 }

@@ -17,6 +17,9 @@ import com.anysoft.util.IOTools;
  * 
  * @author yyduan
  * @since 1.6.8.12
+ * 
+ * @version 1.6.8.15 [20170511 duanyy] <br>
+ * - 增加绝对路径调用功能 <br>
  */
 public class HttpClientResponse implements Response{
 	protected CloseableHttpResponse httpResponse = null;
@@ -90,6 +93,20 @@ public class HttpClientResponse implements Response{
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public void discard(){
+		if (this.httpResponse != null){
+			HttpEntity entity = this.httpResponse.getEntity();
+			if (entity != null){
+				try {
+					IOTools.close(entity.getContent());
+				}catch (Exception ex){
+					
+				}
+			}
+		}
 	}
 	
 	@Override

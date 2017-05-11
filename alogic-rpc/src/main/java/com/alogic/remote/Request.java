@@ -10,6 +10,9 @@ import com.anysoft.util.Properties;
  * 调用Client
  * @author yyduan
  * @since 1.6.8.12
+ * 
+ * @version 1.6.8.15 [20170511 duanyy] <br>
+ * - 增加绝对路径调用功能 <br>
  */
 public interface Request extends AutoCloseable{
 	/**
@@ -52,6 +55,11 @@ public interface Request extends AutoCloseable{
 	 * 执行调用，获取响应
 	 */
 	public Response execute(String path,String key,Properties ctx);
+	
+	/**
+	 * 执行调用，获取响应
+	 */
+	public Response execute(String fullPath);
 		
 	/**
 	 * 输出流直接输出
