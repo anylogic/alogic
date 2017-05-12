@@ -388,22 +388,19 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
 	@Override
 	public Logiclet createLogiclet(String xmlTag, Logiclet parent) {
-		Logiclet found = null;
-		
-		//首先到staticModules中查找
-		Class<? extends Logiclet> clazz = staticModules.get(xmlTag);
-		if (clazz != null){
-			found = createLogiclet(clazz,xmlTag,parent);
-		}
-		
-		if (found == null){
-			found = onCreateLogiclet(xmlTag,parent);
-		}
+		Logiclet found = onCreateLogiclet(xmlTag,parent);
 		
 		if (found == null){
 			Logiclet p = parent();
 			if (p != null){
 				found = p.createLogiclet(xmlTag, parent);
+			}
+		}
+		
+		if (found == null){
+			Class<? extends Logiclet> clazz = staticModules.get(xmlTag);
+			if (clazz != null){
+				found = createLogiclet(clazz,xmlTag,parent);
 			}
 		}
 		return found;

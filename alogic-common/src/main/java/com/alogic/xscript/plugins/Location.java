@@ -26,9 +26,10 @@ import com.jayway.jsonpath.JsonPath;
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
  */
+
 public class Location extends Segment {
-	protected String path;
-	
+	protected String jsonPath;
+	protected String xmlPath;
 	public Location(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -36,32 +37,44 @@ public class Location extends Segment {
 	@Override
 	public void configure(Properties p) {
 		super.configure(p);
-		path = PropertiesConstants.getString(p, "path", path);
+		jsonPath = PropertiesConstants.getString(p, "jsonPath", jsonPath);
+		xmlPath = PropertiesConstants.getString(p, "xmlPath", xmlPath);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void onExecute(XsObject root,XsObject current,final LogicletContext ctx,final ExecuteWatcher watcher){
+	protected void onExecute(XsObject root, XsObject current,
+			final LogicletContext ctx, final ExecuteWatcher watcher) {
 		XsObject newCurrent = current;
-		if (StringUtils.isNotEmpty(path)){
-			if (root instanceof JsonObject){
-				Object result = JsonPath.read(current, path);
-				if (result instanceof Map<?,?>){
-					newCurrent = new JsonObject("node",(Map<String,Object>)result);
-				}else{
-					logger.error("Can not locate the path:" + path);
-				}				
+		if (root instanceof JsonObject) {
+			if (StringUtils.isNotEmpty(jsonPath)){
+				Object result = JsonPath.read((Map<String,Object>)current.getContent(), jsonPath);
+				if (result instanceof Map<?, ?>) {
+					newCurrent = new JsonObject("node",
+							(Map<String, Object>) result);
+				} else {
+					log("Can not locate the path:" + jsonPath,"error");
+				}
 			}else{
-				if (root instanceof XmlObject){
-					Node result = XmlTools.getNodeByPath((Element)current.getContent(), path);
-					if (result != null && result instanceof Element){
-						newCurrent = new XmlObject("node",(Element)result);
-					}else{
-						logger.error("Can not locate the path:" + path);
+				log(String.format("[%s]json path is null",getXmlTag()),"error");
+			}
+		} else {
+			if (root instanceof XmlObject) {
+				if (StringUtils.isNotEmpty(xmlPath)){
+					Node result = XmlTools.getNodeByPath(
+							(Element) current.getContent(), xmlPath);
+					if (result != null && result instanceof Element) {
+						newCurrent = new XmlObject("node", (Element) result);
+					} else {
+						logger.error("Can not locate the path:" + xmlPath);
 					}
 				}else{
-					throw new BaseException("core.not_supported",String.format("Tag %s does not support protocol %s",getXmlTag(),root.getClass().getName()));	
+					log(String.format("[%s]xml path is null",getXmlTag()),"error");
 				}
+			} else {
+				throw new BaseException("core.not_supported", String.format(
+						"Tag %s does not support protocol %s", getXmlTag(),
+						root.getClass().getName()));
 			}
 		}
 		super.onExecute(root, newCurrent, ctx, watcher);
