@@ -10,6 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
+import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.jayway.jsonpath.JsonPath;
@@ -23,6 +26,9 @@ import com.jayway.jsonpath.JsonPath;
  * 
  * @version 1.6.8.4 [20170329 duanyy] <br>
  * - 对象的属性可以循环处理 <br>
+ * 
+ * @version 1.6.9.1 [20170516 duanyy] <br>
+ * - 修复部分插件由于使用新的文档模型产生的兼容性问题 <br>
  */
 public class Repeat extends Segment{
 	protected String jsonPath;
@@ -41,45 +47,48 @@ public class Repeat extends Segment{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
-		if (StringUtils.isNotEmpty(jsonPath)){
-			Object result = null;
-			try {
-				result = JsonPath.read(current, jsonPath);
-			}catch (Exception ex){
-				
-			}
-			if (result != null){
-				if (result instanceof List<?>){
-					List<Object> list = (List<Object>)result;
-					for (Object o:list){
-						if (o instanceof Map<?,?>){
-							Map<String,Object> newCurrent = (Map<String,Object>)o;
-							super.onExecute(root, newCurrent, ctx, watcher);
-						}else{
-							ctx.SetValue(value, o.toString());
-							super.onExecute(root, current, ctx, watcher);
-						}
-					}
-				}else{
-					if (result instanceof Map<?,?>){
-						Map<String,Object> newCurrent = (Map<String,Object>)result;
-						Iterator<Entry<String,Object>> iter = newCurrent.entrySet().iterator();
-						while (iter.hasNext()){
-							Entry<String,Object> entry = iter.next();
-							Object val = entry.getValue();
-							if (val instanceof String || val instanceof Number){
-								ctx.SetValue(key, entry.getKey());
-								ctx.SetValue(value, val.toString());
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
+		if (current instanceof JsonObject){
+			if (StringUtils.isNotEmpty(jsonPath)){
+				Object result = null;
+				try {
+					result = JsonPath.read(current.getContent(), jsonPath);
+				}catch (Exception ex){
+					
+				}
+				if (result != null){
+					if (result instanceof List<?>){
+						List<Object> list = (List<Object>)result;
+						for (Object o:list){
+							if (o instanceof Map<?,?>){
+								super.onExecute(root, new JsonObject("current",(Map<String,Object>)o), ctx, watcher);
+							}else{
+								ctx.SetValue(value, o.toString());
 								super.onExecute(root, current, ctx, watcher);
 							}
 						}
 					}else{
-						logger.error("Can not locate the path:" + jsonPath);
+						if (result instanceof Map<?,?>){
+							Map<String,Object> newCurrent = (Map<String,Object>)result;
+							Iterator<Entry<String,Object>> iter = newCurrent.entrySet().iterator();
+							while (iter.hasNext()){
+								Entry<String,Object> entry = iter.next();
+								Object val = entry.getValue();
+								if (val instanceof String || val instanceof Number){
+									ctx.SetValue(key, entry.getKey());
+									ctx.SetValue(value, val.toString());
+									super.onExecute(root, current, ctx, watcher);
+								}
+							}
+						}else{
+							logger.error("Can not locate the path:" + jsonPath);
+						}
 					}
 				}
 			}
+		}else{
+			throw new BaseException("core.not_supported",
+					String.format("Tag %s does not support protocol %s",this.getXmlTag(),root.getClass().getName()));	
 		}
 	}
 	

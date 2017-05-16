@@ -8,3 +8,6 @@ alogic-1.6.9
 - alogic-common:修正location插件的bug，同时支持xml和json的定位;
 - alogic-common:修改logiclet插件的加载次序,便于指令的重载;
 
+
+### 1.6.9.1 [20170516 duanyy]
+- 修复部分插件由于使用新的文档模型产生的兼容性问题;

@@ -327,8 +327,9 @@ public class JsonTools {
 					}else{
 						array = new ArrayList<Object>();
 						Object removed = json.remove(key);
-						if (removed != null)
-						array.add(removed);
+						if (removed != null){
+							array.add(removed);
+						}
 						json.put(key, array);
 					}
 				}
@@ -367,7 +368,7 @@ public class JsonTools {
 					json2Xml((List<Object>)item,e,key);
 				}else{
 					Element newElem = doc.createElement(key);
-					newElem.setAttribute(key, item.toString());
+					newElem.appendChild(doc.createTextNode(item.toString()));
 					e.appendChild(newElem);
 				}
 			}
@@ -393,7 +394,9 @@ public class JsonTools {
 					e.appendChild(newElem);
 					continue;
 				} else {
-					e.setAttribute(key, data.toString());
+					Element newElem = doc.createElement(key);
+					newElem.appendChild(doc.createTextNode(data.toString()));
+					e.appendChild(newElem);
 				}
 			}
 		}

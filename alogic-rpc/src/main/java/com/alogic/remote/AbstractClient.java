@@ -62,13 +62,7 @@ public abstract class AbstractClient implements Client {
 	 */
 	protected String scheme = "http";
 	
-	/**
-	 * 根据路由策略，负载均衡策略从Cluster中获取合适的后端节点
-	 * @param key 服务调用的关键字（某些负载均衡算法需要）
-	 * @param p 环境变量
-	 * @param tryTimes 已经重试的次数（某些Attempt需要）
-	 * @return 可用的后端节点
-	 */
+	@Override
 	public Backend getBackend(String key,Properties p,long tryTimes){		
 		String routeId = PropertiesConstants.getString(p,"$route",dftRouteId,true);
 		Route route = cluster.getRoute(routeId);

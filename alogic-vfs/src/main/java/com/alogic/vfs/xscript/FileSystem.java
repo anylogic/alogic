@@ -13,6 +13,7 @@ import com.alogic.vfs.sftp.SFtp;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
@@ -28,6 +29,9 @@ import com.anysoft.util.Factory;
  * 
  * @version 1.6.8.6 [20170410 duanyy] <br>
  * - 在globalId模式下，FileSystem不应该被关闭 <br>
+ * 
+ * @version 1.6.9.1 [20170516 duanyy] <br>
+ * - 修复部分插件由于使用新的文档模型产生的兼容性问题 <br>
  */
 public class FileSystem extends VFS{
 	
@@ -58,8 +62,7 @@ public class FileSystem extends VFS{
 	}
 	
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx,
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		props.PutParent(ctx);
 		try{

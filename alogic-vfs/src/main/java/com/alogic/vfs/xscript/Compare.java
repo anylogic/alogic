@@ -1,7 +1,5 @@
 package com.alogic.vfs.xscript;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
@@ -13,6 +11,7 @@ import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -23,6 +22,9 @@ import com.anysoft.util.XmlElementProperties;
  * @author yyduan
  * @version 1.6.7.11 [20170203 duanyy] <br>
  * - 增加toString实现 <br>
+ * 
+ * @version 1.6.9.1 [20170516 duanyy] <br>
+ * - 修复部分插件由于使用新的文档模型产生的兼容性问题 <br>
  */
 public class Compare extends AbstractLogiclet {
 	protected String srcId = "$vfs-src";
@@ -47,8 +49,7 @@ public class Compare extends AbstractLogiclet {
 	}
 	
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx,
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		String srcPathValue = ctx.transform(srcPath);
 		String destPathValue = ctx.transform(destPath);

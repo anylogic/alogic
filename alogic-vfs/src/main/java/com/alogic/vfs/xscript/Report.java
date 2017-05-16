@@ -16,6 +16,7 @@ import com.alogic.vfs.client.Tool.Result;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -25,6 +26,12 @@ import com.anysoft.util.PropertiesConstants;
  * @author yyduan
  * @version 1.6.7.11 [20170203 duanyy] <br>
  * - 支持按结果过滤输出 <br>
+ * 
+ * @version 1.6.9.1 [20170516 duanyy] <br>
+ * - 修复部分插件由于使用新的文档模型产生的兼容性问题 <br>
+ * 
+ * @version 1.6.9.1 [20170516 duanyy] <br>
+ * - 修复部分插件由于使用新的文档模型产生的兼容性问题 <br>
  */
 public class Report extends VFS implements Tool.Watcher{
 	/**
@@ -64,8 +71,7 @@ public class Report extends VFS implements Tool.Watcher{
 	}
 	
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx,
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		if (StringUtils.isNotEmpty(cid)){
 			try{
@@ -81,7 +87,7 @@ public class Report extends VFS implements Tool.Watcher{
 		}
 	}
 
-	protected void begin(Map<String, Object> current, LogicletContext ctx){
+	protected void begin(XsObject current, LogicletContext ctx){
 		
 	}
 
@@ -138,7 +144,7 @@ public class Report extends VFS implements Tool.Watcher{
 		}
 	}
 
-	protected void end(Map<String, Object> current, LogicletContext ctx) {
+	protected void end(XsObject current, LogicletContext ctx) {
 		log("Total Result Statistics:");
 		Iterator<Entry<String,Integer>> iter = totalStat.entrySet().iterator();
 		while (iter.hasNext()){

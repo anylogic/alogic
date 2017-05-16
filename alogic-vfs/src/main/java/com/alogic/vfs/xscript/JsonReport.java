@@ -5,14 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.alogic.vfs.client.Directory;
 import com.alogic.vfs.client.Tool.FileInfo;
 import com.alogic.vfs.client.Tool.Result;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -20,6 +18,8 @@ import com.anysoft.util.PropertiesConstants;
  * 输出结果到json文档
  * @author yyduan
  *
+ * @version 1.6.9.1 [20170516 duanyy] <br>
+ * - 修复部分插件由于使用新的文档模型产生的兼容性问题 <br>
  */
 public class JsonReport extends Report {
 
@@ -59,19 +59,11 @@ public class JsonReport extends Report {
 	}
 
 	@Override
-	protected void begin(Map<String, Object> current, LogicletContext ctx) {
+	protected void begin(XsObject current, LogicletContext ctx) {
 		result.clear();	
 		super.begin(current, ctx);
 	}
-	
-	protected void end(Map<String, Object> current, LogicletContext ctx) {
-		String tagValue = ctx.transform(tag);
-		if (StringUtils.isNotEmpty(tagValue)){
-			current.put(tagValue, result);
-		}
-		super.end(current, ctx);
-	}	
-
+		
 	/**
 	 * 获取指定VFS的文件列表
 	 * 

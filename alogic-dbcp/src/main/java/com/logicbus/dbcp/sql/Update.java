@@ -21,6 +21,9 @@ import com.anysoft.util.BaseException;
  * 
  * @version 1.6.8.3 [20170328 duanyy] <br>
  * - 修正tlog输出，将参数和错误原因分离开来 <br>
+ * 
+ * @version 1.6.9.1 [20170516 duanyy] <br>
+ * - 优化异常信息 <br>
  */
 public class Update extends DBOperation {
 
@@ -62,7 +65,7 @@ public class Update extends DBOperation {
 		}catch (SQLException ex){
 			error = true;
 			msg = ex.getMessage();
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + sql);
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
 		}
 		finally{
 			close(stmt);
@@ -93,7 +96,7 @@ public class Update extends DBOperation {
 		}catch (SQLException ex){
 			error = true;
 			msg = ex.getMessage();
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + sqls.toString());
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
 		}
 		finally{
 			close(stmt);
