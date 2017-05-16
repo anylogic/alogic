@@ -3,13 +3,12 @@ package com.alogic.vfs.xscript;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
-
 import com.alogic.vfs.core.VirtualFileSystem;
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -20,6 +19,9 @@ import com.anysoft.util.PropertiesConstants;
  * @author duanyy
  *
  * @since 1.6.7.8
+ * 
+ * @version 1.6.9.1 [20170516 duanyy] <br>
+ * - 修复部分插件由于使用新的文档模型产生的兼容性问题 <br>
  */
 public class FileSave extends AbstractLogiclet{
 	protected String pid = "$vfs";
@@ -44,8 +46,7 @@ public class FileSave extends AbstractLogiclet{
 	}
 
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx,
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		VirtualFileSystem vfs = ctx.getObject(pid);
 		if (vfs == null){
