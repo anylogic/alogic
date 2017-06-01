@@ -15,6 +15,9 @@ import com.anysoft.util.BaseException;
  * 
  * @version 1.6.3.33 [20150723 duanyy] <br>
  * - 增加selectAsObjects方法<br>
+ * 
+ * @version 1.6.9.2 [20170601 duanyy] <br>
+ * - 增加简单的ORM框架 <br>
  */
 public class DBTools {
 	
@@ -231,6 +234,29 @@ public class DBTools {
 		}
 	}	
 
+	/**
+	 * Select多行数据
+	 * @param conn 数据库连接
+	 * @param result 结果数组
+	 * @param adapter 对象映射适配器
+	 * @param sql SQL语句
+	 * @param args SQL语句的参数
+	 */
+	public static <T> void list(
+			Connection conn,
+			List<T> result,
+			ObjectMappingAdapter<T> adapter,
+			String sql,
+			Object...args){
+		Select selector = new Select(conn);
+		try {
+			selector.execute(sql, args);
+			selector.result(result, adapter);
+		} finally {
+			Select.close(selector);
+		}
+	}
+	
 	/**
 	 * Select多行数据
 	 * 

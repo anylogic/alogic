@@ -11,3 +11,7 @@ alogic-1.6.9
 
 ### 1.6.9.1 [20170516 duanyy]
 - 修复部分插件由于使用新的文档模型产生的兼容性问题;
+
+### 1.6.9.2 [20170525 duanyy]
+- alogic-doer:改造TaskCenter模型，以便提供分布式任务处理支持;
+- alogic-dbcp:修改DBTools工具，提供简单的ORM框架;

@@ -11,7 +11,6 @@ import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;
 import com.logicbus.redis.client.Client;
 import com.logicbus.redis.client.Protocol;
-import com.logicbus.redis.util.RedisConnectException;
 import com.logicbus.redis.util.RedisContextException;
 import com.logicbus.redis.util.RedisException;
 
@@ -52,13 +51,11 @@ public class RedisPool extends Queued{
 	 * time out to get client
 	 */
 	protected int timeout = 30000;
-	
-	
+		
 	protected String getIdOfMaxQueueLength() {
 		return "maxActive";
 	}
 
-	
 	protected String getIdOfIdleQueueLength() {
 		return "maxIdle";
 	}
@@ -80,25 +77,18 @@ public class RedisPool extends Queued{
 		returnObject(client);
 	}
 	
-	
 	protected <pooled> pooled createObject() throws BaseException {
 		Client instance =  new Client(host,port,password,db);
 		instance.register(this);
-		return (pooled)instance;
+		return (pooled) instance;
 	}
 
-	
 	public void configure(Element _e, Properties _properties)
 			throws BaseException {
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
 		
-		id = PropertiesConstants.getString(p, "id", "",true);
-		
-		host = PropertiesConstants.getString(p,"host", "",true);
-		if (host == null || host.length() <= 0){
-			throw new RedisConnectException("nohost","Can not find host value");
-		}
-		
+		id = PropertiesConstants.getString(p, "id", "",true);		
+		host = PropertiesConstants.getString(p,"host", "",true);		
 		port = PropertiesConstants.getInt(p, "port", port,true);
 		password = PropertiesConstants.getString(p,"password","",true);
 		db = PropertiesConstants.getInt(p, "defaultDB", db,true);
@@ -106,7 +96,6 @@ public class RedisPool extends Queued{
 		timeout = PropertiesConstants.getInt(p,"timeout", timeout);
 		configure(p);
 	}
-
 	
 	public void report(Element xml) {
 		if (xml != null){
@@ -117,7 +106,6 @@ public class RedisPool extends Queued{
 			super.report(xml);
 		}
 	}
-
 	
 	public void report(Map<String, Object> json) {
 		if (json != null){

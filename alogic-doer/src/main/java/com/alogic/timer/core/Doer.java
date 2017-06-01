@@ -6,9 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.anysoft.util.BaseException;
+import com.alogic.timer.core.Task.State;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
@@ -24,31 +25,20 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.9.2 [20170525 duanyy] <br>
+ * - 增加事件属性，以便和事件处理体系进行对接 <br>
+ * 
+ * @version 1.6.9.2 [20170601 duanyy] <br>
+ * - 改造TaskCenter模型，以便提供分布式任务处理支持; <br>
  */
-public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
+public interface Doer extends Configurable,XMLConfigurable,Reportable{
 	
 	/**
-	 * 状态
-	 * 
-	 * @author duanyy
-	 *
+	 * 获取队列id
+	 * @return 队列id
 	 */
-	public enum State{
-		/**
-		 * 空闲
-		 */
-		IDLE,
-		/**
-		 * 工作中
-		 */
-		WORKING
-	}
-	
-	/**
-	 * 获取Doer状态
-	 * @return 状态
-	 */
-	public State getState();
+	public String getQueue();
 	
 	/**
 	 * 设置上下文持有者
@@ -63,18 +53,6 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	public ContextHolder getContextHolder();
 	
 	/**
-	 * 设置当前的任务
-	 * @param task 任务
-	 */
-	public void setCurrentTask(Task task);
-	
-	/**
-	 * 获取当前的任务
-	 * @return 当前任务
-	 */
-	public Task getCurrentTask();
-	
-	/**
 	 * 设置任务状态监听器
 	 * @param listener 监听器
 	 */
@@ -84,27 +62,18 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	 * 执行
 	 * @param task 待执行的任务
 	 */
-	public void execute(Task task);
-	
-	/**
-	 * 完成任务
-	 */
-	public void complete();
-	
+	public void run(Task task);
+		
 	/**
 	 * Abstract
 	 * @author duanyy
 	 *
 	 */
-	abstract public static class Abstract implements Doer {
+	abstract public static class Abstract implements Doer,TaskStateListener {
 		/**
 		 * a logger of log4j
 		 */
 		protected static final Logger LOG = LoggerFactory.getLogger(Doer.class);
-		/**
-		 * 任务状态
-		 */
-		protected State state = State.IDLE;
 		
 		/**
 		 * 上下文持有者
@@ -112,14 +81,19 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		private ContextHolder ctxHolder = null;
 		
 		/**
-		 * 当前current
-		 */
-		private Task current = null;
-		
-		/**
 		 * 状态监听器
 		 */
 		private TaskStateListener stateListener = null;
+		
+		/**
+		 * 队列
+		 */
+		private String queue = "default";
+		
+		@Override
+		public String getQueue(){
+			return queue;
+		}
 		
 		@Override
 		public void setContextHolder(ContextHolder holder) {
@@ -132,52 +106,29 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		}
 
 		@Override
-		public void setCurrentTask(Task task) {
-			current = task;
-		}
-
-		@Override
-		public Task getCurrentTask() {
-			return current;
-		}
-
-		@Override
 		public void setTaskStateListener(TaskStateListener listener) {
 			stateListener = listener;
 		}
 		
-
-		public void reportState(Task.State state,int percent){
-			if (stateListener != null){
-				stateListener.reportState(current, state, percent);
-			}
-		}
-		
-		public void run(){
-			Task task = getCurrentTask();
+		@Override
+		public void run(Task task){
 			try {
 				if (task == null){
 					LOG.error("Can not execute because the task is null.");
 				}else{
-					state = State.WORKING;
 					execute(task);
 				}
 			}catch (Exception t){
 				LOG.error("Exception when executing the task:" + task.id());
-			}finally{
-				complete();
 			}
 		}
-		
-		public void complete(){
-			state = State.IDLE;
-		}
+
+		abstract protected void execute(Task task);
 		
 		@Override
 		public void report(Element xml) {
 			if (xml != null){
 				xml.setAttribute("module", getClass().getName());
-				xml.setAttribute("state", state.name());
 			}
 		}
 
@@ -185,13 +136,7 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		public void report(Map<String, Object> json) {
 			if (json != null){
 				json.put("module", getClass().getName());
-				json.put("state", state.name());
 			}
-		}
-
-		@Override
-		public State getState() {
-			return state;
 		}
 
 		@Override
@@ -201,33 +146,42 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 		}		
 		
 		@Override
-		public void configure(Properties p) throws BaseException {
-			// nothing to do
-		}
-	}
-
-	/**
-	 * Runnable包裹器
-	 * 
-	 * @author duanyy
-	 *
-	 */
-	public static class Wrapper extends Abstract{
-		private Runnable real = null;
-		
-		public Wrapper(Runnable runnable){
-			real = runnable;
-		}
-		
-		@Override
 		public void configure(Properties p){
-			// nothing to do
+			queue = PropertiesConstants.getString(p,"queue",queue);
+		}
+		
+		@Override
+		public void onRunning(String id, State state, int percent,String note) {
+			if (stateListener != null){
+				stateListener.onRunning(id, state, percent,note);
+			}
 		}
 
 		@Override
-		public void execute(Task task) {
-			if (real != null){
-				real.run();
+		public void onQueued(String id, State state, int percent,String note) {
+			if (stateListener != null){
+				stateListener.onQueued(id, state, percent,note);
+			}
+		}
+
+		@Override
+		public void onPolled(String id, State state, int percent,String note) {
+			if (stateListener != null){
+				stateListener.onPolled(id, state, percent,note);
+			}
+		}
+
+		@Override
+		public void onStart(String id, State state, int percent,String note) {
+			if (stateListener != null){
+				stateListener.onStart(id, state, percent,note);
+			}
+		}
+
+		@Override
+		public void onFinish(String id, State state, int percent,String note) {
+			if (stateListener != null){
+				stateListener.onFinish(id, state, percent,note);
 			}
 		}
 	}
@@ -239,8 +193,24 @@ public interface Doer extends Configurable,XMLConfigurable,Runnable,Reportable{
 	 */
 	public static class Quiet extends Abstract{
 		@Override
-		public void execute(Task task) {
+		protected void execute(Task task) {
 			// nothing to do
+		}
+
+	}
+	
+	public static class Wrapper extends Abstract{
+		protected Runnable runnable = null;
+		
+		public Wrapper(Runnable run){
+			this.runnable = run;
+		}
+		
+		@Override
+		protected void execute(Task task) {
+			if (this.runnable != null){
+				this.runnable.run();
+			}
 		}
 	}
 }

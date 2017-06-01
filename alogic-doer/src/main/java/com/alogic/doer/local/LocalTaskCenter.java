@@ -1,160 +1,205 @@
 package com.alogic.doer.local;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.alogic.doer.core.TaskCenter;
-import com.alogic.doer.core.TaskQueue;
-import com.alogic.doer.core.TaskReport;
+import com.alogic.doer.core.TaskDispatcher;
+import com.alogic.timer.core.Doer;
+import com.alogic.timer.core.DoerContext;
 import com.alogic.timer.core.Task;
+import com.alogic.timer.core.Task.State;
 import com.anysoft.util.BaseException;
-import com.anysoft.util.Counter;
+import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
-import com.anysoft.util.SimpleCounter;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
 
 /**
- * JVM本地实现的TaskCenter
- * 
- * @author duanyy
- * 
- * @since 1.6.3.4
- * 
- * @version 1.6.7.9 [20170201 duanyy] <br>
- * - 采用SLF4j日志框架输出日志 <br>
+ * 本地实现的任务中心
+ * @author yyduan
+ * @version 1.6.9.2 [20170601 duanyy] <br>
+ * - 改造TaskCenter模型，以便提供分布式任务处理支持; <br>
  */
-public class LocalTaskCenter implements TaskCenter {
+public class LocalTaskCenter implements TaskCenter{
 	/**
 	 * a logger of log4j
 	 */
-	protected static final Logger logger = LoggerFactory.getLogger(TaskCenter.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(TaskCenter.class);
 	
-	public TaskReport getTaskReport(String id, String queue) {
-		TaskQueue q = queues == null ? null:queues.get(queue);
+	/**
+	 * 为doer创造的全局上下文
+	 */
+	protected DoerContext ctx = new DoerContext();
+	
+	/**
+	 * 任务队列
+	 */
+	protected Map<String,LinkedBlockingQueue<Task>> taskQueue 
+		= new ConcurrentHashMap<String,LinkedBlockingQueue<Task>>();
+	
+	/**
+	 * 任务处理器
+	 */
+	protected List<LocalTaskRobber> robbers = new ArrayList<LocalTaskRobber>();
+	
+	/**
+	 * 线程
+	 */
+	protected Thread thread = null;
+	
+	@Override
+	public void dispatch(String queue, Task task) {
+		String eventId = task.getEventId();
+		LinkedBlockingQueue<Task> found = taskQueue.get(eventId);
+		if (found == null){
+			synchronized (LocalTaskCenter.class){
+				found = taskQueue.get(eventId);
+				if (found == null){
+					found = new LinkedBlockingQueue<Task>();
+					taskQueue.put(eventId, found);
+				}
+			}
+		}
 		
-		return q == null ? null : q.getTaskReport(id);
-	}
-	
-	public void dispatch(Task task) throws BaseException {
-		long now = System.currentTimeMillis();
-		boolean error = false;
-		try {
-			TaskQueue q = queues == null ? null : queues.get(task.queue());
-			
-			if (q == null){
-				throw new BaseException("core.queue_not_found","Can not find the queue:" + task.queue());
-			}
-			
-			q.dispatch(task);
-		}catch (BaseException ex){
-			error = true;
-			throw ex;
-		}finally{
-			if (counter != null){
-				counter.count(System.currentTimeMillis() - now, error);
-			}
+		if (!found.offer(task)){
+			onFinish(task.id(),State.Failed, 10000,"The queue is full.queue:" + task.id());
+			throw new BaseException("core.queue_is_full","The queue is full.queue:" + task.id());
+		}else{
+			onQueued(task.id(),State.Queued, 10000,"");
 		}
 	}
 
-	public void configure(Properties p) throws BaseException {
-
-	}
-	
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
-		Properties p = new XmlElementProperties(_e,_properties);
+	@Override
+	public void configure(Element root, Properties props) {
+		Properties p = new XmlElementProperties(root,props);
 		configure(p);
-		//counter
-		counter = new SimpleCounter(p);
 		
-		//queues
-		queues = new Hashtable<String,TaskQueue>();
-		{
-			NodeList nodeList = XmlTools.getNodeListByPath(_e, "queue");
-			
-			for (int i = 0 ;i < nodeList.getLength() ; i ++){
-				Node n = nodeList.item(i);
-				
-				if (Node.ELEMENT_NODE != n.getNodeType()){
-					continue;
-				}
-				
-				Element e = (Element)n;
-				
-				String id = e.getAttribute("id");
-				if (id == null || id.length() <= 0){
-					continue;
-				}
-				
-				LocalTaskQueue q = new LocalTaskQueue();
-				try {
-					q.configure(e, p);
-					queues.put(id, q);
-				}catch (Exception ex){
-					ex.printStackTrace();
-					logger.error("Can not config TaskQueue,module:" + q.getClass().getName());
-				}
+		NodeList nodeList = XmlTools.getNodeListByPath(root, "event");
+		
+		for (int i = 0 ; i < nodeList.getLength() ; i ++){
+			Node node = nodeList.item(i);
+			if (node.getNodeType() != Node.ELEMENT_NODE){
+				continue;
 			}
+			
+			Element e = (Element)node;
+			
+			LocalTaskRobber robber = new LocalTaskRobber.Default();
+			robber.configure(e, p);
+			robbers.add(robber);
 		}
 	}
 
+	@Override
+	public void configure(Properties p) {
+		
+	}
+
+	@Override
 	public void report(Element xml) {
 		if (xml != null){
-			Document doc = xml.getOwnerDocument();
-			
-			Enumeration<TaskQueue> iterator = queues.elements();
-			
-			while (iterator.hasMoreElements()){
-				TaskQueue obj = iterator.nextElement();
-				Element _obj = doc.createElement("queue");
-				obj.report(_obj);
-				xml.appendChild(_obj);
-			}
-			
-			if (counter != null){
-				Element _counter = doc.createElement("counter");
-				counter.report(_counter);
-				xml.appendChild(_counter);
-			}
+			XmlTools.setString(xml,"module",getClass().getName());
 		}
 	}
 
+	@Override
 	public void report(Map<String, Object> json) {
 		if (json != null){
-			List<Object> _objs = new ArrayList<Object>(queues.size());
-			
-			Enumeration<TaskQueue> iterator = queues.elements();
-			while (iterator.hasMoreElements()){
-				TaskQueue obj = iterator.nextElement();
-				Map<String,Object> _obj = new HashMap<String,Object>();
-				obj.report(_obj);
-				_objs.add(_obj);
-			}
-			
-			json.put("queue",_objs);
-			
-			if (counter != null){
-				Map<String,Object> map = new HashMap<String,Object>();
-				counter.report(map);
-				json.put("counter", map);
-			}
+			JsonTools.setString(json, "module", getClass().getName());
 		}
 	}
 
-	protected Counter counter = null;
-	protected Hashtable<String,TaskQueue> queues = null;
+	@Override
+	public void onRunning(String id, State state, int percent,String note) {
+		LOG.info(String.format("[%s]Task %s -> %d%%",state.name(),id,percent/100));
+	}
 
+	@Override
+	public void onQueued(String id, State state, int percent,String note) {
+		LOG.info(String.format("[%s]Task %s -> %d%%",state.name(),id,percent/100));
+	}
 
+	@Override
+	public void onPolled(String id, State state, int percent,String note) {
+		LOG.info(String.format("[%s]Task %s -> %d%%",state.name(),id,percent/100));
+	}
+
+	@Override
+	public void onStart(String id, State state, int percent,String note) {
+		LOG.info(String.format("[%s]Task %s -> %d%%",state.name(),id,percent/100));
+	}
+
+	@Override
+	public void onFinish(String id, State state, int percent,String note) {
+		LOG.info(String.format("[%s]Task %s -> %d%%",state.name(),id,percent/100));
+	}		
+
+	@Override
+	public DoerContext getContext() {
+		return ctx;
+	}
+
+	@Override
+	public void saveContext(DoerContext ctx, Doer task) {
+		// nothing to do
+	}
+
+	@Override
+	public void start() {
+		LOG.info("Task center is starting...");
+		for (LocalTaskRobber robber:robbers){
+			robber.start(this);
+		}
+		LOG.info("Task center has started.");
+	}
+
+	@Override
+	public int askForTask(String queue, TaskDispatcher dispatcher, long timeout) {
+		LinkedBlockingQueue<Task> found = taskQueue.get(queue);
+		if (found == null){
+			//没有事件要处理
+			return 1;
+		}
+		
+		try {
+			Task task = found.poll(timeout, TimeUnit.MILLISECONDS);
+			if (task != null && dispatcher != null){
+				onPolled(task.id(),State.Polled,0,"");
+				dispatcher.dispatch(queue,task);
+				//有事件要处理，已经dispatch
+				return 0;
+			}else{
+				//超时，没有事件要处理
+				return 2;
+			}
+		} catch (InterruptedException e) {
+			//进程被打断
+			return -1;
+		}
+	}
+
+	@Override
+	public void stop() {
+		for (LocalTaskRobber robber:robbers){
+			robber.stop();
+		}
+	}
+
+	@Override
+	public void join(long timeout) {
+		for (LocalTaskRobber robber:robbers){
+			robber.join(timeout);
+		}
+	}
 }

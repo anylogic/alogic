@@ -1,38 +1,31 @@
 package com.alogic.doer.demo;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.alogic.doer.client.TaskSubmitter;
-import com.alogic.timer.core.Task;
+import com.alogic.doer.core.TaskCenter;
+import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Settings;
 
 public class Demo {
 
 	public static void main(String[] args) {
-		Settings settings = Settings.get();
-		settings.SetValue("doer.master","java:///com/alogic/doer/demo/doer.demo.xml#com.alogic.doer.demo.Demo");
+		Settings p = Settings.get();
+		p.SetValue("tc.master", 
+				"java:///com/alogic/doer/demo/doer.demo.xml#" + Demo.class.getName());
 		
-		Map<String,String> parameters = new HashMap<String,String>();
+		TaskCenter tc = TaskCenter.TheFactory.get();
 		
-		parameters.put("name", "yyduan");
+		tc.start();
 		
-		TaskSubmitter.submit("job", "demo", parameters);
+		TaskSubmitter.submit("hello", new DefaultProperties());
+		TaskSubmitter.submit("hello", new DefaultProperties());
+		TaskSubmitter.submit("hello", new DefaultProperties());
+		TaskSubmitter.submit("hello", new DefaultProperties());
+		TaskSubmitter.submit("hello", new DefaultProperties());
+		TaskSubmitter.submit("hello", new DefaultProperties());
 		
-		while (true){
-			
-			Task.State state = TaskSubmitter.getTaskReport("job", "demo").state();
-			
-			if (state == Task.State.Done || state == Task.State.Failed){
-				break;
-			}
-			
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		tc.join(10000);
+		
+		tc.stop();
 	}
 
 }

@@ -1,25 +1,32 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.github.anylogic</groupId>
-    <artifactId>alogic</artifactId>
-    <version>1.6.9-SNAPSHOT</version>
-  </parent>
-  <artifactId>alogic-doer</artifactId>
-  <name>alogic-doer</name>
-  <description>后台执行器，定时器框架</description>     
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.github.anylogic</groupId>
+		<artifactId>alogic</artifactId>
+		<version>1.6.9-SNAPSHOT</version>
+	</parent>
+	<artifactId>alogic-doer</artifactId>
+	<name>alogic-doer</name>
+	<description>后台执行器，定时器框架</description>
 	<distributionManagement>
 		<site>
 			<id>localhost</id>
 			<name>localhost</name>
 			<url>file:///${project.site.home}</url>
 		</site>
-	</distributionManagement>  
-  <dependencies>
-  	<dependency>
-  		<groupId>com.github.anylogic</groupId>
-  		<artifactId>alogic-core</artifactId>
-  		<version>${project.version}</version>
-  	</dependency>
-  </dependencies>
+	</distributionManagement>
+	<dependencies>
+		<dependency>
+			<groupId>com.github.anylogic</groupId>
+			<artifactId>alogic-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.9</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>

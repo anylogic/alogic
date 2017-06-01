@@ -32,6 +32,9 @@ import com.anysoft.util.BaseException;
  * 
  * @version 1.6.8.3 [20170328 duanyy] <br>
  * - 修正tlog输出，将参数和错误原因分离开来 <br>
+ * 
+ * @version 1.6.9.2 [20170601 duanyy] <br>
+ * - 增加简单的ORM框架 <br>
  */
 public class Select extends DBOperation {
 
@@ -49,7 +52,7 @@ public class Select extends DBOperation {
 	 * @return
 	 * @throws SQLException
 	 */
-	public Select execute(String sql,Object... params) throws BaseException{
+	public Select execute(String sql,Object... params){
 		close();
 		TraceContext tc = traceEnable()?Tool.start():null;
 		boolean error = false;	
@@ -83,7 +86,7 @@ public class Select extends DBOperation {
 	 * @return 结果值
 	 * @throws SQLException
 	 */
-	public Object single()throws BaseException{
+	public Object single(){
 		try {
 			if (rs != null && rs.next()){
 				return rs.getObject(1);
@@ -103,7 +106,7 @@ public class Select extends DBOperation {
 	 * 
 	 * @since 1.6.2.3
 	 */
-	public long singleAsLong(long dftValue)throws BaseException{
+	public long singleAsLong(long dftValue){
 		Object result = single();
 		
 		if (result == null){
@@ -131,7 +134,7 @@ public class Select extends DBOperation {
 	 * 
 	 * @since 1.6.2.3
 	 */
-	public String singleAsString(String dftValue)throws BaseException{
+	public String singleAsString(String dftValue){
 		Object result = single();
 		
 		if (result == null){
@@ -147,7 +150,7 @@ public class Select extends DBOperation {
 	 * @return 查询结果
 	 * @throws SQLException
 	 */
-	public Map<String,Object> singleRow()throws BaseException{
+	public Map<String,Object> singleRow(){
 		return singleRow(null);
 	}
 	
@@ -158,7 +161,7 @@ public class Select extends DBOperation {
 	 * @throws SQLException
 	 * s@since 1.6.2.3
 	 */
-	public Map<String,String> singleRowAsString()throws BaseException{
+	public Map<String,String> singleRowAsString(){
 		return singleRowAsString(null);
 	}	
 
@@ -170,7 +173,7 @@ public class Select extends DBOperation {
 	 * @throws SQLException
 	 * @since 1.2.0
 	 */
-	public Map<String,Object> singleRow(Map<String,Object> result)throws BaseException{
+	public Map<String,Object> singleRow(Map<String,Object> result){
 		return singleRow(null,result);
 	}		
 	
@@ -182,7 +185,7 @@ public class Select extends DBOperation {
 	 * @throws BaseException
 	 * @since 1.6.2.4
 	 */
-	public Map<String,Object> singleRow(RowRenderer<Object> renderer,Map<String,Object> result)throws BaseException{
+	public Map<String,Object> singleRow(RowRenderer<Object> renderer,Map<String,Object> result){
 		try {
 			if (rs != null && rs.next()){
 				if (renderer == null){
@@ -219,7 +222,7 @@ public class Select extends DBOperation {
 	 * @throws BaseException
 	 * @since 1.6.2.3
 	 */
-	public Map<String,String> singleRowAsString(Map<String,String> result)throws BaseException{
+	public Map<String,String> singleRowAsString(Map<String,String> result){
 		return singleRowAsString(null,result);
 	}	
 	
@@ -230,7 +233,7 @@ public class Select extends DBOperation {
 	 * @return 单行结果
 	 * @throws BaseException
 	 */
-	public Map<String,String> singleRowAsString(RowRenderer<String> renderer,Map<String,String> result)throws BaseException{
+	public Map<String,String> singleRowAsString(RowRenderer<String> renderer,Map<String,String> result){
 		try {
 			if (rs != null && rs.next()){
 				if (renderer == null){
@@ -261,7 +264,26 @@ public class Select extends DBOperation {
 		}
 	}	
 	
-	public void result(RowListener<Object> rowListener)throws BaseException{
+	/**
+	 * 输出结
+	 * @param result 结果数组
+	 * @param adapter 对象映射适配器
+	 */
+	public <T> void result(List<T> result,ObjectMappingAdapter<T> adapter){
+		if (rs == null || adapter == null){
+			return ;
+		}
+		try{
+			while (rs.next()){
+				adapter.rowFetched(rs, result);
+			}
+		}
+		catch (SQLException ex){
+			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+		}		
+	}
+	
+	public void result(RowListener<Object> rowListener){
 		if (rs == null || rowListener == null){
 			return ;
 		}
@@ -299,7 +321,7 @@ public class Select extends DBOperation {
 	 * @param rowListener 行监听器
 	 * @throws SQLException
 	 */
-	public void resultAsString(RowListener<String> rowListener)throws BaseException{
+	public void resultAsString(RowListener<String> rowListener){
 		if (rs == null || rowListener == null){
 			return ;
 		}
@@ -336,25 +358,25 @@ public class Select extends DBOperation {
 	 * @return 查询结果
 	 * @throws SQLException
 	 */
-	public List<Map<String,Object>> result()throws BaseException{
+	public List<Map<String,Object>> result(){
 		RowListener.Default<Object> data = new RowListener.Default<Object>();
 		result(data);
 		return data.getResult();
 	}
 	
-	public List<Map<String,Object>> result(RowRenderer<Object> renderer)throws BaseException{
+	public List<Map<String,Object>> result(RowRenderer<Object> renderer){
 		RowListener.Default<Object> data = new RowListener.Default<Object>(renderer);
 		result(data);
 		return data.getResult();
 	}
 	
-	public List<Map<String,String>> resultAsString()throws BaseException{
+	public List<Map<String,String>> resultAsString(){
 		RowListener.Default<String> data = new RowListener.Default<String>();
 		resultAsString(data);
 		return data.getResult();
 	}
 	
-	public List<Map<String,String>> resultAsString(RowRenderer<String> renderer)throws BaseException{
+	public List<Map<String,String>> resultAsString(RowRenderer<String> renderer){
 		RowListener.Default<String> data = new RowListener.Default<String>(renderer);
 		resultAsString(data);
 		return data.getResult();

@@ -3,21 +3,19 @@ package com.alogic.timer.core;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import com.alogic.timer.matcher.Crontab;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Factory;
 import com.anysoft.util.JsonTools;
+import com.anysoft.util.KeyGen;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
@@ -45,6 +43,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.9.2 [20170601 duanyy] <br>
+ * - 改造TaskCenter模型，以便提供分布式任务处理支持; <br>
  */
 public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	/**
@@ -284,11 +285,6 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 					return;
 				}
 				
-				if (doer.getState() != Doer.State.IDLE) {
-					// 不是空闲状态
-					return;
-				}
-				
 				boolean match = matcher.match(lastDate, now, ctxHolder);
 				if (match) {
 					lastDate = now;
@@ -337,37 +333,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		 * @return 任务id
 		 */
 		protected static String newTaskId(){
-			return System.currentTimeMillis()+ randomString(6);
-		}
-		
-		/**
-		 * 字符表
-		 */
-		protected static final char[] Chars = {
-		      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-		      'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-		      'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
-		      'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-		      'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
-		      'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
-		      '8', '9'
-		 };
-		
-		/**
-		 * 按照指定宽度生成随机字符串
-		 * @param _width 字符串的宽度
-		 * @return 随机字符串
-		 */
-		static protected String randomString(int _width){
-			int width = _width <= 0 ? 6 : _width;
-			char [] ret = new char[width];
-			Random ran = new Random();
-			for (int i = 0 ; i < width ; i ++){
-				int intValue = ran.nextInt(62) % 62;
-				ret[i] = Chars[intValue];
-			}
-			
-			return new String(ret);
+			return KeyGen.uuid(8,0,16);
 		}
 	}
 	
@@ -412,7 +378,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		}
 
 		public Task newTask() {
-			return new Task.Default(newTaskId(), getId());
+			return new Task.Default(newTaskId(),"default");
 		}
 	}
 	
@@ -452,9 +418,9 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		protected Date toDate = new Date(System.currentTimeMillis() + 50 * 365 * 24 * 60 * 60 * 1000L);				
 		
 		/**
-		 * 队列
+		 * 事件
 		 */
-		protected String queue;
+		protected String event = "default";
 		
 		/**
 		 * 调用参数
@@ -471,7 +437,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 				id = newTimerId();
 			}
 			
-			queue = PropertiesConstants.getString(p,"queue",id,true);
+			event = PropertiesConstants.getString(p,"event",event,true);
 			name = PropertiesConstants.getString(p,"name","",true);
 			note = PropertiesConstants.getString(p,"note","",true);
 		}
@@ -482,7 +448,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 			if (xml != null){
 				xml.setAttribute("name", name);
 				xml.setAttribute("note", note);
-				xml.setAttribute("queue", queue);
+				xml.setAttribute("event", event);
 				
 				if (fromDate != null){
 					xml.setAttribute("fromDate", String.valueOf(fromDate.getTime()));
@@ -500,7 +466,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 			if (json != null){
 				json.put("name", name);
 				json.put("note", note);
-				json.put("queue", queue);
+				json.put("event", event);
 				
 				if (fromDate != null){
 					json.put("fromDate", fromDate.getTime());
@@ -595,8 +561,8 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		}
 		
 		public Task newTask() {
-			return parameters == null ? new Task.Default(newTaskId(), getId()) 
-			: new Task.Default(newTaskId(), getId(),parameters);
+			return parameters == null ? new Task.Default(newTaskId(),event) 
+			: new Task.Default(newTaskId(),event,parameters);
 		}
 	}
 }
