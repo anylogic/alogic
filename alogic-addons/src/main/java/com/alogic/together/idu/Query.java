@@ -28,6 +28,9 @@ import com.logicbus.dbcp.sql.RowRenderer;
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 修正在查询记录为空时的异常问题
+ * 
  */
 public class Query extends DBOperation{
 	protected String tag = "data";
@@ -68,9 +71,11 @@ public class Query extends DBOperation{
 					List<Object> data = new ArrayList<Object>();
 					String sql = processor.process(ctx, data);
 					Map<String,Object> result = DBTools.selectAsObjects(conn, sql,data.toArray());
-					@SuppressWarnings("unchecked")
-					Map<String,Object> content = (Map<String,Object>)current.getContent();
-					content.put(tagValue, result);
+					if (result != null){
+						@SuppressWarnings("unchecked")
+						Map<String,Object> content = (Map<String,Object>)current.getContent();
+						content.put(tagValue, result);
+					}
 				}
 			}
 		}else{
@@ -78,16 +83,16 @@ public class Query extends DBOperation{
 				List<Object> data = new ArrayList<Object>();
 				String sql = processor.process(ctx, data);
 				Map<String,Object> result = DBTools.selectAsObjects(conn, sql,data.toArray());
-
-				Iterator<Entry<String,Object>> iter = result.entrySet().iterator();
-				
-				while (iter.hasNext()){
-					Entry<String,Object> entry = iter.next();
-					Object value = entry.getValue();
-					if (value != null){
-						current.addProperty(entry.getKey(), value.toString());
-					}else{
-						current.addProperty(entry.getKey(), "");
+				if (result != null){
+					Iterator<Entry<String,Object>> iter = result.entrySet().iterator();
+					while (iter.hasNext()){
+						Entry<String,Object> entry = iter.next();
+						Object value = entry.getValue();
+						if (value != null){
+							current.addProperty(entry.getKey(), value.toString());
+						}else{
+							current.addProperty(entry.getKey(), "");
+						}
 					}
 				}
 			}else{
@@ -97,16 +102,17 @@ public class Query extends DBOperation{
 					List<Object> data = new ArrayList<Object>();
 					String sql = processor.process(ctx, data);
 					Map<String,Object> result = DBTools.selectAsObjects(conn, sql,data.toArray());
-
-					Iterator<Entry<String,Object>> iter = result.entrySet().iterator();
-					
-					while (iter.hasNext()){
-						Entry<String,Object> entry = iter.next();
-						Object value = entry.getValue();
-						if (value != null){
-							newChild.addProperty(entry.getKey(), value.toString());
-						}else{
-							newChild.addProperty(entry.getKey(), "");
+					if (result != null){
+						Iterator<Entry<String,Object>> iter = result.entrySet().iterator();
+						
+						while (iter.hasNext()){
+							Entry<String,Object> entry = iter.next();
+							Object value = entry.getValue();
+							if (value != null){
+								newChild.addProperty(entry.getKey(), value.toString());
+							}else{
+								newChild.addProperty(entry.getKey(), "");
+							}
 						}
 					}
 				}				

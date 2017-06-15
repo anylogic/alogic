@@ -10,6 +10,9 @@ import com.anysoft.util.KeyGen;
  * 
  * @author duanyy
  * @since 1.6.7.15
+ * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 修正全局序列号不规范问题 <br>
  */
 public interface Parameters {
 	/**
@@ -76,7 +79,7 @@ public interface Parameters {
 		/**
 		 * 序列号
 		 */
-		protected String sn = KeyGen.uuid(8, 0, 16);
+		protected String sn = KeyGen.uuid(8, 0, 15);
 		
 		protected InvokeContext ctx = null;
 		

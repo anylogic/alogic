@@ -25,7 +25,7 @@ public class Bootstrap implements ServletContextListener {
 	protected static final Logger logger = LoggerFactory.getLogger(Bootstrap.class);
 	
 	public void contextInitialized(ServletContextEvent sce) {
-		logger.info("the scheduler will start..");
+		logger.info("The scheduler will start..");
 		Scheduler scheduler = SchedulerFactory.get();
 		scheduler.start();
 	}
@@ -33,7 +33,7 @@ public class Bootstrap implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent sce) {
 		Scheduler scheduler = SchedulerFactory.get();
 		scheduler.stop();
-		logger.info("the scheduler stopped.");
+		logger.info("The scheduler has stopped.");
 	}
 
 }

@@ -14,6 +14,9 @@ import com.anysoft.util.PropertiesConstants;
  * @author duanyy
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 当文档为空的时候，不加入到父节点中 <br>
  */
 public class ArrayItem extends Segment {
 	protected String id = "$array";
@@ -31,9 +34,11 @@ public class ArrayItem extends Segment {
 	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 		XsArray list = ctx.getObject(id);
 		if (list != null){
-			XsObject template = list.newObject();
-			list.add(template);
+			XsObject template = list.newObject();			
 			super.onExecute(root, template, ctx, watcher);			
+			if (!template.isNull()){
+				list.add(template);
+			}
 		}
 	}	
 }

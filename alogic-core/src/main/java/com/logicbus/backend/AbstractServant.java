@@ -30,7 +30,7 @@ import com.logicbus.models.servant.ServiceDescription;
  * - 清除Servant体系中处于deprecated的方法 <br>
  * 
  * @version 1.6.6.13 [20170109 duanyy] <br>
- * - 采用新的指标接口 <br.
+ * - 采用新的指标接口 <br>
  */
 public abstract class AbstractServant extends Servant implements MetricsCollector {
 

@@ -166,6 +166,6 @@ public class KeyGen {
 		System.out.println(uuid(10,0,61));
 		
 		// 64为数字(16进制)
-		System.out.println(uuid(8,0,16));
+		System.out.println(uuid(8,0,15));
 	}
 }

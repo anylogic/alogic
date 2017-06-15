@@ -23,6 +23,8 @@ import com.alogic.xscript.log.LogInfo;
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
+ * @version 1.6.9.3 [20170602 duanyy] <br>
+ * - 在异常处理的时候，输出异常的id和原因信息; <br>
  */
 public abstract class Block extends AbstractLogiclet{
 
@@ -92,6 +94,8 @@ public abstract class Block extends AbstractLogiclet{
 				handler = exceptionAndFinallyHandlers.get(STMT_EXCEPTION);
 			}
 			if (handler != null){
+				ctx.SetValue("$code", id);
+				ctx.SetValue("$reason", ex.getMessage());
 				handler.execute(root,current,ctx,watcher);
 			}else{
 				throw ex;

@@ -41,6 +41,9 @@ import ch.ethz.ssh2.SFTPv3FileHandle;
  * 
  * @version 1.6.7.18 [20170227 duanyy] <br>
  * - 修正SFtp的java.lang.NegativeArraySizeException异常 <br>
+ * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 增加move的方法 <br>
  */
 
 public class SFtp extends VirtualFileSystem.Abstract {
@@ -485,6 +488,33 @@ public class SFtp extends VirtualFileSystem.Abstract {
 		}
 		if (conn != null) {
 			conn.close();
+		}
+	}
+
+	@Override
+	public boolean move(String src, String dest, boolean overwrite) {
+		
+		String srcPath = getRealPath(src);
+		String destPath = getRealPath(dest);
+		
+		if (!this.exist(srcPath)){
+			//源路径不存在
+			return false;
+		}
+		
+		if (this.exist(destPath)){
+			if (!overwrite){
+				return false;
+			}
+			this.deleteFile(destPath);
+		}
+		
+		try {
+			SFTPv3Client client = getClient();
+			client.mv(srcPath, destPath);
+			return true;
+		} catch (IOException e) {
+			return false;
 		}
 	}
 }

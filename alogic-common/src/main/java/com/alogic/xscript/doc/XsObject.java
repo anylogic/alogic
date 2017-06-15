@@ -5,6 +5,10 @@ package com.alogic.xscript.doc;
  * 
  * @author yyduan
  * @since 1.6.8.14
+ * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 增加判断文档是否为空的方法 <br>
+ * 
  */
 public interface XsObject extends XsElement {
 	/**
@@ -12,6 +16,15 @@ public interface XsObject extends XsElement {
 	 * @return tag
 	 */
 	public String getTag();
+	
+	/**
+	 * 是否空对象
+	 * @return 是否空对象
+	 * 
+	 * @since 1.6.9.3
+	 */
+	public boolean isNull();
+	
 	/**
 	 * 增加指定属性
 	 * @param name 属性名

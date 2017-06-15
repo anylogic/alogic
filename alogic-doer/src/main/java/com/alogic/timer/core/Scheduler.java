@@ -133,10 +133,12 @@ public interface Scheduler extends Timer,Runnable {
 		
 		protected String id = "root";
 		
+		@Override
 		public void setTaskCommitter(DoerCommitter _committer){
 			comitter = _committer;
 		}
 		
+		@Override
 		public void configure(Properties p){
 			interval = PropertiesConstants.getLong(p,"interval",interval,true);
 			id = PropertiesConstants.getString(p, "id", "root");
@@ -146,11 +148,13 @@ public interface Scheduler extends Timer,Runnable {
 			}
 		}
 
+		@Override
 		public void configure(Element _e, Properties _properties){
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);
 		}
 
+		@Override
 		public void report(Element xml) {
 			if (xml != null){
 				xml.setAttribute("id", getId());
@@ -180,6 +184,7 @@ public interface Scheduler extends Timer,Runnable {
 			}
 		}
 
+		@Override
 		public void report(Map<String, Object> json) {
 			if (json != null){
 				json.put("module", getClass().getName());
@@ -210,22 +215,27 @@ public interface Scheduler extends Timer,Runnable {
 			}
 		}
 
+		@Override
 		public void schedule(String id, Matcher matcher, Doer task) {
 			schedule(new Timer.Simple(id, matcher, task));
 		}
 
+		@Override
 		public void schedule(String id, Matcher matcher, Runnable runnable) {
 			schedule(new Timer.Simple(id, matcher, runnable));
 		}
 
+		@Override
 		public String getId() {
 			return id;
 		}
 
+		@Override
 		public State getState() {
 			return state;
 		}
 
+		@Override
 		public void pause() {
 			if (state != State.Running){
 				throw new BaseException("core.incorrect_state","The current state is not Running,Can not pause.");
@@ -233,6 +243,7 @@ public interface Scheduler extends Timer,Runnable {
 			state = State.Paused;
 		}
 
+		@Override
 		public void resume() {
 			if (state != State.Paused){
 				throw new BaseException("core.incorrect_state","The current state is not Paused,Can not resume.");
@@ -240,14 +251,15 @@ public interface Scheduler extends Timer,Runnable {
 			state = State.Running;
 		}
 		
+		@Override
 		public void schedule(DoerCommitter committer) {
 				//scheduler只能启动一次，所以只能状态为Init时启动
 			if (state == State.Init){
-				setTaskCommitter(committer);
 				start();
 			}
 		}
 		
+		@Override
 		public void start() {
 			final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 			final Runnable self = this;
@@ -270,6 +282,7 @@ public interface Scheduler extends Timer,Runnable {
 			}
 		}		
 		
+		@Override
 		public void stop(){
 			state = State.Stopping;
 			if (fc != null){
@@ -290,6 +303,7 @@ public interface Scheduler extends Timer,Runnable {
 			}
 		}
 		
+		@Override
 		public void run(){
 			if (state == State.Idle){
 				state = State.Running;
@@ -309,6 +323,7 @@ public interface Scheduler extends Timer,Runnable {
 		
 		abstract protected void scheduleOnce();
 		
+		@Override
 		public void join(long timeout){
 			if (future != null){
 				try {
@@ -319,10 +334,12 @@ public interface Scheduler extends Timer,Runnable {
 			}
 		}
 		
+		@Override
 		public Date forecastNextDate() {
 			return new Date();
 		}
 		
+		@Override
 		public boolean isTimeToClear(){return true;}
 		
 		private FailoverController getFailoverController(Properties p) {
@@ -357,26 +374,34 @@ public interface Scheduler extends Timer,Runnable {
 	public static class Simple extends Abstract{
 		protected Hashtable<String,Timer> timers = new Hashtable<String,Timer>();
 		protected boolean async = true;
+		
+		@Override
 		public void configure(Properties p) throws BaseException {
 			super.configure(p);
 			async = PropertiesConstants.getBoolean(p,"async",async,true);
 		}		
+		
+		@Override
 		public Timer[] getTimers() {
 			return timers.values().toArray(new Timer[0]);
 		}
 
+		@Override
 		public Timer get(String id) {
 			return timers.get(id);
 		}
 
+		@Override
 		public void schedule(Timer timer) {
 			timers.put(timer.getId(), timer);
 		}
 
+		@Override
 		public void remove(String id) {
 			timers.remove(id);
 		}	
 		
+		@Override
 		protected void scheduleOnce() {
 			if (state != State.Running){
 				//not running
@@ -417,6 +442,7 @@ public interface Scheduler extends Timer,Runnable {
 			}
 		}
 		
+		@Override
 		public Task newTask() {
 			//never used
 			return null;
@@ -435,6 +461,7 @@ public interface Scheduler extends Timer,Runnable {
 		 */
 		protected String dftTimer = Timer.XMLed.class.getName();
 		
+		@Override
 		public void configure(Element _e, Properties _properties)
 				throws BaseException {
 			Properties p = new XmlElementProperties(_e,_properties);
@@ -533,6 +560,8 @@ public interface Scheduler extends Timer,Runnable {
 	 *
 	 */
 	public static class Linked extends XMLed{	
+
+		@Override
 		public void configure(Element _e, Properties _properties){
 			Properties p = new XmlElementProperties(_e,_properties);
 			

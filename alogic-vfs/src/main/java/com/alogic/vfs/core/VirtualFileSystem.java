@@ -27,6 +27,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.7.13 [20170206 duanyy] <br>
  * - 写文件接口增加permissions参数，以便在创建文件时指定文件的权限 <br>
+ * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 增加move的方法 <br>
  */
 public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigurable,Reportable{
 	
@@ -88,6 +91,15 @@ public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigu
 	 * @return 如果该路径文件存在，返回true
 	 */
 	public boolean exist(String path);
+	
+	/**
+	 * 移动文件到其他位置
+	 * @param src 源文件路径
+	 * @param dest 目的文件路径
+	 * @param overwrite 是否覆盖
+	 * @return 是否操作成功
+	 */
+	public boolean move(String src,String dest,boolean overwrite);
 	
 	/**
 	 * 指定的路径是否目录

@@ -17,6 +17,9 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * 基于Json的XsObject
  * @author yyduan
  * @since 1.6.8.14
+ * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 增加判断文档是否为空的方法 <br>
  */
 public class JsonObject implements XsObject {
 
@@ -31,6 +34,11 @@ public class JsonObject implements XsObject {
 		this.tag = tag;
 	}
 
+	@Override
+	public boolean isNull() {
+		return content == null || content.isEmpty();
+	}
+	
 	@Override
 	public String getTag() {
 		return tag;
@@ -282,4 +290,5 @@ public class JsonObject implements XsObject {
 		JsonProvider provider = JsonProviderFactory.createProvider();
 		System.out.println(provider.toJson(doc.getContent()));
 	}
+
 }

@@ -29,6 +29,9 @@ import com.anysoft.util.StringMatcher;
  * 
  * @version 1.6.7.13 [20170206 duanyy] <br>
  * - 写文件接口增加permissions参数，以便在创建文件时指定文件的权限 <br>
+ * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 增加move的方法 <br>
  */
 public class LocalFileSystem extends VirtualFileSystem.Abstract {
 	
@@ -244,6 +247,25 @@ public class LocalFileSystem extends VirtualFileSystem.Abstract {
 		IOTools.close(out);
 	}
 
-
-
+	@Override
+	public boolean move(String src, String dest,boolean overwrite){
+		String srcPath = getRealPath(src);
+		String destPath = getRealPath(dest);
+		
+		File srcFile = new File(srcPath);
+		if (!srcFile.exists() || !srcFile.canRead()){
+			//源文件不存在或不能读
+			return false;
+		}
+		
+		File destFile = new File(destPath);
+		if (destFile.exists()){
+			if (!overwrite){
+				return false;
+			}
+			destFile.delete();
+		}
+		
+		return srcFile.renameTo(destFile);
+	}
 }

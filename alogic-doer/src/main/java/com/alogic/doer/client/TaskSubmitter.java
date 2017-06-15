@@ -27,6 +27,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.9.2 [20170601 duanyy] <br>
  * - 改造TaskCenter模型，以便提供分布式任务处理支持; <br>
+ * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 修正taskId不规范问题 <br>
  */
 public class TaskSubmitter{
 	
@@ -174,6 +177,6 @@ public class TaskSubmitter{
 	 * @return 任务id
 	 */
 	protected static String newTaskId(){
-		return KeyGen.uuid(8,0,16);
+		return KeyGen.uuid(8,0,15);
 	}
 }

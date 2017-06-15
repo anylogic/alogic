@@ -25,6 +25,10 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.8.6 [20170410 duanyy] <br>
  * - 服务调用全局序列号采用随机64位数字(16进制) <br>
+ * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 修正tlog的全局序列号不规范问题 <br>
+ * 
  */
 public interface TraceContext extends Reportable{
 	/**
@@ -101,13 +105,13 @@ public interface TraceContext extends Reportable{
 		protected transient TraceContext parent = null;
 		
 		public Default(){
-			sn = KeyGen.uuid(10, 64);
+			sn = KeyGen.uuid(8,0,15);
 			order = "1";
 		}
 		
 		public Default(TraceContext p,String n,String o){
 			parent = p;
-			sn = StringUtils.isEmpty(n)?KeyGen.uuid(8,0,16):n;
+			sn = StringUtils.isEmpty(n)?KeyGen.uuid(8,0,15):n;
 			order = o;
 		}		
 		

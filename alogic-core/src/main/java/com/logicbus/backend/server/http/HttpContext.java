@@ -57,6 +57,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.8.6 [20170410 duanyy] <br>
  * - 服务调用全局序列号采用随机64位数字(16进制) <br>
+ * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 修正tlog的全局序列号不规范问题 <br>
  */
 
 public class HttpContext extends Context {
@@ -225,7 +228,7 @@ public class HttpContext extends Context {
 		if (sample){
 			return "s" + KeyGen.uuid(9,36);
 		}else{
-			return KeyGen.uuid(8,0,16);
+			return KeyGen.uuid(8,0,15);
 		}
 	}	
 	

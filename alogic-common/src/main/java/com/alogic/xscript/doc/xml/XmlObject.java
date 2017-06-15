@@ -16,6 +16,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @author yyduan
  * @since 1.6.8.14
+ * 
+ * @version 1.6.9.3 [20170615 duanyy] <br>
+ * - 增加判断文档是否为空的方法 <br>
  */
 public class XmlObject implements XsObject {
 	
@@ -28,6 +31,11 @@ public class XmlObject implements XsObject {
 	public XmlObject(String tag,Element content){
 		this.xmlTag = tag;
 		this.content = content;
+	}
+	
+	@Override
+	public boolean isNull() {
+		return content == null || !content.hasChildNodes();
 	}
 	
 	@Override
