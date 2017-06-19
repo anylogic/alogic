@@ -29,7 +29,7 @@ import com.anysoft.util.PropertiesConstants;
 public class FileList extends AbstractLogiclet{
 	protected String pid = "$vfs";
 	protected String path = "/";
-	protected String pattern = "*";
+	protected String pattern = "[\\S]*";
 	protected String offset = "0";
 	protected String limit = "100";
 	protected String tag = "data";

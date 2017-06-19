@@ -40,7 +40,7 @@ public class FileList extends AbstractServant{
 		
 		String path = getArgument("path","/",ctx);
 		String fsId = getArgument("domain","default",ctx);
-		String pattern = getArgument("pattern","*",ctx);
+		String pattern = getArgument("pattern","[\\S]*",ctx);
 		int offset = getArgument("offset",0,ctx);
 		int limit = getArgument("limit",30,ctx);		
 		

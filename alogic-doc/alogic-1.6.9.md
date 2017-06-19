@@ -23,3 +23,6 @@ alogic-1.6.9
 - alogic-common:XsObject类增加是否为空的方法;
 - alogic-doer:增加相应的查询服务及启动引导类;
 - alogic-vfs:增加移动文件的方法;
+
+### 1.6.9.4 [20170615 duanyy]
+- alogic-vfs：统一各实现的文件名匹配规则为正则表达式匹配;

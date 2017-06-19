@@ -11,10 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.alogic.vfs.core.VirtualFileSystem;
 import com.anysoft.util.IOTools;
-import com.anysoft.util.StringMatcher;
 
 /**
  * 基于本地文件系统的VFS
@@ -32,6 +33,9 @@ import com.anysoft.util.StringMatcher;
  * 
  * @version 1.6.9.3 [20170615 duanyy] <br>
  * - 增加move的方法 <br>
+ * 
+ * @version 1.6.9.4 [20170615 duanyy] <br>
+ * - 统一各实现的文件名匹配规则为正则表达式匹配 <br>
  */
 public class LocalFileSystem extends VirtualFileSystem.Abstract {
 	
@@ -85,11 +89,12 @@ public class LocalFileSystem extends VirtualFileSystem.Abstract {
 		
 		String[] files = dirFile.list();
 		
-		StringMatcher matcher = new StringMatcher(pattern);
+		Pattern p = Pattern.compile(pattern);
 		
 		int current = 0;
 		for (String file:files){
-			if (matcher.match(file)){
+			Matcher matcher = p.matcher(file);
+			if (matcher.matches()){
 				if (current >= offset){
 					result.add(file);
 				}
@@ -119,12 +124,13 @@ public class LocalFileSystem extends VirtualFileSystem.Abstract {
 		
 		File[] files = dirFile.listFiles();
 		
-		StringMatcher matcher = new StringMatcher(pattern);
+		Pattern p = Pattern.compile(pattern);
 		
 		int current = 0;
 		for (File file:files){
 			String filename = file.getName();
-			if (matcher.match(filename) || file.isDirectory()){
+			Matcher matcher = p.matcher(filename);
+			if (matcher.matches()){
 				if (current >= offset && current < offset + limit){
 					Map<String,Object> map = new HashMap<String,Object>();
 					getFileInfo(file,map);

@@ -44,6 +44,9 @@ import ch.ethz.ssh2.SFTPv3FileHandle;
  * 
  * @version 1.6.9.3 [20170615 duanyy] <br>
  * - 增加move的方法 <br>
+ * 
+ * @version 1.6.9.4 [20170615 duanyy] <br>
+ * - 统一各实现的文件名匹配规则为正则表达式匹配 <br>
  */
 
 public class SFtp extends VirtualFileSystem.Abstract {
@@ -174,7 +177,6 @@ public class SFtp extends VirtualFileSystem.Abstract {
 						SFTPv3DirectoryEntry entry = files.get(i);
 						String filename = entry.filename;
 						Matcher matcher = p.matcher(filename);
-						;
 						if (matcher.matches()) {
 							if (current >= offset) {
 								result.add(filename);
