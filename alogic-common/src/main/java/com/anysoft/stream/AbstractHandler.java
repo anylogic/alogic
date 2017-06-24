@@ -402,10 +402,16 @@ public abstract class AbstractHandler<data extends Flowable> implements Handler<
 				if (currentQueueLength <= maxQueueLength){
 					queue.offer(_data);
 					currentQueueLength ++;
-				}
+				} 
+				//队列满的时候，抛弃掉
 			}else{
 				if (currentQueueLength > maxQueueLength){
-					flush(timestamp);
+					//当队列已经满的时候，必须先出一个，才能进一个
+					data item = queue.poll();
+					if (item != null){
+						handler.onHandle(item,timestamp);
+						currentQueueLength --;
+					}
 				}
 				queue.offer(_data);
 				currentQueueLength ++;
