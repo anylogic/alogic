@@ -12,6 +12,7 @@ import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.JsonSerializer;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Reportable;
+import com.anysoft.util.Settings;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
 
@@ -23,6 +24,9 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * 
  * @version 1.6.9.2 [20170601 duanyy] <br>
  * - 改造TaskCenter模型，以便提供分布式任务处理支持; <br>
+ * 
+ * @version 1.6.9.6 [20170719 duanyy] <br>
+ * - Task参数可读取Settings中的变量 <br>
  */
 public interface Task extends JsonSerializer,Reportable{
 	
@@ -122,7 +126,7 @@ public interface Task extends JsonSerializer,Reportable{
 		public Default(String id,String event,Map<String,String> _p){
 			this.id = id;
 			this.event = event;
-			this.p = new DefaultProperties();
+			this.p = new DefaultProperties("default",Settings.get());
 			if (_p != null){
 				Iterator<Entry<String,String>> iter = _p.entrySet().iterator();
 				
@@ -166,7 +170,7 @@ public interface Task extends JsonSerializer,Reportable{
 				id = JsonTools.getString(json, "id", "");
 				event = JsonTools.getString(json, "event", "");
 				if (p == null){
-					p = new DefaultProperties();
+					p = new DefaultProperties("default",Settings.get());
 				}
 				
 				Object parameters = json.get("parameters");

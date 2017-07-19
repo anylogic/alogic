@@ -179,7 +179,7 @@ public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigu
 		/**
 		 * 缺省的文件名模板
 		 */
-		protected String dftPattern = "*";
+		protected String dftPattern = "[\\S]*";
 	
 		/**
 		 * 文件系统的根目录的实际路径

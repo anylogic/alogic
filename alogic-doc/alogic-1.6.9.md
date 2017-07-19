@@ -29,3 +29,7 @@ alogic-1.6.9
 
 ### 1.6.9.5 [20170624 duanyy]
 - alogic-common:修正流处理框架中异步处理时的数据丢失问题;
+
+### 1.6.9.6 [20170706 duanyy]
+- alogic-vfs:增加文件移动和文件拷贝脚本;
+- alogic-common:XmlObject避免属性值为空的情况;

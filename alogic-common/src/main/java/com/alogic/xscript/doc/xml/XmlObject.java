@@ -19,6 +19,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.9.3 [20170615 duanyy] <br>
  * - 增加判断文档是否为空的方法 <br>
+ * 
+ * @version 1.6.8.6 [20170719 duanyy] <br>
+ * - 避免属性值为空的情况 <br>
  */
 public class XmlObject implements XsObject {
 	
@@ -50,18 +53,22 @@ public class XmlObject implements XsObject {
 
 	@Override
 	public void addProperty(String name, String value) {
-		Document doc = this.content.getOwnerDocument();
-		Element ele = doc.createElement(name);
-		ele.appendChild(doc.createTextNode(value));
-		this.content.appendChild(ele);
+		if (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(value)){
+			Document doc = this.content.getOwnerDocument();
+			Element ele = doc.createElement(name);
+			ele.appendChild(doc.createTextNode(value));
+			this.content.appendChild(ele);
+		}
 	}
 
 	@Override
 	public void addProperty(String name, Number value) {
-		Document doc = this.content.getOwnerDocument();
-		Element ele = doc.createElement(name);
-		ele.appendChild(doc.createTextNode(String.valueOf(value)));
-		this.content.appendChild(ele);
+		if (StringUtils.isNotEmpty(name) && value != null){
+			Document doc = this.content.getOwnerDocument();
+			Element ele = doc.createElement(name);
+			ele.appendChild(doc.createTextNode(String.valueOf(value)));
+			this.content.appendChild(ele);
+		}
 	}
 
 	@Override

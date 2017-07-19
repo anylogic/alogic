@@ -162,11 +162,11 @@ public class SFtp extends VirtualFileSystem.Abstract {
 
 	@Override
 	public List<String> listFiles(String path, String pattern, int offset, int limit) {
+		List<String> result = new ArrayList<String>();
 		SFTPv3Client client = getClient();
 		String realPath = getRealPath(path);
 		try {
 			if (isDir(path)) {
-				List<String> result = new ArrayList<String>();
 				List<SFTPv3DirectoryEntry> files = client.ls(realPath);
 
 				if (files != null) {
@@ -189,12 +189,11 @@ public class SFtp extends VirtualFileSystem.Abstract {
 
 					}
 				}
-				return result;
 			}
 		} catch (IOException e) {
 			LOG.error(e.getMessage());
 		}
-		return null;
+		return result;
 	}
 
 	@Override

@@ -12,6 +12,9 @@ import com.alogic.xscript.plugins.Segment;
  * 
  * @version 1.6.8.5 [20170331 duanyy] <br>
  * - 增加vfs-mkdir指令，用于在VFS中构建目录 <br>
+ * 
+ * @version 1.6.9.6 [20170706 duanyy] <br>
+ * - 增加文件移动和文件拷贝脚本 <br>
  */
 public class VFS extends Segment{
 
@@ -22,6 +25,8 @@ public class VFS extends Segment{
 		registerModule("vfs-sync",Sync.class);
 		registerModule("vfs-check",Compare.class);
 		registerModule("vfs-report",Report.class);
+		registerModule("vfs-mv",FileMove.class);
+		registerModule("vfs-cp",FileCopy.class);
 		registerModule("vfs-report-json",JsonReport.class);
 		registerModule("vfs-src",FileSystem.Source.class);
 		registerModule("vfs-dest",FileSystem.Destination.class);
