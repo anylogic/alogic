@@ -73,7 +73,8 @@ public class Main {
 		runAsJson("java:///xscript/setAsJson.xml#com.alogic.xscript.demo.Main",settings);
 		runAsJson("java:///xscript/hash.xml#com.alogic.xscript.demo.Main",settings);
 
-		runAsXml("java:///xscript/hash.xml#com.alogic.xscript.demo.Main",settings);		
+		runAsXml("java:///xscript/hash.xml#com.alogic.xscript.demo.Main",settings);	
+		runAsJson("java:///xscript/now.xml#com.alogic.xscript.demo.Main",settings);	
 	}
 
 }

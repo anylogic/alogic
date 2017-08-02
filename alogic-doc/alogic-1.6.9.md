@@ -33,3 +33,13 @@ alogic-1.6.9
 ### 1.6.9.6 [20170706 duanyy]
 - alogic-vfs:增加文件移动和文件拷贝脚本;
 - alogic-common:XmlObject避免属性值为空的情况;
+
+### 1.6.9.7 [20170731 duanyy] 
+- alogic-common:FromSettings和FromEnv支持refer和raw的功能;
+- alogic-common:Now增加模板输出功能;
+- alogic-common:RRModelManager修正多实例下的并发问题;
+- alogic-dbcp:DBTools增加AutoCommit相关的操作;
+- alogic-dbcp:增加强制读写分离功能，应对数据中间层之类的场景;
+- alogic-dbcp:可自动为Connection设置autocommit属性;
+
+

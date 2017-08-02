@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -29,9 +31,12 @@ import com.anysoft.util.XmlElementProperties;
  * - 对接指标处理器 <br>
  * 
  * @version 1.6.6.13 [20170109 duanyy] <br>
- * - 采用新的指标接口
+ * - 采用新的指标接口 <br>
+ * 
  */
 public class RRModel<data extends RRData> implements XMLConfigurable,Configurable,Reportable,MetricsCollector{
+	
+	protected static final Logger LOG = LoggerFactory.getLogger(RRModel.class);
 
 	/**
 	 * id
@@ -81,7 +86,6 @@ public class RRModel<data extends RRData> implements XMLConfigurable,Configurabl
 	 */
 	public void update(long timestamp,data fragment){
 		Iterator<RRArchive<data>> iterator = rras.values().iterator();
-		
 		while (iterator.hasNext()){
 			RRArchive<data> rra = iterator.next();
 			rra.update(timestamp, fragment);
@@ -167,7 +171,6 @@ public class RRModel<data extends RRData> implements XMLConfigurable,Configurabl
 	@Override
 	public void configure(Properties p) throws BaseException {
 		String[] _rras = PropertiesConstants.getString(p,"rrm.rras","minute,halfhour,hour").split(",");
-
 		for (int i = 0 ;i < _rras.length ; i ++){
 			String id = _rras[i];
 			if (id != null && id.length() > 0){

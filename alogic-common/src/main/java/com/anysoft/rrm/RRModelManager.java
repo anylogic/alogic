@@ -1,7 +1,8 @@
 package com.anysoft.rrm;
 
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.anysoft.util.Properties;
 
@@ -10,31 +11,42 @@ import com.anysoft.util.Properties;
  * @author duanyy
  * @version 1.6.4.14 [20151126 duanyy] <br>
  * - 增加list方法.<br>
+ * 
+ * @version 1.9.6.7 [20170802 duanyy] <br>
+ * - 修正多实例下的并发问题 <br>
+ * 
  */
 public class RRModelManager {
 	
-	private Hashtable<String,RRModel<? extends RRData>> rrms = new Hashtable<String,RRModel<? extends RRData>>();
+	private Map<String,RRModel<? extends RRData>> rrms = new ConcurrentHashMap<String,RRModel<? extends RRData>>();
 	
 	public RRModel<? extends RRData> getModel(String id){
 		return (RRModel<? extends RRData>) rrms.get(id);
 	}
 	
-	public <data extends RRData> RRModel<data> addModel(String id,Class<data> clazz,Properties p){
-		RRModel<data> newModel = new RRModel<data>(id);		
-		newModel.configure(p);
-		rrms.put(id, newModel);
-		
-		return newModel;
+	@SuppressWarnings("unchecked")
+	public synchronized <data extends RRData> RRModel<data> addModel(String id,Class<data> clazz,Properties p){
+		RRModel<data> found = (RRModel<data>) rrms.get(id);
+		if (found == null){
+			found = new RRModel<data>(id);		
+			found.configure(p);
+			rrms.put(id, found);
+		}
+		return found;
 	}
 	
-	public <data extends RRData> RRModel<data> addModel(String id,data instance,Properties p){
-		RRModel<data> newModel = new RRModel<data>(id);
-		
-		newModel.configure(p);
-		newModel.update(System.currentTimeMillis(), instance);
-		
-		rrms.put(id, newModel);
-		return newModel;
+	@SuppressWarnings("unchecked")
+	public synchronized <data extends RRData> RRModel<data> addModel(String id,data instance,Properties p){
+		RRModel<data> found = (RRModel<data>) rrms.get(id);
+		if (found == null){
+			found = new RRModel<data>(id);
+			
+			found.configure(p);
+			found.update(System.currentTimeMillis(), instance);
+			
+			rrms.put(id, found);
+		}
+		return found;
 	}	
 	
 	public <data extends RRData> RRModel<data> addModel(String id,RRModel<data> newModel){

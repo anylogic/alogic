@@ -18,6 +18,9 @@ import com.anysoft.util.BaseException;
  * 
  * @version 1.6.9.2 [20170601 duanyy] <br>
  * - 增加简单的ORM框架 <br>
+ * 
+ * @version 1.6.9.7 [20170802 duanyy] <br>
+ * - 增加AutoCommit相关的操作 <br>
  */
 public class DBTools {
 	
@@ -336,7 +339,7 @@ public class DBTools {
 	 * @param conn 连接
 	 * @throws ServantException
 	 */
-	public static void commit(Connection conn) throws BaseException{
+	public static void commit(Connection conn){
 		try {
 			conn.commit();
 		} catch (SQLException ex) {
@@ -345,11 +348,37 @@ public class DBTools {
 	}
 	
 	/**
+	 * 获取当前数据库连接的AutoCommit属性
+	 * @param conn 连接
+	 * @return autoCommit
+	 */
+	public static boolean getAutoCommit(Connection conn){
+		try {
+			return conn.getAutoCommit();
+		} catch (SQLException e){
+			return true;
+		}
+	}
+	
+	/**
+	 * 设置当前数据库连接的AutoCommit属性
+	 * @param conn 连接
+	 * @param autoCommit 
+	 */
+	public static void setAutoCommit(Connection conn,boolean autoCommit){
+		try {
+			conn.setAutoCommit(autoCommit);
+		}catch (SQLException e){
+			// nothing to do
+		}
+	}
+	
+	/**
 	 * 回滚事务
 	 * @param conn
 	 * @throws ServantException
 	 */
-	public static void rollback(Connection conn) throws BaseException{
+	public static void rollback(Connection conn){
 		try {
 			conn.rollback();
 		} catch (SQLException ex) {

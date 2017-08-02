@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<script>
+	<now id="now"/>
+	<log msg="${now}"/>
+	<now id="now" pattern="yyyy-MM-dd'T'HH:mm:ss"/>
+	<log msg="${now}"/>		
+	<now id="now" pattern="yyyyMMdd"/>
+	<log msg="${now}"/>	
+</script>

@@ -55,16 +55,24 @@ import com.logicbus.dbcp.util.ConnectionPoolStat;
  * @version 1.6.6.9 [20161209 duanyy] <br>
  * - 从新的框架下继承 <br>
  * 
+ * @version 1.6.9.7 [20170802 duanyy] <br>
+ * - 增加强制读写分离功能，应对数据中间层之类的场景 <br>
+ * - 可自动为Connection设置autocommit属性 <br>
+ * 
  */
 abstract public class AbstractConnectionPool extends Queued implements ConnectionPool{
 	protected Counter stat = null;
 	protected LoadBalance<ReadOnlySource> loadBalance = null;
 	protected boolean testConn = true;
+	protected boolean autoCommit = true;
+	protected boolean enableRWSForce = false;
 	
 	@Override
 	public void configure(Properties props){
 		boolean enableStat = true;
 		testConn = PropertiesConstants.getBoolean(props, "dbcp.test", testConn);
+		autoCommit = PropertiesConstants.getBoolean(props, "dbcp.autoCommit", autoCommit);
+		enableRWSForce = PropertiesConstants.getBoolean(props, "dbcp.enableRWS", enableRWSForce);
 		enableStat = PropertiesConstants.getBoolean(props, "dbcp.stat.enable", enableStat);
 		
 		if (enableStat){
@@ -142,7 +150,7 @@ abstract public class AbstractConnectionPool extends Queued implements Connectio
 	
 	public Connection getConnection(int timeout, boolean enableRWS) {
 		Connection conn = null;
-		if (enableRWS){
+		if (enableRWSForce || enableRWS){
 			conn = selectReadSource(timeout);
 		}
 		
@@ -169,6 +177,14 @@ abstract public class AbstractConnectionPool extends Queued implements Connectio
 				if (stat != null){
 					stat.count(System.nanoTime() - start, conn == null);
 				}
+			}
+		}
+		
+		if (conn != null && autoCommit){
+			try {
+				conn.setAutoCommit(true);
+			}catch (SQLException ex){
+				// nothing to do
 			}
 		}
 		return conn;
@@ -208,7 +224,6 @@ abstract public class AbstractConnectionPool extends Queued implements Connectio
 	
 	abstract protected List<ReadOnlySource> getReadOnlySources();
 
-	
 	public Connection getConnection(int timeout) {
 		return getConnection(timeout,false);
 	}
