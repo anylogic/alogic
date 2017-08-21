@@ -7,11 +7,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
+import com.anysoft.webloader.ServletConfigProperties;
 import com.anysoft.webloader.ServletHandler;
 import com.logicbus.backend.AccessController;
 import com.logicbus.backend.DefaultNormalizer;
@@ -62,6 +64,9 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.6.8.6 [20170410 duanyy] <br>
  * - 增加Options方法的实现 <br>
+ * 
+ * @version 1.6.9.8 [20170821 duanyy] <br>
+ * - 优化代码 <br>
  */
 public class MessageRouterServletHandler implements ServletHandler {
 	/**
@@ -106,44 +111,31 @@ public class MessageRouterServletHandler implements ServletHandler {
 	protected boolean corsSupport = true;
 	
 	public void init(ServletConfig servletConfig) throws ServletException {
-		Settings settings = Settings.get();
-		encoding = settings.GetValue("http.encoding", encoding);
-		defaultAllowOrigin = settings.GetValue("http.alloworigin",
-				defaultAllowOrigin);
-		corsSupport = PropertiesConstants.getBoolean(settings, "http.cors", corsSupport);
-		
-		methodAllow = PropertiesConstants.getString(settings, "http.method.allow", methodAllow);
-		
-		ac = (AccessController) settings.get("accessController");
+		ServletConfigProperties props = new ServletConfigProperties(servletConfig);
 
-		String _cacheAllowed = servletConfig.getInitParameter("cacheAllowed");
-		cacheAllowed = (_cacheAllowed != null && _cacheAllowed.equals("true"))?true:false;
-		
-		String normalizerClass = servletConfig.getInitParameter("normalizer");
-		normalizerClass = normalizerClass == null
-				|| normalizerClass.length() <= 0 ? "com.logicbus.backend.DefaultNormalizer"
-				: normalizerClass;
-
+		encoding =  PropertiesConstants.getString(props,"http.encoding", encoding);		
+		defaultAllowOrigin = PropertiesConstants.getString(props,"http.alloworigin",defaultAllowOrigin);
+		corsSupport = PropertiesConstants.getBoolean(props, "http.cors", corsSupport);
+		methodAllow = PropertiesConstants.getString(props, "http.method.allow", methodAllow);
+		cacheAllowed = PropertiesConstants.getBoolean(props, "cacheAllowed", cacheAllowed);
+		interceptMode = PropertiesConstants.getBoolean(props, "intercept.mode", interceptMode);
+	
+		String normalizerClass = PropertiesConstants.getString(props, "normalizer", "com.logicbus.backend.DefaultNormalizer");
 		logger.info("Normalizer is initializing,module:" + normalizerClass);
 		try {
 			Normalizer.TheFactory ncf = new Normalizer.TheFactory(
 					Settings.getClassLoader());
-			normalizer = ncf.newInstance(normalizerClass,settings);
+			normalizer = ncf.newInstance(normalizerClass,props);
 		} catch (Throwable t) {
-			normalizer = new DefaultNormalizer(settings);
+			normalizer = new DefaultNormalizer(props);
 			logger.error("Failed to initialize Normalizer.Using default:"
 					+ DefaultNormalizer.class.getName());
 		}
-		{
-			String _interceptMode = servletConfig.getInitParameter("intercept.mode");
-			
-			if (_interceptMode != null && _interceptMode.equals("true")){
-				interceptMode = true;
-			}
-		}
+		
+		Settings settings = Settings.get();
+		ac = (AccessController) settings.get("accessController");		
 	}
 
-	
 	public void doService(HttpServletRequest request,
 			HttpServletResponse response, String method)
 			throws ServletException, IOException {
@@ -167,7 +159,7 @@ public class MessageRouterServletHandler implements ServletHandler {
 		// to support CORS
 		if (corsSupport){
 			String origin = request.getHeader("Origin");
-			response.setHeader("Access-Control-Allow-Origin", origin == null || origin.length() <= 0 ? defaultAllowOrigin : origin);
+			response.setHeader("Access-Control-Allow-Origin", StringUtils.isEmpty(origin) ? defaultAllowOrigin : origin);
 			response.setHeader("Access-Control-Allow-Credentials", "true");
 		}
 		

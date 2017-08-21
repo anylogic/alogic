@@ -93,6 +93,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.8.3 [20170328 duanyy] <br>
  * - 修正tlog输出，将参数和错误原因分离开来 <br>
+ * 
+ * @version 1.6.9.8 [20170821 duanyy] <br>
+ * - 优化代码 <br>
  */
 public class MessageRouter {
 	
@@ -162,10 +165,10 @@ public class MessageRouter {
 			}
 		}catch (ServantException ex){
 			ctx.setReturn(ex.getCode(), ex.getMessage());
-			logger.error(ex.getCode() + ":" + ex.getMessage());
+			logger.error(ex.getCode() + ":" + ex.getMessage(),ex);
 		}catch (BaseException ex){
 			ctx.setReturn(ex.getCode(), ex.getMessage());
-			logger.error(ex.getCode() + ":" + ex.getMessage());
+			logger.error(ex.getCode() + ":" + ex.getMessage(),ex);
 		}catch (Exception ex){
 			ctx.setReturn("core.fatalerror",ex.getMessage());
 			logger.error("core.fatalerror:" + ex.getMessage(),ex);
@@ -193,7 +196,8 @@ public class MessageRouter {
 			}
 			if (tracerEnable){
 				boolean ok = ctx.getReturnCode().equals("core.ok");
-				Tool.end(tc, "ALOGIC", id.getPath(), ok ?"OK":"FAILED", ctx.getReason(),ctx.getQueryString(), ctx.getContentLength());
+				Tool.end(tc, "ALOGIC", id.getPath(), ok ?"OK":"FAILED", 
+						String.format("[%s]%s", ctx.getClientIp(),ctx.getReason()),ctx.getQueryString(),ctx.getKeyword(), ctx.getContentLength());
 			}
 		}
 		return 0;

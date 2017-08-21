@@ -42,4 +42,7 @@ alogic-1.6.9
 - alogic-dbcp:增加强制读写分离功能，应对数据中间层之类的场景;
 - alogic-dbcp:可自动为Connection设置autocommit属性;
 
-
+### 1.6.9.8 [20170821 duanyy]
+- alogic-common:tlog增加keyword字段;
+- alogic-core:服务上下文增加keyword关键字，和tlog对接;
+- alogic-doer:任务id修改为18位数字(当前时间戳+随机数字);

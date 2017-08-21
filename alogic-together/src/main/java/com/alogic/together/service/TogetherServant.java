@@ -19,7 +19,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * TogetherServant
  * 
  * @author duanyy
- *
+ * @version 1.6.9.8 [20170821 duanyy] <br>
+ * - 服务上下文增加keyword关键字，和tlog对接; <br>
  */
 public class TogetherServant extends AbstractServant {
 	protected Script script = null;
@@ -61,6 +62,11 @@ public class TogetherServant extends AbstractServant {
 				script.execute(doc,doc, logicletContext, null);
 			}finally{
 				logicletContext.removeObject("$context");
+				
+				String keyword = logicletContext.GetValue("$keyword", "");
+				if (StringUtils.isNotEmpty(keyword)){
+					ctx.setKeyword(keyword);
+				}				
 			}
 		}else{
 			ctx.asMessage(JsonMessage.class);
@@ -80,6 +86,11 @@ public class TogetherServant extends AbstractServant {
 				script.execute(doc,doc, logicletContext, null);
 			}finally{
 				logicletContext.removeObject("$context");
+				
+				String keyword = logicletContext.GetValue("$keyword", "");
+				if (StringUtils.isNotEmpty(keyword)){
+					ctx.setKeyword(keyword);
+				}
 			}
 		}else{
 			ctx.asMessage(JsonMessage.class);

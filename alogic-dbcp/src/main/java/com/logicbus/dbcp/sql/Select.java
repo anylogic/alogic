@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
 import com.anysoft.util.BaseException;
@@ -35,6 +37,9 @@ import com.anysoft.util.BaseException;
  * 
  * @version 1.6.9.2 [20170601 duanyy] <br>
  * - 增加简单的ORM框架 <br>
+ * 
+ * @version 1.6.9.8 [20170821 duanyy] <br>
+ * - 将SQL语句的绑定参数输出到tlog <br>
  */
 public class Select extends DBOperation {
 
@@ -57,11 +62,16 @@ public class Select extends DBOperation {
 		TraceContext tc = traceEnable()?Tool.start():null;
 		boolean error = false;	
 		String msg = "ok";
+		StringBuffer data = new StringBuffer();
 		try {
 			stmt = conn.prepareStatement(sql);
 			
 			if (params != null){
 				for (int i = 0 ; i < params.length ; i ++){
+					if (i != 0){
+						data.append(",");
+					}
+					data.append(params[i]);
 					stmt.setObject(i + 1, params[i]);
 				}
 			}
@@ -71,11 +81,11 @@ public class Select extends DBOperation {
 		}
 		catch (SQLException ex){
 			error = true;
-			msg = ex.getMessage();
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+			msg = ExceptionUtils.getStackTrace(ex);
+			throw new BaseException("core.sql_error",msg);
 		}finally{
 			if (traceEnable() && tc != null){
-				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", msg,sql,0);
+				Tool.end(tc, "DB", "Query", error ? "FAILED":"OK", msg,String.format("[%s]%s",data,sql),0);
 			}
 		}
 	}
@@ -94,7 +104,7 @@ public class Select extends DBOperation {
 			return null;
 		}
 		catch (SQLException ex){
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+			throw new BaseException("core.sql_error",ExceptionUtils.getStackTrace(ex));
 		}		
 	}
 
@@ -159,7 +169,7 @@ public class Select extends DBOperation {
 	 * 
 	 * @return 查询结果
 	 * @throws SQLException
-	 * s@since 1.6.2.3
+	 * @since 1.6.2.3
 	 */
 	public Map<String,String> singleRowAsString(){
 		return singleRowAsString(null);
@@ -211,7 +221,7 @@ public class Select extends DBOperation {
 			return null;
 		}
 		catch (SQLException ex){
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+			throw new BaseException("core.sql_error",ExceptionUtils.getStackTrace(ex));
 		}
 	}	
 	
@@ -260,7 +270,7 @@ public class Select extends DBOperation {
 			return null;
 		}
 		catch (SQLException ex){
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+			throw new BaseException("core.sql_error",ExceptionUtils.getStackTrace(ex));
 		}
 	}	
 	
@@ -279,7 +289,7 @@ public class Select extends DBOperation {
 			}
 		}
 		catch (SQLException ex){
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+			throw new BaseException("core.sql_error",ExceptionUtils.getStackTrace(ex));
 		}		
 	}
 	
@@ -309,7 +319,7 @@ public class Select extends DBOperation {
 			}
 		}
 		catch (SQLException ex){
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+			throw new BaseException("core.sql_error",ExceptionUtils.getStackTrace(ex));
 		}
 	}
 
@@ -347,7 +357,7 @@ public class Select extends DBOperation {
 			}
 		}
 		catch (SQLException ex){
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+			throw new BaseException("core.sql_error",ExceptionUtils.getStackTrace(ex));
 		}
 	}
 	
@@ -383,6 +393,6 @@ public class Select extends DBOperation {
 	}
 	
 	public void close() throws BaseException {
-		close(stmt,rs);
+		close(rs,stmt);
 	}	
 }

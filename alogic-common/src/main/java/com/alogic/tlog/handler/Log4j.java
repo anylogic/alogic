@@ -26,6 +26,9 @@ import com.anysoft.util.Settings;
  * 
  * @version 1.6.7.21 [20170303 duanyy] <br>
  * - 增加parameter字段，便于调用者记录个性化参数 <br>
+ * 
+ * @version 1.6.9.8 [20170821] <br>
+ * - tlog增加keyword字段 <br>
  */
 public class Log4j extends AbstractHandler<TLog>{
 
@@ -104,6 +107,7 @@ public class Log4j extends AbstractHandler<TLog>{
 		.append(item.contentLength()).append(delimeter)
 		.append(item.code()).append(delimeter)
 		.append(item.parameter()).append(delimeter)
+		.append(item.keyword()).append(delimeter)
 		.append(reason).append(eol);
 		
 		logger.info(buf.toString());

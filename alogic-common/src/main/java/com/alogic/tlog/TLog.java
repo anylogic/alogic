@@ -19,10 +19,13 @@ import com.anysoft.util.JsonTools;
  * 
  * @version 1.6.7.24 [20170310 duanyy] <br>
  * - 增加app和host字段 <br>
+ * 
+ * @version 1.6.9.8 [20170821] <br>
+ * - tlog增加keyword字段 <br>
  */
 public class TLog implements Comparable<TLog>,Flowable,JsonSerializer{
 	protected static final String PATTERN = 
-			"%s|%s|%s|%s|%s|%s|%d|%d|%d|%s|%s|%s";
+			"%s|%s|%s|%s|%s|%s|%d|%d|%d|%s|%s|%s|%s";
 	/**
 	 * 序列号
 	 */
@@ -79,6 +82,11 @@ public class TLog implements Comparable<TLog>,Flowable,JsonSerializer{
 	public String parameter;
 	
 	/**
+	 * 业务关键字
+	 */
+	public String keyword = "";
+	
+	/**
 	 * 内容长度
 	 */
 	public long contentLength;
@@ -89,7 +97,7 @@ public class TLog implements Comparable<TLog>,Flowable,JsonSerializer{
 	}	
 	
 	public String toString(){
-		return String.format(PATTERN, sn,order,type,app,host,method,startDate,duration,contentLength,code,parameter,reason);
+		return String.format(PATTERN, sn,order,type,app,host,method,startDate,duration,contentLength,code,parameter,keyword,reason);
 	}	
 	
 	@Override
@@ -185,6 +193,14 @@ public class TLog implements Comparable<TLog>,Flowable,JsonSerializer{
 		return method;
 	}
 
+	public String keyword(){
+		return keyword;
+	}
+	
+	public void keyword(String keyword){
+		this.keyword = keyword;
+	}
+	
 	public String parameter(){
 		return parameter;
 	}
@@ -251,6 +267,7 @@ public class TLog implements Comparable<TLog>,Flowable,JsonSerializer{
 			JsonTools.setLong(json, "duration", duration());
 			JsonTools.setLong(json, "contentLength", contentLength());
 			JsonTools.setString(json, "code", code());
+			JsonTools.setString(json, "keyword", keyword());
 			JsonTools.setString(json, "parameter", parameter());
 			JsonTools.setString(json, "reason", reason());
 		}
@@ -270,6 +287,7 @@ public class TLog implements Comparable<TLog>,Flowable,JsonSerializer{
 			contentLength = JsonTools.getLong(json,"contentLength",0);
 			code = JsonTools.getString(json,"code","");
 			parameter = JsonTools.getString(json,"parameter","");
+			keyword = JsonTools.getString(json,"keyword","");
 			reason = JsonTools.getString(json,"reason","");
 		}
 	}

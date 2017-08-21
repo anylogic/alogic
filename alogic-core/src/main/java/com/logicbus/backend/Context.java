@@ -52,6 +52,9 @@ import com.logicbus.backend.message.Message;
  * 
  * @version 1.6.7.15 [20170221 duanyy] <br>
  * - 增加设置Content-Length接口 <br>
+ * 
+ * @version 1.6.9.8 [20170821 duanyy] <br>
+ * - 服务上下文增加keyword关键字，和tlog对接; <br>
  */
 public abstract class Context extends DefaultProperties implements DataProvider{
 	/**
@@ -67,7 +70,12 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	/**
 	 * 原因
 	 */
-	protected String reason = "It is ok.";
+	protected String reason = "OK";
+	
+	/**
+	 * 业务关键字
+	 */
+	protected String keyword = "";
 	
 	/**
 	 * 时间戳
@@ -145,6 +153,12 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	public String getReason(){return reason;}
 	
 	/**
+	 * 获取业务关键字
+	 * @return 业务关键字
+	 */
+	public String getKeyword(){return keyword;}
+	
+	/**
 	 * 获取时长
 	 * @return 时长
 	 */
@@ -159,6 +173,10 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	public void setReturn(String _code,String _reason){
 		returnCode = _code;
 		reason = _reason;
+	}
+	
+	public void setKeyword(String keyword){
+		this.keyword = keyword;
 	}
 
 	/**

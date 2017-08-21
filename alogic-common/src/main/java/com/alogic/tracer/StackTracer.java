@@ -23,6 +23,9 @@ import com.anysoft.util.Properties;
  * 
  * @version 1.6.7.21 [20170303 duanyy] <br>
  * - TLog增加parameter字段，便于调用者记录个性化参数 <br>
+ * 
+ * @version 1.6.9.8 [20170821] <br>
+ * - tlog增加keyword字段 <br>
  */
 public class StackTracer extends Tracer.Abstract{
 	/**
@@ -63,14 +66,14 @@ public class StackTracer extends Tracer.Abstract{
 	}	
 
 	@Override
-	public void endProcedure(TraceContext ctx, String type, String name, String result, String note,long contentLength) {
-		endProcedure(ctx,type,name,result,note,"",contentLength);
+	public void configure(Properties p) {
+		super.configure(p);
 	}
-	
 
 	@Override
 	public void endProcedure(TraceContext ctx, String type, String name,
-			String result, String note, String parameter, long contentLength) {
+			String result, String note, String parameter, String keyword,
+			long contentLength) {
 		long thread = Thread.currentThread().getId();
 		
 		TraceContext current = contexts.get(thread);
@@ -90,6 +93,7 @@ public class StackTracer extends Tracer.Abstract{
 			traceLog.code(result);
 			traceLog.type(type);
 			traceLog.parameter(parameter);
+			traceLog.keyword(keyword);
 			traceLog.startDate(current.timestamp());
 			traceLog.duration(System.nanoTime()-current.startTime());			
 			traceLog.contentLength(contentLength);
@@ -99,11 +103,6 @@ public class StackTracer extends Tracer.Abstract{
 			//如果为空，恐怕出了问题			
 			LOG.error("It is impossible,something is wrong.");
 		}
-	}	
-
-	@Override
-	public void configure(Properties p) {
-		super.configure(p);
 	}
 
 

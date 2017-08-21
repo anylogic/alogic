@@ -39,6 +39,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.7.21 [20170303 duanyy] <br>
  * - TLog增加parameter字段，便于调用者记录个性化参数 <br>
+ * 
+ * @version 1.6.9.8 [20170821] <br>
+ * - tlog增加keyword字段 <br>
  */
 public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 	
@@ -63,18 +66,7 @@ public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 	 * @return 上下文实例
 	 */
 	public TraceContext startProcedure(String sn,String order);
-	
-	/**
-	 * 结束过程
-	 * @param ctx 上下文实例
-	 * @param type 过程类型
-	 * @param name 过程名称
-	 * @param result 结果
-	 * @param note 说明
-	 * @param contentLength 内容长度
-	 */
-	public void endProcedure(TraceContext ctx,String type,String name,String result,String note,long contentLength);
-	
+		
 	/**
 	 * 结束过程
 	 * @param ctx 上下文实例
@@ -83,9 +75,11 @@ public interface Tracer extends Reportable,Configurable,XMLConfigurable{
 	 * @param result 结果
 	 * @param note 说明
 	 * @param parameter 参数，参数的内容和编码由type确定
+	 * @param keyword 业务关键字
 	 * @param contentLength 内容长度
 	 */	
-	public void endProcedure(TraceContext ctx,String type,String name,String result,String note,String parameter,long contentLength);
+	public void endProcedure(TraceContext ctx,String type,String name,String result,String note,String parameter,String keyword,long contentLength);
+	
 	
 	/**
 	 * 虚基类

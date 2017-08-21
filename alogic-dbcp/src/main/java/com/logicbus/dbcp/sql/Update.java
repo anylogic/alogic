@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
 import com.anysoft.util.BaseException;
@@ -24,6 +26,9 @@ import com.anysoft.util.BaseException;
  * 
  * @version 1.6.9.1 [20170516 duanyy] <br>
  * - 优化异常信息 <br>
+ * 
+ * @version 1.6.9.8 [20170821 duanyy] <br>
+ * - 将SQL语句的绑定参数输出到tlog <br>
  */
 public class Update extends DBOperation {
 
@@ -52,11 +57,16 @@ public class Update extends DBOperation {
 		TraceContext tc = traceEnable()?Tool.start():null;
 		boolean error = false;
 		String msg = "OK";
+		StringBuffer data = new StringBuffer();
 		try {
 			stmt = conn.prepareStatement(sql);
 			
 			if (params != null){
 				for (int i = 0 ; i < params.length ; i ++){
+					if (i != 0){
+						data.append(",");
+					}
+					data.append(params[i]);					
 					stmt.setObject(i + 1, params[i]);
 				}
 			}
@@ -64,13 +74,13 @@ public class Update extends DBOperation {
 			return stmt.executeUpdate();
 		}catch (SQLException ex){
 			error = true;
-			msg = ex.getMessage();
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+			msg = ExceptionUtils.getStackTrace(ex);
+			throw new BaseException("core.sql_error",msg);
 		}
 		finally{
 			close(stmt);
 			if (traceEnable() && tc != null){
-				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", msg ,sql, 0);
+				Tool.end(tc, "DB", "Update", error ? "FAILED":"OK", msg ,String.format("[%s]%s",data.toString(),sql), 0);
 			}
 		}
 	}
@@ -95,8 +105,8 @@ public class Update extends DBOperation {
 			return stmt.executeBatch();
 		}catch (SQLException ex){
 			error = true;
-			msg = ex.getMessage();
-			throw new BaseException("core.sql_error","Error occurs when executing sql:" + ex.getMessage());
+			msg = ExceptionUtils.getStackTrace(ex);
+			throw new BaseException("core.sql_error",msg);
 		}
 		finally{
 			close(stmt);

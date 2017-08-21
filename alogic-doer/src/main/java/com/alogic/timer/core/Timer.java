@@ -49,6 +49,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.9.3 [20170615 duanyy] <br>
  * - 修正taskId不规范问题 <br>
+ * 
+ * @version 1.6.9.8 [20170821] <br>
+ * - 任务id修改为18位数字(当前时间戳+随机数字) <br>
  */
 public interface Timer extends Configurable,XMLConfigurable,Reportable {
 	/**
@@ -336,7 +339,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		 * @return 任务id
 		 */
 		protected static String newTaskId(){
-			return KeyGen.uuid(8,0,15);
+			return String.format("%d%s",System.currentTimeMillis(),KeyGen.uuid(5, 0, 9));
 		}
 	}
 	

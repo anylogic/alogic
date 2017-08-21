@@ -27,6 +27,9 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * 
  * @version 1.6.9.6 [20170719 duanyy] <br>
  * - Task参数可读取Settings中的变量 <br>
+ * 
+ * @version 1.6.9.8 [20170821] <br>
+ * - 任务id修改为18位数字(当前时间戳+随机数字) <br>
  */
 public interface Task extends JsonSerializer,Reportable{
 	
@@ -157,9 +160,11 @@ public interface Task extends JsonSerializer,Reportable{
 			if (json != null){
 				json.put("id", id);
 				json.put("event", event);
-				Map<String,Object> parameters = new HashMap<String,Object>();
-				p.toJson(parameters);
-				json.put("parameters", parameters);
+				if (p != null){
+					Map<String,Object> parameters = new HashMap<String,Object>();
+					p.toJson(parameters);
+					json.put("parameters", parameters);
+				}
 			}
 		}
 
@@ -174,7 +179,7 @@ public interface Task extends JsonSerializer,Reportable{
 				}
 				
 				Object parameters = json.get("parameters");
-				if (parameters instanceof Map){
+				if (parameters != null && parameters instanceof Map){
 					p.fromJson((Map<String,Object>)parameters);
 				}
 			}

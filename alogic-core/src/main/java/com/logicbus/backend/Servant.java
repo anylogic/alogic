@@ -40,6 +40,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.9.8 [20170821 duanyy] <br>
+ * - 服务上下文增加keyword关键字，和tlog对接; <br>
  */
 public abstract class Servant implements Pooled{
 	/**
@@ -287,7 +290,7 @@ public abstract class Servant implements Pooled{
 	 * @since 1.4.0
 	 */
 	public void actionAfter(Context ctx){
-		ctx.setReturn("core.ok","It is successful");
+		ctx.setReturn("core.ok","OK");
 	}
 	
 	/**

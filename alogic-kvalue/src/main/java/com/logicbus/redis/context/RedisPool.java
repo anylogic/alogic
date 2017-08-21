@@ -77,7 +77,7 @@ public class RedisPool extends Queued{
 		returnObject(client);
 	}
 	
-	protected <pooled> pooled createObject() throws BaseException {
+	protected <pooled> pooled createObject(){
 		Client instance =  new Client(host,port,password,db);
 		instance.register(this);
 		return (pooled) instance;
