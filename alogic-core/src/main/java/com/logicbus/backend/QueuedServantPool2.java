@@ -48,6 +48,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.7.4 [20170118 duanyy] <br>
  * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
+ * 
+ * @version 1.6.9.9 [20170829 duanyy] <br>
+ * - Pool的returnObject接口增加是否出错的参数 <br>
  */
 public class QueuedServantPool2 extends Queued implements ServantPool{
 	/**
@@ -194,8 +197,8 @@ public class QueuedServantPool2 extends Queued implements ServantPool{
 	}
 	
 	@Override
-	public void returnObject(Servant obj) {
-		super.returnObject(obj);
+	public void returnObject(Servant obj,boolean hasError) {
+		super.returnObject(obj,hasError);
 	}		
 		
 	/**

@@ -96,6 +96,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.9.8 [20170821 duanyy] <br>
  * - 优化代码 <br>
+ * 
+ * @version 1.6.9.9 [20170829 duanyy] <br>
+ * - Pool的returnObject接口增加是否出错的参数 <br>
  */
 public class MessageRouter {
 	
@@ -183,7 +186,7 @@ public class MessageRouter {
 			}
 			if (pool != null){
 				if (servant != null){
-					pool.returnObject(servant);		
+					pool.returnObject(servant,false);		
 				}				
 				pool.visited(ctx.getDuration(),ctx.getReturnCode());
 				if (acmEnable && ac != null){

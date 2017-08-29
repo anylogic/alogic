@@ -73,8 +73,12 @@ public class RedisPool extends Queued{
 		return found;
 	}
 	
+	public void recycle(Client client,boolean error){
+		returnObject(client,error);
+	}
+	
 	public void recycle(Client client){
-		returnObject(client);
+		returnObject(client,false);
 	}
 	
 	protected <pooled> pooled createObject(){

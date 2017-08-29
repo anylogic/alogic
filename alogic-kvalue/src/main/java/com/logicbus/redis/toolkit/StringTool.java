@@ -102,8 +102,7 @@ public class StringTool extends KeyTool {
 	 */
 	public boolean set(final String key,final String value){
 		_set(key,value);
-		getStatusCodeReply();
-		return true;
+		return getStatusCodeReply() != null;
 	}
 	
 	/**
@@ -114,8 +113,7 @@ public class StringTool extends KeyTool {
 	 */
 	public boolean set(final String key,final String value,SetParams params){
 		_set(key,value,params);
-		getStatusCodeReply();
-		return true;
+		return getStatusCodeReply() != null;
 	}
 	
 	/**

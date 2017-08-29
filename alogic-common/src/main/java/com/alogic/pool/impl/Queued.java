@@ -25,6 +25,8 @@ import com.alogic.pool.CloseAware;
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
  * 
+ * @version 1.6.9.9 [20170829 duanyy] <br>
+ * - Pool的returnObject接口增加是否出错的参数 <br>
  */
 public abstract class Queued implements Pool,CloseAware {
 	/**
@@ -157,7 +159,23 @@ public abstract class Queued implements Pool,CloseAware {
 	
 	@Override
 	public void closeObject(Object _pooled){
-		returnObject(_pooled);
+		returnObject(_pooled,false);
+	}
+	
+	protected <pooled> pooled borrowObject(){
+		//在idle中没有抢到，直接创建一个实例
+		try {
+			creatingIncr(1);
+			pooled found = createObject();
+			if (found != null){
+				workingIncr(1);
+				return found;
+			}else{
+				return null;
+			}
+		}finally{
+			creatingIncr(-1);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -183,16 +201,7 @@ public abstract class Queued implements Pool,CloseAware {
 			}
 			
 			//在idle中没有抢到，直接创建一个实例
-			try {
-				creatingIncr(1);
-				pooled found = createObject();
-				if (found != null){
-					workingIncr(1);
-					return found;
-				}
-			}finally{
-				creatingIncr(-1);
-			}
+			return borrowObject();
 		}
 	
 		//是否愿意等待其他线程释放实例到idle队列
@@ -227,18 +236,17 @@ public abstract class Queued implements Pool,CloseAware {
 	}
 
 	@Override
-	public <pooled> void returnObject(pooled obj) {
-		if (idleCnt > idleQueueLength){
+	public <pooled> void returnObject(pooled obj,boolean hasError) {
+		workingIncr(-1);		
+		if (hasError || idleCnt >= idleQueueLength){
 			//实际idle数大于许可idle数
 			//不用归还到空闲队列，直接释放
 			close(obj);
 			obj = null;
-			workingIncr(-1);
 		}else{
 			//归还到队列
-			idleQueue.offer(obj);
-			workingIncr(-1);
 			idleIncr(1);
+			idleQueue.offer(obj);
 		}				
 	}
 

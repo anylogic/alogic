@@ -16,7 +16,9 @@ import com.anysoft.util.XmlElementProperties;
  * 保持一个共享对象，重复使用
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.9.9 [20170829 duanyy] <br>
+ * - Pool的returnObject接口增加是否出错的参数 <br>
  */
 public abstract class Singleton implements Pool,CloseAware{
 	/**
@@ -79,7 +81,7 @@ public abstract class Singleton implements Pool,CloseAware{
 	}
 
 	@Override
-	public <pooled> void returnObject(pooled obj) {
+	public <pooled> void returnObject(pooled obj,boolean hasError) {
 		// nothing to do
 	}
 }

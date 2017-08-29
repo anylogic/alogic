@@ -31,6 +31,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.7.4 [20170118 duanyy] <br>
  * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
+ * 
+ * @version 1.6.9.9 [20170829 duanyy] <br>
+ * - Pool的returnObject接口增加是否出错的参数 <br>
  */
 public interface ServantPool extends AutoCloseable,Reportable,MetricsReportable{
 	/**
@@ -79,7 +82,7 @@ public interface ServantPool extends AutoCloseable,Reportable,MetricsReportable{
 	 * 向服务池归还对象
 	 * @param obj 服务对象
 	 */
-	public void returnObject(Servant obj);
+	public void returnObject(Servant obj,boolean hasError);
 	
 	/**
 	 * 获取服务池的健康度

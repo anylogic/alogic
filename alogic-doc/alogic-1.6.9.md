@@ -46,3 +46,10 @@ alogic-1.6.9
 - alogic-common:tlog增加keyword字段;
 - alogic-core:服务上下文增加keyword关键字，和tlog对接;
 - alogic-doer:任务id修改为18位数字(当前时间戳+随机数字);
+
+### 1.6.9.9 [20170829 duanyy]
+- alogic-common:Pool的returnObject接口增加是否出错的参数;
+- alogic-common:XScript增加Duration插件;
+- alogic-kvalue:增加redis的script指令;
+- alogic-kvalue:增加基于redis的分布式锁实现;
+- alogic-vfs:增加ssh改密码功能;

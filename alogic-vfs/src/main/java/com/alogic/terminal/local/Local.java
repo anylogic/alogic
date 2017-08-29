@@ -76,6 +76,12 @@ public class Local extends Terminal.Abstract{
 			IOTools.close(br);
 		}
 	}
+	
+	@Override
+	public boolean changePassword(String newPwd,Resolver resolver) {
+		// nothing to do
+		return false;
+	}	
 
 	@Override
 	public void configure(Properties p) {

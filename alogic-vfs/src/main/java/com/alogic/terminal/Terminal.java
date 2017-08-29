@@ -51,6 +51,12 @@ public interface Terminal extends Configurable,XMLConfigurable,AutoCloseable,Rep
 	public void disconnect();
 	
 	/**
+	 * 修改指定用户的密码
+	 * @param newPwd 新的密码
+	 */
+	public boolean changePassword(String newPwd,Resolver resolver);
+	
+	/**
 	 * 虚基类
 	 * 
 	 * @author duanyy
@@ -79,6 +85,6 @@ public interface Terminal extends Configurable,XMLConfigurable,AutoCloseable,Rep
 			if (json != null){
 				JsonTools.setString(json,"module",getClass().getName());
 			}
-		}
+		}		
 	}
 }

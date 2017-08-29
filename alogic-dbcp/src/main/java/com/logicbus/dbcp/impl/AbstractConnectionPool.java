@@ -14,6 +14,7 @@ import com.alogic.pool.impl.Queued;
 import com.anysoft.loadbalance.LoadBalance;
 import com.anysoft.loadbalance.LoadBalanceFactory;
 import com.anysoft.util.Counter;
+import com.anysoft.util.IOTools;
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -59,6 +60,8 @@ import com.logicbus.dbcp.util.ConnectionPoolStat;
  * - 增加强制读写分离功能，应对数据中间层之类的场景 <br>
  * - 可自动为Connection设置autocommit属性 <br>
  * 
+ * @version 1.6.9.9 [20170829 duanyy] <br>
+ * - Pool的returnObject接口增加是否出错的参数 <br>
  */
 abstract public class AbstractConnectionPool extends Queued implements ConnectionPool{
 	protected Counter stat = null;
@@ -158,19 +161,18 @@ abstract public class AbstractConnectionPool extends Queued implements Connectio
 			long start = System.nanoTime();
 			try {
 				int _timeout = timeout > getMaxWait() ? getMaxWait() : timeout;
-				conn = borrowObject(0,_timeout);		
-				
+				conn = borrowObject(0,_timeout);
 				if (testConn){
 					try {
-						if (!conn.isValid(1)){
+						if (conn.isClosed() || !conn.isValid(1)){
 							//如果该Connection无效，关闭，并直接创建一个
 							logger.info("Connection is not valid , to create one");
-							conn.close();
-							conn = createObject();
+							returnObject(conn,true);
+							conn = borrowObject();
 						}
 					}catch (Exception ex){
 						logger.error("Failed to test the connection,to create one",ex);
-						conn = createObject();
+						conn = borrowObject();
 					}
 				}
 			}finally{
@@ -264,33 +266,13 @@ abstract public class AbstractConnectionPool extends Queued implements Connectio
 				ConnectionPool _pool = _conn.getPool();
 				if (_pool == this){
 					//是由本pool创建的
-					if (!hasError){
-						//如果没有发生错误，归还到连接池
-						returnObject(conn);
-					}else{
-						//发生了错误，直接关闭
-						try {
-							conn.close();
-						} catch (SQLException e) {
-		
-						}
-					}
+					returnObject(conn,hasError);
 				}else{
 					//不是我创建的，交给相应的pool去回收
 					_pool.recycle(conn, hasError);
 				}
 			}else{
-				if (!hasError){ 
-					//如果没有发生错误，归还到连接池
-					returnObject(conn);
-				}else{
-					//发生了错误，直接关闭
-					try {
-						conn.close();
-					} catch (SQLException e) {
-	
-					}
-				}
+				returnObject(conn,hasError);
 			}
 		}
 	}

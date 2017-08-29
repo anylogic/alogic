@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import org.apache.commons.lang3.StringUtils;
@@ -230,7 +231,18 @@ public class SSH extends Terminal.Abstract{
 	@Override
 	public void configure(Properties p) {
 		username = PropertiesConstants.getString(p,"username",username,true);
+		
 		password = PropertiesConstants.getString(p,"password",password,true);
+		if (StringUtils.isNotEmpty(coder)) {
+			// 通过coder进行密码解密
+			try {
+				Coder c = CoderFactory.newCoder(coder);
+				password = c.decode(password, username);
+			} catch (Exception ex) {
+				LOG.error(String.format("Can not encrypt password:%s with %s",password,coder));
+			}
+		}	
+		
 		host = PropertiesConstants.getString(p,"host",host,true);
 		port = PropertiesConstants.getInt(p,"port",port,true);
 		coder = PropertiesConstants.getString(p, "coder", coder);
@@ -266,18 +278,8 @@ public class SSH extends Terminal.Abstract{
 		
 		try {
 			conn.connect();
-			
-			String pwd = password;
-			if (StringUtils.isNotEmpty(coder)) {
-				// 通过coder进行密码解密
-				try {
-					Coder c = CoderFactory.newCoder(coder);
-					pwd = c.decode(password, username);
-				} catch (Exception ex) {
-					LOG.error(String.format("Can not encrypt password:%s with %s",password,coder));
-				}
-			}			
-            boolean isAuthenticated = conn.authenticateWithPassword(username, pwd);  
+					
+            boolean isAuthenticated = conn.authenticateWithPassword(username, password);  
             
             if (!isAuthenticated){ 
             	throw new BaseException("core.ssh_auth","Authentication failed.");			
@@ -294,22 +296,76 @@ public class SSH extends Terminal.Abstract{
 			conn = null;
 		}
 	}
-
-	public static void main(String[] args){
-		Properties p = new DefaultProperties();
-		p.SetValue("host", "10.128.91.41");
-		p.SetValue("user", "alogic");
-		p.SetValue("pwd", "shit1234_");
-		
-		Terminal shell = new SSH();
-		shell.configure(p);
-		
+	
+	private void waitForEcho(){
 		try {
-			shell.connect();
-			System.out.println(shell.exec(new Command.Simple("ketty.sh start app=demo")));
-			shell.disconnect();
-		}finally{
-			IOTools.close(shell);
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
 		}
 	}
+	
+	@Override
+	public boolean changePassword(String newPwd,Resolver resolver) {
+		Session sess = null;
+		String oldPwd = this.password;
+		String cmd = "passwd";
+		Object cookies = resolver.resolveBegin(cmd);
+		try{
+            sess = conn.openSession();
+            sess.execCommand(cmd);
+            InputStream so = sess.getStdout();
+            InputStream err = sess.getStderr();
+            OutputStream out = sess.getStdin();
+           
+            byte[] buffer = new byte[500];
+            int length = 0;
+            length = err.read(buffer);
+            if (length > 0 && resolver != null){
+            	resolver.resolveLine(cookies, new String(buffer, 0, length));
+            }
+
+            String coldpassword = oldPwd + "\n";
+            out.write(coldpassword.getBytes());
+            waitForEcho();
+            length = err.read(buffer);
+            if (length > 0 && resolver != null){
+            	resolver.resolveLine(cookies, new String(buffer, 0, length));
+            } 
+            
+            String cnewpass = newPwd +"\n";
+            out.write(cnewpass.getBytes());
+            waitForEcho();
+            length = err.read(buffer);
+            if (length > 0) {
+                String rs = new String(buffer, 0, length);
+                resolver.resolveLine(cookies, rs);
+                if(rs.indexOf("BAD") > -1){
+                    return false;
+                }
+            }
+            
+            out.write(cnewpass.getBytes());
+            waitForEcho();
+            try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+			}
+            
+            length = so.read(buffer);
+            if (length > 0) {
+                String rs = new String(buffer, 0, length);
+                resolver.resolveLine(cookies, rs);
+                if(rs.indexOf("successfully") < 0){
+                    return false;
+                }
+            }
+
+        } catch (IOException e) {
+        	throw new BaseException("core.ssh_session", "Error occurs", e);
+        }finally{
+        	resolver.resolveEnd(cookies);
+        	sess.close();
+        }        
+        return true;
+	}	
 }

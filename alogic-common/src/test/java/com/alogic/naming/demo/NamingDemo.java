@@ -23,7 +23,7 @@ public class NamingDemo {
 		for (int i = 0 ;i < 1000 ; i ++){
 			User user = pool.borrowObject(0, 0);
 			user.print();
-			pool.returnObject(user);
+			pool.returnObject(user,false);
 		}
 		
 		pool = naming.lookup("user");
@@ -31,7 +31,7 @@ public class NamingDemo {
 		for (int i = 0 ;i < 1000 ; i ++){
 			User user = pool.borrowObject(0, 0);
 			user.print();
-			pool.returnObject(user);
+			pool.returnObject(user,false);
 		}
 		
 		pool = naming.lookup("pooledUser");
@@ -39,7 +39,7 @@ public class NamingDemo {
 		for (int i = 0 ;i < 1000 ; i ++){
 			User user = pool.borrowObject(0, 0);
 			user.print();
-			pool.returnObject(user);
+			pool.returnObject(user,false);
 		}
 	}
 

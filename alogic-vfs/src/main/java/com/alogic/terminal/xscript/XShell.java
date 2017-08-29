@@ -1,99 +1,64 @@
 package com.alogic.terminal.xscript;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.alogic.terminal.Resolver;
 import com.alogic.terminal.Terminal;
 import com.alogic.terminal.local.Local;
 import com.alogic.terminal.ssh.SSH;
-import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.plugins.Segment;
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-import com.anysoft.util.XmlTools;
 
 /**
  * Shell插件
  * @author duanyy
  * @version 1.6.7.11 [20170203 duanyy] <br>
  * - 指令为空时将忽略，不执行 <br>
+ * 
+ * @version 1.6.9.9 [20170829 duanyy] <br>
+ * - 增加ssh改密码功能 <br>
  */
-public class XShell extends AbstractLogiclet implements Resolver{
-	
-	/**
-	 * 指令
-	 */
-	protected List<String> cmds = new ArrayList<String>();
-	
+public class XShell extends Segment{
+
 	/**
 	 * 属性列表
 	 */
 	protected DefaultProperties props = new DefaultProperties();	
+	
+	/**
+	 * 上下文id
+	 */
+	protected String id = "$xshell";
 	
 	public XShell(String tag, Logiclet p) {
 		super(tag, p);
 	}
 
 	@Override
+	public void configure(Properties p){
+		super.configure(p);
+		id = PropertiesConstants.getString(p, "id", id ,true);
+	}
+	
+	@Override
 	public void configure(Element e, Properties p) {
 		super.configure(e, p);
+
 		//将element的配置保存下来
 		props.Clear();
-		props.loadFromElementAttrs(e);		
-		
-		NodeList nodeList = XmlTools.getNodeListByPath(e, "cmd");
-		cmds.clear();
-		for (int i = 0 ;i < nodeList.getLength() ; i ++){
-			Node n = nodeList.item(i);
-			
-			if (Node.ELEMENT_NODE != n.getNodeType()){
-				continue;
-			}
-			
-			Element elem = (Element)n;
-			
-			String c = elem.getAttribute("value");
-			if (StringUtils.isNotEmpty(c)){
-				String [] list = c.split(";");
-				for (String one:list){
-					if (StringUtils.isNotEmpty(one)){
-						cmds.add(one);
-					}
-				}
-			}
-		}		
+		props.loadFromElementAttrs(e);				
 	}	
 
 	@Override
-	public Object resolveBegin(String cmd) {
-		return this;
-	}
-
-	@Override
-	public void resolveLine(Object cookies, String content) {
-		log(content, "info");
-	}
-
-	@Override
-	public void resolveEnd(Object cookies) {
-		// nothing to do
-	}
-
-	@Override
-	protected void onExecute(Map<String, Object> root, Map<String, Object> current, LogicletContext ctx,
-			ExecuteWatcher watcher) {
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher){
 		props.PutParent(ctx);
 		try{
 			Terminal t = null;
@@ -108,14 +73,11 @@ public class XShell extends AbstractLogiclet implements Resolver{
 			if (t != null){
 				try{
 					t.connect();
-					for (String cmd:cmds){
-						String transformed = ctx.transform(cmd);
-						if (StringUtils.isNotEmpty(transformed)){
-							t.exec(this,transformed);
-						}
-					}
+					ctx.setObject(id, t);
+					super.onExecute(root, current, ctx, watcher);
 				}finally{
-					t.disconnect();
+					ctx.removeObject(id);
+					t.disconnect();										
 				}
 			}
 		}finally{

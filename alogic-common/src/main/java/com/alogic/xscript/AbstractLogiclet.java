@@ -21,6 +21,7 @@ import com.alogic.xscript.plugins.Check;
 import com.alogic.xscript.plugins.CheckAndSetDefault;
 import com.alogic.xscript.plugins.Constants;
 import com.alogic.xscript.plugins.Decrypt;
+import com.alogic.xscript.plugins.Duration;
 import com.alogic.xscript.plugins.Encrypt;
 import com.alogic.xscript.plugins.Except;
 import com.alogic.xscript.plugins.ForEach;
@@ -94,6 +95,8 @@ import com.anysoft.util.XmlElementProperties;
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
+ * @version 1.6.9.9 [20170829 duanyy] <br>
+ * - 增加Duration插件 <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -176,6 +179,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_HASH = "hash";
 	public static final String STMT_MATCH = "match";
 	public static final String STMT_REM = "rem";
+	public static final String STMT_DURATION = "duration";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -222,6 +226,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_HASH, Hash.class);
 		staticModules.put(STMT_MATCH, Match.class);
 		staticModules.put(STMT_REM,Remove.class);
+		staticModules.put(STMT_DURATION,Duration.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	
