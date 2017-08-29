@@ -53,3 +53,6 @@ alogic-1.6.9
 - alogic-kvalue:增加redis的script指令;
 - alogic-kvalue:增加基于redis的分布式锁实现;
 - alogic-vfs:增加ssh改密码功能;
+
+### 1.6.9 [20170829 duanyy]
+- 发布1.6.9版本.
