@@ -20,6 +20,7 @@ import com.alogic.xscript.plugins.Asynchronized;
 import com.alogic.xscript.plugins.Check;
 import com.alogic.xscript.plugins.CheckAndSetDefault;
 import com.alogic.xscript.plugins.Constants;
+import com.alogic.xscript.plugins.Decr;
 import com.alogic.xscript.plugins.Decrypt;
 import com.alogic.xscript.plugins.Duration;
 import com.alogic.xscript.plugins.Encrypt;
@@ -31,6 +32,7 @@ import com.alogic.xscript.plugins.FromSettings;
 import com.alogic.xscript.plugins.Get;
 import com.alogic.xscript.plugins.GetAsJson;
 import com.alogic.xscript.plugins.Include;
+import com.alogic.xscript.plugins.Incr;
 import com.alogic.xscript.plugins.Location;
 import com.alogic.xscript.plugins.Log;
 import com.alogic.xscript.plugins.Lowercase;
@@ -97,6 +99,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.9.9 [20170829 duanyy] <br>
  * - 增加Duration插件 <br>
+ * 
+ * @version 1.6.10.1 [20170911 duanyy] <br>
+ * - 增加incr,decr指令 <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -180,6 +185,8 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_MATCH = "match";
 	public static final String STMT_REM = "rem";
 	public static final String STMT_DURATION = "duration";
+	public static final String STMT_INCR = "incr";
+	public static final String STMT_DECR = "decr";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -227,6 +234,8 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_MATCH, Match.class);
 		staticModules.put(STMT_REM,Remove.class);
 		staticModules.put(STMT_DURATION,Duration.class);
+		staticModules.put(STMT_INCR,Incr.class);
+		staticModules.put(STMT_DECR, Decr.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	

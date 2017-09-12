@@ -75,6 +75,7 @@ public class Main {
 
 		runAsXml("java:///xscript/hash.xml#com.alogic.xscript.demo.Main",settings);	
 		runAsJson("java:///xscript/now.xml#com.alogic.xscript.demo.Main",settings);	
+		runAsJson("java:///xscript/incr.decr.xml#com.alogic.xscript.demo.Main",settings);			
 	}
 
 }

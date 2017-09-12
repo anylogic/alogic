@@ -7,6 +7,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -35,6 +36,9 @@ import com.anysoft.util.Properties;
  * 
  * @version 1.6.8.15 [20170511 duanyy] <br>
  * - 增加绝对路径调用功能 <br>
+ * 
+ * @version 1.6.10.1 [20170910 duanyy] <br>
+ * - 修正httpclient连接的“failed to respond”异常;
  */
 public class HttpClientRequest implements Request{
 	protected static final Logger LOG = LoggerFactory.getLogger(HttpClientRequest.class);
@@ -158,6 +162,8 @@ public class HttpClientRequest implements Request{
 			throw new CallException("internal.conn_timeout",url, ex);
 		}catch (ConnectException ex){
 			throw new CallException("internal.conn_refused",url, ex);
+		}catch (NoHttpResponseException ex){
+			throw new CallException("internal.no_http_response",url, ex);
 		}catch (Exception ex){
 			throw new CallException("core.io_error",url, ex);
 		}
@@ -174,6 +180,8 @@ public class HttpClientRequest implements Request{
 			throw new CallException("internal.conn_timeout",url, ex);
 		}catch (ConnectException ex){
 			throw new CallException("internal.conn_refused",url, ex);
+		}catch (NoHttpResponseException ex){
+			throw new CallException("internal.no_http_response",url, ex);
 		}catch (Exception ex){
 			throw new CallException("core.io_error",url, ex);
 		}

@@ -18,6 +18,8 @@ import com.anysoft.util.PropertiesConstants;
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
+ * @version 1.6.10.1 [20170910 duanyy] <br>
+ * - id参数改为可计算参数 <br>
  */
 public class AddDimension extends MetricsBuilder {
 	protected String id = "";
@@ -32,7 +34,7 @@ public class AddDimension extends MetricsBuilder {
 	public void configure(Properties p){
 		super.configure(p);
 		
-		id = PropertiesConstants.getString(p,"id",id,true);
+		id = PropertiesConstants.getRaw(p,"id",id);
 		value = PropertiesConstants.getRaw(p, "value", value);
 		overwrite = PropertiesConstants.getBoolean(p, "overwrite", overwrite,true);
 	}
@@ -40,12 +42,13 @@ public class AddDimension extends MetricsBuilder {
 	@Override
 	protected void onExecute(Fragment f, XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
-		if (StringUtils.isNotEmpty(id)){
+		String idValue = ctx.transform(id);
+		if (StringUtils.isNotEmpty(idValue)){
 			String valueValue = ctx.transform(value);
 			
 			if (StringUtils.isNotEmpty(valueValue)){
 				Dimensions dims = f.getDimensions();
-				dims.set(id, valueValue, overwrite);
+				dims.set(idValue, valueValue, overwrite);
 			}
 		}
 	}

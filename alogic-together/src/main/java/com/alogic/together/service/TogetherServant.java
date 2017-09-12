@@ -93,7 +93,7 @@ public class TogetherServant extends AbstractServant {
 				}
 			}
 		}else{
-			ctx.asMessage(JsonMessage.class);
+			ctx.asMessage(XMLMessage.class);
 		}
 		return 0;	
 	}

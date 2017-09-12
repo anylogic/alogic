@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<script>
+	<set id="i" value="0"/>
+	
+	<log msg="i=${i}"/>
+	
+	<incr id="i" value="1"/>
+	
+	<log msg="i=${i}"/>
+	
+	<decr id="i" value="1"/>
+	
+	<log msg="i=${i}"/>
+</script>

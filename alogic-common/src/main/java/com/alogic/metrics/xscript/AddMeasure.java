@@ -24,6 +24,8 @@ import com.anysoft.util.PropertiesConstants;
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
+ * @version 1.6.10.1 [20170910 duanyy] <br>
+ * - id参数改为可计算参数 <br>
  */
 public class AddMeasure extends MetricsBuilder {
 	protected String id = "";
@@ -39,7 +41,7 @@ public class AddMeasure extends MetricsBuilder {
 	public void configure(Properties p){
 		super.configure(p);
 		
-		id = PropertiesConstants.getString(p,"id",id,true);
+		id = PropertiesConstants.getRaw(p,"id",id);
 		value = PropertiesConstants.getRaw(p, "value", value);
 		
 		type = Fragment.DataType.valueOf(PropertiesConstants.getString(p,"type",type.name(),true));
@@ -49,9 +51,9 @@ public class AddMeasure extends MetricsBuilder {
 	@Override
 	protected void onExecute(Fragment f, XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
-		if (StringUtils.isNotEmpty(id)){
-			String valueValue = ctx.transform(value);
-			
+		String idValue = ctx.transform(id);
+		if (StringUtils.isNotEmpty(idValue)){			
+			String valueValue = ctx.transform(value);			
 			if (StringUtils.isNotEmpty(valueValue)){
 				Measures meas = f.getMeasures();
 				
@@ -59,7 +61,7 @@ public class AddMeasure extends MetricsBuilder {
 				case D:
 					try {
 						double doubleValue = Double.parseDouble(valueValue);
-						meas.set(id, doubleValue,method);
+						meas.set(idValue, doubleValue,method);
 					}catch (NumberFormatException ex){
 						
 					}	
@@ -67,13 +69,13 @@ public class AddMeasure extends MetricsBuilder {
 				case L:
 					try {
 						long longValue = Long.parseLong(valueValue);
-						meas.set(id, longValue,method);
+						meas.set(idValue, longValue,method);
 					}catch (NumberFormatException ex){
 						
 					}
 					break;
 				default:
-					meas.set(id, valueValue);
+					meas.set(idValue, valueValue);
 				}
 			}
 		}
