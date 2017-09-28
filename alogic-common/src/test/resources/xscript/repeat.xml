@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<script>
+	<!--通过template来初始化文档 -->
+	<template tag="data" content="[{},{},{},{},{},{}]" />
+	<!--针对data数组进行循环 -->
+	<repeat path="$.data[*]" async="true">
+		<uuid id="rowId" length="10" />
+		<get id="id" value="${rowId}" />
+		<sleep timeout="4000"/>
+	</repeat>
+</script>

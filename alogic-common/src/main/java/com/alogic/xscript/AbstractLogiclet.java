@@ -40,6 +40,7 @@ import com.alogic.xscript.plugins.Match;
 import com.alogic.xscript.plugins.Message;
 import com.alogic.xscript.plugins.Obj;
 import com.alogic.xscript.plugins.Now;
+import com.alogic.xscript.plugins.Rand;
 import com.alogic.xscript.plugins.Remove;
 import com.alogic.xscript.plugins.Repeat;
 import com.alogic.xscript.plugins.Scope;
@@ -187,6 +188,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_DURATION = "duration";
 	public static final String STMT_INCR = "incr";
 	public static final String STMT_DECR = "decr";
+	public static final String STMT_RAND = "rand";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -236,6 +238,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_DURATION,Duration.class);
 		staticModules.put(STMT_INCR,Incr.class);
 		staticModules.put(STMT_DECR, Decr.class);
+		staticModules.put(STMT_RAND, Rand.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	
@@ -343,11 +346,11 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		throw new BaseException("core.not_supported",String.format("Tag %s does not support protocol %s",this.xmlTag,root.getClass().getName()));	
 	}
 	
-	public String getArgument(String id,String dftValue,LogicletContext ctx){
+	public static String getArgument(String id,String dftValue,LogicletContext ctx){
 		return ctx.GetValue(id, dftValue);
 	}
 	
-	public long getArgument(String id,long dftValue,LogicletContext ctx){
+	public static long getArgument(String id,long dftValue,LogicletContext ctx){
 		String value = getArgument(id,String.valueOf(dftValue),ctx);
 		
 		try {
@@ -357,7 +360,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		}
 	}	
 	
-	public int getArgument(String id,int dftValue,LogicletContext ctx){
+	public static int getArgument(String id,int dftValue,LogicletContext ctx){
 		String value = getArgument(id,String.valueOf(dftValue),ctx);
 		
 		try {
@@ -367,7 +370,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		}
 	}
 	
-	public boolean getArgument(String id,boolean dftValue,LogicletContext ctx){
+	public static boolean getArgument(String id,boolean dftValue,LogicletContext ctx){
 		String value = getArgument(id,Boolean.toString(dftValue),ctx);
 		
 		try {
@@ -377,7 +380,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		}
 	}	
 	
-	public String getArgument(String id,LogicletContext ctx){
+	public static String getArgument(String id,LogicletContext ctx){
 		String value = ctx.GetValue(id, "");
 		if (StringUtils.isEmpty(value)){
 			throw new BaseException("client.args_not_found","Can not find parameter:" + id);

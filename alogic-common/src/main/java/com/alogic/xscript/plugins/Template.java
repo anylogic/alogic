@@ -11,6 +11,9 @@ import org.apache.commons.lang3.StringUtils;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
+import com.anysoft.util.BaseException;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -29,8 +32,10 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * - 可以支持非map类型 <br>
  * 
  * @version 1.6.6.1 [20160823 duanyy] <br>
- * - 支持extend模式
+ * - 支持extend模式<br>
  * 
+ * @version 1.6.10.2 [20170925 duanyy] <br>
+ * - 修正无法工作的问题<br>
  */
 public class Template extends Segment {
 	protected String content = new String();
@@ -77,36 +82,41 @@ public class Template extends Segment {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void onExecute(Map<String, Object> root,
-			Map<String, Object> current, LogicletContext ctx, ExecuteWatcher watcher) {
-		
-		if (StringUtils.isNotEmpty(content)){
-			Object template = provider.parse(content);
-			
-			if (template instanceof Map){
-				if (extend){
-					Map<String,Object> data = (Map<String,Object>)template;
-					Iterator<Entry<String,Object>> iter = data.entrySet().iterator();
-					while (iter.hasNext()){
-						Entry<String,Object> entry = iter.next();
-						current.put(entry.getKey(), entry.getValue());
+	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
+		if (current instanceof JsonObject) {
+			Map<String, Object> jsonCurrent = (Map<String, Object>) current
+					.getContent();
+			if (StringUtils.isNotEmpty(content)) {
+				Object template = provider.parse(content);
+
+				if (template instanceof Map) {
+					if (extend) {
+						Map<String, Object> data = (Map<String, Object>) template;
+						Iterator<Entry<String, Object>> iter = data.entrySet()
+								.iterator();
+						while (iter.hasNext()) {
+							Entry<String, Object> entry = iter.next();
+							jsonCurrent.put(entry.getKey(), entry.getValue());
+						}
+						super.onExecute(root, current, ctx, watcher);
+					} else {
+						String tagValue = ctx.transform(tag);
+						if (StringUtils.isNotEmpty(tagValue)) {
+							jsonCurrent.put(tagValue, template);
+							super.onExecute(root,new JsonObject(tagValue,(Map<String,Object>)template), ctx,watcher);
+						}
 					}
-					super.onExecute(root, current, ctx, watcher);
-				}else{
+				} else {
 					String tagValue = ctx.transform(tag);
-					if (StringUtils.isNotEmpty(tagValue)){
-						current.put(tagValue, template);
-						super.onExecute(root, (Map<String,Object>)template, ctx, watcher);
+					if (StringUtils.isNotEmpty(tagValue)) {
+						jsonCurrent.put(tagValue, template);
 					}
-				}
-			}else{
-				String tagValue = ctx.transform(tag);
-				if (StringUtils.isNotEmpty(tagValue)){
-					current.put(tagValue,template);
 				}
 			}
+		}else{
+			throw new BaseException("core.not_supported",
+					String.format("Tag %s does not support protocol %s",
+							getXmlTag(),root.getClass().getName()));	
 		}
 	}
-
-
 }

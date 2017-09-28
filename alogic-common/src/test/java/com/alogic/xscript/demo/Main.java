@@ -69,13 +69,18 @@ public class Main {
 		Settings settings = Settings.get();		
 		settings.addSettings(new CommandLine(args));		
 		
-		runAsJson("java:///xscript/getAsJson.xml#com.alogic.xscript.demo.Main",settings);
-		runAsJson("java:///xscript/setAsJson.xml#com.alogic.xscript.demo.Main",settings);
-		runAsJson("java:///xscript/hash.xml#com.alogic.xscript.demo.Main",settings);
+		//runAsJson("java:///xscript/getAsJson.xml#com.alogic.xscript.demo.Main",settings);
+		//runAsJson("java:///xscript/setAsJson.xml#com.alogic.xscript.demo.Main",settings);
+		//runAsJson("java:///xscript/hash.xml#com.alogic.xscript.demo.Main",settings);
 
-		runAsXml("java:///xscript/hash.xml#com.alogic.xscript.demo.Main",settings);	
-		runAsJson("java:///xscript/now.xml#com.alogic.xscript.demo.Main",settings);	
-		runAsJson("java:///xscript/incr.decr.xml#com.alogic.xscript.demo.Main",settings);			
+		//runAsXml("java:///xscript/hash.xml#com.alogic.xscript.demo.Main",settings);	
+		//runAsJson("java:///xscript/now.xml#com.alogic.xscript.demo.Main",settings);	
+		//runAsJson("java:///xscript/incr.decr.xml#com.alogic.xscript.demo.Main",settings);			
+		//runAsJson("java:///xscript/async.xml#com.alogic.xscript.demo.Main",settings);
+		
+		//runAsJson("java:///xscript/foreach.xml#com.alogic.xscript.demo.Main",settings);
+		//runAsJson("java:///xscript/repeat.xml#com.alogic.xscript.demo.Main",settings);
+		runAsJson("java:///xscript/rand.xml#com.alogic.xscript.demo.Main",settings);
 	}
 
 }

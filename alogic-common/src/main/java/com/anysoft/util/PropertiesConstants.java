@@ -33,7 +33,10 @@ import org.apache.commons.lang3.StringUtils;
  * - 根据sonar建议优化代码 <br>
  * 
  * @version 1.6.5.33 [20160722 duanyy[ <br>
- * - 增加getRaw方法
+ * - 增加getRaw方法 <br>
+ * 
+ * @version 1.6.10.2 [20170925 duanyy] <br>
+ * - 增加transform系列方法 <br>
  */
 public class PropertiesConstants {
 	public static final String DEFAULT_DATE_PATTERN = "yyyyMMddHHmmss";
@@ -43,6 +46,124 @@ public class PropertiesConstants {
 	private PropertiesConstants(){
 		
 	}
+	
+	/**
+	 * 转换模板
+	 * 
+	 * @param props 属性集
+	 * @param pattern 模板
+	 * @param dftValue 缺省值
+	 * @return 转换值
+	 */
+	public static String transform(Properties p,String pattern,String dftValue){
+		String value = p.transform(pattern);
+		return StringUtils.isNotEmpty(value) ? value : dftValue;
+	}
+	
+	/**
+	 * 转换模板
+	 * 
+	 * @param props 属性集
+	 * @param pattern 模板
+	 * @param dftValue 缺省值
+	 * @return 转换值
+	 */
+	public static long transform(Properties p, String pattern, long dftValue) {
+		String value = p.transform(pattern);
+		if (StringUtils.isEmpty(value)) {
+			return dftValue;
+		}
+
+		try {
+			return Long.parseLong(value);
+		} catch (NumberFormatException ex) {
+			return dftValue;
+		}
+	}
+	
+	/**
+	 * 转换模板
+	 * 
+	 * @param props 属性集
+	 * @param pattern 模板
+	 * @param dftValue 缺省值
+	 * @return 转换值
+	 */
+	public static int transform(Properties p, String pattern, int dftValue) {
+		String value = p.transform(pattern);
+		if (StringUtils.isEmpty(value)) {
+			return dftValue;
+		}
+
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException ex) {
+			return dftValue;
+		}
+	}	
+	
+	/**
+	 * 转换模板
+	 * 
+	 * @param props 属性集
+	 * @param pattern 模板
+	 * @param dftValue 缺省值
+	 * @return 转换值
+	 */
+	public static double transform(Properties p, String pattern, double dftValue) {
+		String value = p.transform(pattern);
+		if (StringUtils.isEmpty(value)) {
+			return dftValue;
+		}
+
+		try {
+			return Double.parseDouble(value);
+		} catch (NumberFormatException ex) {
+			return dftValue;
+		}
+	}	
+	
+	/**
+	 * 转换模板
+	 * 
+	 * @param props 属性集
+	 * @param pattern 模板
+	 * @param dftValue 缺省值
+	 * @return 转换值
+	 */
+	public static float transform(Properties p, String pattern, float dftValue) {
+		String value = p.transform(pattern);
+		if (StringUtils.isEmpty(value)) {
+			return dftValue;
+		}
+
+		try {
+			return Float.parseFloat(value);
+		} catch (NumberFormatException ex) {
+			return dftValue;
+		}
+	}	
+	
+	/**
+	 * 转换模板
+	 * 
+	 * @param props 属性集
+	 * @param pattern 模板
+	 * @param dftValue 缺省值
+	 * @return 转换值
+	 */
+	public static boolean transform(Properties p, String pattern, boolean dftValue) {
+		String value = p.transform(pattern);
+		if (StringUtils.isEmpty(value)) {
+			return dftValue;
+		}
+
+		try {
+			return BooleanUtils.toBoolean(value);
+		} catch (NumberFormatException ex) {
+			return dftValue;
+		}
+	}	
 	
 	/**
 	 * 向Properties设置String值

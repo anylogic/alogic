@@ -5,6 +5,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
 import com.alogic.xscript.Block;
@@ -21,10 +23,15 @@ import com.anysoft.util.PropertiesConstants;
  * @author duanyy
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
+ * @version 1.6.10.2 [20170925 duanyy] <br>
+ * - 采用私有线程池，可指定线程池大小，并且可关闭线程池 <br>
+ * 
  */
 public class Asynchronized extends Block {
 	protected long timeout = 1000L;	
-	protected static ScheduledThreadPoolExecutor exec = new  ScheduledThreadPoolExecutor(5);
+	protected int threadPoolSize = 5;
+	protected boolean shutdownGracefully = true;
 	
 	public Asynchronized(String tag, Logiclet p) {
 		super(tag, p);
@@ -33,18 +40,19 @@ public class Asynchronized extends Block {
 	@Override
 	public void configure(Properties p) {
 		super.configure(p);
-		timeout = PropertiesConstants.getLong(p, "timeout", timeout);
+		timeout = PropertiesConstants.getLong(p, "async.timeout", timeout);
+		threadPoolSize = PropertiesConstants.getInt(p, "async.threadPoolSize", threadPoolSize);
+		shutdownGracefully = PropertiesConstants.getBoolean(p, "async.shutdownGracefully", shutdownGracefully);
 	}
 
 	@Override
 	protected void onExecute(final XsObject root,final XsObject current, final LogicletContext ctx, final ExecuteWatcher watcher) {
-		List<Logiclet> list = children;
-		
+		final List<Logiclet> list = children;
+		final ScheduledThreadPoolExecutor exec = new  ScheduledThreadPoolExecutor(threadPoolSize);
 		final CountDownLatch latch = new CountDownLatch(list.size());
 		
 		boolean error = false;
 		String msg = "OK";
-		
 		final TraceContext tc = traceEnable()?Tool.start():null;
 		
 		try {
@@ -55,16 +63,22 @@ public class Asynchronized extends Block {
 					@Override
 					public void run() {
 						TraceContext child = (traceEnable()&&tc != null)?tc.newChild():null;
+						String msg  = "OK";
+						boolean error = false;
 						try {
 							if (logiclet != null){
 								logiclet.execute(root,current,ctx,watcher);
 							}
+						}catch (Exception ex){
+							msg = ExceptionUtils.getStackTrace(ex);
+							log(msg,"error");
+							error = true;
 						}finally{
 							if (latch != null){
 								latch.countDown();
 							}
 							if (traceEnable()&&tc != null){
-								Tool.end(child, "ASYNC-CHILD", getXmlTag(),"OK", "OK");
+								Tool.end(child, "ASYNC-CHILD",getXmlTag(), error?"FAILED":"OK", msg);
 							}
 						}
 					}
@@ -75,11 +89,17 @@ public class Asynchronized extends Block {
 			if (!latch.await(timeout, TimeUnit.MILLISECONDS)){
 				logger.warn("The async executing is timtout.");
 			}
+			
 		}catch (Exception ex){
-			logger.error(ex.getMessage());
+			msg = ExceptionUtils.getStackTrace(ex);
+			log(msg,"error");
 			error = true;
-			msg = ex.getMessage();
 		}finally{
+			if (shutdownGracefully){
+				exec.shutdown();
+			}else{
+				exec.shutdownNow();
+			}
 			if (traceEnable()){
 				Tool.end(tc, "ASYNC", getXmlTag(), error?"FAILED":"OK", msg);
 			}				

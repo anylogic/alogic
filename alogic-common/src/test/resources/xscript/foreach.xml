@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<script>
+	<set id="array" value="tom;jerry;alogic" />
+	<foreach in="${array}" async="true" async.timeout="3000">
+		<log msg="item = ${$value}"/>
+		<template tag="${$value}" content="{}" extend="false">
+			<get id="id" value="${$value}" />
+		</template>
+	</foreach>
+
+</script>

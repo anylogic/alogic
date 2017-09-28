@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<script>
+	<async timeout="10000">
+		<!--子语句1，执行5s -->
+		<segment>
+			<log msg="child 1 start." />
+			<sleep timeout="5000" />
+			<log msg="child 1 end." />
+		</segment>
+		<!--子语句2，执行3s -->
+		<segment>
+			<log msg="child 2 start." />
+			<sleep timeout="3000" />
+			<log msg="child 2 end." />
+		</segment>
+	</async>
+</script>
