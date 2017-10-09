@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<script>
+	<using xmlTag="remote" module="com.alogic.remote.xscript.CreateRequest" />
+
+	<remote clientId="default" method="get">
+		<set id="callPath" value="https://api.github.com/users/anylogic/repos"/> 
+		<log msg="start to call ${callPath}.."/>
+		
+		<remote-call-direct path="${callPath}">
+			<remote-as-text id="body" />
+			<log msg="Response text is ${body}" />
+		</remote-call-direct>
+		
+		<log msg="end.."/>
+	</remote>
+</script>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<context>
+		<client 
+			id="default"
+			module="com.alogic.remote.httpclient.HttpClient"
+
+			rpc.ketty.attempt="com.alogic.remote.attempt.Failfast"
+			rpc.ketty.maxTryTimes="10" 
+			rpc.ketty.loadbalance="RoundRobin"
+			rpc.ketty.cluster="default" 
+			rpc.ketty.route="default"
+
+			rpc.http.maxConnPerHost="2000" rpc.http.maxConn="4000"
+			rpc.http.keepAlive.enable="true" rpc.http.keepAlive.ttl="60000"
+			rpc.http.timeout="10000">
+		</client>
+	</context>
+</source>

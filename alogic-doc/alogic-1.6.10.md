@@ -17,3 +17,8 @@ alogic-1.6.10
 - alogic-common:PropertiesConstants增加transform系列方法。
 - alogic-common:优化foreach,repeat指令，增加异步执行功能。
 - alogic-common:增加rand指令，用于生成一定范围内的随机数。
+
+### 1.6.10.3 [20171009 duanyy]
+- alogic-rpc:httpClient增加PUT,GET,DELETE,HEAD,OPTIONS,TRACE,PATCH等http方法;
+- alogic-rpc:增加基于Client的Naming框架;
+- algoic-rpc:增加基于Client的xscript脚本插件;

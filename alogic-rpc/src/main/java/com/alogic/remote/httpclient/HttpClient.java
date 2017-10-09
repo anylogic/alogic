@@ -7,7 +7,15 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
@@ -30,6 +38,10 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.8.14 <br>
  * - 优化http远程调用的超时机制 <br>
+ * 
+ * @version 1.6.10.3 [20171009 duanyy] <br>
+ * - 增加PUT,GET,DELETE,HEAD,OPTIONS,TRACE,PATCH等http方法;
+ * 
  */
 public class HttpClient extends AbstractClient{
 	/**
@@ -45,6 +57,36 @@ public class HttpClient extends AbstractClient{
 	protected String encoding = "utf-8";
 	
 	protected int autoRetryCnt = 2;
+	
+	/**
+	 * Http method
+	 * @author yyduan
+	 *
+	 */
+	public enum Method {
+		GET(HttpGet.class),
+		POST(HttpPost.class),
+		DELETE(HttpDelete.class),
+		HEAD(HttpHead.class),
+		OPTIONS(HttpOptions.class),
+		TRACE(HttpTrace.class),
+		PATCH(HttpPatch.class),
+		PUT(HttpPut.class);
+		
+		protected Class<? extends HttpRequestBase> clazz;
+		
+		Method(Class<? extends HttpRequestBase> clazz){
+			this.clazz = clazz;
+		}
+		
+		public HttpRequestBase createRequest(){
+			try {
+				return this.clazz.newInstance();
+			} catch (Exception ex){
+				return null;
+			}
+		}
+	};
 	
 	@Override
 	public void configure(Properties p) {
@@ -95,8 +137,16 @@ public class HttpClient extends AbstractClient{
 	
 	@Override
 	public Request build(String method) {
-		HttpPost request = new HttpPost();
+		HttpRequestBase request = getRequestByMethod(method);
+		if (request == null){
+			request = new HttpPost();
+		}
 		request.setConfig(requestConfig);
 		return new HttpClientRequest(httpClient,request,this,encoding,autoRetryCnt);
+	}
+	
+	public HttpRequestBase getRequestByMethod(final String method){
+		Method m = Method.valueOf(method.toUpperCase());
+		return m.createRequest();
 	}
 }

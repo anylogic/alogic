@@ -1,48 +1,46 @@
 package com.alogic.remote;
 
-import java.io.InputStream;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.anysoft.util.DefaultProperties;
-import com.anysoft.util.Factory;
-import com.anysoft.util.IOTools;
+import java.util.HashMap;
+import java.util.Map;
+import com.alogic.xscript.ExecuteWatcher;
+import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.Script;
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
+import com.anysoft.util.CommandLine;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Settings;
-import com.anysoft.util.XmlTools;
-import com.anysoft.util.resource.ResourceFactory;
+import com.jayway.jsonpath.spi.JsonProvider;
+import com.jayway.jsonpath.spi.JsonProviderFactory;
 
 public class Demo {
 
-	public static void main(String[] args) {
-		try {
-			ResourceFactory rf = Settings.getResourceFactory();
-			
-			InputStream in = rf.load("java:///com/alogic/remote/remote.client.xml#" + Demo.class.getName(), null);
-			Document doc = XmlTools.loadFromInputStream(in);
-			Element root = doc.getDocumentElement();
-			
-			Factory<Client> f = new Factory<Client>();
-			Properties p = new DefaultProperties("default",Settings.get());
-			
-			Client client = f.newInstance(root, p, "module");
-		
-			//进行100次调用
-			for (int i = 0 ;i < 100 ; i ++){
-				Request request = client.build("post");
-				Response res = null;
-				try{			
-					res = request.execute("/services/core/AclQuery","sn", p);					
-					String text = res.asString();					
-					System.out.println(text);
-				}finally{
-					IOTools.close(res,request);
-				}
-			}
-		}catch (Exception ex){
-			ex.printStackTrace();
+	public static void runAsJson(String src,Properties p){
+		Script script = Script.create(src, p);
+		if (script == null){
+			System.out.println("Fail to compile the script");
+			return;
 		}
+		long start = System.currentTimeMillis();
+		Map<String,Object> root = new HashMap<String,Object>();
+		XsObject doc = new JsonObject("root",root);
+		LogicletContext ctx = new LogicletContext(p);
+		script.execute(doc, doc, ctx, new ExecuteWatcher.Quiet());
+		
+		System.out.println("Script:" + src);
+		System.out.println("Duration:" + (System.currentTimeMillis() - start) + "ms");
+		
+		JsonProvider provider = JsonProviderFactory.createProvider();
+		System.out.println("#########################################################");
+		System.out.println(provider.toJson(root));				
+		System.out.println("#########################################################");
+	}
+	
+	public static void main(String[] args) {
+		Settings settings = Settings.get();		
+		settings.addSettings(new CommandLine(args));
+		settings.SetValue("remote.master", "java:///conf/remote.xml");
+		runAsJson("java:///xscript/cluster.xml",settings);
 	}
 
 }
