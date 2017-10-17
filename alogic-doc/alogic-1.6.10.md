@@ -22,3 +22,6 @@ alogic-1.6.10
 - alogic-rpc:httpClient增加PUT,GET,DELETE,HEAD,OPTIONS,TRACE,PATCH等http方法;
 - alogic-rpc:增加基于Client的Naming框架;
 - algoic-rpc:增加基于Client的xscript脚本插件;
+
+### 1.6.10.4 [20171017 duanyy] 
+- alogic-kvalue:RedisPool优化密码取值功能;
