@@ -19,7 +19,7 @@ public interface Partitioner extends XMLConfigurable,AutoCloseable,Reportable{
 	 * 根据Key的取值判断该Key分配在哪个分区
 	 * 
 	 * @param key
-	 * @return
+	 * @return 分区实例
 	 */
 	public Partition getPartition(final String key);
 	

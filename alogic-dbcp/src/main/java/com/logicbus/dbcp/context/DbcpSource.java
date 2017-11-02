@@ -35,7 +35,7 @@ public class DbcpSource extends Source<ConnectionPool> {
 	 * 通过ID来获取ConnectionPool
 	 * 
 	 * @param id
-	 * @return
+	 * @return ConnectionPool实例
 	 */
 	public static ConnectionPool getPool(String id){
 		return DbcpSource.get().get(id);

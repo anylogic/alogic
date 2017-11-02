@@ -18,46 +18,44 @@ public interface HashRow extends KeyValueRow{
 	
 	/**
 	 * 获取Hash中所有取值的列表
-	 * @return
 	 */
 	public List<String> values();
 	
 	/**
 	 * 获取Hash中所有key的列表
-	 * @return
 	 */
 	public List<String> keys();
 	
 	/**
 	 * 删除Hash中一个或多个Field
 	 * @param fields field的key列表
-	 * @return
+	 * @return 被删除的Field个数
 	 */
 	public long del(final String...fields);
 	
 	/**
 	 * 测试Hash中是否存在指定的field
 	 * @param field
-	 * @return
+	 * @return 是否存在
 	 */
 	public boolean exists(final String field);
 	
 	/**
 	 * 获取Hash中指定的field
 	 * @param field
-	 * @return
+	 * @return 指定field的值
 	 */
 	public String get(final String field,final String dftValue);
 	/**
 	 * 获取Hash中指定的field
 	 * @param field
-	 * @return
+	 * @return 指定field的值
 	 */
 	public long get(final String field,final long dftValue);
 	/**
 	 * 获取Hash中指定的field
 	 * @param field
-	 * @return
+	 * @return 指定field的值
 	 */
 	public double get(final String field,final double dftValue);
 	
@@ -78,7 +76,7 @@ public interface HashRow extends KeyValueRow{
 	 * 设置Field
 	 * @param field
 	 * @param value
-	 * @return
+	 * @return 本次操作是否成功
 	 */
 	public boolean set(final String field,final String value);
 	
@@ -86,7 +84,7 @@ public interface HashRow extends KeyValueRow{
 	 * 设置field
 	 * @param field
 	 * @param value
-	 * @return
+	 * @return 本次操作是否成功
 	 */
 	public boolean set(final String field,final long value);
 	
@@ -94,14 +92,14 @@ public interface HashRow extends KeyValueRow{
 	 * 设置field
 	 * @param field
 	 * @param value
-	 * @return
+	 * @return 本次操作是否成功
 	 */
 	public boolean set(final String field,final double value);
 	
 	/**
 	 * 设置多个field
 	 * @param keyvalues
-	 * @return
+	 * @return 本次操作是否成功
 	 */
 	public boolean mset(final String...keyvalues);
 	
@@ -109,7 +107,7 @@ public interface HashRow extends KeyValueRow{
 	 * 对指定Field的值进行增量加减
 	 * @param field
 	 * @param increment
-	 * @return
+	 * @return 操作前的值
 	 */
 	public long incr(final String field,final long increment);
 	
@@ -145,7 +143,7 @@ public interface HashRow extends KeyValueRow{
 	 * 对指定Field的值进行增量加减
 	 * @param field
 	 * @param increment
-	 * @return
+	 * @return 操作前的值
 	 */	
 	public double incr(final String field,final double increment);
 	
@@ -180,13 +178,13 @@ public interface HashRow extends KeyValueRow{
 	/**
 	 * 获取多个field的取值
 	 * @param fields
-	 * @return
+	 * @return Field的值的列表
 	 */
 	public List<String> mget(final String...fields);
 	
 	/**
 	 * 获取Hash中Field个数
-	 * @return
+	 * @return Field个数
 	 */
 	public long length();
 }

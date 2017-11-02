@@ -25,3 +25,10 @@ alogic-1.6.10
 
 ### 1.6.10.4 [20171017 duanyy] 
 - alogic-kvalue:RedisPool优化密码取值功能;
+
+### 1.6.10.5 [20171102 duanyy]
+- 修正部分类的注释;
+- alogic-common:增加基于HmacSHA256的Coder;
+- alogic-dbcp:增加数据库操作相关的xscript插件,作为alogic-addons中idu的替代方案;
+- alogic-cache:增加缓存相关的xscript插件,作为alogic-addons中idu的替代方案;
+- alogic-zk:增加zk相关的模块;

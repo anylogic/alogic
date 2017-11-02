@@ -59,7 +59,7 @@ public class ConnectionModel implements Cacheable{
 	
 	/**
 	 * 获取名称
-	 * @return
+	 * @return 名称
 	 */
 	public String getName(){
 		return name;
@@ -72,7 +72,7 @@ public class ConnectionModel implements Cacheable{
 	
 	/**
 	 * 获取JDBC驱动类
-	 * @return
+	 * @return JDBC驱动类
 	 */
 	public String getDriver(){
 		return driver;
@@ -85,7 +85,7 @@ public class ConnectionModel implements Cacheable{
 	
 	/**
 	 * 获取数据库连接所用的URI
-	 * @return
+	 * @return 数据库连接所用的URI
 	 */
 	public String getURI(){
 		return url;
@@ -98,7 +98,7 @@ public class ConnectionModel implements Cacheable{
 	
 	/**
 	 * 获取用户名
-	 * @return
+	 * @return 用户名
 	 */
 	public String getUserName(){
 		return username;
@@ -110,8 +110,8 @@ public class ConnectionModel implements Cacheable{
 	protected String password;
 	
 	/**
-	 * 获取密码
-	 * @return
+	 * 获取密码 
+	 * @return 密码
 	 */
 	public String getPassword(){
 		return password;
@@ -129,7 +129,7 @@ public class ConnectionModel implements Cacheable{
 	
 	/**
 	 * 获取maxActive
-	 * @return
+	 * @return 最大活跃实例个数
 	 */
 	public int getMaxActive(){return maxActive;}
 	
@@ -147,7 +147,7 @@ public class ConnectionModel implements Cacheable{
 	
 	/**
 	 * 获取空闲连接数
-	 * @return
+	 * @return 空闲连接数
 	 */
 	public int getMaxIdle(){return maxIdle;}
 	
@@ -158,7 +158,7 @@ public class ConnectionModel implements Cacheable{
 	
 	/**
 	 * 获取最大等待时间
-	 * @return
+	 * @return 最大等待时间
 	 */
 	public int getMaxWait(){return maxWait;}
 	
@@ -331,7 +331,7 @@ public class ConnectionModel implements Cacheable{
 	
 	/**
 	 * 按照当前的连接属性创建数据库连接
-	 * @return
+	 * @return 数据库连接
 	 */
 	public Connection newConnection(){
 		Connection conn = null;

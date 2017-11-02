@@ -16,7 +16,7 @@ public interface BackendProvider extends Reportable,XMLConfigurable,Configurable
 	 * 装入指定应用的后端列表
 	 * 
 	 * @param appId
-	 * @return
+	 * @return 后端列表
 	 */
 	public AppBackends load(String appId);
 	

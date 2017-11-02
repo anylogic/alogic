@@ -25,25 +25,25 @@ public interface Result {
 	
 	/**
 	 * 获取服务结果代码
-	 * @return
+	 * @return 结果代码
 	 */
 	public String getCode();
 	
 	/**
 	 * 获取错误原因
-	 * @return
+	 * @return 错误原因
 	 */
 	public String getReason();
 	
 	/**
 	 * 获取本次服务调用的全局序列号
-	 * @return
+	 * @return 全局序列号
 	 */
 	public String getGlobalSerial();
 	
 	/**
 	 * 获取服务端的服务时长
-	 * @return
+	 * @return 服务时长
 	 */
 	public long getDuration();
 	
@@ -51,7 +51,7 @@ public interface Result {
 	 * 获取结果对象
 	 * @param id
 	 * @param clazz
-	 * @return
+	 * @return 结果对象
 	 */
 	public <data extends JsonSerializer> data getData(String id,Class<data> clazz);
 	
@@ -59,7 +59,7 @@ public interface Result {
 	 * 获取结果对象
 	 * @param id
 	 * @param instance
-	 * @return
+	 * @return 结果对象
 	 */
 	public <data extends JsonSerializer> data getData(String id,data instance);
 	
@@ -67,7 +67,7 @@ public interface Result {
 	 * 获取结果对象
 	 * @param id
 	 * @param builder
-	 * @return
+	 * @return 结果对象
 	 */
 	public <data> data getData(String id,Builder<data> builder);	
 }

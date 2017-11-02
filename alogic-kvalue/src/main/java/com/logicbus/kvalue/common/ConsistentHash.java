@@ -49,7 +49,7 @@ public class ConsistentHash extends AbstractPartitioner {
 	/**
 	 * MurMurHash算法实现
 	 * @param key
-	 * @return
+	 * @return Hash值
 	 */
 	static protected Long hash(String key) {
 		ByteBuffer buf = ByteBuffer.wrap(key.getBytes());

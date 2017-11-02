@@ -63,7 +63,6 @@ public class HashTool extends KeyTool {
 	 * to scan the keys
 	 * @param cursor
 	 * @param params
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public ScanResult<String> hscan(final String key,final String cursor,ScanParams params){

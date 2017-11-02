@@ -41,7 +41,7 @@ public class Client extends Connection implements PooledCloseable{
 	
 	/**
 	 * 获取当前DB
-	 * @return
+	 * @return 当前的DB
 	 */
 	public long getCurrentDB(){
 		return db;

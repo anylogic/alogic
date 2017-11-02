@@ -21,7 +21,7 @@ public interface Parameters extends DataProvider{
 	 * 
 	 * @param id 参数Id
 	 * @param value 参数值
-	 * @return
+	 * @return 自身实例
 	 */
 	public Parameters param(String id,String value);
 	
@@ -29,7 +29,7 @@ public interface Parameters extends DataProvider{
 	 * 批量设置服务参数
 	 * 
 	 * @param idvalues 参数名值列表
-	 * @return
+	 * @return 自身实例
 	 */
 	public Parameters params(String...idvalues);
 	
@@ -37,7 +37,7 @@ public interface Parameters extends DataProvider{
 	 * 设置单个服务参数对象
 	 * @param id
 	 * @param value
-	 * @return
+	 * @return 自身实例
 	 */
 	public <data extends JsonSerializer> Parameters param(String id,data value);
 	
@@ -45,20 +45,20 @@ public interface Parameters extends DataProvider{
 	 * 设置单个服务参数对象
 	 * @param id
 	 * @param builder
-	 * @return
+	 * @return 自身实例
 	 */
 	public <data> Parameters param(String id,data value,Builder<data> builder);
 	
 	/**
 	 * 清空当前所有的参数和对象
-	 * @return
+	 * @return 自身实例
 	 */
 	public Parameters clean();
 	
 	/**
 	 * 获取指定的参数对象
 	 * @param id 对象id
-	 * @return
+	 * @return 对象数据
 	 */
 	public Object getData(String id);
 }

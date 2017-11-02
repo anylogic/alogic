@@ -203,7 +203,6 @@ public class KeyTool extends Toolkit {
 	 * to scan the keys
 	 * @param cursor
 	 * @param params
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public ScanResult<String> scan(final String cursor,ScanParams params){

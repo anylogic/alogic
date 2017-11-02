@@ -51,7 +51,7 @@ public interface Backend extends Load {
 	
 	/**
 	 * Web context路径
-	 * @return
+	 * @return context路径
 	 */
 	public String getContextPath();
 	

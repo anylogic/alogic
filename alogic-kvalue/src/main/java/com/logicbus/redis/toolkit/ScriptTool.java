@@ -82,7 +82,7 @@ public class ScriptTool extends Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为状态码
-	 * @return
+	 * @return 应答内容
 	 */
 	public String getStatusCodeReply(){
 		return super.getStatusCodeReply();
@@ -90,7 +90,7 @@ public class ScriptTool extends Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为大块字符串
-	 * @return
+	 * @return 应答内容
 	 */
 	public String getBulkReply(){
 		return super.getBulkReply();
@@ -98,7 +98,7 @@ public class ScriptTool extends Toolkit {
 
 	/**
 	 * 获取应答，应答内容为大块二进制块
-	 * @return
+	 * @return 应答内容
 	 */	
 	public byte[] getBinaryBulkReply(){
 		return super.getBinaryBulkReply();
@@ -106,7 +106,7 @@ public class ScriptTool extends Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为数值
-	 * @return
+	 * @return 应答内容
 	 */
 	public Long getIntegerReply(){
 		return super.getIntegerReply();
@@ -114,7 +114,7 @@ public class ScriptTool extends Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为多个大块字符串
-	 * @return
+	 * @return 应答内容
 	 */
 	public List<String> getMultiBulkReply(List<String> t){
 		return super.getMultiBulkReply(t);
@@ -122,7 +122,7 @@ public class ScriptTool extends Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为多个大块二进制块
-	 * @return
+	 * @return 应答内容
 	 */
 	public List<byte[]> getBinaryMultiBulkReply(){
 		return super.getBinaryMultiBulkReply();
@@ -130,7 +130,7 @@ public class ScriptTool extends Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为多个对象
-	 * @return
+	 * @return 应答内容
 	 */
 	public List<Object> getObjectMultiBulkReply(){
 		return super.getObjectMultiBulkReply();

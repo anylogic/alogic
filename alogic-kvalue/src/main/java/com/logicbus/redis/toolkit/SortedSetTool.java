@@ -143,7 +143,6 @@ public class SortedSetTool extends KeyTool {
 	 * to scan the keys
 	 * @param cursor
 	 * @param params
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public ScanResult<String> zscan(final String key,final String cursor,ScanParams params){

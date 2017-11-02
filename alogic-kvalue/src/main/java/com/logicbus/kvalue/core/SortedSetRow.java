@@ -21,96 +21,96 @@ public interface SortedSetRow extends KeyValueRow {
 	/**
 	 * 向SortedSet中增加元素
 	 * 
-	 * @param member
-	 * @param score
+	 * @param member 元素
+	 * @param score 元素的分值
 	 */
 	public boolean add(String member,double score);
 	
 	/**
 	 * 向SortedSet中增加元素
-	 * @param element
+	 * @param element 新增的元素
 	 */
 	public boolean add(Pair<String,Double> element);
 	
 	/**
 	 * 向SortedSet中增加多个元素
-	 * @param elements
+	 * @param elements 新增的元素列表
 	 */
 	public long add(Map<String,Double> elements);
 	
 	/**
 	 * 获取SortedSet大小
-	 * @return
+	 * @return Set的大小
 	 */
 	public long size();
 	
 	/**
 	 * 对指定元素的score值进行增减
-	 * @param member
-	 * @param score
-	 * @return
+	 * @param member 指定元素
+	 * @param score 分值
+	 * @return 新的分值
 	 */
 	public double incr(final String member,final double score);
 	
 	/**
 	 * 获取指定元素的Score值
-	 * @param member
-	 * @return
+	 * @param member 指定的元素
+	 * @return 分值
 	 */
 	public double score(final String member);
 	
 	/**
 	 * 获取指定元素的排名(Rank)
-	 * @param member
-	 * @return
+	 * @param member 指定的元素
+	 * @return 排名
 	 */
 	public long rank(final String member,boolean reverse);
 	
 	/**
 	 * 统计Score值在min和max之间的元素个数
-	 * @param min
-	 * @param max
-	 * @return
+	 * @param min 最小值
+	 * @param max 最大值
+	 * @return 元素个数
 	 */
 	public long count(double min,double max);
 	
 	/**
 	 * 移除一个或多个指定的元素
-	 * @param members
-	 * @return
+	 * @param members 元素列表
+	 * @return 被移除的元素个数
 	 */
 	public long remove(final String...members);
 	
 	/**
 	 * 移除指定排名范围(from start to stop)的元素
-	 * @param start
-	 * @param stop
-	 * @return
+	 * @param start 开始位置
+	 * @param stop 结束位置
+	 * @return 移除的元素个数
 	 */
 	public long remove(final long start,final long stop);
 	
 	/**
 	 * 移除指定Score范围(from min to max)的元素
-	 * @param min
-	 * @param max
-	 * @return
+	 * @param min 最小分值
+	 * @param max 最大分值
+	 * @return 移除的元素个数
 	 */
 	public long remove(final double min,final double max);
 	
 	/**
 	 * 获取指定Score区间(from min to max)的元素列表(不带Score)
-	 * @param min
-	 * @param max
-	 * @param reverse
-	 * @return
+	 * @param min 最小分值
+	 * @param max 最大分值
+	 * @param reverse 是否逆序
+	 * @return 元素列表
 	 */
 	public List<String> rangeByScore(final double min,final double max,boolean reverse);
 	
 	/**
 	 * 获取指定Score区间(from min to max)的元素列表(不带Score)
-	 * @param min
-	 * @param max
-	 * @param reverse
+	 * @param min 最小分值
+	 * @param max 最大分值
+	 * @param reverse 是否逆序
 	 * @param offset 偏移，用于分页查询
 	 * @param cnt 本次查询数据个数，用于分页查询
 	 * @return 元素列表
@@ -121,9 +121,9 @@ public interface SortedSetRow extends KeyValueRow {
 	
 	/**
 	 * 获取指定Score区间(from min to max)的元素列表(带Score)
-	 * @param min
-	 * @param max
-	 * @param reverse
+	 * @param min 最小分值
+	 * @param max 最大分值
+	 * @param reverse 是否逆序
 	 * @return 元素列表
 	 */
 	public List<Pair<String,Double>> rangeByScoreWithScores(
@@ -131,9 +131,9 @@ public interface SortedSetRow extends KeyValueRow {
 	
 	/**
 	 * 获取指定Score区间(from min to max)的元素列表(带Score)
-	 * @param min
-	 * @param max
-	 * @param reverse
+	 * @param min 最小分值
+	 * @param max 最大分值
+	 * @param reverse 是否逆序
 	 * @param offset 偏移，用于分页查询
 	 * @param cnt 本次查询数据个数，用于分页查询
 	 * @return 元素列表
@@ -145,8 +145,8 @@ public interface SortedSetRow extends KeyValueRow {
 	
 	/**
 	 * 获取指定排名范围（from start to stop）的元素列表(不带Score)
-	 * @param start
-	 * @param stop
+	 * @param start 开始位置
+	 * @param stop 结束位置
 	 * @param reverse 是否逆序(从大到小)
 	 * @return 元素列表
 	 */
@@ -154,9 +154,9 @@ public interface SortedSetRow extends KeyValueRow {
 	
 	/**
 	 * 获取指定排名范围（from start to stop）的元素列表(带Score)
-	 * @param start
-	 * @param stop
-	 * @param reverse
+	 * @param start 开始位置
+	 * @param stop 结束位置
+	 * @param reverse 是否逆序(从大到小)
 	 * @return 元素列表
 	 */
 	public List<Pair<String,Double>> rangeWithScores(final long start,final long stop,boolean reverse);

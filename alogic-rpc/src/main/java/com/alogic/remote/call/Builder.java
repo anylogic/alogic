@@ -18,15 +18,15 @@ public interface Builder<data> {
 	 * 将指定的对象序列化为Json对象
 	 * @param id
 	 * @param o
-	 * @return
+	 * @return Json对象
 	 */
 	public Object serialize(String id,data o);
 
 	/**
-	 * 将指定的对象序列化为Json对象
+	 * 将Json对象反序列化为对象
 	 * @param id
 	 * @param json
-	 * @return
+	 * @return 对象
 	 */
 	public data deserialize(String id,Object json);	
 }

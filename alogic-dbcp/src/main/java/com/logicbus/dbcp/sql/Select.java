@@ -54,7 +54,7 @@ public class Select extends DBOperation {
 	 * 执行SQL语句
 	 * @param sql SQL语句
 	 * @param params 参数列表
-	 * @return
+	 * @return 实例
 	 * @throws SQLException
 	 */
 	public Select execute(String sql,Object... params){
@@ -179,7 +179,7 @@ public class Select extends DBOperation {
 	 * 获取查询结果(单行返回值)
 	 * 
 	 * @param result
-	 * @return
+	 * @return 查询结果(单行返回值)
 	 * @throws SQLException
 	 * @since 1.2.0
 	 */

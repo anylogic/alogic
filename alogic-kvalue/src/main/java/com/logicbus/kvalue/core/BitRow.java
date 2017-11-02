@@ -36,7 +36,7 @@ public interface BitRow extends KeyValueRow{
 	/**
 	 * 获取指定位置的bit值
 	 * @param offset
-	 * @return
+	 * @return bit值
 	 */
 	public boolean getBit(final long offset);
 	
@@ -44,7 +44,7 @@ public interface BitRow extends KeyValueRow{
 	 * 计算指定范围内bit位为1的个数
 	 * @param start
 	 * @param end
-	 * @return
+	 * @return 个数
 	 */
 	public long bitCount(final long start,final long end);
 }

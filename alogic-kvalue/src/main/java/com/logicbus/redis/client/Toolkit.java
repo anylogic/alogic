@@ -36,7 +36,7 @@ public class Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为状态码
-	 * @return
+	 * @return 应答内容
 	 */
 	protected String getStatusCodeReply(){
 		return conn().getStatusCodeReply();
@@ -44,7 +44,7 @@ public class Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为大块字符串
-	 * @return
+	 * @return 应答内容
 	 */
 	protected String getBulkReply(){
 		return conn().getBulkReply();
@@ -52,7 +52,7 @@ public class Toolkit {
 
 	/**
 	 * 获取应答，应答内容为大块二进制块
-	 * @return
+	 * @return 应答内容
 	 */	
 	protected byte[] getBinaryBulkReply(){
 		return conn().getBinaryBulkReply();
@@ -60,7 +60,7 @@ public class Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为数值
-	 * @return
+	 * @return 应答内容
 	 */
 	protected Long getIntegerReply(){
 		return conn().getIntegerReply();
@@ -68,7 +68,7 @@ public class Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为多个大块字符串
-	 * @return
+	 * @return 应答内容
 	 */
 	protected List<String> getMultiBulkReply(List<String> t){
 		return conn().getMultiBulkReply(t);
@@ -76,7 +76,7 @@ public class Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为多个大块二进制块
-	 * @return
+	 * @return 应答内容
 	 */
 	protected List<byte[]> getBinaryMultiBulkReply(){
 		return conn().getBinaryMultiBulkReply();
@@ -84,7 +84,7 @@ public class Toolkit {
 	
 	/**
 	 * 获取应答，应答内容为多个对象
-	 * @return
+	 * @return 应答内容
 	 */
 	protected List<Object> getObjectMultiBulkReply(){
 		return conn().getObjectMultiBulkReply();

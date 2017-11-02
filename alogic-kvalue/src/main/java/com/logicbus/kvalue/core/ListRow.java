@@ -29,7 +29,7 @@ public interface ListRow extends KeyValueRow {
 	 * 获取指定位置的元素
 	 * @param index 位置
 	 * @param dftValue 缺省值 
-	 * @return
+	 * @return 指定位置的元素值
 	 */
 	public String get(final long index,final String dftValue);
 	
@@ -37,7 +37,7 @@ public interface ListRow extends KeyValueRow {
 	 * 在指定的位置设置元素
 	 * @param index
 	 * @param value
-	 * @return
+	 * @return 操作是否成功
 	 */
 	public boolean set(final long index,final String value);
 	
@@ -48,7 +48,7 @@ public interface ListRow extends KeyValueRow {
 	 * block为true,线程阻塞直到其他线程向List增加元素。
 	 * 
 	 * @param block
-	 * @return
+	 * @return 被移除的头元素
 	 */
 	public String leftPop(boolean block);
 	
@@ -60,29 +60,29 @@ public interface ListRow extends KeyValueRow {
 	 * block为true,线程阻塞直到其他线程向List增加元素。
 	 * 
 	 * @param block
-	 * @return
+	 * @return 被移除的尾元素
 	 */
 	public String rightPop(boolean block);
 	
 	/**
 	 * 依次向列表头插入一个或多个新元素
-	 * @param values
+	 * @param values 新插入的元素值列表
 	 * @return 插入后的列表长度
 	 */
 	public long leftPush(final String...values);
 	
 	/**
 	 * 依次向列表尾插入一个或多个新元素
-	 * @param values
-	 * @return
+	 * @param values 新插入的元素值列表
+	 * @return 插入后的列表长度
 	 */
 	public long rightPush(final String...values);
 	
 	/**
 	 * 获取List的一个区域（从start到stop）
-	 * @param start
-	 * @param stop
-	 * @return
+	 * @param start 开始位置
+	 * @param stop 结束位置
+	 * @return 指定区域的列表
 	 */
 	public List<String> range(final long start,final long stop);
 	
@@ -97,7 +97,7 @@ public interface ListRow extends KeyValueRow {
 	 * 
 	 * @param value
 	 * @param count
-	 * @return
+	 * @return 被移除的元素个数
 	 */
 	public long remove(final String value,final long count);
 	
@@ -106,7 +106,7 @@ public interface ListRow extends KeyValueRow {
 	 * 
 	 * @param start
 	 * @param stop
-	 * @return
+	 * @return 被裁减的元素个数
 	 */
 	public long trim(final long start,final long stop);
 }

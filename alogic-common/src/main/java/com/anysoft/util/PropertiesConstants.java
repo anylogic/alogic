@@ -50,7 +50,7 @@ public class PropertiesConstants {
 	/**
 	 * 转换模板
 	 * 
-	 * @param props 属性集
+	 * @param p 属性集
 	 * @param pattern 模板
 	 * @param dftValue 缺省值
 	 * @return 转换值
@@ -63,7 +63,7 @@ public class PropertiesConstants {
 	/**
 	 * 转换模板
 	 * 
-	 * @param props 属性集
+	 * @param p 属性集
 	 * @param pattern 模板
 	 * @param dftValue 缺省值
 	 * @return 转换值
@@ -84,7 +84,7 @@ public class PropertiesConstants {
 	/**
 	 * 转换模板
 	 * 
-	 * @param props 属性集
+	 * @param p 属性集
 	 * @param pattern 模板
 	 * @param dftValue 缺省值
 	 * @return 转换值
@@ -105,7 +105,7 @@ public class PropertiesConstants {
 	/**
 	 * 转换模板
 	 * 
-	 * @param props 属性集
+	 * @param p 属性集
 	 * @param pattern 模板
 	 * @param dftValue 缺省值
 	 * @return 转换值
@@ -126,7 +126,7 @@ public class PropertiesConstants {
 	/**
 	 * 转换模板
 	 * 
-	 * @param props 属性集
+	 * @param p 属性集
 	 * @param pattern 模板
 	 * @param dftValue 缺省值
 	 * @return 转换值
@@ -147,7 +147,7 @@ public class PropertiesConstants {
 	/**
 	 * 转换模板
 	 * 
-	 * @param props 属性集
+	 * @param p 属性集
 	 * @param pattern 模板
 	 * @param dftValue 缺省值
 	 * @return 转换值

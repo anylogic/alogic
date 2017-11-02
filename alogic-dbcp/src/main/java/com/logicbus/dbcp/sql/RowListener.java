@@ -27,7 +27,7 @@ public interface RowListener<T> {
 	 * 发现数据列
 	 * @param cookies 数据行对象
 	 * @param columnIndex 列索引(以0开始)
-	 * @param name 本次查询的元数据
+	 * @param metadata 本次查询的元数据
 	 * @param value 数据对象
 	 */
 	public void columnFound(Object cookies,int columnIndex,ResultSetMetaData metadata,T value);

@@ -34,7 +34,7 @@ public class RedisBaseRow implements KeyValueRow {
 	 * 选取合适的Client
 	 * 
 	 * @param readOnly 是否只读
-	 * @return
+	 * @return Client实例
 	 */
 	protected Client getClient(boolean readOnly){
 		//主数据源

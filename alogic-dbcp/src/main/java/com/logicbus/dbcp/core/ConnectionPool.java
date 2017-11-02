@@ -43,20 +43,20 @@ public interface ConnectionPool extends Reportable,MetricsReportable,AutoCloseab
 	/**
 	 * 从连接池中获取数据库连接
 	 * @param timeout 超时时间
-	 * @return
+	 * @return 数据库连接实例
 	 */
 	public Connection getConnection(int timeout);
 	
 	/**
 	 * 从连接池中获取数据库连接
 	 * @param enableRWS 允许读写分离
-	 * @return
+	 * @return 数据库连接实例
 	 */
 	public Connection getConnection(boolean enableRWS);
 	
 	/**
 	 * 从连接池中获取数据库连接
-	 * @return
+	 * @return 数据库连接实例
 	 */
 	public Connection getConnection();
 	
@@ -78,7 +78,7 @@ public interface ConnectionPool extends Reportable,MetricsReportable,AutoCloseab
 	/**
 	 * 获取连接池名称
 	 * 
-	 * @return
+	 * @return 连接池名称
 	 */
 	public String getName();
 }

@@ -68,8 +68,6 @@ public class StringTool extends KeyTool {
 
 	/**
 	 * to set key to hold the String value
-	 * @param key
-	 * @param value
 	 */
 	public void _set(final String key,final String value){
 		sendCommand(Command.SET.raw,key,value);
@@ -77,9 +75,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to set key to hold String value
-	 * @param key
-	 * @param value
-	 * @param params
 	 */
 	public void _set(final String key,final String value,SetParams params){
 		if (params == null)
@@ -97,8 +92,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to set key to hold the String value
-	 * @param key
-	 * @param value
 	 */
 	public boolean set(final String key,final String value){
 		_set(key,value);
@@ -107,9 +100,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to set key to hold String value
-	 * @param key
-	 * @param value
-	 * @param params
 	 */
 	public boolean set(final String key,final String value,SetParams params){
 		_set(key,value,params);
@@ -118,9 +108,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to set or clear the bit at offset in the string value stored at key.
-	 * @param key
-	 * @param offset
-	 * @param value
 	 */
 	public void _setbit(final String key,final long offset,final boolean value){
 		sendCommand(
@@ -133,10 +120,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to set or clear the bit at offset in the string value stored at key.
-	 * @param key
-	 * @param offset
-	 * @param value
-	 * @return the old bit value stored at offset
 	 */
 	public long setbit(final String key,final long offset,final boolean value){
 		_setbit(key,offset,value);
@@ -145,9 +128,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to overwrite part of a string at key starting at the specified offset
-	 * @param key
-	 * @param offset
-	 * @param value
 	 */
 	public void _setrange(final String key,final long offset,final String value){
 		sendCommand(
@@ -160,10 +140,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to overwrite part of a string at key starting at the specified offset
-	 * @param key
-	 * @param offset
-	 * @param value
-	 * @return the length of the string after it was modified by the command.
 	 */
 	public long setrange(final String key,final long offset,final String value){
 		_setrange(key,offset,value);
@@ -172,7 +148,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to set the given keys to their respective values
-	 * @param keyvalues
 	 */
 	public void _mset(final String... keyvalues){
 		sendCommand(Command.MSET.raw,keyvalues);
@@ -180,7 +155,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to set the given keys to their respective values
-	 * @param keyvalues
 	 */
 	public void mset(final String... keyvalues){
 		_mset(keyvalues);
@@ -189,7 +163,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to set the given keys to their respective values, only if none of the keys exist
-	 * @param keyvalues
 	 */
 	public void _msetex(final String... keyvalues){
 		sendCommand(Command.MSET.raw,keyvalues);
@@ -197,8 +170,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to set the given keys to their respective values,only if none of the keys exist
-	 * @param keyvalues
-	 * @return true if all the keys are set,false if no key was set
 	 */
 	public boolean msetex(final String... keyvalues){
 		_msetex(keyvalues);
@@ -207,8 +178,6 @@ public class StringTool extends KeyTool {
 	
 	/**
 	 * to set the string value of a key and return its old value
-	 * @param key
-	 * @param value
 	 */
 	public void _getset(final String key,final String value){
 		sendCommand(Command.GETSET.raw,key,value);
@@ -236,7 +205,6 @@ public class StringTool extends KeyTool {
 	/**
 	 * to get value of the key
 	 * @param key
-	 * @return
 	 */
 	public String get(final String key,final String defaultValue){
 		_get(key);
@@ -297,7 +265,6 @@ public class StringTool extends KeyTool {
 	/**
 	 * to get the values of the specified keys.
 	 * @param keys
-	 * @return
 	 */
 	public List<String> mget(final String...keys){
 		_mget(keys);

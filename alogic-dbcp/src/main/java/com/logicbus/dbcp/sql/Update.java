@@ -49,7 +49,7 @@ public class Update extends DBOperation {
 	 * 执行单个SQL语句
 	 * @param sql 
 	 * @param params 参数列表
-	 * @return
+	 * @return 结果
 	 * @throws SQLException
 	 */
 	public int execute(String sql,Object...params) throws BaseException{
@@ -88,7 +88,7 @@ public class Update extends DBOperation {
 	/**
 	 * 执行多个SQL语句
 	 * @param sqls
-	 * @return
+	 * @return 执行结果
 	 * @throws SQLException
 	 */
 	public int[] executeBatch(String...sqls) throws BaseException{

@@ -34,15 +34,15 @@ public interface Table extends XMLConfigurable,Reportable{
 	
 	/**
 	 * 获取表名
-	 * @return
+	 * @return 表名
 	 */
 	public String getName();
 	
 	/**
 	 * 选择指定的行
-	 * @param key
-	 * @param enableRWSplit
-	 * @return
+	 * @param key 行的key
+	 * @param enableRWSplit 是否允许读写分离
+	 * @return 行的实例
 	 */
 	public KeyValueRow select(String key,boolean enableRWSplit);
 	

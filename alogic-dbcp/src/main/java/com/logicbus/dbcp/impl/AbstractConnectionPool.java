@@ -14,7 +14,6 @@ import com.alogic.pool.impl.Queued;
 import com.anysoft.loadbalance.LoadBalance;
 import com.anysoft.loadbalance.LoadBalanceFactory;
 import com.anysoft.util.Counter;
-import com.anysoft.util.IOTools;
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -195,7 +194,7 @@ abstract public class AbstractConnectionPool extends Queued implements Connectio
 	/**
 	 * 尝试选择只读数据源
 	 * 
-	 * @return
+	 * @return 只读数据源的数据库连接
 	 */
 	protected Connection selectReadSource(int timeout){
 		Connection found = null;
@@ -289,10 +288,14 @@ abstract public class AbstractConnectionPool extends Queued implements Connectio
 	
 	/**
 	 * 获取争抢连接时的最大等待时间
-	 * @return
+	 * @return 最大等待时间
 	 */
 	abstract protected int getMaxWait();
 	
+	/**
+	 * 获取超时时间
+	 * @return 超时时间
+	 */
 	abstract protected long getTimeout();
 	
 	/**

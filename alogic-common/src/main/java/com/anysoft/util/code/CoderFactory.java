@@ -50,6 +50,16 @@ public class CoderFactory extends Factory<Coder> {
 			System.out.println("The decoded value is " + decodedValue);						
 		}
 		{
+			Coder coder = CoderFactory.newCoder("SHA256");		
+			key = coder.createKey();
+			String encodedValue = coder.encode(value,key);
+			System.out.println("The key is " + key);
+			System.out.println("The encoded value is " + encodedValue);
+			
+			String decodedValue = coder.decode(encodedValue,key);
+			System.out.println("The decoded value is " + decodedValue);						
+		}		
+		{
 			Coder coder = CoderFactory.newCoder("DES3");		
 			String encodedValue = coder.encode(value,key);
 			System.out.println("The encoded value is " + encodedValue);			

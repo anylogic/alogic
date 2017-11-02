@@ -86,7 +86,7 @@ public class ByteArrayTool extends Toolkit {
 	/**
 	 * to get value of the key
 	 * @param key
-	 * @return
+	 * @return value
 	 */
 	public byte [] get(final String key,final byte [] defaultValue){
 		_get(key);

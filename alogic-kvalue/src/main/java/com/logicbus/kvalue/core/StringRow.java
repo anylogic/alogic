@@ -54,7 +54,7 @@ public interface StringRow extends KeyValueRow {
 	
 	/**
 	 * 获取字符串长度
-	 * @return
+	 * @return 字符串长度
 	 */
 	public long strlen();
 }

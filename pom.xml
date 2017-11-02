@@ -52,6 +52,7 @@
 		<module>alogic-lucene</module>
 		<module>alogic-vfs</module>
 		<module>alogic-rpc</module>
+		<module>alogic-zk</module>
 	</modules>
 	<distributionManagement>
 		<repository>

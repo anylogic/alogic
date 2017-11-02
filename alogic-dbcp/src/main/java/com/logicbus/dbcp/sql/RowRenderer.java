@@ -21,7 +21,7 @@ public interface RowRenderer<T> {
 	/**
 	 * 渲染行的数据
 	 * @param rowData 行的数据
-	 * @return
+	 * @return 行的数据
 	 */
 	public Map<String,T> render(Map<String,T> rowData);
 	

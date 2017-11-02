@@ -155,7 +155,6 @@ public class SetTool extends KeyTool {
 	 * to scan the keys
 	 * @param cursor
 	 * @param params
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public ScanResult<String> sscan(final String key,final String cursor,ScanParams params){

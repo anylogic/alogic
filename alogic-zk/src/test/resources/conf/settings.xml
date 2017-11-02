@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<settings>
+
+	<parameter id="zookeeper.connectString" value="127.0.0.1:2181"/>
+	<parameter id="sessionTimeout" value="3000"/>
+	
+</settings>

@@ -22,7 +22,7 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @author yyduan
  * 
- * @sicne 1.6.9.6
+ * @since 1.6.9.6
  */
 public class FileCopy extends AbstractLogiclet{
 	protected String srcVfs = "$vfs";
