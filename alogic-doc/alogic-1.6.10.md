@@ -39,3 +39,4 @@ alogic-1.6.10
 - alogic-core:修改对调用者实际IP和代理IP的取值规则;
 - alogic-rpc:增加Http调用请求级别的Filter和Client级别的Customizer，并增加多种插件;
 - algoic-vfs:vfs比较和同步增加路径的白名单和黑名单功能;
+- alogic-zk:Zookeeper版本由3.4.6升级到3.4.10;
