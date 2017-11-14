@@ -161,12 +161,22 @@ public class HttpContext extends Context {
 		 * 支持负载均衡器的X-Forwarded-For
 		 */
 		String ip = request.getHeader(ForwardedHeader);
-		return (StringUtils.isEmpty(ip)) ? request.getRemoteHost() : ip;
+		if (StringUtils.isNotEmpty(ip)){
+			String [] ips = ip.split(",");
+			if (ips.length > 0){
+				return ips[0];
+			}else{
+				return request.getRemoteHost();
+			}
+		}else{
+			return request.getRemoteHost();
+		}
 	}
 	
 	@Override
 	public String getClientRealIp(){
-		return request.getRemoteHost();
+		String ip = request.getHeader(RealIp);
+		return StringUtils.isNotEmpty(ip)?ip:request.getRemoteHost();
 	}
 
 	@Override
@@ -317,9 +327,11 @@ public class HttpContext extends Context {
 	}
 	
 	public static String ForwardedHeader = "X-Forwarded-For";
+	public static String RealIp = "X-Real-IP";
 	static{
 		Settings settings = Settings.get();
 		ForwardedHeader = settings.GetValue("http.forwardedheader", ForwardedHeader);
+		RealIp = settings.GetValue("http.realip", RealIp);
 	}
 	
 	/**

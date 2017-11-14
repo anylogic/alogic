@@ -11,13 +11,26 @@
 			rpc.ketty.cluster="default" 
 			rpc.ketty.route="default"
 			rpc.ketty.scheme = "https"
-
+			
+			rpc.http.ssl.ks.path="file://d:/temp/server.keystore"
+			rpc.http.ssl.ks.passwd="alogic"
+			rpc.http.ssl.ks.hostname.verify="false"
+			
 			rpc.http.maxConnPerHost="2000" rpc.http.maxConn="4000"
 			rpc.http.keepAlive.enable="true" rpc.http.keepAlive.ttl="60000"
 			rpc.http.timeout="10000">
 			<cluster module="com.alogic.remote.cluster.StaticCluster">
 					<backend ip="api.github.com" port="443"/>
 			</cluster>
+			<filter 
+				module="com.alogic.remote.httpclient.filter.Signature" 
+				key="150993816000311897" 
+				content="FU6F05lu0ZNwfgVJvYJufWg5FwHtfGh9ImaiB5nO76c"
+			/>
+			<customizer module="com.alogic.remote.httpclient.customizer.Hub">
+				<sink module="com.alogic.remote.httpclient.customizer.Default"/>
+				<sink module="com.alogic.remote.httpclient.customizer.SSL"/>
+			</customizer>
 		</client>
 	</context>
 </source>

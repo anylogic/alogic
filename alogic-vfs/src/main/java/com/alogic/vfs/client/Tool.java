@@ -11,6 +11,10 @@ import com.anysoft.util.XMLConfigurable;
  * @author duanyy
  * @version 1.6.7.14 [20170210 duanyy] <br>
  * - 增加{@link #addSource(Directory)}方法，以便支持多来源目录 <br>
+ * 
+ * @version 1.6.10.6 [20171114 duanyy] <br>
+ * - 比较和同步增加路径的白名单和黑名单功能 <br>
+ * 
  */
 public interface Tool extends Configurable,XMLConfigurable{	
 	/**
@@ -24,6 +28,18 @@ public interface Tool extends Configurable,XMLConfigurable{
 	 * @param src 源目录
 	 */
 	public void addSource(Directory src);
+	
+	/**
+	 * 设置黑名单路径
+	 * @param paths 路径集，分号(;)分隔
+	 */
+	public void setBlacklist(String paths);
+	
+	/**
+	 * 设置白名单路径
+	 * @param paths 路径集，分号(;)分隔
+	 */
+	public void setWhitelist(String paths);
 	
 	/**
 	 * 获取源目录

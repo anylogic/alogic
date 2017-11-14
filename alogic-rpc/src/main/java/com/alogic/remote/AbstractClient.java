@@ -151,6 +151,15 @@ public abstract class AbstractClient implements Client {
 			}
 		}
 		
-		configure(props);
+		onConfigure(e,props);
+	}
+	
+	/**
+	 * 处理Configure事件
+	 * @param e root xml element
+	 * @param p 变量集
+	 */
+	protected void onConfigure(Element e,Properties p){
+		configure(p);
 	}
 }

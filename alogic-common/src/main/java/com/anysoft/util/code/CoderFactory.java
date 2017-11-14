@@ -2,7 +2,9 @@ package com.anysoft.util.code;
 
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
+import com.anysoft.util.Pair;
 import com.anysoft.util.Settings;
+import com.anysoft.util.code.util.RSAUtil;
 
 /**
  * SDACoder的工厂类
@@ -50,8 +52,8 @@ public class CoderFactory extends Factory<Coder> {
 			System.out.println("The decoded value is " + decodedValue);						
 		}
 		{
-			Coder coder = CoderFactory.newCoder("SHA256");		
-			key = coder.createKey();
+			Coder coder = CoderFactory.newCoder("HmacSHA256");		
+			//key = coder.createKey();
 			String encodedValue = coder.encode(value,key);
 			System.out.println("The key is " + key);
 			System.out.println("The encoded value is " + encodedValue);
@@ -76,6 +78,18 @@ public class CoderFactory extends Factory<Coder> {
 			System.out.println("The encoded value is " + encodedValue);
 			String decodedValue = coder.decode(encodedValue,key);
 			System.out.println("The decoded value is " + decodedValue);
+		}	
+		{
+			Coder coder = CoderFactory.newCoder("MD5");		
+			String encodedValue = coder.encode("shit1234_","Password");
+			System.out.println("The encoded value is " + encodedValue);
+			String decodedValue = coder.decode(encodedValue,key);
+			System.out.println("The decoded value is " + decodedValue);
 		}		
+		{
+			Pair<String,String> keyPair = RSAUtil.generateKeyPairInBase64();
+			System.out.println("The public key is " + keyPair.key());
+			System.out.println("The secret key is " + keyPair.value());
+		}
 	}
 }

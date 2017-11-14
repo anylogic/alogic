@@ -32,3 +32,10 @@ alogic-1.6.10
 - alogic-dbcp:增加数据库操作相关的xscript插件,作为alogic-addons中idu的替代方案;
 - alogic-cache:增加缓存相关的xscript插件,作为alogic-addons中idu的替代方案;
 - alogic-zk:增加zk相关的模块;
+
+### 1.6.10.6 [20171107 duanyy]
+- alogic-addons:重写ACM模型，增加签名，密码等服务验证功能;
+- alogic-common:增加HmacSHA256和SHA256编码器;
+- alogic-core:修改对调用者实际IP和代理IP的取值规则;
+- alogic-rpc:增加Http调用请求级别的Filter和Client级别的Customizer，并增加多种插件;
+- algoic-vfs:vfs比较和同步增加路径的白名单和黑名单功能;

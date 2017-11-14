@@ -25,6 +25,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.9.1 [20170516 duanyy] <br>
  * - 修复部分插件由于使用新的文档模型产生的兼容性问题 <br>
+ * 
+ * @version 1.6.10.6 [20171114 duanyy] <br>
+ * - 比较和同步增加路径的白名单和黑名单功能 <br>
  */
 public class Compare extends AbstractLogiclet {
 	protected String srcId = "$vfs-src";
@@ -32,6 +35,8 @@ public class Compare extends AbstractLogiclet {
 	protected String reportId = "$vfs-report";
 	protected String srcPath = "/";
 	protected String destPath = "/";
+	protected String blacklist = "";
+	protected String whitelist = "";
 	
 	public Compare(String tag, Logiclet p) {
 		super(tag, p);
@@ -46,6 +51,8 @@ public class Compare extends AbstractLogiclet {
 		reportId = PropertiesConstants.getString(p,"report",reportId,true);
 		srcPath = PropertiesConstants.getRaw(p,"srcPath",srcPath);
 		destPath = PropertiesConstants.getRaw(p,"destPath",destPath);
+		blacklist = PropertiesConstants.getRaw(p,"blacklist",blacklist);
+		whitelist = PropertiesConstants.getRaw(p,"whitelist",whitelist);
 	}
 	
 	@Override
@@ -57,6 +64,9 @@ public class Compare extends AbstractLogiclet {
 		Tool.Watcher report = ctx.getObject(reportId);
 		
 		Tool tool = new ToolImpl2();
+		
+		tool.setBlacklist(ctx.transform(blacklist));
+		tool.setWhitelist(ctx.transform(whitelist));	
 		
 		String [] paths = srcPathValue.split(";");
 		for (String path:paths){

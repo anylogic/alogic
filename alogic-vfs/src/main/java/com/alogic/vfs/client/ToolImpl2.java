@@ -10,7 +10,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -20,6 +19,8 @@ import org.w3c.dom.Element;
 import com.alogic.vfs.core.VirtualFileSystem;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.StringMatcher;
 import com.anysoft.util.XmlElementProperties;
 
 /**
@@ -29,6 +30,8 @@ import com.anysoft.util.XmlElementProperties;
  *
  * @since 1.6.7.14
  * 
+ * @version 1.6.10.6 [20171114 duanyy] <br>
+ * - 比较和同步增加路径的白名单和黑名单功能 <br>
  */
 public class ToolImpl2 implements Tool {
 	/**
@@ -50,12 +53,73 @@ public class ToolImpl2 implements Tool {
 	 * 扩展的源目录
 	 */
 	private List<Directory> extSources = new ArrayList<Directory>();
+	
+	/**
+	 * 黑名单模式
+	 */
+	private List<StringMatcher> blacklist = new ArrayList<StringMatcher>();
+	
+	/**
+	 * 白名单模式
+	 */
+	private List<StringMatcher> whitelist = new ArrayList<StringMatcher>();
 
 	@Override
 	public void configure(Properties p) {
-		// nothing to do
+		setBlacklist(PropertiesConstants.getString(p, "blacklist", ""));
+		setWhitelist(PropertiesConstants.getString(p, "whitelist", ""));
+	}
+	
+	@Override
+	public void setBlacklist(String list){
+		blacklist.clear();
+		
+		if (StringUtils.isNotEmpty(list)){
+			String [] bls = list.split(";");
+			for (String item:bls){
+				if (StringUtils.isNotEmpty(item)){
+					blacklist.add(new StringMatcher(item));
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void setWhitelist(String list){
+		whitelist.clear();
+		
+		if (StringUtils.isNotEmpty(list)){
+			String [] wls = list.split(";");
+			for (String item:wls){
+				if (StringUtils.isNotEmpty(item)){
+					whitelist.add(new StringMatcher(item));
+				}
+			}
+		}		
 	}
 
+	protected boolean isBlack(String upath){
+		boolean inBlack = false;
+		for (StringMatcher matcher:blacklist){
+			if (matcher.match(upath)){
+				inBlack = true;
+				break;
+			}
+		}
+		return inBlack;
+	}
+	
+	protected boolean isWhite(String upath){
+		boolean inWhite = whitelist.isEmpty();
+		for (StringMatcher matcher:whitelist){
+			if (matcher.match(upath)){
+				inWhite = true;
+				break;
+			}
+		}
+		return inWhite;
+	}
+	
 	@Override
 	public void configure(Element e, Properties p) {
 		XmlElementProperties props = new XmlElementProperties(e, p);
@@ -229,7 +293,18 @@ public class ToolImpl2 implements Tool {
 					LOG.warn("Can not find name attr in file info.");
 					continue;
 				}
+				
 				String uid = uPath + File.separator + name;
+				//白名单
+				if (!isWhite(uid)){
+					continue;
+				}
+				
+				//黑名单
+				if (isBlack(uid)){
+					continue;
+				}
+				
 				boolean isDir = JsonTools.getBoolean(fileInfo, "dir", false);
 				if (isDir) {
 					buildDestFileList(fileList, uid, theDest, path + File.separator + name);
@@ -268,6 +343,17 @@ public class ToolImpl2 implements Tool {
 					continue;
 				}
 				String uid = uPath + File.separator + name;
+				
+				//白名单
+				if (!isWhite(uid)){
+					continue;
+				}
+				
+				//黑名单
+				if (isBlack(uid)){
+					continue;
+				}
+				
 				boolean isDir = JsonTools.getBoolean(fileInfo, "dir", false);
 				if (isDir) {
 					buildSrcFileList(fileList, uid, theSrc, path + File.separator + name);

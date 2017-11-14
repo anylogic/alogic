@@ -38,6 +38,8 @@ import com.anysoft.util.XmlElementProperties;
  * @version 1.6.7.14 [20170210 duanyy] <br>
  * - 修正文件比较和文件同步时信息填入问题 <br>
  * 
+ * @version 1.6.10.6 [20171114 duanyy] <br>
+ * - 比较和同步增加路径的白名单和黑名单功能 <br>
  */
 public class ToolImpl implements Tool {
 	/**
@@ -64,6 +66,14 @@ public class ToolImpl implements Tool {
 	public void configure(Element e, Properties p) {
 		XmlElementProperties props = new XmlElementProperties(e, p);
 		configure(props);
+	}
+	
+	@Override
+	public void setBlacklist(String list){
+	}
+	
+	@Override
+	public void setWhitelist(String list){		
 	}
 
 	@Override

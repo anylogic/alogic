@@ -7,6 +7,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 
+import org.apache.http.Header;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -39,6 +40,9 @@ import com.anysoft.util.Properties;
  * 
  * @version 1.6.10.1 [20170910 duanyy] <br>
  * - 修正httpclient连接的“failed to respond”异常;
+ * 
+ * @version 1.6.10.6 [20171114 duanyy] <br>
+ * - 增加Filter的事件触发 <br>
  */
 public class HttpClientRequest implements Request{
 	protected static final Logger LOG = LoggerFactory.getLogger(HttpClientRequest.class);
@@ -54,6 +58,26 @@ public class HttpClientRequest implements Request{
 		this.client = client;
 		this.encoding = encoding;
 		this.autoRetryCnt = autoRetryCnt;
+	}
+	
+	/**
+	 * 获取当前的URI
+	 * @return URI
+	 */
+	public String getURI(){
+		URI uri = this.httpRequest != null ? this.httpRequest.getURI() : null;
+		return uri != null ? uri.toString() : "";
+	}
+	
+	/**
+	 * 获取指定的header值
+	 * @param name header名称
+	 * @param dft 缺省值
+	 * @return header值
+	 */
+	public String getHeader(String name,String dft){
+		Header header = this.httpRequest != null ? this.httpRequest.getFirstHeader(name) : null;
+		return header == null ? dft: header.getValue();
 	}
 	
 	@Override
@@ -155,7 +179,13 @@ public class HttpClientRequest implements Request{
 		String url = fullPath;
 		try {			
 			httpRequest.setURI(URI.create(url));
-			return new HttpClientResponse(httpClient.execute(httpRequest),encoding);			
+			
+			//request事件
+			client.onRequest(this);
+			HttpClientResponse response =  new HttpClientResponse(httpClient.execute(httpRequest),encoding);			
+			//response事件
+			client.onResponse(response);
+			return response;
 		}catch (SocketTimeoutException ex){
 			throw new CallException("core.socket_timeout",url, ex);
 		}catch (ConnectTimeoutException ex){

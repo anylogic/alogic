@@ -17,7 +17,7 @@ import com.anysoft.util.PropertiesConstants;
  * @version 1.6.8.1 [20170320 duanyy] <br>
  * - 修正switch语句没有break的bug <br>
  * 
- * @version 1.6.8.8 [20170417 duanyy] <br
+ * @version 1.6.8.8 [20170417 duanyy] <br>
  * - 修正AddMeasure处理double值的bug <br>
  * 
  * 

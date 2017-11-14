@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<script>
+	<using xmlTag="remote" module="com.alogic.remote.xscript.CreateRequest" />
+
+	<remote clientId="default" method="get">
+		<remote-url-builder id="callPath" base="https://10.142.233.119:9102/native/balance.query">
+			<param id="Destination-Id" value="14912140639"/>
+			<param id="Destination-Id-Type" value="2"/>
+			<param id="Destination-Attr" value="2"/>
+			<param id="AreaCode" value="025"/>
+			<param id="Query-Flag" value="2"/>
+			<param id="Mvno-Id" value="500000001"/>
+		</remote-url-builder>
+		
+		<log msg="start to call ${callPath}.."/>
+		
+		<remote-call-direct path="${callPath}">
+			<remote-as-text id="body" />
+			<log msg="Response text is ${body}" />
+		</remote-call-direct>
+		
+		<log msg="end.."/>
+	</remote>
+</script>

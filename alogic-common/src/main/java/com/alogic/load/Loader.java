@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -37,6 +38,10 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.10.6 [20171114 duanyy] <br>
+ * - 优化日志输出  <br>
+ * 
  */
 public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable,Reportable{
 	
@@ -143,6 +148,7 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 					}
 				}catch (Exception ex){
 					LOG.error("Can not create loader from element:" + XmlTools.node2String(elem));
+					LOG.error(ExceptionUtils.getStackTrace(ex));
 				}
 			}
 			

@@ -88,8 +88,8 @@ public class RSAUtil {
             PublicKey publicKey = keyPair.getPublic();  
             PrivateKey privateKey = keyPair.getPrivate();  
   
-            String publicKeyInBase64 = Base64.encodeBase64String(publicKey.getEncoded());
-            String privateKeyInBase64 = Base64.encodeBase64String(privateKey.getEncoded());
+            String publicKeyInBase64 = Base64.encodeBase64URLSafeString(publicKey.getEncoded());
+            String privateKeyInBase64 = Base64.encodeBase64URLSafeString(privateKey.getEncoded());
             
             return new Pair.Default<String, String>(publicKeyInBase64,privateKeyInBase64); // NOSONAR
         } catch (Exception ex) {  
@@ -107,7 +107,7 @@ public class RSAUtil {
     public static String encryptWithPublicKey(String data,String publicKey){
     	byte [] toEncrypt = data.getBytes();
     	byte [] result = encryptWithPublicKey(toEncrypt,0,toEncrypt.length,Base64.decodeBase64(publicKey));
-    	return result != null ? Base64.encodeBase64String(result) : data;
+    	return result != null ? Base64.encodeBase64URLSafeString(result) : data;
     }
     
     /**
@@ -144,7 +144,7 @@ public class RSAUtil {
     public static String encryptWithPrivateKey(String data,String privateKey){
     	byte [] toEncrypt = data.getBytes();
     	byte [] result = encryptWithPrivateKey(toEncrypt,0,toEncrypt.length,Base64.decodeBase64(privateKey));
-    	return result != null ? Base64.encodeBase64String(result) : data;
+    	return result != null ? Base64.encodeBase64URLSafeString(result) : data;
     }    
   
     /**
@@ -255,7 +255,7 @@ public class RSAUtil {
     public static String sign(String data,String privateKey){
     	byte [] toSign = data.getBytes();
     	byte [] result = sign(toSign,0,toSign.length,Base64.decodeBase64(privateKey));
-    	return result != null ? Base64.encodeBase64String(result) : null;
+    	return result != null ? Base64.encodeBase64URLSafeString(result) : null;
     }
     
     /**
@@ -353,7 +353,7 @@ public class RSAUtil {
     	System.out.println("the signature data is ");
     	System.out.println(sign);
     	
-    	boolean verify = verify(data + "aa",publicKey,sign);
+    	boolean verify = verify(data,publicKey,sign);
     	System.out.println(verify);
     }
 }  

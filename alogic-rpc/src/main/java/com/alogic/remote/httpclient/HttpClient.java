@@ -1,11 +1,5 @@
 package com.alogic.remote.httpclient;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -16,19 +10,17 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
-import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
+import org.w3c.dom.Element;
 
 import com.alogic.remote.AbstractClient;
 import com.alogic.remote.Request;
+import com.alogic.remote.httpclient.customizer.Default;
+import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.XmlTools;
 
 /**
  * 基于apache http client实现的Client
@@ -40,8 +32,10 @@ import com.anysoft.util.PropertiesConstants;
  * - 优化http远程调用的超时机制 <br>
  * 
  * @version 1.6.10.3 [20171009 duanyy] <br>
- * - 增加PUT,GET,DELETE,HEAD,OPTIONS,TRACE,PATCH等http方法;
+ * - 增加PUT,GET,DELETE,HEAD,OPTIONS,TRACE,PATCH等http方法; <br>
  * 
+ * @version 1.6.10.6 [20171114 duanyy] <br>
+ * - 增加Http调用请求级别的Filter和Client级别的Customizer <br>
  */
 public class HttpClient extends AbstractClient{
 	/**
@@ -57,6 +51,10 @@ public class HttpClient extends AbstractClient{
 	protected String encoding = "utf-8";
 	
 	protected int autoRetryCnt = 2;
+	
+	protected HttpCientFilter filter = null;
+	
+	protected HttpClientCustomizer customizer = null;
 	
 	/**
 	 * Http method
@@ -89,50 +87,44 @@ public class HttpClient extends AbstractClient{
 	};
 	
 	@Override
+	protected void onConfigure(Element e,Properties p){
+		//装入filter配置
+		Element filterElem = XmlTools.getFirstElementByPath(e, "filter");
+		if (filterElem != null){
+			Factory<HttpCientFilter> factory = new Factory<HttpCientFilter>();
+			try {
+				filter = factory.newInstance(filterElem, p, "module");
+			}catch (Exception ex){
+				LOG.error(String.format("Can not create filter with %s", XmlTools.node2String(filterElem)));
+			}
+		}	
+		
+		Element customizerElem = XmlTools.getFirstElementByPath(e, "customizer");
+		if (customizerElem != null){
+			Factory<HttpClientCustomizer> factory = new Factory<HttpClientCustomizer>();
+			try {
+				customizer = factory.newInstance(customizerElem, p, "module");
+			}catch (Exception ex){
+				LOG.error(String.format("Can not create customizer with %s", XmlTools.node2String(customizerElem)));
+			}
+		}
+		configure(p);
+	}
+	
+	@Override
 	public void configure(Properties p) {
 		super.configure(p);
 		
 		encoding = PropertiesConstants.getString(p,"http.encoding",encoding);
 		autoRetryCnt = PropertiesConstants.getInt(p, "rpc.ketty.autoRetryTimes", autoRetryCnt);
 		
-		final long keepAliveTime = PropertiesConstants.getInt(p,"rpc.http.keepAlive.ttl",60000);
-		ConnectionKeepAliveStrategy kaStrategy = new DefaultConnectionKeepAliveStrategy() {
-		    @Override
-		    public long getKeepAliveDuration(final HttpResponse response, final HttpContext context) {
-		    	long keepAlive = super.getKeepAliveDuration(response, context);
-				if (keepAlive == -1) {
-					keepAlive = keepAliveTime;
-				}
-				return keepAlive;
-		    }
-		};
-		
-		List<Header> headers = new ArrayList<Header>();
-		boolean keepAliveEnable = PropertiesConstants.getBoolean(p,"rpc.http.keepAlive.enable", true);
-		if (keepAliveEnable){
-			headers.add(new BasicHeader("Connection",HTTP.CONN_KEEP_ALIVE));
-		}else{
-			headers.add(new BasicHeader("Connection",HTTP.CONN_CLOSE));
+		if (customizer == null){
+			customizer = new Default();
+			customizer.configure(p);
 		}
 		
-		int maxConnPerRoute = PropertiesConstants.getInt(p, "rpc.http.maxConnPerHost", 200);
-		int maxConn = PropertiesConstants.getInt(p,"rpc.http.maxConn",2000);
-		int ttlOfConn = PropertiesConstants.getInt(p,"rpc.http.keepalive.ttl",60000);
-		
-		httpClient = HttpClients.custom().
-				useSystemProperties().
-				setMaxConnPerRoute(maxConnPerRoute).
-				setConnectionReuseStrategy(DefaultClientConnectionReuseStrategy.INSTANCE).
-				setMaxConnTotal(maxConn).
-				setDefaultHeaders(headers).
-				setConnectionTimeToLive(ttlOfConn,TimeUnit.MILLISECONDS).
-				setKeepAliveStrategy(kaStrategy).build();
-		
-		int timeOut = PropertiesConstants.getInt(p, "rpc.http.timeout", 10000);
-		requestConfig = RequestConfig.custom().
-				setConnectionRequestTimeout(PropertiesConstants.getInt(p, "rpc.http.timeout.request", timeOut))
-                .setConnectTimeout(PropertiesConstants.getInt(p, "rpc.http.timeout.conn", timeOut))
-                .setSocketTimeout(PropertiesConstants.getInt(p, "rpc.http.timeout.socket", timeOut)).build();
+		httpClient = customizer.customizeHttpClient(HttpClients.custom(), p).build();
+		requestConfig = customizer.customizeRequestConfig(RequestConfig.custom(), p).build();
 	}
 	
 	@Override
@@ -148,5 +140,17 @@ public class HttpClient extends AbstractClient{
 	public HttpRequestBase getRequestByMethod(final String method){
 		Method m = Method.valueOf(method.toUpperCase());
 		return m.createRequest();
+	}
+	
+	public  void onRequest(HttpClientRequest request){
+		if (filter != null){
+			filter.onRequest(request);
+		}
+	}
+	
+	public void onResponse(HttpClientResponse response){
+		if (filter != null){
+			filter.onResponse(response);
+		}
 	}
 }

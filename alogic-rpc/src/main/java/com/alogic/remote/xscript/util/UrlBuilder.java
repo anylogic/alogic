@@ -25,6 +25,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @author yyduan
  * @since 1.6.10.3
+ * 
+ * @version 1.6.10.6 [20171114 duanyy] <br>
+ * - 修正无参数时的拼接问题 <br>
  */
 public class UrlBuilder extends AbstractLogiclet{
 	/**
@@ -83,25 +86,27 @@ public class UrlBuilder extends AbstractLogiclet{
 		if (StringUtils.isNotEmpty(id)){
 			StringBuffer buffer = new StringBuffer(ctx.transform(base));
 			
-			buffer.append("?");
-			
-			boolean first = true;
-			for (Pair<String,String> p:paraData){
-				String id = p.key();
-				String value = ctx.transform(p.value());
-				if (StringUtils.isNotEmpty(value)){
-					try {
-						if (!first){
-							buffer.append("&");
-						}
-						String encodeValue = URLEncoder.encode(value, encoding);
-						buffer.append(id).append("=").append(encodeValue);
-						first = false;
-					} catch (UnsupportedEncodingException e) {
-						log(String.format("Encoding %s is not supported", encoding));
-					}				
+			if (!paraData.isEmpty()){
+				buffer.append("?");
+				
+				boolean first = true;
+				for (Pair<String,String> p:paraData){
+					String id = p.key();
+					String value = ctx.transform(p.value());
+					if (StringUtils.isNotEmpty(value)){
+						try {
+							if (!first){
+								buffer.append("&");
+							}
+							String encodeValue = URLEncoder.encode(value, encoding);
+							buffer.append(id).append("=").append(encodeValue);
+							first = false;
+						} catch (UnsupportedEncodingException e) {
+							log(String.format("Encoding %s is not supported", encoding));
+						}				
+					}
 				}
-			}			
+			}
 			ctx.SetValue(id, buffer.toString());
 		}
 	}
