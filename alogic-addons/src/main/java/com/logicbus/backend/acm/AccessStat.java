@@ -9,6 +9,9 @@ package com.logicbus.backend.acm;
  * @author duanyy
  *
  * @since 1.2.3
+ * 
+ * @version 1.6.10.7 [20171115 duanyy] <br>
+ * - AccessStat中增加被Denied的统计信息 <br>
  */
 public class AccessStat {
 	/**
@@ -19,6 +22,17 @@ public class AccessStat {
 	 * 最近一分钟调用次数
 	 */
 	protected int timesOneMin = 0;
+	
+	/**
+	 * 被拒绝的总次数
+	 */
+	public long deniedTotal = 0;
+	
+	/**
+	 * 最近一分钟被拒绝的总次数
+	 */
+	public long deniedOneMin = 0;		
+	
 	/**
 	 * 当前接入进程个数
 	 */

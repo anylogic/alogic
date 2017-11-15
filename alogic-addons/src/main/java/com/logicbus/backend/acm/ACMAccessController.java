@@ -60,6 +60,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.8.3 [20170328 duanyy] <br>
  * - 访问控制对象取SessionId <br>
+ * 
+ * @version 1.6.10.7 [20171115 duanyy] <br>
+ * - AccessStat中增加被Denied的统计信息 <br>
  */
 public abstract class ACMAccessController implements AccessController {
 	/**
@@ -176,17 +179,26 @@ public abstract class ACMAccessController implements AccessController {
 			current.timesTotal ++;
 			current.thread ++;
 			current.waitCnt = lock.getQueueLength();
+			
+			int priority = acm.getPriority(ctx.getClientIp(), serviceId.getPath(), current);
+			if (priority < 0){
+				current.deniedTotal ++;
+			}
+			
 			long timestamp = System.currentTimeMillis();
 			timestamp = (timestamp / 60000)*60000;
 			if (timestamp != current.timestamp){
 				//新的周期
 				current.timesOneMin = 1;
+				current.deniedOneMin = priority < 0 ? 1 : 0;				
 				current.timestamp = timestamp;
 			}else{
 				current.timesOneMin ++;
+				if (priority < 0){
+					current.deniedOneMin ++;
+				}
 			}
-			
-			return acm.getPriority(ctx.getClientIp(), serviceId.getPath(), current);
+			return priority;
 		}finally{
 			lock.unlock();
 		}
@@ -235,6 +247,8 @@ public abstract class ACMAccessController implements AccessController {
 						eAcl.setAttribute("timesTotal", String.valueOf(value.timesTotal));
 						eAcl.setAttribute("timesOneMin",String.valueOf(value.timesOneMin));
 						eAcl.setAttribute("waitCnt", String.valueOf(value.waitCnt));
+						eAcl.setAttribute("deniedTotal", String.valueOf(value.deniedTotal));
+						eAcl.setAttribute("deniedOneMin", String.valueOf(value.deniedOneMin));
 						
 						root.appendChild(eAcl);						
 					}
@@ -276,6 +290,8 @@ public abstract class ACMAccessController implements AccessController {
 							mAcl.put("timesTotal", String.valueOf(value.timesTotal));
 							mAcl.put("timesOneMin",String.valueOf(value.timesOneMin));
 							mAcl.put("waitCnt", String.valueOf(value.waitCnt));
+							mAcl.put("deniedTotal", String.valueOf(value.deniedTotal));
+							mAcl.put("deniedOneMin", String.valueOf(value.deniedOneMin));
 							
 							acls.add(mAcl);							
 						}
@@ -306,10 +322,12 @@ public abstract class ACMAccessController implements AccessController {
 				}
 				Measures meas = f.getMeasures();
 				if (meas != null){
-					meas.set("thread", value.thread, Method.avg);
-					meas.set("timesTotal", value.timesTotal,Method.avg);
-					meas.set("timesOneMin", value.timesOneMin,Method.avg);
-					meas.set("waitCnt", value.waitCnt,Method.avg);
+					meas.set("thread", value.thread, Method.lst);
+					meas.set("timesTotal", value.timesTotal,Method.lst);
+					meas.set("timesOneMin", value.timesOneMin,Method.lst);
+					meas.set("waitCnt", value.waitCnt,Method.lst);
+					meas.set("deniedTotal", value.deniedTotal,Method.lst);
+					meas.set("deniedOneMin", value.deniedOneMin,Method.lst);
 				}
 				
 				collector.metricsIncr(f);

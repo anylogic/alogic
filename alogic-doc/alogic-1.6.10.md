@@ -40,3 +40,6 @@ alogic-1.6.10
 - alogic-rpc:增加Http调用请求级别的Filter和Client级别的Customizer，并增加多种插件;
 - algoic-vfs:vfs比较和同步增加路径的白名单和黑名单功能;
 - alogic-zk:Zookeeper版本由3.4.6升级到3.4.10;
+
+### 1.6.10.7 [20171115 duanyy]
+- alogic-addons:优化ACM模型，在ACM统计中增加denied的服务调用个数的字段;
