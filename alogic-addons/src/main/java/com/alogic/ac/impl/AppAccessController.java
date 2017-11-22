@@ -89,7 +89,7 @@ public class AppAccessController extends ACMAccessController{
 			}
 			
 			if (StringUtils.isEmpty(appKey)){
-				throw new BaseException("client.permission_denied",String.format("Can not find argument %s.",appKeyId));
+				return getClientIp(ctx);
 			}
 			
 			AccessAppKey keyInfo = findAppKeyInfo(appKey);

@@ -3,14 +3,15 @@ package com.logicbus.redis.context;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.w3c.dom.Element;
 
 import com.alogic.pool.impl.Queued;
+import com.alogic.sda.SDAFactory;
+import com.alogic.sda.SecretDataArea;
 import com.anysoft.util.BaseException;
-import com.anysoft.util.Confirmer;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-import com.anysoft.util.Settings;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.code.Coder;
 import com.anysoft.util.code.CoderFactory;
@@ -28,6 +29,9 @@ import com.logicbus.redis.util.RedisException;
  * 
  * @version 1.6.10.4 [20171017 duanyy] <br>
  * - 优化密码取值功能 <br>
+ * 
+ * @version 1.6.10.8 [20171122 duanyy] <br>
+ * - 支持用户名密码等信息实时从SDA获取 <br>
  */
 public class RedisPool extends Queued{
 
@@ -66,20 +70,7 @@ public class RedisPool extends Queued{
 	 */
 	protected int timeout = 30000;
 	
-	/**
-	 * 数据确认类的类名
-	 */
-	protected String callback = "";
-	
-	/**
-	 * 数据确认ID
-	 */
-	protected String callbackId = "";
-	
-	/**
-	 * 数据确认者
-	 */
-	protected Confirmer confirmer = null;
+	protected String sdaId = "";
 	
 	/**
 	 * 加密的coder
@@ -127,20 +118,25 @@ public class RedisPool extends Queued{
 	protected <pooled> pooled createObject(){
 		Client instance = null;
 		try {
-			ClassLoader cl = Settings.getClassLoader();
-			if (confirmer == null){
-				if (StringUtils.isNotEmpty(callbackId) 
-						&& StringUtils.isNotEmpty(callback)){
-					try {
-						confirmer = (Confirmer)cl.loadClass(callback).newInstance();
-						confirmer.prepare(callbackId);
-					}catch (Exception ex){
-						
-					}
+			SecretDataArea sda = null;
+			if (StringUtils.isNotEmpty(sdaId)){
+				//从sda中装入信息
+				try {
+					sda = SDAFactory.getDefault().load(sdaId, true);
+				}catch (Exception ex){
+					logger.error("Can not find sda : " + sdaId);
+					logger.error(ExceptionUtils.getStackTrace(ex));
 				}
-			}	
+			}
 			
-			if (confirmer == null){
+			if (sda != null){
+				String pwd = sda.getField("password", password);
+				String ip = sda.getField("ip", host);
+				int p = sda.getField("port", port);
+				int index = sda.getField("db", db);
+				instance =  new Client(ip,p,pwd,index);
+				instance.register(this);
+			}else{
 				String pwd = password;
 				if (StringUtils.isNotEmpty(coder)){
 					//通过coder进行密码解密
@@ -151,10 +147,6 @@ public class RedisPool extends Queued{
 						logger.error("Can not find coder:" + coder);
 					}
 				}
-				instance =  new Client(host,port,pwd,db);
-				instance.register(this);
-			}else{
-				String pwd = confirmer.confirm("password", password);
 				instance =  new Client(host,port,pwd,db);
 				instance.register(this);
 			}
@@ -174,8 +166,7 @@ public class RedisPool extends Queued{
 		password = PropertiesConstants.getString(p,"password","",true);
 		username = PropertiesConstants.getString(p,"username",username,true);
 		coder = PropertiesConstants.getString(p,"coder",coder,true);
-		callback = PropertiesConstants.getString(p,"callback",callback);
-		callbackId = PropertiesConstants.getString(p,"callbackId",callbackId);
+		sdaId = PropertiesConstants.getString(p,"sda", sdaId);
 		db = PropertiesConstants.getInt(p, "defaultDB", db,true);
 		
 		timeout = PropertiesConstants.getInt(p,"timeout", timeout);

@@ -216,26 +216,27 @@ abstract public class Properties implements DataProvider{
 				Element e = (Element)node;
 				String id = XmlTools.getString(e,"id","");
 				String value = XmlTools.getString(e,"value","");
-				if (StringUtils.isEmpty(id) || StringUtils.isEmpty(value)){
+				if (StringUtils.isEmpty(id)){
 					continue;
 				}
 				
-				boolean fromEnv = XmlTools.getBoolean(e, "fromEnv", false);
-				if (fromEnv){
-					value = System.getenv(value);
-					if (StringUtils.isEmpty(value)){
-						value = XmlTools.getString(e, "dft", "");
-					}
-				}else{
-					boolean fromProperties = XmlTools.getBoolean(e, "fromProperties", false);
-					if (fromProperties){
-						value = System.getProperty(value);
+				if (StringUtils.isNotEmpty(value)){
+					boolean fromEnv = XmlTools.getBoolean(e, "fromEnv", false);
+					if (fromEnv){
+						value = System.getenv(value);
 						if (StringUtils.isEmpty(value)){
 							value = XmlTools.getString(e, "dft", "");
 						}
+					}else{
+						boolean fromProperties = XmlTools.getBoolean(e, "fromProperties", false);
+						if (fromProperties){
+							value = System.getProperty(value);
+							if (StringUtils.isEmpty(value)){
+								value = XmlTools.getString(e, "dft", "");
+							}
+						}
 					}
 				}
-				
 				//支持final标示,如果final为true,则不覆盖原有的取值
 				boolean isFinal = XmlTools.getBoolean(e, "final", false);
 				if (isFinal){

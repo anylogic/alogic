@@ -24,8 +24,8 @@
 			</cluster>
 			<filter 
 				module="com.alogic.remote.httpclient.filter.Signature" 
-				key="150993816000311897" 
-				content="FU6F05lu0ZNwfgVJvYJufWg5FwHtfGh9ImaiB5nO76c"
+				key="150993774063149632" 
+				keyContent="OyCVzeZt-pL-00d3EvpU0KkU_DAMDgA21DePc9JwQBY"
 			/>
 			<customizer module="com.alogic.remote.httpclient.customizer.Hub">
 				<sink module="com.alogic.remote.httpclient.customizer.Default"/>

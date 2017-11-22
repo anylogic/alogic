@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -14,8 +16,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.alogic.sda.SDAFactory;
+import com.alogic.sda.SecretDataArea;
 import com.anysoft.cache.Cacheable;
-import com.anysoft.util.Confirmer;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
@@ -45,6 +48,10 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.10.8 [20171122 duanyy] <br>
+ * - 支持用户名密码等信息实时从SDA获取 <br>
+ * 
  */
 public class ConnectionModel implements Cacheable{
 	/**
@@ -157,26 +164,16 @@ public class ConnectionModel implements Cacheable{
 	protected int maxWait = 5000;
 	
 	/**
+	 * sda id
+	 */
+	protected String sdaId = "";
+	
+	/**
 	 * 获取最大等待时间
 	 * @return 最大等待时间
 	 */
 	public int getMaxWait(){return maxWait;}
 	
-	/**
-	 * 数据确认ID
-	 */
-	protected String callbackId = "";
-	
-	/**
-	 * 数据确认类的类名
-	 */
-	protected String callback = "";
-	
-	/**
-	 * 数据确认者
-	 */
-	protected Confirmer confirmer = null;
-
 	protected List<ReadOnlySource> readonlys = null; 
 	
 	public List<ReadOnlySource> getReadOnlySources(){return readonlys;}
@@ -191,8 +188,7 @@ public class ConnectionModel implements Cacheable{
 		e.setAttribute("maxIdle", String.valueOf(maxIdle));
 		e.setAttribute("maxWait", String.valueOf(maxWait));
 		e.setAttribute("timeout", String.valueOf(timeout));
-		e.setAttribute("callbackId", callbackId);
-		e.setAttribute("callback", callback);
+		e.setAttribute("sda", sdaId);
 		
 		//readonlys
 		if (readonlys != null && readonlys.size() > 0){
@@ -220,8 +216,7 @@ public class ConnectionModel implements Cacheable{
 		JsonTools.setInt(json, "maxIdle", maxIdle);
 		JsonTools.setInt(json, "maxWait", maxWait);
 		JsonTools.setLong(json, "timeout", timeout);
-		JsonTools.setString(json, "callbackId", callbackId);
-		JsonTools.setString(json, "callback", callback);
+		JsonTools.setString(json, "sda", sdaId);
 		
 		//readonlys
 		if (readonlys != null && readonlys.size() > 0){
@@ -257,8 +252,7 @@ public class ConnectionModel implements Cacheable{
 		maxIdle = PropertiesConstants.getInt(props, "maxIdle",1);
 		maxWait = PropertiesConstants.getInt(props, "maxWait",5000);
 		timeout = PropertiesConstants.getLong(props, "timeout",timeout);
-		callbackId = PropertiesConstants.getString(props, "callbackId", "");
-		callback = PropertiesConstants.getString(props, "callback", "");
+		sdaId = PropertiesConstants.getString(props, "sda", sdaId);
 		
 		NodeList _readonlys = XmlTools.getNodeListByPath(e, "ross/ros");
 		if (_readonlys != null && _readonlys.getLength() > 0){
@@ -295,8 +289,7 @@ public class ConnectionModel implements Cacheable{
 		maxIdle = JsonTools.getInt(json, "maxIdle",1);
 		maxWait = JsonTools.getInt(json, "maxWait",5000);
 		timeout = JsonTools.getLong(json, "timeout", timeout);
-		callbackId = JsonTools.getString(json, "callbackId", callbackId);
-		callback = JsonTools.getString(json, "callback", callback);
+		sdaId = JsonTools.getString(json, "sda", sdaId);
 		
 		Object _readonlys = json.get("ross");
 		if (_readonlys != null && _readonlys instanceof List){
@@ -337,21 +330,28 @@ public class ConnectionModel implements Cacheable{
 		Connection conn = null;
 		try {
 			ClassLoader cl = Settings.getClassLoader();
-			if (confirmer == null){
-				if (callbackId != null && callbackId.length() > 0 
-						&& callback != null && callback.length() > 0){
-					try {
-						confirmer = (Confirmer)cl.loadClass(callback).newInstance();
-						confirmer.prepare(callbackId);
-					}catch (Exception ex){
-						
-					}
+			SecretDataArea sda = null;
+			if (StringUtils.isNotEmpty(sdaId)){
+				//从sda中装入信息
+				try {
+					sda = SDAFactory.getDefault().load(sdaId, true);
+				}catch (Exception ex){
+					logger.error("Can not find sda : " + sdaId);
+					logger.error(ExceptionUtils.getStackTrace(ex));
 				}
-			}			
-			if (confirmer == null){
-				Class.forName(driver, true, cl);
+			}
+			
+			if (sda != null){
+				String _driver = sda.getField("driver", driver);
+				String _url = sda.getField("url", url);
+				String _username = sda.getField("username", username);
+				String _password = sda.getField("password", password);
+				
+				Class.forName(_driver,true,cl);
+				conn = DriverManager.getConnection(_url, _username,_password);
+			}else{
 				String _password = password;
-				if (coder != null && coder.length() > 0){
+				if (StringUtils.isNotEmpty(coder)){
 					//通过coder进行密码解密
 					try {
 						Coder _coder = CoderFactory.newCoder(coder);
@@ -359,16 +359,9 @@ public class ConnectionModel implements Cacheable{
 					}catch (Exception ex){
 						logger.error("Can not find coder:" + coder);
 					}
-				}
-				conn = DriverManager.getConnection(url, username, _password);
-			}else{
-				String _driver = confirmer.confirm("driver", driver);
-				String _url = confirmer.confirm("url", url);
-				String _username = confirmer.confirm("username", username);
-				String _password = confirmer.confirm("password", password);
-				
-				Class.forName(_driver,true,cl);
-				conn = DriverManager.getConnection(_url, _username,_password);
+				}				
+				Class.forName(driver, true, cl);
+				conn = DriverManager.getConnection(url, username, _password);				
 			}
 		}catch (Exception ex){
 			logger.error("Can not create a connection to " + url,ex);

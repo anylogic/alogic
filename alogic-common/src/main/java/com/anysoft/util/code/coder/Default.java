@@ -1,5 +1,6 @@
 package com.anysoft.util.code.coder;
 
+import com.anysoft.util.KeyGen;
 import com.anysoft.util.code.Coder;
 
 
@@ -27,6 +28,6 @@ public class Default implements Coder {
 
 	
 	public String createKey(){
-		return "";
+		return KeyGen.getKey(8);
 	}	
 }

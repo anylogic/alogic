@@ -203,7 +203,12 @@ public class HttpClientRequest implements Request{
 		String url = client.getInvokeURL(backend, path);
 		try {			
 			httpRequest.setURI(URI.create(url));
-			return new HttpClientResponse(httpClient.execute(httpRequest),encoding);			
+			//request事件
+			client.onRequest(this);
+			HttpClientResponse response = new HttpClientResponse(httpClient.execute(httpRequest),encoding);	
+			//response事件
+			client.onResponse(response);			
+			return response;
 		}catch (SocketTimeoutException ex){
 			throw new CallException("core.socket_timeout",url, ex);
 		}catch (ConnectTimeoutException ex){

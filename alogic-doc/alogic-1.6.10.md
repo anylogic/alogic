@@ -43,3 +43,11 @@ alogic-1.6.10
 
 ### 1.6.10.7 [20171115 duanyy]
 - alogic-addons:优化ACM模型，在ACM统计中增加denied的服务调用个数的字段;
+
+### 1.6.10.8 [20171119 duanyy]
+- alogic-common:Properties在装入xml文件时，支持设置空字符串(字符串长度为0);
+- alogic-common:增加SDA加载框架，用于加载私密配置数据;
+- alogic-dbcp:支持实时从SDA中获取数据;
+- alogic-kvalue:支持实时从SDA中获取数据;
+- alogic-rpc:支持实时从SDA中获取数据;
+- alogic-common:淘汰Reload框架;

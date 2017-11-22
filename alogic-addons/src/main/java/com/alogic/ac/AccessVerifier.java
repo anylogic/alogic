@@ -60,6 +60,11 @@ public interface AccessVerifier extends Loadable,XmlSerializer,JsonSerializer,XM
 		}
 
 		@Override
+		public long getTimestamp(){
+			return System.currentTimeMillis();
+		}
+		
+		@Override
 		public void report(Element xml) {
 			if (xml != null){
 				XmlTools.setString(xml,"module",this.getClass().getName());

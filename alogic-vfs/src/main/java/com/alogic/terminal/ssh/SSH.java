@@ -13,7 +13,6 @@ import com.alogic.terminal.Command;
 import com.alogic.terminal.Resolver;
 import com.alogic.terminal.Terminal;
 import com.anysoft.util.BaseException;
-import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;

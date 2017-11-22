@@ -124,6 +124,11 @@ public interface AccessControlModel extends Loadable,XmlSerializer,JsonSerialize
 		public String getId() {
 			return id;
 		}
+		
+		@Override
+		public long getTimestamp(){
+			return timestamp;
+		}
 	
 		public int getMaxThread(){
 			return maxThread;

@@ -18,6 +18,7 @@ import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.doc.json.JsonObject;
 import com.anysoft.stream.Handler;
 import com.anysoft.util.DefaultProperties;
+import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
@@ -151,7 +152,7 @@ public class LogicBusApp implements WebApp {
 	public void init(DefaultProperties props,ServletContext sc) {
 		Settings settings = Settings.get();
 		settings.addSettings(props);
-		
+				
 		// 初始化一些object		
 		ClassLoader classLoader = (ClassLoader) sc.getAttribute("classLoader");
 		if (classLoader == null){

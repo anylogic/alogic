@@ -17,6 +17,12 @@ public interface Loadable extends Reportable{
 	public String getId();
 	
 	/**
+	 * 获取对象的时间戳
+	 * @return 时间戳
+	 */
+	public long getTimestamp();
+	
+	/**
 	 * 是否已经过期
 	 * @return true if expired, or not return false
 	 */

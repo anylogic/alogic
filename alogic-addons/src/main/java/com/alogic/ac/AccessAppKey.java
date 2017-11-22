@@ -72,6 +72,11 @@ public interface AccessAppKey extends Loadable,XmlSerializer,JsonSerializer,XMLC
 		}
 		
 		@Override
+		public long getTimestamp(){
+			return timestamp;
+		}
+		
+		@Override
 		public String getAppId(){
 			return appId;
 		}
