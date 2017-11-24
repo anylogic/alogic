@@ -21,6 +21,9 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.10.8 [20171122 duanyy] <br>
  * - 支持实时从SDA获取信息 <br>
+ * 
+ * @version 1.6.10.9 [20171124 duanyy] <br>
+ * - Signature和RSA验证的签名文本中的URL更改为URI; <br>
  */
 public class Signature extends HttpCientFilter.Abstract{
 	/**
@@ -67,13 +70,17 @@ public class Signature extends HttpCientFilter.Abstract{
 		String now = String.valueOf(System.currentTimeMillis());
 		
 		String payload = request.getHeader(payloadId, "");
-		String uri = request.getURI();
+		String uriPath = request.getPathInfo();
+		String queryInfo = request.getQueryInfo();
+		if (StringUtils.isNotEmpty(queryInfo)){
+			uriPath += "?" + queryInfo;
+		}
 		
 		StringBuffer toSign = new StringBuffer();
 		
 		toSign.append(theKeyId).append("\n");
 		toSign.append(now).append("\n");
-		toSign.append(uri);
+		toSign.append(uriPath);
 		if (StringUtils.isNotEmpty(payload)){
 			toSign.append("\n").append(payload);
 		}

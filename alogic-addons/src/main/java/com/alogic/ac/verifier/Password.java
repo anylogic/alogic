@@ -17,6 +17,8 @@ import com.logicbus.backend.Context;
  * @author yyduan
  * @since 1.6.10.6
  * 
+ * @version 1.6.10.9 [20171124 duanyy] <br>
+ * - 请求生存周期ttl可以通过参数ttl进行配置 <br>
  */
 public class Password extends AccessVerifier.Abstract{
 	protected Coder des3Coder = null;
@@ -30,9 +32,9 @@ public class Password extends AccessVerifier.Abstract{
 		super.configure(p);
 		des3Coder = CoderFactory.newCoder("DES3");
 		md5Coder = CoderFactory.newCoder("MD5");
-		
 		timestampId = PropertiesConstants.getString(p,"timestampId", timestampId);		
 		pwdId = PropertiesConstants.getString(p,"pwdId",pwdId);
+		ttl = PropertiesConstants.getLong(p, "ttl", ttl);
 	}
 
 	@Override

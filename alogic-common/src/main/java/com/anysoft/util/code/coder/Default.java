@@ -16,18 +16,23 @@ import com.anysoft.util.code.Coder;
  */
 public class Default implements Coder {
 
-	
+	@Override
 	public String encode(String data,String key) {
 		return data;
 	}
 
-	
+	@Override
 	public String decode(String data,String key) {
 		return data;
 	}
 
-	
+	@Override
 	public String createKey(){
 		return KeyGen.getKey(8);
 	}	
+	
+	@Override
+	public String createKey(String init){
+		return init;
+	}
 }

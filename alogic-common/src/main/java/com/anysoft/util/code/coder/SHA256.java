@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Base64;
+
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.code.Coder;
 
@@ -20,6 +21,7 @@ public class SHA256 implements Coder {
 		return "sha-256";
 	}
 	
+	@Override
 	public String encode(String data, String key) {
 		try {
 			MessageDigest m = MessageDigest.getInstance(getAlgorithm());
@@ -32,14 +34,18 @@ public class SHA256 implements Coder {
 		}
 	}
 
-	
+	@Override
 	public String decode(String data, String key) {
 		return data;
 	}
 
-	
+	@Override
 	public String createKey() {
 		return KeyGen.getKey(8);
 	}
 
+	@Override
+	public String createKey(String init){
+		return init;
+	}
 }

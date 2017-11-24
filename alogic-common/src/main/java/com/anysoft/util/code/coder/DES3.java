@@ -72,6 +72,11 @@ public class DES3 implements Coder {
 		return KeyGen.getKey(24);
 	}	
 	
+	@Override
+	public String createKey(String init){
+		return init;
+	}
+	
 	protected String padding(String key){
 		if (key.length() > 24){
 			return key.substring(0,23);

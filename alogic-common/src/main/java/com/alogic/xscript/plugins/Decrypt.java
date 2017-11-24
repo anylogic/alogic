@@ -51,7 +51,7 @@ public class Decrypt extends AbstractLogiclet{
 			String outData = coder.decode(inData, keyData);
 			String outId = ctx.transform(out);
 			if (StringUtils.isNotEmpty(outData) && StringUtils.isNotEmpty(outId)){
-				ctx.SetValue(out, outData);
+				ctx.SetValue(outId, outData);
 			}
 		}
 		

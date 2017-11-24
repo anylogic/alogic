@@ -20,7 +20,7 @@ public class MD5 implements Coder {
 	public String getAlgorithm() {
 		return "md5";
 	}
-	
+	@Override
 	public String encode(String data, String key) {
 		try {
 			MessageDigest m = MessageDigest.getInstance(getAlgorithm());
@@ -33,13 +33,18 @@ public class MD5 implements Coder {
 		}
 	}
 
-	
+	@Override
 	public String decode(String data, String key) {
 		return data;
 	}
 
-	
+	@Override
 	public String createKey() {
 		return KeyGen.getKey(8);
+	}
+	
+	@Override
+	public String createKey(String key){
+		return key;
 	}
 }

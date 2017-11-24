@@ -24,7 +24,7 @@ public class AES implements Coder {
 		return "AES";
 	}
 	
-	
+	@Override
 	public String encode(String data,String key) {
 		try {
 			String algorithm = getAlgorithm();
@@ -42,7 +42,7 @@ public class AES implements Coder {
 		}
 	}
 
-	
+	@Override
 	public String decode(String data,String key) {
 		try {
 			byte [] result = Base64.decodeBase64(data.getBytes());
@@ -59,9 +59,14 @@ public class AES implements Coder {
 			return data;
 		}
 	}
-	
-	
+
+	@Override
 	public String createKey(){
 		return KeyGen.getKey(8);
+	}
+	
+	@Override
+	public String createKey(String init){
+		return init;
 	}
 }

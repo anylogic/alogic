@@ -56,6 +56,7 @@ public class HmacSHA256 implements Coder {
 		} 
 	}
 	
+	@Override
 	public String createKey(String key){
 		return createKey();
 	}

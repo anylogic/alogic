@@ -14,6 +14,7 @@ import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class RSAUtil {
   
             return new Pair.Default<byte[], byte[]>(publicKey.getEncoded(),privateKey.getEncoded()); // NOSONAR
         } catch (Exception ex) {  
-        	LOG.error(ex.getMessage());
+        	LOG.error(ExceptionUtils.getStackTrace(ex));
             return null;
         }  
     }
@@ -93,7 +94,7 @@ public class RSAUtil {
             
             return new Pair.Default<String, String>(publicKeyInBase64,privateKeyInBase64); // NOSONAR
         } catch (Exception ex) {  
-        	LOG.error(ex.getMessage());
+        	LOG.error(ExceptionUtils.getStackTrace(ex));
             return null;
         }  
     }    
@@ -129,7 +130,7 @@ public class RSAUtil {
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);  
             encryptedData = cipher.doFinal(data, offset, length);  
         } catch (Exception ex) {  
-        	LOG.error(ex.getMessage());
+        	LOG.error(ExceptionUtils.getStackTrace(ex));
         }  
   
         return encryptedData;  
@@ -166,7 +167,7 @@ public class RSAUtil {
             cipher.init(Cipher.ENCRYPT_MODE, privateKey);  
             encryptedData = cipher.doFinal(data, offset, length);  
         } catch (Exception ex) { 
-        	LOG.error(ex.getMessage());
+        	LOG.error(ExceptionUtils.getStackTrace(ex));
         }  
   
         return encryptedData;  
@@ -203,7 +204,7 @@ public class RSAUtil {
             cipher.init(Cipher.DECRYPT_MODE, publicKey);  
             encryptedData = cipher.doFinal(data, offset, length);  
         } catch (Exception ex) {  
-        	LOG.error(ex.getMessage());
+        	LOG.error(ExceptionUtils.getStackTrace(ex));
         }  
   
         return encryptedData;  
@@ -240,7 +241,7 @@ public class RSAUtil {
             cipher.init(Cipher.DECRYPT_MODE, privateKey);  
             encryptedData = cipher.doFinal(data, offset, length);  
         } catch (Exception ex) {
-        	LOG.error(ex.getMessage());
+        	LOG.error(ExceptionUtils.getStackTrace(ex));
         }  
   
         return encryptedData;  
@@ -277,7 +278,7 @@ public class RSAUtil {
             signature.update(data, offset, length);
             signedData = signature.sign();  
         } catch (Exception ex) {
-        	LOG.error(ex.getMessage());
+        	LOG.error(ExceptionUtils.getStackTrace(ex));
         }  
   
         return signedData;  
@@ -315,7 +316,7 @@ public class RSAUtil {
             signature.update(data, offset, length);  
             result = signature.verify(dataSignature);  
         } catch (Exception ex) {
-        	LOG.error(ex.getMessage());
+        	LOG.error(ExceptionUtils.getStackTrace(ex));
         }  
   
         return result;  

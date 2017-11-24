@@ -14,6 +14,9 @@ import com.logicbus.backend.Context;
  * 基于RSA的签名验证
  * @author yyduan
  * @since 1.6.10.6
+ * 
+ * @version 1.6.10.9 [20171124 duanyy] <br>
+ * - 签名文本中URL改为URI <br>
  */
 public class RSA extends AccessVerifier.Abstract{
 	protected String timestampId = "x-alogic-now";
@@ -44,11 +47,16 @@ public class RSA extends AccessVerifier.Abstract{
 		String now = ctx.getRequestHeader(timestampId);
 		String payload = ctx.getRequestHeader(payloadId);
 
-		StringBuffer toSign = new StringBuffer();
+		String uri = ctx.getRequestURI();
+		String queryString = ctx.getQueryString();
+		if (StringUtils.isNotEmpty(queryString)){
+			uri += "?" + queryString;
+		}
 		
+		StringBuffer toSign = new StringBuffer();
 		toSign.append(key.getId()).append("\n");
 		toSign.append(now).append("\n");
-		toSign.append(ctx.getRequestURI());
+		toSign.append(uri);
 		
 		if (StringUtils.isNotEmpty(payload)){
 			toSign.append("\n").append(payload);

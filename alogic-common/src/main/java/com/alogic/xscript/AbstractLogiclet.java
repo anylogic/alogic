@@ -31,6 +31,10 @@ import com.alogic.xscript.plugins.FromEnv;
 import com.alogic.xscript.plugins.FromSettings;
 import com.alogic.xscript.plugins.Get;
 import com.alogic.xscript.plugins.GetAsJson;
+import com.alogic.xscript.plugins.IfExist;
+import com.alogic.xscript.plugins.IfFalse;
+import com.alogic.xscript.plugins.IfNotExist;
+import com.alogic.xscript.plugins.IfTrue;
 import com.alogic.xscript.plugins.Include;
 import com.alogic.xscript.plugins.Incr;
 import com.alogic.xscript.plugins.Location;
@@ -189,6 +193,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_INCR = "incr";
 	public static final String STMT_DECR = "decr";
 	public static final String STMT_RAND = "rand";
+	public static final String STMT_IF_TRUE = "if-true";
+	public static final String STMT_IF_FALSE = "if-false";
+	public static final String STMT_IF_EXIST = "if-exist";
+	public static final String STMT_IF_NOT_EXIST = "if-n-exist";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -239,6 +247,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_INCR,Incr.class);
 		staticModules.put(STMT_DECR, Decr.class);
 		staticModules.put(STMT_RAND, Rand.class);
+		staticModules.put(STMT_IF_TRUE, IfTrue.class);
+		staticModules.put(STMT_IF_FALSE, IfFalse.class);
+		staticModules.put(STMT_IF_EXIST, IfExist.class);
+		staticModules.put(STMT_IF_NOT_EXIST, IfNotExist.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	

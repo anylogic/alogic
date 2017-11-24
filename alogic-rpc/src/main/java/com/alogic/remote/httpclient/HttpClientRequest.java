@@ -43,6 +43,10 @@ import com.anysoft.util.Properties;
  * 
  * @version 1.6.10.6 [20171114 duanyy] <br>
  * - 增加Filter的事件触发 <br>
+ * 
+ * @version 1.6.10.9 [20171124 duanyy] <br>
+ * - 增加{@link #getPathInfo()}和{@link #getQueryInfo()}方法 <br>
+ * 
  */
 public class HttpClientRequest implements Request{
 	protected static final Logger LOG = LoggerFactory.getLogger(HttpClientRequest.class);
@@ -67,6 +71,16 @@ public class HttpClientRequest implements Request{
 	public String getURI(){
 		URI uri = this.httpRequest != null ? this.httpRequest.getURI() : null;
 		return uri != null ? uri.toString() : "";
+	}
+	
+	public String getPathInfo(){
+		URI uri = this.httpRequest != null ? this.httpRequest.getURI() : null;
+		return uri != null ? uri.getPath() : "";
+	}
+	
+	public String getQueryInfo(){
+		URI uri = this.httpRequest != null ? this.httpRequest.getURI() : null;
+		return uri != null ? uri.getQuery() : "";
 	}
 	
 	/**

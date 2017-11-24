@@ -24,7 +24,7 @@ public class DES implements Coder {
 		return "DES";
 	}
 	
-	
+	@Override
 	public String encode(String data,String key) {
 		try {
 			String algorithm = getAlgorithm();
@@ -44,7 +44,7 @@ public class DES implements Coder {
 		}
 	}
 
-	
+	@Override
 	public String decode(String data,String key) {
 		try {
 			String algorithm = getAlgorithm();
@@ -64,8 +64,13 @@ public class DES implements Coder {
 		}
 	}	
 	
-	
+	@Override
 	public String createKey(){
 		return KeyGen.getKey(8);
 	}	
+	
+	@Override
+	public String createKey(String init){
+		return init;
+	}
 }

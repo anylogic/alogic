@@ -51,3 +51,9 @@ alogic-1.6.10
 - alogic-kvalue:支持实时从SDA中获取数据;
 - alogic-rpc:支持实时从SDA中获取数据;
 - alogic-common:淘汰Reload框架;
+
+### 1.6.10.9 [20171124 duanyy]
+- alogic-addons:Signature和RSA验证的签名文本中的URL更改为URI;
+- alogic-common:增加IfTrue,IfFalse,IfExist,IfNotExist等xscript插件;
+- alogic-common:增加crypto相关的xscript插件;
+- alogic-core:规范URI和URL取值;

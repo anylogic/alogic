@@ -10,10 +10,12 @@ import com.anysoft.util.code.util.RSAUtil;
  *
  */
 public class PublicRSA implements Coder {	
+	@Override
 	public String encode(String data,String key) {
 		return RSAUtil.encryptWithPublicKey(data, key);
 	}
 
+	@Override
 	public String decode(String data,String key) {
 		return RSAUtil.decryptWithPublicKey(data, key);
 	}
@@ -22,7 +24,13 @@ public class PublicRSA implements Coder {
 		return RSAUtil.verify(data, key, signData);
 	}
 	
+	@Override
 	public String createKey(){
 		return KeyGen.getKey(8);
+	}
+	
+	@Override
+	public String createKey(String init){
+		return init;
 	}
 }

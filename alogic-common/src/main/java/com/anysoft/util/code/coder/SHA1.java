@@ -43,4 +43,8 @@ public class SHA1 implements Coder {
 		return KeyGen.getKey(8);
 	}
 
+	@Override
+	public String createKey(String init){
+		return init;
+	}
 }

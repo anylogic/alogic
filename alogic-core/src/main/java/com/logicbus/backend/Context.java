@@ -55,6 +55,9 @@ import com.logicbus.backend.message.Message;
  * 
  * @version 1.6.9.8 [20170821 duanyy] <br>
  * - 服务上下文增加keyword关键字，和tlog对接; <br>
+ * 
+ * @version 1.6.10.9 [20171124 duanyy] <br>
+ * - 规范化URL和URI的取值 <br>
  */
 public abstract class Context extends DefaultProperties implements DataProvider{
 	/**
@@ -238,6 +241,12 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	 * @return request路径
 	 */
 	abstract public String getRequestURI();
+	
+	/**
+	 * 获取请求的URL
+	 * @return URL
+	 */
+	abstract public String getRequestURL();
 	
 	/**
 	 * 获取请求的方法

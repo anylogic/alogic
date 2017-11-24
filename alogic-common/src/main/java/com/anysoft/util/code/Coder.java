@@ -31,4 +31,11 @@ public interface Coder {
 	 * @return key
 	 */
 	public String createKey();
+	
+	/**
+	 * 通过一个初始化的值生成key
+	 * @param init 初始化的值
+	 * @return 对应算法所需要的Key
+	 */
+	public String createKey(String init);
 }

@@ -60,6 +60,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.9.3 [20170615 duanyy] <br>
  * - 修正tlog的全局序列号不规范问题 <br>
+ * 
+ * @version 1.6.10.9 [20171124 duanyy] <br>
+ * - 规范化URL和URI的取值 <br>
  */
 
 public class HttpContext extends Context {
@@ -186,9 +189,13 @@ public class HttpContext extends Context {
 
 	@Override
 	public String getRequestURI() {
-		// since 1.2.0 返回整个URL
+		return request.getRequestURI();
+	}
+	
+	@Override
+	public String getRequestURL(){
 		String queryString = request.getQueryString();
-		if (queryString != null && queryString.length() > 0){
+		if (StringUtils.isNotEmpty(queryString)){
 			return request.getRequestURL().toString() + "?" + queryString;
 		}else{
 			return request.getRequestURL().toString();

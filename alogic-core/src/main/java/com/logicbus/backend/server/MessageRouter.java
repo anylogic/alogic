@@ -99,6 +99,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.9.9 [20170829 duanyy] <br>
  * - Pool的returnObject接口增加是否出错的参数 <br>
+ * 
+ * @version 1.6.10.9 [20171124 duanyy] <br>
+ * - 规范化URL和URI的取值 <br>
  */
 public class MessageRouter {
 	
@@ -141,7 +144,7 @@ public class MessageRouter {
 				sessionId = ac.createSessionId(id, pool.getDescription(), ctx);
 				priority = ac.accessStart(sessionId,id, pool.getDescription(), ctx);
 				if (priority < 0){
-					logger.info("Unauthorized Access:" + ctx.getClientIp() + ",url:" + ctx.getRequestURI());
+					logger.info("Unauthorized Access:" + ctx.getClientIp() + ",url:" + ctx.getRequestURL());
 					ctx.setReturn("client.permission_denied","Permission denied!service id: "+ id);
 					return 0;
 				}
@@ -222,7 +225,7 @@ public class MessageRouter {
 		item.reason = ctx.getReason();
 		item.startTime = ctx.getTimestamp();
 		item.duration = ctx.getDuration();
-		item.url = ctx.getRequestURI();
+		item.url = ctx.getRequestURL();
 		item.content = logType == ServiceDescription.LogType.detail ? ctx.toString() : null;
 		item.contentLength = ctx.getContentLength();
 		
