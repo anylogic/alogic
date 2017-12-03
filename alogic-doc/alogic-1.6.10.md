@@ -57,3 +57,7 @@ alogic-1.6.10
 - alogic-common:增加IfTrue,IfFalse,IfExist,IfNotExist等xscript插件;
 - alogic-common:增加crypto相关的xscript插件;
 - alogic-core:规范URI和URL取值;
+
+### 1.6.10.10 [20171203 duanyy]
+- alogic-common:增加HashObject和SetObject基础接口;
+- alogic-auth:增加alogic-auth模块，用于登录验证;

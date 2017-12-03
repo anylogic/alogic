@@ -1,8 +1,6 @@
 package com.anysoft.util;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * XMLElement变量集
@@ -15,10 +13,6 @@ public class XmlElementProperties extends Properties {
 	 * 对应的Element
 	 */
 	private Element m_element = null;
-	/**
-	 * 扩展的变量集
-	 */
-	private DefaultProperties extProps = null;
 	
 	/**
 	 * 构造函数
@@ -28,30 +22,6 @@ public class XmlElementProperties extends Properties {
 	public XmlElementProperties(Element element,Properties parent){
 		super("Default",parent);
 		m_element = element;
-		extProps = new DefaultProperties();
-		
-		if (element != null){
-			Element ext = XmlTools.getFirstElementByPath(element, "properties");
-			if (ext != null){
-				NodeList nodeList = ext.getChildNodes();
-				for (int i= 0 ; i < nodeList.getLength() ; i ++){
-					Node node = nodeList.item(i);
-					if (node.getNodeType() != Node.ELEMENT_NODE){
-						continue;
-					}
-					if (!node.getNodeName().equals("parameter")){
-						continue;
-					}
-					Element _e = (Element)node;
-					String id = _e.getAttribute("id");
-					String value = _e.getAttribute("value");
-					if (id.length() <= 0){
-						continue;
-					}
-					extProps.SetValue(id, value);
-				}
-			}
-		}
 	}
 	
 	/**
@@ -68,11 +38,7 @@ public class XmlElementProperties extends Properties {
 	protected String _GetValue(String _name) {
 		if (m_element != null)
 		{
-			String value = m_element.getAttribute(_name);
-			if (value.length() <= 0){
-				return extProps.GetValue(_name, "", false, true);
-			}
-			return value;
+			return m_element.getAttribute(_name);
 		}
 		return "";
 	}

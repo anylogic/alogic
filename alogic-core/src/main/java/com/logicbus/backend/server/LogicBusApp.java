@@ -18,7 +18,6 @@ import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.doc.json.JsonObject;
 import com.anysoft.stream.Handler;
 import com.anysoft.util.DefaultProperties;
-import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
