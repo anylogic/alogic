@@ -139,7 +139,9 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 			
 			List<String> privileges = user.getPrivileges();
 			if (!privileges.isEmpty()){
-				sess.sAdd(privileges.toArray(new String[0]));
+				for (String item:privileges){
+					sess.sAdd("$user." + item);
+				}
 			}
 			
 			/**

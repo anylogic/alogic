@@ -102,12 +102,12 @@ public class SimplePrincipal implements UserPrincipal{
 
 	@Override
 	public List<String> getPrivileges() {
-		return this.session.sMembers("$user*");
+		return this.session.sMembers("$user.*");
 	}
 
 	@Override
 	public boolean hasPrivilege(String privilege){
-		return this.session.sExist("$user" + privilege);
+		return this.session.sExist("$user." + privilege);
 	}
 	
 	/**
