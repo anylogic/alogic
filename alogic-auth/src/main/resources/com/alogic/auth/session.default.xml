@@ -1,3 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<session-manager>
+<session-manager module="com.alogic.auth.DefaultPrincipalManager">
+	<handler module="com.alogic.auth.local.DefaultAuthenticationHandler">
+		<user-model loader="com.alogic.auth.local.SimpleUser$LoadFromInner">
+			<user id="admin" name="admin" pwd="RfJgNhCvVpthVcRQZyaMaw==" avatar="14422183776656hPbbv" privileges="admin,user"/>
+		</user-model>
+	</handler>
+	<session module="com.alogic.auth.LocalSessionManager"/>
 </session-manager>

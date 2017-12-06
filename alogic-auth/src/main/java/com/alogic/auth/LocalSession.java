@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,6 +44,11 @@ public class LocalSession implements Session{
 	public static final String SET_KEY = "$set";
 	
 	/**
+	 * 是否登录标记的Key
+	 */
+	public static final String LOGIN_KEY = "$login";
+	
+	/**
 	 * HttpSession代理
 	 */
 	private HttpSession httpSession = null;
@@ -53,6 +59,16 @@ public class LocalSession implements Session{
 	 */
 	public LocalSession(HttpSession session){
 		this.httpSession = session;
+	}
+	
+	@Override
+	public boolean isLoggedIn() {
+		return BooleanUtils.toBoolean(hGet(LOGIN_KEY, "false"));
+	}
+	
+	@Override
+	public void setLoggedIn(boolean loggedIn){
+		this.hSet(LOGIN_KEY, BooleanUtils.toStringTrueFalse(loggedIn), true);
 	}
 	
 	@Override
@@ -106,7 +122,7 @@ public class LocalSession implements Session{
 				mapObject = httpSession.getAttribute(MAP_KEY);
 				if (mapObject == null){
 					mapObject = new ConcurrentHashMap<String,String>();
-					httpSession.setAttribute(SET_KEY, mapObject);
+					httpSession.setAttribute(MAP_KEY, mapObject);
 				}
 			}
 		}
@@ -277,7 +293,6 @@ public class LocalSession implements Session{
 	@Override
 	public void hSet(String key, String value, boolean overwrite) {
 		Map<String,String> mapObject = getMapObject(true);
-		
 		if (mapObject.containsKey(key)){
 			if (overwrite){
 				mapObject.put(key, value);
@@ -339,7 +354,7 @@ public class LocalSession implements Session{
 	}
 
 	@Override
-	public List<String> keys(String condition) {
+	public List<String> hKeys(String condition) {
 		List<String> result = new ArrayList<String>();
 		Map<String,String> mapObject = getMapObject(false);
 		
@@ -363,4 +378,11 @@ public class LocalSession implements Session{
 		return result;
 	}
 
+	@Override
+	public void hDel(String key) {
+		Map<String,String> mapObject = getMapObject(false);
+		if (mapObject != null){
+			mapObject.remove(key);
+		}
+	}
 }

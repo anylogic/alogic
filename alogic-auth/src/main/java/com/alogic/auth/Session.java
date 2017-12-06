@@ -35,4 +35,18 @@ public interface Session extends SetObject,HashObject{
 	 * @return 指定name的对象，如果不存在，返回为null
 	 */
 	public Object getAttribute(String name);
+	
+	/**
+	 * 判断是否登录
+	 * 
+	 * @return 如果已经登录,返回为true,反之为false
+	 */
+	public boolean isLoggedIn();
+	
+	/**
+	 * 设置是否登录标志
+	 * 
+	 * @param loggedIn 当前是否登录
+	 */
+	public void setLoggedIn(boolean loggedIn);
 }

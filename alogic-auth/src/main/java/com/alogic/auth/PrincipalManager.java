@@ -1,11 +1,7 @@
 package com.alogic.auth;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XmlElementProperties;
@@ -26,10 +22,6 @@ public interface PrincipalManager extends SessionManager,AuthenticationHandler{
 	 */
 	public abstract static class Abstract extends AuthenticationHandler.Abstract implements PrincipalManager{
 		
-		/**
-		 * a logger of slf4j
-		 */
-		protected static final Logger LOG = LoggerFactory.getLogger(PrincipalManager.class);
 		@Override
 		public void configure(Element e, Properties p) {
 			Properties props = new XmlElementProperties(e,p);

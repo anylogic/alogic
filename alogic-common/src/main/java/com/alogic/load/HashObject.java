@@ -77,5 +77,11 @@ public interface HashObject extends Loadable{
 	 * @param condition 查询条件，字符串的模板	 
 	 * @return 符合条件的Key列表
 	 */
-	public List<String> keys(String condition);
+	public List<String> hKeys(String condition);
+	
+	/**
+	 * 删除指定的key
+	 * @param key 待删除的key
+	 */
+	public void hDel(String key);
 }

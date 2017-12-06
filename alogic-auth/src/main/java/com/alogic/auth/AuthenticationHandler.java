@@ -3,10 +3,11 @@ package com.alogic.auth;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.BaseException;
@@ -30,31 +31,37 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	/**
 	 * 通过Servlet请求获取Principal 
 	 * 
-	 * @param session 当前回话
-	 * @param req ServletRequest
+	 * @param request HttpServletRequest
 	 * @return Principal实例，如果当前没有登录，返回为null.
 	 */
-	public Principal getCurrent(ServletRequest req);
+	public Principal getCurrent(HttpServletRequest request);
 	
 	/**
 	 * 通过Servlet请求进行登录
 	 * 
-	 * @param req ServletRequest
+	 * @param request HttpServletRequest
 	 * @return Principal实例，如果成功，返回登录后的Principal，反之，以异常的形式抛出.
 	 */
-	public Principal login(ServletRequest req);
+	public Principal login(HttpServletRequest request);
+	
+	/**
+	 * 通过Session获取Principal
+	 * @param session 会话
+	 * @return Principal实例，如果当前没有登录，返回为null.
+	 */
+	public Principal getCurrent(Session session);
 	
 	/**
 	 * 通过服务上下文获取Principal 
 	 * 
-	 * @param req ServletRequest
+	 * @param ctx Context
 	 * @return Principal实例，如果当前没有登录，返回为null.
 	 */
 	public Principal getCurrent(Context ctx);
 	
 	/**
 	 * 通过服务上下文进行登录
-	 * @param req ServletRequest
+	 * @param ctx Context
 	 * @return Principal实例，如果成功，返回登录后的Principal，反之，以异常的形式抛出.
 	 */
 	public Principal login(Context ctx);	
@@ -117,7 +124,11 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	 *
 	 */
 	public abstract static class Abstract implements AuthenticationHandler{
-
+		/**
+		 * a logger of slf4j
+		 */
+		protected final Logger LOG = LoggerFactory.getLogger(AuthenticationHandler.class);
+		
 		@Override
 		public void configure(Element e, Properties p) {
 			Properties props = new XmlElementProperties(e,p);
@@ -139,7 +150,7 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 			HttpServletRequest request = httpContext.getRequest();
 			return getCurrent(request);
 		}
-
+		
 		@Override
 		public Principal login(Context ctx) {
 			if (!(ctx instanceof HttpContext)){

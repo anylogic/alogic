@@ -32,7 +32,7 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 	 * <p>
 	 * 用来从HttpServletRequest中获取当前的Session实例，当当前Session不存在的时候，如果create为true，则创建Session,反之返回为null.
 	 * 
-	 * @param ctx 服务调用上下文
+	 * @param request HttpServletRequest
 	 * @param create 是否创建
 	 * @return 当前的Session实例
 	 */

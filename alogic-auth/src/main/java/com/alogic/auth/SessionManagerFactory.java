@@ -34,16 +34,17 @@ public class SessionManagerFactory extends Factory<SessionManager>{
 	/**
 	 * 缺省的配置文件路径
 	 */
-	public static final String DEFAULT = "java:///com/alogic/auth/session.default.xml";
+	public static final String DEFAULT = "java:///com/alogic/auth/session.default.xml#" 
+			+ SessionManagerFactory.class.getName();
 	
 	/**
 	 * 获取缺省实现
 	 * @return PrincipalManager实例
 	 */
 	public static SessionManager getDefault(){
-		if (INSTANCE != null){
+		if (INSTANCE == null){
 			synchronized (PrincipalManager.class){
-				if (INSTANCE != null){
+				if (INSTANCE == null){
 					Settings p = Settings.get();
 					INSTANCE = loadFromPath(
 							PropertiesConstants.getString(p,"auth.master",DEFAULT),

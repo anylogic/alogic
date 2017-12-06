@@ -1,12 +1,6 @@
 package com.alogic.auth;
 
-import java.util.Map;
-
-import org.w3c.dom.Element;
-
 import com.alogic.load.Loadable;
-import com.anysoft.util.JsonSerializer;
-import com.anysoft.util.XmlSerializer;
 
 /**
  * Principal
@@ -16,7 +10,7 @@ import com.anysoft.util.XmlSerializer;
  * @author yyduan
  * @since 1.6.10.10
  */
-public interface Principal extends JsonSerializer,XmlSerializer,Loadable{
+public interface Principal extends Loadable{
 
 	/**
 	 * 获取id
@@ -26,23 +20,6 @@ public interface Principal extends JsonSerializer,XmlSerializer,Loadable{
 	 * @return id
 	 */
 	public String getId();
-	
-	/**
-	 * 获取当前会话id
-	 * @return 会话id
-	 */
-	public String getSessionId();
-	
-	/**
-	 * 判断当前是否已登录
-	 * 
-	 * <p>
-	 * 对某些PrincipalManager实现来说,如果用户未登录,也可以返回一个Principal,
-	 * 通过本方法来判断是否登录
-	 * 
-	 * @return 如果已经登录,返回为true,反正,返回为false
-	 */
-	public boolean isLoggedIn();
 	
 	/**
 	 * 虚基类
@@ -74,16 +51,6 @@ public interface Principal extends JsonSerializer,XmlSerializer,Loadable{
 
 		@Override
 		public void expire() {
-		}
-
-		@Override
-		public void report(Element xml) {
-			this.toXML(xml);
-		}
-
-		@Override
-		public void report(Map<String, Object> json) {
-			this.toJson(json);
 		}
 
 		@Override

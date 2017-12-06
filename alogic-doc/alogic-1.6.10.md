@@ -61,3 +61,6 @@ alogic-1.6.10
 ### 1.6.10.10 [20171203 duanyy]
 - alogic-common:增加HashObject和SetObject基础接口;
 - alogic-auth:增加alogic-auth模块，用于登录验证;
+
+### 1.6.10.10 [20171206 duanyy]
+- 完善alogic-auth模块;
