@@ -2,21 +2,16 @@ package com.alogic.auth;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Pair;
 import com.anysoft.util.StringMatcher;
@@ -32,22 +27,7 @@ import com.anysoft.util.XmlTools;
  * @since 1.6.10.10
  */
 public class LocalSession implements Session{
-	
-	/**
-	 * HashMap对象的Key
-	 */
-	public static final String MAP_KEY = "$map";
-	
-	/**
-	 * HashSet对象的Key
-	 */
-	public static final String SET_KEY = "$set";
-	
-	/**
-	 * 是否登录标记的Key
-	 */
-	public static final String LOGIN_KEY = "$login";
-	
+		
 	/**
 	 * HttpSession代理
 	 */
@@ -63,12 +43,12 @@ public class LocalSession implements Session{
 	
 	@Override
 	public boolean isLoggedIn() {
-		return BooleanUtils.toBoolean(hGet(LOGIN_KEY, "false"));
+		return BooleanUtils.toBoolean(hGet(DEFAULT_GROUP,LOGIN_KEY, "false"));
 	}
 	
 	@Override
 	public void setLoggedIn(boolean loggedIn){
-		this.hSet(LOGIN_KEY, BooleanUtils.toStringTrueFalse(loggedIn), true);
+		this.hSet(DEFAULT_GROUP,LOGIN_KEY, BooleanUtils.toStringTrueFalse(loggedIn), true);
 	}
 	
 	@Override
@@ -87,18 +67,19 @@ public class LocalSession implements Session{
 	 * <p>
 	 * 用于获取内置的setObject, 当该对象不存在时，如果create为true，则创建一个。
 	 * 
+	 * @param group 分组
 	 * @param create 当不存在时是否创建
 	 * @return 内置的setObject
 	 */
 	@SuppressWarnings("unchecked")
-	protected Set<String> getSetObject(boolean create){
-		Object setObject = httpSession.getAttribute(SET_KEY);
+	protected Set<String> getSetObject(String group,boolean create){
+		Object setObject = httpSession.getAttribute(group);
 		if (setObject == null && create){
 			synchronized(this){
-				setObject = httpSession.getAttribute(SET_KEY);
+				setObject = httpSession.getAttribute(group);
 				if (setObject == null){
 					setObject = Collections.newSetFromMap(new ConcurrentHashMap<String,Boolean>());
-					httpSession.setAttribute(SET_KEY, setObject);
+					httpSession.setAttribute(group, setObject);
 				}
 			}
 		}
@@ -111,18 +92,19 @@ public class LocalSession implements Session{
 	 * <p>
 	 * 用于获取内置的mapObject,当该对象不存在时，如果create为true，则创建一个。
 	 * 
+	 * @param group 分组
 	 * @param create 当不存在时是否创建
 	 * @return 内置的mapObject
 	 */
 	@SuppressWarnings("unchecked")
-	protected  Map<String,String> getMapObject(boolean create){
-		Object mapObject = httpSession.getAttribute(MAP_KEY);
+	protected  Map<String,String> getMapObject(String group,boolean create){
+		Object mapObject = httpSession.getAttribute(group);
 		if (mapObject == null){
 			synchronized(this){
-				mapObject = httpSession.getAttribute(MAP_KEY);
+				mapObject = httpSession.getAttribute(group);
 				if (mapObject == null){
 					mapObject = new ConcurrentHashMap<String,String>();
-					httpSession.setAttribute(MAP_KEY, mapObject);
+					httpSession.setAttribute(group, mapObject);
 				}
 			}
 		}
@@ -131,16 +113,16 @@ public class LocalSession implements Session{
 	
 	
 	@Override
-	public void sAdd(String... members) {
-		Set<String> obj = getSetObject(true);
+	public void sAdd(String group,String... members) {
+		Set<String> obj = getSetObject(group,true);
 		for (String m:members){
 			obj.add(m);
 		}
 	}
 
 	@Override
-	public void sDel(String... members) {
-		Set<String> obj = getSetObject(false);
+	public void sDel(String group,String... members) {
+		Set<String> obj = getSetObject(group,false);
 		if (obj != null){
 			for (String m:members){
 				obj.remove(m);
@@ -149,8 +131,8 @@ public class LocalSession implements Session{
 	}
 
 	@Override
-	public int sSize() {
-		Set<String> obj = getSetObject(false);
+	public int sSize(String group) {
+		Set<String> obj = getSetObject(group,false);
 		return obj == null ? 0 : obj.size();
 	}
 	
@@ -159,9 +141,9 @@ public class LocalSession implements Session{
 	}
 
 	@Override
-	public List<String> sMembers(String condition) {
+	public List<String> sMembers(String group,String condition) {
 		List<String> result = new ArrayList<String>();
-		Set<String> obj = getSetObject(false);
+		Set<String> obj = getSetObject(group,false);
 		if (obj != null){
 			if (isConditionValid(condition)){
 				StringMatcher matcher = new StringMatcher(condition);			
@@ -183,8 +165,8 @@ public class LocalSession implements Session{
 	}
 
 	@Override
-	public boolean sExist(String member) {
-		Set<String> obj = getSetObject(false);
+	public boolean sExist(String group,String member) {
+		Set<String> obj = getSetObject(group,false);
 		return obj != null ? obj.contains(member) : false;
 	}
 
@@ -214,29 +196,6 @@ public class LocalSession implements Session{
 			XmlTools.setString(xml,"module",getClass().getName());
 			XmlTools.setString(xml, "id", getId());
 			XmlTools.setString(xml,"timestamp", String.valueOf(getTimestamp()));
-			
-			List<Pair<String,String>> hashValues = this.hGetAll(null);
-			if (!hashValues.isEmpty()){
-				Document doc = xml.getOwnerDocument();
-				
-				for (Pair<String,String> p:hashValues){
-					Element elem = doc.createElement("hash");
-					XmlTools.setString(elem, "k", p.key());
-					XmlTools.setString(elem, "v", p.value());
-					xml.appendChild(elem);
-				}
-			}
-			
-			List<String> setValues = this.sMembers(null);
-			if (!setValues.isEmpty()){
-				Document doc = xml.getOwnerDocument();
-				
-				for (String m:setValues){
-					Element elem = doc.createElement("set");
-					XmlTools.setString(elem, "v", m);
-					xml.appendChild(elem);
-				}
-			}
 		}
 	}
 
@@ -246,22 +205,6 @@ public class LocalSession implements Session{
 			JsonTools.setString(json, "module", getClass().getName());
 			JsonTools.setString(json, "id", getId());
 			JsonTools.setLong(json, "timestamp", getTimestamp());
-			
-			List<Pair<String,String>> hashValues = this.hGetAll(null);
-			if (!hashValues.isEmpty()){
-				Map<String,Object> map = new HashMap<String,Object>();
-				
-				for (Pair<String,String> p:hashValues){
-					map.put(p.key(), p.value());
-				}
-				
-				json.put("hash", map);
-			}
-			
-			List<String> setValues = this.sMembers(null);
-			if (!setValues.isEmpty()){
-				json.put("set", setValues);
-			}
 		}
 	}
 
@@ -275,7 +218,7 @@ public class LocalSession implements Session{
 		@SuppressWarnings("unchecked")
 		Map<String,String> mapObject = context != null ?
 				(Map<String,String>)context
-				:getMapObject(false);
+				:getMapObject(DEFAULT_GROUP,false);
 				
 		if (mapObject != null){
 			String value = mapObject.get(varName);
@@ -287,12 +230,12 @@ public class LocalSession implements Session{
 
 	@Override
 	public Object getContext(String varName) {
-		return getMapObject(false);
+		return getMapObject(DEFAULT_GROUP,false);
 	}
 
 	@Override
-	public void hSet(String key, String value, boolean overwrite) {
-		Map<String,String> mapObject = getMapObject(true);
+	public void hSet(String group,String key, String value, boolean overwrite) {
+		Map<String,String> mapObject = getMapObject(group,true);
 		if (mapObject.containsKey(key)){
 			if (overwrite){
 				mapObject.put(key, value);
@@ -303,8 +246,8 @@ public class LocalSession implements Session{
 	}
 
 	@Override
-	public String hGet(String key, String dftValue) {
-		Map<String,String> mapObject = getMapObject(false);
+	public String hGet(String group,String key, String dftValue) {
+		Map<String,String> mapObject = getMapObject(group,false);
 		
 		if (mapObject != null){
 			String value = mapObject.get(key);
@@ -315,16 +258,16 @@ public class LocalSession implements Session{
 	}
 
 	@Override
-	public boolean hExist(String key) {
-		Map<String,String> mapObject = getMapObject(false);
+	public boolean hExist(String group,String key) {
+		Map<String,String> mapObject = getMapObject(group,false);
 		
 		return mapObject == null ? false:mapObject.containsKey(key);
 	}
 
 	@Override
-	public List<Pair<String, String>> hGetAll(String condition) {
+	public List<Pair<String, String>> hGetAll(String group,String condition) {
 		List<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
-		Map<String,String> mapObject = getMapObject(false);
+		Map<String,String> mapObject = getMapObject(group,false);
 		
 		if (mapObject != null){
 			if (isConditionValid(condition)){
@@ -348,15 +291,15 @@ public class LocalSession implements Session{
 	}
 
 	@Override
-	public int hLen() {
-		Map<String,String> mapObject = getMapObject(false);
+	public int hLen(String group) {
+		Map<String,String> mapObject = getMapObject(group,false);
 		return mapObject == null ? 0 : mapObject.size();
 	}
 
 	@Override
-	public List<String> hKeys(String condition) {
+	public List<String> hKeys(String group,String condition) {
 		List<String> result = new ArrayList<String>();
-		Map<String,String> mapObject = getMapObject(false);
+		Map<String,String> mapObject = getMapObject(group,false);
 		
 		if (mapObject != null){
 			if (isConditionValid(condition)){
@@ -379,8 +322,8 @@ public class LocalSession implements Session{
 	}
 
 	@Override
-	public void hDel(String key) {
-		Map<String,String> mapObject = getMapObject(false);
+	public void hDel(String group,String key) {
+		Map<String,String> mapObject = getMapObject(group,false);
 		if (mapObject != null){
 			mapObject.remove(key);
 		}

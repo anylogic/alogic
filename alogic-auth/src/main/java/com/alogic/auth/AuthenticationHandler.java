@@ -14,6 +14,7 @@ import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
 import com.logicbus.backend.Context;
@@ -37,6 +38,17 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	public Principal getCurrent(HttpServletRequest request);
 	
 	/**
+	 * 通过Token来查找指定的Principal
+	 * <p>
+	 * 本方法用于SSO场景下的Token验证
+	 * 
+	 * @param app 应用id
+	 * @param token token
+	 * @return Principal实例，如果没有找到指定的token，返回为null
+	 */
+	public Principal getPrincipal(String app,String token);
+	
+	/**
 	 * 通过Servlet请求进行登录
 	 * 
 	 * @param request HttpServletRequest
@@ -46,10 +58,11 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	
 	/**
 	 * 通过Session获取Principal
+	 * @param request HttpServletRequest
 	 * @param session 会话
 	 * @return Principal实例，如果当前没有登录，返回为null.
 	 */
-	public Principal getCurrent(Session session);
+	public Principal getCurrent(HttpServletRequest request,Session session);
 	
 	/**
 	 * 通过服务上下文获取Principal 
@@ -129,6 +142,11 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 		 */
 		protected final Logger LOG = LoggerFactory.getLogger(AuthenticationHandler.class);
 		
+		/**
+		 * 支持ForwardedHeader
+		 */
+		protected String ForwardedHeader = "X-Forwarded-For";
+		
 		@Override
 		public void configure(Element e, Properties p) {
 			Properties props = new XmlElementProperties(e,p);
@@ -137,7 +155,29 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 		
 		@Override
 		public void configure(Properties p){
-			
+			ForwardedHeader = PropertiesConstants.getString(p,"http.forwardedheader", ForwardedHeader);
+		}
+		
+		/**
+		 * 获取客户端的ip
+		 * @param request HttpServletRequest
+		 * @return 客户端ip
+		 */
+		public String getClientIp(HttpServletRequest request) {
+			/**
+			 * 支持负载均衡器的X-Forwarded-For
+			 */
+			String ip = request.getHeader(ForwardedHeader);
+			if (StringUtils.isNotEmpty(ip)){
+				String [] ips = ip.split(",");
+				if (ips.length > 0){
+					return ips[0];
+				}else{
+					return request.getRemoteHost();
+				}
+			}else{
+				return request.getRemoteHost();
+			}
 		}
 		
 		@Override

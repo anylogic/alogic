@@ -12,8 +12,8 @@ import com.alogic.load.SetObject;
  * @author duanyy
  * @since 1.6.10.10
  */
-public interface Session extends SetObject,HashObject{
-	
+public interface Session extends SetObject,HashObject,Constants{
+		
 	/**
 	 * 按name设置对象到Session
 	 * 

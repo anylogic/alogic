@@ -72,7 +72,7 @@ public class AuthLogin implements Filter{
 			if (StringUtils.isNotEmpty(redirectURL)){
 				//客户端提供了参数returnURL
 				HttpServletResponse httpResp = (HttpServletResponse)response;
-				Principal principal = sm.getCurrent(sess);
+				Principal principal = sm.getCurrent(httpReq,sess);
 				if (principal != null){
 					httpResp.sendRedirect(String.format("%s&%s=%s",returnURL,token,principal.getId()));
 				}else{

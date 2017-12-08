@@ -77,7 +77,7 @@ public class AuthCode extends Servant{
 			
 		//记录到Session
 		Session session = SessionManagerFactory.getDefault().getSession(ctx, true);
-		session.hSet("$login.code", 
+		session.hSet(Session.DEFAULT_GROUP,"$login.code", 
 				getArgument("ignoreCase", Boolean.toString(ignoreCase), ctx).equals("true") ? codes.toLowerCase():codes, 
 				true);
 		

@@ -23,6 +23,11 @@
   		<groupId>com.github.anylogic</groupId>
   		<artifactId>alogic-core</artifactId>
   		<version>${project.version}</version>
-  	</dependency>  	
+  	</dependency>  
+   	<dependency>
+  		<groupId>com.github.anylogic</groupId>
+  		<artifactId>alogic-rpc</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>   		
   </dependencies>  
 </project>

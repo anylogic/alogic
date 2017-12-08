@@ -1,5 +1,4 @@
-package com.alogic.auth.local;
-
+package com.alogic.auth.sso.server;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,14 +7,15 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.w3c.dom.Element;
 
 import com.alogic.auth.AuthenticationHandler;
+import com.alogic.auth.CommonPrincipal;
 import com.alogic.auth.Constants;
 import com.alogic.auth.Principal;
 import com.alogic.auth.Session;
 import com.alogic.auth.SessionManager;
-import com.alogic.auth.SessionPrincipal;
 import com.alogic.auth.UserModel;
 import com.alogic.auth.util.SimpleUser;
 import com.alogic.load.Loader;
+import com.alogic.load.Store;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
@@ -26,21 +26,22 @@ import com.anysoft.util.code.Coder;
 import com.anysoft.util.code.CoderFactory;
 
 /**
- * AuthenticationHandler的缺省实现
+ * SSO服务端的Handler
  * 
- * <p>
- * 本实现从配置文件中读取用户信息进行验证.
- * 由于Principal通过Session进行存储，本实现不适合SSO场景.
- * 
- * @author duanyy
- * @since 1.6.10.10
+ * @author yyduan
+ *
  */
-public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract{
+public class ServerSideHandler extends AuthenticationHandler.Abstract{
 	
 	/**
 	 * 会话管理器
 	 */
 	protected SessionManager sessionManager = null;
+	
+	/**
+	 * Principal存储
+	 */
+	protected Store<Principal> store = null;
 	
 	/**
 	 * 用户模型装载器
@@ -56,7 +57,12 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	 * 用于数据库密码验证
 	 */
 	protected Coder md5 = null;
-		
+	
+	/**
+	 * 缺省的app,为当前服务器的appId
+	 */
+	protected String dftApp = "${server.app}";
+	
 	@Override
 	public void configure(Element e, Properties p) {
 		Properties props = new XmlElementProperties(e,p);
@@ -72,6 +78,17 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 			}
 		}
 		
+		elem = XmlTools.getFirstElementByPath(e,"principal-store");
+		if (elem != null){
+			Factory<Store<Principal>> f = new Factory<Store<Principal>>();
+			try {
+				store = f.newInstance(elem, props, "module",Principal.LocalCacheStore.class.getName());
+			}catch (Exception ex){
+				LOG.error("Can not create store:" + XmlTools.node2String(elem));
+				LOG.error(ExceptionUtils.getStackTrace(ex));
+			}
+		}
+		
 		configure(props);
 	}
 	
@@ -79,8 +96,14 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	public void configure(Properties p){
 		super.configure(p);
 		
+		dftApp = PropertiesConstants.getString(p,"dftApp", dftApp);
 		encrypter = CoderFactory.newCoder("DES3");
 		md5 = CoderFactory.newCoder("MD5");
+		
+		if (store == null){
+			store = new Principal.LocalCacheStore();
+			store.configure(p);
+		}
 	}
 	
 	@Override
@@ -91,12 +114,21 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 
 	@Override
 	public Principal getCurrent(HttpServletRequest request,Session session) {
-		return (session != null && session.isLoggedIn()) ? new SessionPrincipal(session):null;
+		Principal principal = null;
+		
+		if (session != null && session.isLoggedIn()){
+			//Session中要保存了token信息
+			String token = session.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
+			if (StringUtils.isNotEmpty(token)){
+				principal = getPrincipal(dftApp,token);
+			}
+		}
+		return principal;
 	}
 	
 	@Override
 	public Principal getPrincipal(String app,String token) {
-		throw new BaseException("core.e1000","In default mode,it's not supported to get principal by token.");
+		return store.load(token, true);
 	}
 	
 	@Override
@@ -104,7 +136,7 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 		Session sess = sessionManager.getSession(request, true);
 		if (sess.isLoggedIn()){
 			//如果已经登录了，直接返回
-			return new SessionPrincipal(sess);
+			return getCurrent(request,sess);
 		}
 		
 		//登录id
@@ -137,17 +169,23 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 						String.format("User %s does not exist or the password is not correct.", userId));				
 			}
 			
-			Principal newPrincipal = new SessionPrincipal(sess);
+			String tokenId = sess.getId();
+			Principal newPrincipal = new CommonPrincipal(sess.getId());
 			user.copyTo(newPrincipal);
 			//设置登录时间
-			newPrincipal.setProperty(Constants.LOGIN_TIME, String.valueOf(System.currentTimeMillis()), true);
+			newPrincipal.setProperty(Session.LOGIN_TIME, String.valueOf(System.currentTimeMillis()), true);
 			//设置客户端ip
-			newPrincipal.setProperty(Constants.FROM_IP, getClientIp(request), true);
+			newPrincipal.setProperty(Session.FROM_IP, getClientIp(request), true);
 			
 			/**
 			 * 设置已登录标记
 			 */			
 			sess.setLoggedIn(true);
+			/**
+			 * 设置token
+			 */
+			sess.hSet(Session.DEFAULT_GROUP,Session.TOKEN,tokenId,true);
+			
 			LOG.info(String.format("User %s has logged in.",user.getId()));
 			return newPrincipal;
 		}catch (Exception ex){
@@ -162,7 +200,7 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	@Override
 	public boolean hasPrivilege(Principal principal, String privilege) {
 		if (principal != null){
-			SessionPrincipal thePrincipal = (SessionPrincipal)principal;
+			CommonPrincipal thePrincipal = (CommonPrincipal)principal;
 			return thePrincipal.hasPrivilege(privilege);
 		}
 		return false;
@@ -171,7 +209,7 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	@Override
 	public void logout(Principal principal) {
 		if (principal != null){
-			SessionPrincipal thePrincipal = (SessionPrincipal)principal;
+			CommonPrincipal thePrincipal = (CommonPrincipal)principal;
 			LOG.info(String.format("User %s has logged out.",
 					thePrincipal.getUserId()));			
 			thePrincipal.expire();

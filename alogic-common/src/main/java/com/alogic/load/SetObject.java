@@ -18,21 +18,24 @@ public interface SetObject extends Loadable,DataProvider{
 
 	/**
 	 * 向Set中增加member
+	 * @param group 分组
 	 * @param member Set成员列表
 	 */
-	public void sAdd(String...members);
+	public void sAdd(String group,String...members);
 	
 	/**
 	 * 从Set中删除member
+	 * @param group 分组
 	 * @param members 待删除的成员列表
 	 */
-	public void sDel(String...members);
+	public void sDel(String group,String...members);
 	
 	/**
 	 * 当前Set大小
+	 * @param group 分组
 	 * @return 返回当前Set大小
 	 */
-	public int sSize();
+	public int sSize(String group);
 	
 	/**
 	 * 获取符合指定查询条件的member列表
@@ -41,15 +44,17 @@ public interface SetObject extends Loadable,DataProvider{
 	 * 用于获取符合指定查询条件的member列表,参数condition是一个字符串匹配模板,支持简单的通配符*匹配.
 	 * 当condition为空字符串时，返回所有的member。
 	 * 
+	 * @param group 分组
 	 * @param condition 查询条件，字符串的模板	 
 	 * @return 符合条件的member列表
 	 */
-	public List<String> sMembers(String condition);
+	public List<String> sMembers(String group,String condition);
 	
 	/**
 	 * 当前Set是否存在指定的成员
+	 * @param group 分组
 	 * @param member 指定成员
 	 * @return 如果该member存在，返回为true,反之为false
 	 */
-	public boolean sExist(String member);
+	public boolean sExist(String group,String member);
 }

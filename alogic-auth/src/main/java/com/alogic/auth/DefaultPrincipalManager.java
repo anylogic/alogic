@@ -3,8 +3,10 @@ package com.alogic.auth;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.w3c.dom.Element;
+
 import com.alogic.auth.local.DefaultAuthenticationHandler;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
@@ -107,8 +109,13 @@ public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	}
 
 	@Override
-	public Principal getCurrent(Session session) {
-		return authHandler.getCurrent(session);
+	public Principal getCurrent(HttpServletRequest req,Session session) {
+		return authHandler.getCurrent(req,session);
+	}
+	
+	@Override
+	public Principal getPrincipal(String app,String token) {
+		return authHandler.getPrincipal(app,token);
 	}
 	
 	@Override
