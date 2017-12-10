@@ -1,10 +1,5 @@
 package com.alogic.auth.sso.client;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,8 +12,6 @@ import com.alogic.auth.Principal;
 import com.alogic.auth.Session;
 import com.alogic.auth.SessionManager;
 import com.alogic.auth.SessionPrincipal;
-import com.alogic.metrics.Fragment;
-import com.alogic.remote.call.BuilderFactory;
 import com.alogic.remote.call.Call;
 import com.alogic.remote.call.Parameters;
 import com.alogic.remote.call.Result;
@@ -49,7 +42,7 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	 * 参数token的参数id
 	 */
 	protected String arguToken = "token";
-	
+		
 	@Override
 	public void configure(Element e, Properties p) {
 		Properties props = new XmlElementProperties(e,p);
@@ -103,7 +96,7 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 					
 					Result result = theCall.execute(paras);
 					
-					
+					principal = result.getData("data", new SessionPrincipal(session));
 				}catch (Exception ex){
 					LOG.error("Remote call failed.");
 					LOG.error(ExceptionUtils.getStackTrace(ex));
@@ -125,7 +118,7 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 
 	@Override
 	public Principal getPrincipal(String app, String token) {
-		throw new BaseException("core.e1000","In default mode,it's not supported to get principal by token.");
+		throw new BaseException("core.e1000","In sso client mode,it's not supported to get principal by token.");
 	}
 
 	@Override

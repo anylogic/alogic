@@ -19,7 +19,6 @@ import com.alogic.load.Loader;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
-import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.code.Coder;

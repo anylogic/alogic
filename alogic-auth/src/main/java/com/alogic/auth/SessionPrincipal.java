@@ -1,11 +1,12 @@
 package com.alogic.auth;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Map.Entry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Pair;
 import com.anysoft.util.XmlTools;
@@ -113,16 +114,22 @@ public class SessionPrincipal implements Principal{
 	@Override
 	public void report(Element xml) {
 		if (xml != null){
-			List<Pair<String,String>> entries = this.session.hGetAll(USER_GROUP,"*");
+			XmlTools.setString(xml,"id",this.getId());
 			
-			for (Pair<String,String> entry:entries){
-				XmlTools.setString(xml, entry.key(), entry.value());
+			List<Pair<String,String>> entries = this.session.hGetAll(USER_GROUP,"*");
+			if (entries != null && !entries.isEmpty()){
+				Document doc = xml.getOwnerDocument();				
+				for (Pair<String,String> entry:entries){
+					Element property = doc.createElement("property");
+					XmlTools.setString(property, "k",entry.key());
+					XmlTools.setString(property,"v",entry.value());
+					xml.appendChild(property);
+				}
 			}
 			
 			List<String> privileges = this.getPrivileges();
 			if (privileges != null && !privileges.isEmpty()){
 				Document doc = xml.getOwnerDocument();
-				
 				for (String p:privileges){
 					Element elem = doc.createElement("privilege");
 					XmlTools.setString(elem, "value", p);
@@ -135,8 +142,19 @@ public class SessionPrincipal implements Principal{
 	@Override
 	public void report(Map<String, Object> json) {
 		if (json != null){
+			JsonTools.setString(json, "id", getId());
+			
 			List<Pair<String,String>> entries = this.session.hGetAll(USER_GROUP,"*");
 			
+			if (entries != null){
+				Map<String,Object> map = new HashMap<String,Object>();
+				
+				for (Pair<String,String> p:entries){
+					JsonTools.setString(map,p.key(), p.value());
+				}
+				
+				json.put("property", map);
+			}
 			for (Pair<String,String> entry:entries){
 				JsonTools.setString(json, entry.key(), entry.value());
 			}
@@ -144,6 +162,38 @@ public class SessionPrincipal implements Principal{
 			List<String> privileges = this.getPrivileges();
 			if (privileges != null && !privileges.isEmpty()){
 				json.put("privilege", privileges);
+			}
+		}
+	}
+
+	@Override
+	public void toJson(Map<String, Object> json) {
+		report(json);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void fromJson(Map<String, Object> json) {
+		if (json != null){
+			Object found = json.get("property");
+			if (found != null && found instanceof Map){
+				Map<String,Object> property = (Map<String,Object>)found;
+				
+				Iterator<Entry<String,Object>> iter = property.entrySet().iterator();
+				
+				while (iter.hasNext()){
+					Entry<String,Object> entry = iter.next();
+					setProperty(entry.getKey(), entry.getValue().toString(), true);
+				}
+			}
+			
+			found = json.get("privilege");
+			if (found != null && found instanceof List){
+				List<String> privileges = (List<String>)found;
+				
+				for (String p:privileges){
+					addPrivileges(p);
+				}
 			}
 		}
 	}

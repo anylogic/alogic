@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alogic.load.Loadable;
 import com.alogic.load.Store;
+import com.anysoft.util.JsonSerializer;
 
 /**
  * Principal
@@ -13,7 +14,7 @@ import com.alogic.load.Store;
  * @author yyduan
  * @since 1.6.10.10
  */
-public interface Principal extends Loadable,Constants{
+public interface Principal extends Loadable,Constants,JsonSerializer{
 	
 	/**
 	 * 获取id

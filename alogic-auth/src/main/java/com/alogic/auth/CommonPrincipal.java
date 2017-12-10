@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.XmlTools;
 
@@ -186,13 +187,22 @@ public class CommonPrincipal extends Principal.Abstract{
 	@Override
 	public void report(Element xml) {
 		if (xml != null){
+			XmlTools.setString(xml,"id",getId());
+			
 			Map<String,String> map = getPropertiesObject(false);
 			if (map != null){
+				Document doc = xml.getOwnerDocument();
 				Iterator<Entry<String,String>> iter = map.entrySet().iterator();
 				
 				while (iter.hasNext()){
 					Entry<String,String> entry = iter.next();
-					XmlTools.setString(xml,entry.getKey(),entry.getValue());
+					
+					Element property = doc.createElement("property");
+
+					XmlTools.setString(property, "k", entry.getKey());
+					XmlTools.setString(property, "v", entry.getValue());
+					
+					xml.appendChild(property);
 				}
 			}
 			
@@ -212,14 +222,19 @@ public class CommonPrincipal extends Principal.Abstract{
 	@Override
 	public void report(Map<String, Object> json) {
 		if (json != null){
+			JsonTools.setString(json, "xml", getId());
+			
 			Map<String,String> map = getPropertiesObject(false);
 			if (map != null){
 				Iterator<Entry<String,String>> iter = map.entrySet().iterator();
+				Map<String,Object> m = new HashMap<String,Object>();
 				
 				while (iter.hasNext()){
 					Entry<String,String> entry = iter.next();
-					JsonTools.setString(json,entry.getKey(),entry.getValue());
+					JsonTools.setString(m,entry.getKey(),entry.getValue());
 				}
+				
+				json.put("property",m);
 			}
 			
 			List<String> privileges = this.getPrivileges();
@@ -227,5 +242,15 @@ public class CommonPrincipal extends Principal.Abstract{
 				json.put("privilege", privileges);
 			}
 		}
+	}
+
+	@Override
+	public void toJson(Map<String, Object> json) {
+		report(json);
+	}
+
+	@Override
+	public void fromJson(Map<String, Object> json) {
+		
 	}
 }

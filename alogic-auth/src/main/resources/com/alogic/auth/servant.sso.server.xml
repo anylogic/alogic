@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog name="root">
+	<catalog name="auth">
+		<service 
+			id = "GetToken" 
+			name="验证token并获取token的信息" 
+			note="验证token并获取token的信息." 
+			visible="protected"
+			log = "brief" 
+			module="com.alogic.auth.service.GetTokenInfo">
+			<properties>
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>
+		</service>		
+		<service 
+			id = "Login" 
+			name="登录服务" 
+			note="通过用户名，密码和验证码进行登录." 
+			visible="public"
+			log = "brief" 
+			module="com.alogic.auth.service.Login">
+			<properties>
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>
+		</service>	
+		<service 
+			id = "AuthCode" 
+			name="验证码服务" 
+			note="获取验证码图片." 
+			visible="public"
+			log = "brief" 
+			module="com.alogic.auth.service.AuthCode">
+			<properties>
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>
+		</service>	
+		<service 
+			id = "Logout" 
+			name="退出登录" 
+			note="当前用户退出登录." 
+			visible="public"
+			log = "brief" 
+			module="com.alogic.auth.service.Logout">
+			<properties>
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>
+		</service>		
+		<service 
+			id = "Current" 
+			name="获取当前登录信息" 
+			note="获取当前登录信息." 
+			visible="public"
+			log = "brief" 
+			module="com.alogic.auth.service.CurrentLogin">
+			<properties>
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>
+		</service>		
+		<service 
+			id = "CheckSingle" 
+			name="检查单项权限" 
+			note="检查当前用户是否具备指定的权限." 
+			visible="public"
+			log = "brief" 
+			module="com.alogic.auth.service.CheckSinglePrivilege">
+			<properties>
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>
+		</service>		
+		<service 
+			id = "CheckMenu" 
+			name="检查菜单权限" 
+			note="检查当前用户是否具备指定的菜单权限." 
+			visible="public"
+			log = "brief" 
+			module="com.alogic.auth.service.CheckMenuPrivilege">
+			<properties>
+				<parameter id="jsonDefault" value="true" 
+					name="是否缺省按照JSON协议输出" editor="Boolean" note="Boolean型,是否缺省按照JSON协议输出."/>
+				<parameter id="servant.maxActive" value="10" 
+					name="服务最大的线程数" editor="Integer" note="整型，定义服务最大的线程数，如果超过该数，服务将会被拒绝."/>
+				<parameter id="servant.maxIdle" value="1"
+					name="服务最大空闲的线程数" editor="Integer" note="整型，定义服务所保留的最大的线程数，超过该数的服务实例在闲时将会被释放."/>
+			</properties>
+		</service>								
+	</catalog>
+</catalog>
