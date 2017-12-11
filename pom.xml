@@ -43,7 +43,6 @@
 		<module>alogic-dbcp</module>
 		<module>alogic-addons</module>
 		<module>alogic-together</module>
-		<module>alogic-example</module>
 		<module>alogic-kvalue</module>
 		<module>alogic-cache</module>
 		<module>alogic-doer</module>

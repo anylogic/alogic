@@ -2,10 +2,10 @@ package com.logicbus.backend;
 
 import com.anysoft.pool.Pooled;
 import com.anysoft.util.PropertiesConstants;
-import com.logicbus.models.servant.Argument;
 import com.logicbus.models.servant.ServiceDescription;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,17 +160,7 @@ public abstract class Servant implements Pooled{
 	 * @since 1.4.0
 	 */
 	public String getArgument(String id,String dftValue,Context ctx){
-		Argument argu = desc.getArgument(id);
-		if (argu == null){
-			//没有定义参数
-			return ctx.GetValue(id, dftValue);
-		}
-		
-		String value = argu.getValue(ctx);
-		if (value == null || value.length() <= 0){
-			return dftValue;
-		}
-		return value;
+		return ctx.GetValue(id, dftValue);
 	}
 	
 	/**
@@ -238,29 +228,12 @@ public abstract class Servant implements Pooled{
 	 * @throws ServantException
 	 */
 	public String getArgument(String id,Context ctx){
-		Argument argu = desc.getArgument(id);
-		String value;
-		if (argu == null){
-			//没有定义参数
-			value = ctx.GetValue(id, "");
-		}else{
-			value = argu.getValue(ctx);
-		}		
-		if (value == null || value.length() <= 0){
+		String value = ctx.GetValue(id, "");	
+		if (StringUtils.isEmpty(value)){
 			throw new ServantException("client.args_not_found",
 					"Can not find parameter:" + id);
 		}
 		return value;
-	}
-	
-	/**
-	 * 获取参数列表
-	 * @return 参数列表
-	 * 
-	 * @since 1.0.5
-	 */
-	public Argument [] getArgumentList(){
-		return desc.getArgumentList();
 	}
 	
 	/**
