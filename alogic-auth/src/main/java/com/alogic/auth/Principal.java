@@ -59,6 +59,11 @@ public interface Principal extends Loadable,Constants,JsonSerializer{
 	public String getProperty(String id,String dftValue);
 	
 	/**
+	 * 清除属性
+	 */
+	public void clearProperties();
+	
+	/**
 	 * 获取用户的权限列表
 	 * @return 权限列表
 	 */
@@ -76,6 +81,11 @@ public interface Principal extends Loadable,Constants,JsonSerializer{
 	 * @param privileges 权限列表
 	 */
 	public void addPrivileges(String...privileges);
+	
+	/**
+	 * 清除权限列表
+	 */
+	public void clearPrivileges();
 	
 	/**
 	 * 复制本Principal的数据到另外一个Principal实例

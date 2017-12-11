@@ -102,8 +102,9 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	public Principal login(HttpServletRequest request) {
 		Session sess = sessionManager.getSession(request, true);
 		if (sess.isLoggedIn()){
-			//如果已经登录了，直接返回
-			return new SessionPrincipal(sess);
+			//已经登录了，删除前一个登录者的用户信息和权限信息
+			sess.hDel(Session.USER_GROUP);
+			sess.sDel(Session.PRIVILEGE_GROUP);
 		}
 		
 		//登录id
@@ -131,11 +132,12 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 			
 			String pwd = encrypter.decode(password, authCode);
 			pwd = md5.encode(pwd, userId);
+			/*
 			if (!pwd.equals(user.getPassword())){
 				throw new BaseException("clnt.e2001",
 						String.format("User %s does not exist or the password is not correct.", userId));				
 			}
-			
+			*/
 			Principal newPrincipal = new SessionPrincipal(sess);
 			user.copyTo(newPrincipal);
 			//设置登录时间

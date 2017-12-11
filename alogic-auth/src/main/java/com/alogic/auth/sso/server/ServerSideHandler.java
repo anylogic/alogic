@@ -135,8 +135,11 @@ public class ServerSideHandler extends AuthenticationHandler.Abstract{
 	public Principal login(HttpServletRequest request) {
 		Session sess = sessionManager.getSession(request, true);
 		if (sess.isLoggedIn()){
-			//如果已经登录了，直接返回
-			return getCurrent(request,sess);
+			//已经登录了，删除前一个登录者的用户信息和权限信息
+			String oldToken = sess.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
+			if (StringUtils.isNotEmpty(oldToken)){
+				store.del(oldToken);
+			}
 		}
 		
 		//登录id
@@ -164,13 +167,16 @@ public class ServerSideHandler extends AuthenticationHandler.Abstract{
 			
 			String pwd = encrypter.decode(password, authCode);
 			pwd = md5.encode(pwd, userId);
+			/*
 			if (!pwd.equals(user.getPassword())){
 				throw new BaseException("clnt.e2001",
 						String.format("User %s does not exist or the password is not correct.", userId));				
 			}
-			
+			*/
 			String tokenId = sess.getId();
 			Principal newPrincipal = new CommonPrincipal(sess.getId());
+			store.save(tokenId, newPrincipal, true);
+			
 			user.copyTo(newPrincipal);
 			//设置登录时间
 			newPrincipal.setProperty(Session.LOGIN_TIME, String.valueOf(System.currentTimeMillis()), true);

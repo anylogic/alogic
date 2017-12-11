@@ -155,9 +155,6 @@ public class SessionPrincipal implements Principal{
 				
 				json.put("property", map);
 			}
-			for (Pair<String,String> entry:entries){
-				JsonTools.setString(json, entry.key(), entry.value());
-			}
 			
 			List<String> privileges = this.getPrivileges();
 			if (privileges != null && !privileges.isEmpty()){
@@ -197,5 +194,14 @@ public class SessionPrincipal implements Principal{
 			}
 		}
 	}
+	
+	@Override
+	public void clearProperties() {
+		this.session.hDel(Session.USER_GROUP);
+	}
 
+	@Override
+	public void clearPrivileges() {
+		this.session.sDel(Session.PRIVILEGE_GROUP);
+	}
 }

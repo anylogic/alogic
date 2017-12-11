@@ -42,11 +42,7 @@ public class CheckSinglePrivilege extends AbstractServant{
 			JsonTools.setString(data,"isLoggedIn","false");
 		}else{			
 			Principal principal = sm.getCurrent(ctx);
-			if (principal == null){
-				JsonTools.setString(data,"isLoggedIn","false");
-			}else{
-				//用户已经登录
-				JsonTools.setString(data,"isLoggedIn","true");
+			if (principal != null){
 				String privilege = this.getArgument("privilege", "", ctx);
 				String objectId = this.getArgument("objId","",ctx);
 				String objectType = this.getArgument("objType","", ctx);
@@ -56,8 +52,9 @@ public class CheckSinglePrivilege extends AbstractServant{
 				JsonTools.setString(data,"privilege",privilege);
 				JsonTools.setBoolean(data,"enable",enable);
 				JsonTools.setString(data,"objId",objectId);
-				JsonTools.setString(data,"objType",objectType);
+				JsonTools.setString(data,"objType",objectType);				
 			}
+			JsonTools.setBoolean(data,"isLoggedIn",sess.isLoggedIn());
 		}
 		
 		msg.getRoot().put("data", data);

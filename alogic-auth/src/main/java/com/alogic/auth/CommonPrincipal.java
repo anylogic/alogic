@@ -222,7 +222,7 @@ public class CommonPrincipal extends Principal.Abstract{
 	@Override
 	public void report(Map<String, Object> json) {
 		if (json != null){
-			JsonTools.setString(json, "xml", getId());
+			JsonTools.setString(json, "id", getId());
 			
 			Map<String,String> map = getPropertiesObject(false);
 			if (map != null){
@@ -249,8 +249,46 @@ public class CommonPrincipal extends Principal.Abstract{
 		report(json);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void fromJson(Map<String, Object> json) {
-		
+		if (json != null){
+			Object found = json.get("property");
+			if (found != null && found instanceof Map){
+				Map<String,Object> property = (Map<String,Object>)found;
+				
+				Iterator<Entry<String,Object>> iter = property.entrySet().iterator();
+				
+				while (iter.hasNext()){
+					Entry<String,Object> entry = iter.next();
+					setProperty(entry.getKey(), entry.getValue().toString(), true);
+				}
+			}
+			
+			found = json.get("privilege");
+			if (found != null && found instanceof List){
+				List<String> privileges = (List<String>)found;
+				
+				for (String p:privileges){
+					addPrivileges(p);
+				}
+			}
+		}		
+	}
+
+	@Override
+	public void clearProperties() {
+		Map<String,String> map = getPropertiesObject(false);
+		if (map != null){
+			map.clear();
+		}
+	}
+
+	@Override
+	public void clearPrivileges() {
+		Set<String> set = getPrivilegesObject(false);
+		if (set != null){
+			set.clear();
+		}
 	}
 }

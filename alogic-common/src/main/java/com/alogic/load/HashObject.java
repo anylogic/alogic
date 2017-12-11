@@ -90,4 +90,10 @@ public interface HashObject extends Loadable{
 	 * @param key 待删除的key
 	 */
 	public void hDel(String group,String key);
+	
+	/**
+	 * 删除整个Group
+	 * @param group 分组
+	 */
+	public void hDel(String group);
 }

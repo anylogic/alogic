@@ -44,16 +44,13 @@ public class CheckMenuPrivilege extends AbstractServant{
 				JsonTools.setString(map,"isLoggedIn","false");
 			}else{			
 				Principal principal = sm.getCurrent(ctx);
-				if (principal == null){
-					JsonTools.setString(map,"isLoggedIn","false");
-				}else{
-					//用户已经登录
-					JsonTools.setString(map,"isLoggedIn","true");
+				if (principal != null){
 					sm.checkPrivilege(principal,map,
 							this.getArgument("objId","",ctx),
 							this.getArgument("objType","", ctx)
-							);
+							);					
 				}
+				JsonTools.setBoolean(map,"isLoggedIn",sess.isLoggedIn());
 			}
 		}
 		return 0;

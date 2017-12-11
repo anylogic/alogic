@@ -22,7 +22,7 @@ public class SandBoxFile extends Loader.HotFile<SecretDataArea>{
 	
 	@Override
 	public void configure(Properties p){
-		dftClass = PropertiesConstants.getString(p, "dftClass", "");
+		dftClass = PropertiesConstants.getString(p, "dftClass", dftClass);
 		super.configure(p);
 	}
 }

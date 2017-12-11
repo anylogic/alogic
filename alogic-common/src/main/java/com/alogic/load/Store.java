@@ -25,6 +25,12 @@ public interface Store<O extends Loadable> extends Loader<O> {
 	public void save(String id,O o,boolean overwrite);
 	
 	/**
+	 * 删除指定的对象
+	 * @param id 对象id
+	 */
+	public void del(String id);
+	
+	/**
 	 * 基于本地内存ConcurrentHashMap的Store
 	 * 
 	 * @author yyduan
@@ -50,5 +56,9 @@ public interface Store<O extends Loadable> extends Loader<O> {
 			return data.get(id);
 		}
 		
+		@Override
+		public void del(String id){
+			data.remove(id);
+		}
 	}
 }

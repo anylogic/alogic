@@ -64,3 +64,7 @@ alogic-1.6.10
 
 ### 1.6.10.10 [20171206 duanyy]
 - 完善alogic-auth模块;
+
+### 1.6.10.10 [20171211 duanyy]
+- 迁移alogic-addons中的ac模块到alogic-auth中;
+- 完善alogic-auth模块;

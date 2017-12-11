@@ -1,6 +1,8 @@
 package com.alogic.auth.sso.client;
 
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +19,7 @@ import com.alogic.remote.call.Parameters;
 import com.alogic.remote.call.Result;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
+import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;
@@ -70,40 +73,69 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	
 	@Override
 	public Principal getCurrent(HttpServletRequest request) {
-		Session sess = sessionManager.getSession(request, false);
+		Session sess = sessionManager.getSession(request, true);
 		return getCurrent(request,sess);
 	}
 
 	@Override
 	public Principal getCurrent(HttpServletRequest request,Session session) {
-		Principal principal = null;
-		
-		if (session != null && session.isLoggedIn()){
-			//已经登录，并缓存在了本地session中
-			principal = new SessionPrincipal(session);
-		}else{
-			//先从Session中找token
-			String token = session.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
-			if (StringUtils.isEmpty(token)){
-				token = request.getParameter(arguToken);
-			}
-			if (StringUtils.isNotEmpty(token)){
-				try {
-					Parameters paras = theCall.createParameter();
-					
-					paras.param("token", token);
-					paras.param("fromIp", this.getClientIp(request));
-					
-					Result result = theCall.execute(paras);
-					
-					principal = result.getData("data", new SessionPrincipal(session));
-				}catch (Exception ex){
-					LOG.error("Remote call failed.");
-					LOG.error(ExceptionUtils.getStackTrace(ex));
-				}
-			}
+		Session sess = session;
+		if (sess == null){
+			//保证session不为空
+			sess = sessionManager.getSession(request, true);
 		}
 		
+		Principal principal = null;
+		
+		String token = request.getParameter(arguToken);
+		if (StringUtils.isNotEmpty(token)){
+			//参数中指定了新的token
+			String oldToken = session.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
+			if (token.equals(oldToken)){
+				//和以前的token一致
+				if (session.isLoggedIn()){
+					return new SessionPrincipal(session);
+				}
+			}else{
+				//新的token，删除前一个token的用户信息和权限信息
+				session.hDel(Session.USER_GROUP);
+				session.sDel(Session.PRIVILEGE_GROUP);
+				//记录token到当前的session
+				session.hSet(Session.DEFAULT_GROUP, Session.TOKEN, token, true);
+			}
+		}else{
+			token = session.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
+		}
+		
+		if (StringUtils.isNotEmpty(token)) {
+			try {
+				Parameters paras = theCall.createParameter();
+
+				paras.param("token", token);
+				paras.param("fromIp", getClientIp(request));
+
+				Result result = theCall.execute(paras);
+
+				if (result.getCode().equals("core.ok")) {
+					Map<String, Object> data = result.getData("data");
+
+					boolean isLoggedIn = JsonTools.getBoolean(data,
+							"isLoggedIn", false);
+					if (isLoggedIn) {
+						principal = new SessionPrincipal(session);
+						principal.fromJson(data);
+					}
+					/**
+					 * 设置已登录标记
+					 */
+					session.setLoggedIn(isLoggedIn);
+				}
+
+			} catch (Exception ex) {
+				LOG.error("Remote call failed.");
+				LOG.error(ExceptionUtils.getStackTrace(ex));
+			}
+		}
 		return principal;
 	}
 
@@ -128,7 +160,7 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	
 	@Override
 	public void logout(Principal principal) {
-		throw new BaseException("core.e1000","In sso client mode,it's not supported to login.");
+		throw new BaseException("core.e1000","In sso client mode,it's not supported to logout.");
 	}
 
 	@Override

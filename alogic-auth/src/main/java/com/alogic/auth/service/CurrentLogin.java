@@ -43,17 +43,15 @@ public class CurrentLogin extends AbstractServant{
 		
 		Map<String,Object> data = new HashMap<String,Object>();
 		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
-		Session sess = sm.getSession(ctx, false);
+		Session sess = sm.getSession(ctx, true);
 		if (sess == null){
 			JsonTools.setString(data,"isLoggedIn","false");
 		}else{			
 			Principal principal = sm.getCurrent(ctx);
-			if (principal == null){
-				JsonTools.setString(data,"isLoggedIn","false");
-			}else{
-				JsonTools.setString(data,"isLoggedIn","true");
+			if (principal != null){
 				principal.report(data);
 			}
+			JsonTools.setBoolean(data,"isLoggedIn",sess.isLoggedIn());
 		}
 		
 		msg.getRoot().put("data", data);
@@ -68,17 +66,15 @@ public class CurrentLogin extends AbstractServant{
 		Element data = doc.createElement("data");
 		
 		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
-		Session sess = sm.getSession(ctx, false);
+		Session sess = sm.getSession(ctx, true);
 		if (sess == null){
 			XmlTools.setString(data,"isLoggedIn","false");
 		}else{			
 			Principal principal = sm.getCurrent(ctx);
-			if (principal == null){
-				XmlTools.setString(data,"isLoggedIn","false");
-			}else{
-				XmlTools.setString(data,"isLoggedIn","true");
-				principal.report(data);
+			if (principal != null){
+				principal.report(data);				
 			}
+			XmlTools.setBoolean(data,"isLoggedIn",sess.isLoggedIn());
 		}
 		
 		msg.getRoot().appendChild(data);

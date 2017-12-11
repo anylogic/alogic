@@ -34,7 +34,7 @@ public class AuthGuard implements Filter{
 	/**
 	 * 没有登录的情况下，重定向的登录页面的地址
 	 */
-	protected String loginPage = "/login.html";
+	protected String loginPage = "/login";
 	
 	/**
 	 * 编码

@@ -8,10 +8,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
+
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Pair;
 import com.anysoft.util.StringMatcher;
@@ -130,6 +133,14 @@ public class LocalSession implements Session{
 		}
 	}
 
+	@Override
+	public void sDel(String group){
+		Set<String> obj = getSetObject(group,false);
+		if (obj != null){
+			obj.clear();
+		}
+	}
+	
 	@Override
 	public int sSize(String group) {
 		Set<String> obj = getSetObject(group,false);
@@ -326,6 +337,14 @@ public class LocalSession implements Session{
 		Map<String,String> mapObject = getMapObject(group,false);
 		if (mapObject != null){
 			mapObject.remove(key);
+		}
+	}
+
+	@Override
+	public void hDel(String group) {
+		Map<String,String> mapObject = getMapObject(group,false);
+		if (mapObject != null){
+			mapObject.clear();
 		}
 	}
 }

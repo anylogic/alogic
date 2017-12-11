@@ -19,7 +19,7 @@ public interface SetObject extends Loadable,DataProvider{
 	/**
 	 * 向Set中增加member
 	 * @param group 分组
-	 * @param member Set成员列表
+	 * @param members Set成员列表
 	 */
 	public void sAdd(String group,String...members);
 	
@@ -29,6 +29,12 @@ public interface SetObject extends Loadable,DataProvider{
 	 * @param members 待删除的成员列表
 	 */
 	public void sDel(String group,String...members);
+	
+	/**
+	 * 清除整个group
+	 * @param group 分组
+	 */
+	public void sDel(String group);
 	
 	/**
 	 * 当前Set大小

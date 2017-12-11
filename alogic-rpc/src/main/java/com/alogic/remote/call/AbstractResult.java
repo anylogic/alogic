@@ -58,6 +58,4 @@ abstract public class AbstractResult implements Result{
 		}
 		return result;
 	}
-
-	abstract public Object getData(String id);
 }

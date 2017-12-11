@@ -70,4 +70,11 @@ public interface Result {
 	 * @return 结果对象
 	 */
 	public <data> data getData(String id,Builder<data> builder);	
+	
+	/**
+	 * 获取指定的对象
+	 * @param id 对象id
+	 * @return
+	 */
+	public <data> data getData(String id);
 }

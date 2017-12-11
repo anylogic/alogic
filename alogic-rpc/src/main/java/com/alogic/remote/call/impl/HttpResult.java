@@ -21,14 +21,16 @@ public class HttpResult extends AbstractResult {
 		this.idPaths = idPaths;
 	}
 	
-	public Object getData(String id){
+	@SuppressWarnings("unchecked")
+	@Override
+	public <data> data getData(String id){
 		if (idPaths == null){
-			return root.get(id);
+			return (data) root.get(id);
 		}
 		
 		String path = idPaths.get(id);
 		if (path == null){
-			return root.get(id);
+			return (data) root.get(id);
 		}
 		
 		return JsonPath.read(root, path);
