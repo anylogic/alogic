@@ -61,6 +61,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.7.4 [20170118 duanyy] <br>
  * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
+ * 
+ * @version 1.6.10.12 [20171211 duanyy] <br>
+ * - 兼容混合模式 <br>
  */
 public abstract class AbstractAccessController implements AccessController {
 	/**
@@ -94,6 +97,16 @@ public abstract class AbstractAccessController implements AccessController {
 	@Override
 	public void configure(Properties p) {
 		metricsId = PropertiesConstants.getString(p, "acm.metrics.id", metricsId);
+	}	
+	
+	@Override
+	public String [] getGroupList(){
+		return new String[]{"default"};
+	}
+	
+	@Override
+	public AccessController getGroup(String id){
+		return this;
 	}	
 	
 	@Override

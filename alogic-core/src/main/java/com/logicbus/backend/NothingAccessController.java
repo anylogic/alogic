@@ -27,6 +27,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.7.4 [20170118 duanyy] <br>
  * - 淘汰com.anysoft.metrics包 ，改用新的指标框架<br>
+ * 
+ * @version 1.6.10.12 [20171211 duanyy] <br>
+ * - 兼容混合模式 <br>
  */
 public class NothingAccessController implements AccessController {
 	@Override
@@ -51,6 +54,15 @@ public class NothingAccessController implements AccessController {
 		return 0;
 	}
 
+	@Override
+	public String [] getGroupList(){
+		return new String[]{"default"};
+	}
+	
+	@Override
+	public AccessController getGroup(String id){
+		return this;
+	}
 	
 	public void report(Element root) {
 		if (root != null){

@@ -22,6 +22,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  * 
  * @since 1.6.5.5 
+ * 
+ * @version 1.6.10.12 [20171211 duanyy] <br>
+ * - 支持混合模式 <br>
  */
 public class AclReload extends AbstractServant {
 	
@@ -41,6 +44,7 @@ public class AclReload extends AbstractServant {
 		int limit = getArgument("limit", 30, ctx);	
 		String keyword = getArgument("keyword","",ctx);
 		String acmId = getArgument("acmId","",ctx);
+		String group = getArgument("group","default",ctx);
 		
 		Document doc = msg.getDocument();
 		Element root = msg.getRoot();
@@ -48,13 +52,17 @@ public class AclReload extends AbstractServant {
 		Settings settings = Settings.get();
 		AccessController ac = (AccessController) settings.get("accessController");
 		if (ac != null){
-			ac.reload(acmId);			
+			AccessController acGroup = ac.getGroup(group);
+			if (acGroup == null){
+				acGroup = ac;
+			}
+			acGroup.reload(acmId);			
 			Element acls = doc.createElement("acls");
 			XmlTools.setInt(acls, "offset", offset);
 			XmlTools.setInt(acls, "limit", limit);
 			XmlTools.setString(acls, "keyword",keyword);
 			
-			ac.report(acls);
+			acGroup.report(acls);
 			
 			root.appendChild(acls);
 		}
@@ -69,20 +77,25 @@ public class AclReload extends AbstractServant {
 		int limit = getArgument("limit", 30, ctx);
 		String keyword = getArgument("keyword","",ctx);
 		String acmId = getArgument("acmId","",ctx);
+		String group = getArgument("group","default",ctx);
 		
 		Map<String,Object> root = msg.getRoot();
 		
 		Settings settings = Settings.get();
 		AccessController ac = (AccessController) settings.get("accessController");
 		if (ac != null){
-			ac.reload(acmId);
+			AccessController acGroup = ac.getGroup(group);
+			if (acGroup == null){
+				acGroup = ac;
+			}
+			acGroup.reload(acmId);	
 			Map<String,Object> acls = new HashMap<String,Object>();
 			
 			JsonTools.setInt(acls, "offset", offset);
 			JsonTools.setInt(acls, "limit", limit);
 			JsonTools.setString(acls,"keyword",keyword);
 
-			ac.report(acls);
+			acGroup.report(acls);
 			
 			root.put("acls", acls);
 		}

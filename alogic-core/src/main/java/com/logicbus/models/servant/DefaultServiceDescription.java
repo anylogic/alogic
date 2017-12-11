@@ -39,6 +39,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.8.7 [20170412 duanyy] <br>
  * - DefaultProperties容器由Hashtable更改为HashMap <br>
+ * 
+ * @version 1.6.10.12 [20171211 duanyy] <br>
+ * - 增加访问控制组和权限项属性 <br>
  */
 public class DefaultServiceDescription implements ServiceDescription{
 	/**
@@ -138,6 +141,14 @@ public class DefaultServiceDescription implements ServiceDescription{
 	public boolean guard() {
 		return guard;
 	}	
+	
+	/**
+	 * 设置Guard属性
+	 * @param guard 是否监管
+	 */
+	public void setGuard(boolean guard){
+		this.guard = guard;
+	}
 	
 	/**
 	 * 获得服务ID
@@ -361,15 +372,14 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	
 	public void fromXML(Element root){
-		setServiceID(root.getAttribute("id"));
-		setName(root.getAttribute("name"));
-		setModule(root.getAttribute("module"));
-		setNote(root.getAttribute("note"));
-		setVisible(root.getAttribute("visible"));
-		setPath(root.getAttribute("path"));
-		logType = parseLogType(root.getAttribute("log"));
-		guard = Boolean.parseBoolean(root.getAttribute("guard"));
-		
+		setServiceID(XmlTools.getString(root,"id",""));
+		setName(XmlTools.getString(root, "name", getName()));		
+		setModule(XmlTools.getString(root, "module", getModule()));
+		setNote(XmlTools.getString(root,"note",getNote()));
+		setVisible(XmlTools.getString(root, "visible", visible));
+		setPath(XmlTools.getString(root, "path", getPath()));
+		setLogType(parseLogType(XmlTools.getString(root, "log", logType.toString())));
+		setGuard(XmlTools.getBoolean(root, "guard", guard()));
 		setAcGroup(XmlTools.getString(root,"acGroupId",getAcGroup()));
 		setPrivilege(XmlTools.getString(root,"privilege",getAcGroup()));
 		
@@ -420,18 +430,18 @@ public class DefaultServiceDescription implements ServiceDescription{
 	 */
 	@SuppressWarnings("unchecked")
 	public void fromJson(Map<String,Object> json){
-		setServiceID((String)json.get("id"));
-		setName((String)json.get("name"));
-		setModule((String)json.get("module"));
-		setNote((String)json.get("note"));
-		setVisible((String)json.get("visible"));
-		setPath((String)json.get("path"));
+		setServiceID(JsonTools.getString(json, "id", ""));
+		setName(JsonTools.getString(json, "name", getName()));
+		setModule(JsonTools.getString(json, "module", getModule()));
+		setNote(JsonTools.getString(json, "note", getNote()));
+		setVisible(JsonTools.getString(json, "visible", getVisible()));
+		setPath(JsonTools.getString(json, "path", getPath()));
 		
 		setAcGroup(JsonTools.getString(json,"acGroupId",getAcGroup()));
 		setPrivilege(JsonTools.getString(json,"privilege",getAcGroup()));
 		
-		guard = Boolean.parseBoolean((String)json.get("guard"));
-		logType = parseLogType((String)json.get("log"));
+		setGuard(JsonTools.getBoolean(json, "guard", guard()));
+		setLogType(parseLogType(JsonTools.getString(json, "log", getLogType().toString())));
 		
 		Object propertiesObj = json.get("properties");
 		if (propertiesObj != null && propertiesObj instanceof List){

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.alogic.metrics.Dimensions;
 import com.alogic.metrics.Fragment;
 import com.alogic.metrics.Measures;
@@ -38,6 +39,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.10.7 [20171115 duanyy] <br>
  * - AccessStat中增加被Denied的统计信息 <br>
+ * 
+ * @version 1.6.10.12 [20171211 duanyy] <br>
+ * - 兼容混合模式 <br>
  */
 public abstract class AbstractACMAccessController implements AccessController {
 	/**
@@ -74,6 +78,16 @@ public abstract class AbstractACMAccessController implements AccessController {
 	public void configure(Properties props) {		
 		metricsId = PropertiesConstants.getString(props, "acm.metrics.id", metricsId);
 	}		
+	
+	@Override
+	public String [] getGroupList(){
+		return new String[]{"default"};
+	}
+	
+	@Override
+	public AccessController getGroup(String id){
+		return this;
+	}
 	
 	/**
 	 * 根据绘画获取ACM控制对象id

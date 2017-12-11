@@ -52,6 +52,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.10.12 [20171211 duanyy] <br>
+ * - 支持混合模式 <br>
  */
 public interface AccessController extends Reportable,MetricsReportable,XMLConfigurable,Configurable{
 	
@@ -94,6 +97,19 @@ public interface AccessController extends Reportable,MetricsReportable,XMLConfig
 	 * @return 无用处，仅仅追求对称美
 	 */
 	public int accessEnd(String sessionId,Path serviceId,ServiceDescription servant,Context ctx);
+	
+	/**
+	 * 获取分组列表
+	 * @return 分组列表
+	 */
+	public String [] getGroupList();
+	
+	/**
+	 * 获取指定的分组
+	 * @param id 分组id
+	 * @return 分组
+	 */
+	public AccessController getGroup(String id);
 	
 	/**
 	 * AccessController的工厂类

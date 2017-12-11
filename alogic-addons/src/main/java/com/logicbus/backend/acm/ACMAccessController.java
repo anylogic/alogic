@@ -63,6 +63,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.10.7 [20171115 duanyy] <br>
  * - AccessStat中增加被Denied的统计信息 <br>
+ * 
+ * @version 1.6.10.12 [20171211 duanyy] <br>
+ * - 兼容混合模式 <br>
  */
 public abstract class ACMAccessController implements AccessController {
 	/**
@@ -144,6 +147,16 @@ public abstract class ACMAccessController implements AccessController {
 		return 0;
 	}
 
+	@Override
+	public String [] getGroupList(){
+		return new String[]{"default"};
+	}
+	
+	@Override
+	public AccessController getGroup(String id){
+		return this;
+	}
+	
 	@Override
 	public void reload(String id){
 		// nothing to do

@@ -45,6 +45,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.4.0 [20141117 duanyy] <br>
  * - 将MessageDoc和Context进行合并整合 <br>
+ * 
+ * @version 1.6.10.12 [20171211 duanyy] <br>
+ * - 支持混合模式 <br>
  */
 public class AclQuery extends AbstractServant {
 	
@@ -63,6 +66,7 @@ public class AclQuery extends AbstractServant {
 		int offset = getArgument("offset", 0, ctx);
 		int limit = getArgument("limit", 30, ctx);	
 		String keyword = getArgument("keyword","",ctx);
+		String group = getArgument("group","default",ctx);
 		
 		Document doc = msg.getDocument();
 		Element root = msg.getRoot();
@@ -70,12 +74,17 @@ public class AclQuery extends AbstractServant {
 		Settings settings = Settings.get();
 		AccessController ac = (AccessController) settings.get("accessController");
 		if (ac != null){
+			AccessController acGroup = ac.getGroup(group);
+			if (acGroup == null){
+				acGroup = ac;
+			}
+			
 			Element acls = doc.createElement("acls");
 			XmlTools.setInt(acls, "offset", offset);
 			XmlTools.setInt(acls, "limit", limit);
 			XmlTools.setString(acls, "keyword",keyword);
 			
-			ac.report(acls);
+			acGroup.report(acls);
 			
 			root.appendChild(acls);
 		}
@@ -89,19 +98,24 @@ public class AclQuery extends AbstractServant {
 		int offset = getArgument("offset", 0, ctx);
 		int limit = getArgument("limit", 30, ctx);
 		String keyword = getArgument("keyword","",ctx);
+		String group = getArgument("group","default",ctx);
 		
 		Map<String,Object> root = msg.getRoot();
 		
 		Settings settings = Settings.get();
 		AccessController ac = (AccessController) settings.get("accessController");
 		if (ac != null){
+			AccessController acGroup = ac.getGroup(group);
+			if (acGroup == null){
+				acGroup = ac;
+			}
 			Map<String,Object> acls = new HashMap<String,Object>();
 			
 			JsonTools.setInt(acls, "offset", offset);
 			JsonTools.setInt(acls, "limit", limit);
 			JsonTools.setString(acls,"keyword",keyword);
 
-			ac.report(acls);
+			acGroup.report(acls);
 			
 			root.put("acls", acls);
 		}

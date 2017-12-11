@@ -72,3 +72,6 @@ alogic-1.6.10
 ### 1.6.10.11 [20171211 duanyy]
 - 淘汰alogic-examples工程;
 - 淘汰服务的Argument配置机制;
+
+### 1.6.10.12 [20171211 duanyy]
+- alogic-core:访问控制器支持混合模式;
