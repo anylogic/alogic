@@ -6,6 +6,8 @@
     <version>1.6.10-SNAPSHOT</version>
   </parent>
   <artifactId>alogic-zk</artifactId>
+  <name>alogic-zk</name>
+  <description>Zookeeper相关的API</description>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.anylogic</groupId>

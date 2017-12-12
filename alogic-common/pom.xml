@@ -9,13 +9,6 @@
 	<artifactId>alogic-common</artifactId>
 	<name>alogic-common</name>
   	<description>基础类库</description>    	
- 	<distributionManagement>
-		<site>
-			<id>localhost</id>
-			<name>localhost</name>
-			<url>file:///${project.site.home}</url>
-		</site>
-	</distributionManagement> 	
 	<dependencies>
 		<dependency>
 		    <groupId>org.slf4j</groupId>

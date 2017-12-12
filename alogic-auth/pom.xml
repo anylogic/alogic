@@ -7,13 +7,8 @@
 		<version>1.6.10-SNAPSHOT</version>
 	</parent>
 	<artifactId>alogic-auth</artifactId>
-	<distributionManagement>
-		<site>
-			<id>localhost</id>
-			<name>localhost</name>
-			<url>file:///${project.site.home}</url>
-		</site>
-	</distributionManagement>
+	<name>alogic-auth</name>
+  	<description>认证登录框架</description>	
 	<dependencies>
 		<dependency>
 			<groupId>com.github.anylogic</groupId>

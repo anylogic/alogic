@@ -8,13 +8,6 @@
   <artifactId>alogic-seq</artifactId>
   <name>alogic-seq</name>
   <description>全局唯一序列方案</description>   
-	<distributionManagement>
-		<site>
-			<id>localhost</id>
-			<name>localhost</name>
-			<url>file:///${project.site.home}</url>
-		</site>
-	</distributionManagement>  
   <dependencies>
   	<dependency>
   		<groupId>com.github.anylogic</groupId>

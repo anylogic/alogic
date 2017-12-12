@@ -8,13 +8,6 @@
   <artifactId>alogic-lucene</artifactId>
   <name>alogic-lucene</name>
   <description>基于lucene的搜索框架</description>    
-	<distributionManagement>
-		<site>
-			<id>localhost</id>
-			<name>localhost</name>
-			<url>file:///${project.site.home}</url>
-		</site>
-	</distributionManagement>  
   <properties>
   	<lucene.version>5.3.0</lucene.version>
   </properties>

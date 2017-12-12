@@ -9,13 +9,6 @@
 	<artifactId>alogic-vfs</artifactId>
 	<name>alogic-vfs</name>
   	<description>虚拟文件系统(Virutal File System)框架</description>  
- 	<distributionManagement>
-		<site>
-			<id>localhost</id>
-			<name>localhost</name>
-			<url>file:///${project.site.home}</url>
-		</site>
-	</distributionManagement> 		
 	<dependencies>
 		<dependency>
 			<groupId>com.github.anylogic</groupId>

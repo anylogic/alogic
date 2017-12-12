@@ -9,13 +9,6 @@
 	<artifactId>alogic-addons</artifactId>
 	<name>alogic-addons</name>
 	<description>一些组合起来的附加组件</description>
-	<distributionManagement>
-		<site>
-			<id>localhost</id>
-			<name>localhost</name>
-			<url>file:///${project.site.home}</url>
-		</site>
-	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.anylogic</groupId>

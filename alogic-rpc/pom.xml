@@ -4,11 +4,10 @@
     <groupId>com.github.anylogic</groupId>
     <artifactId>alogic</artifactId>
     <version>1.6.10-SNAPSHOT</version>
-  </parent>
-	<properties>
-		<spring.version>4.1.6.RELEASE</spring.version>
-	</properties>  
+  </parent> 
   <artifactId>alogic-rpc</artifactId>
+  <name>alogic-rpc</name>
+  <description>远程调用相关的API</description>   
 	<dependencies>
 		<dependency>
 			<groupId>com.github.anylogic</groupId>

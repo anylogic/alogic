@@ -73,8 +73,35 @@
 	</distributionManagement>
 
 	<build>
-		<plugins>
-
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-enforcer-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>enforce</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement> 	
+		<plugins> 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -132,23 +159,12 @@
 							<artifactId>maven-javadoc-plugin</artifactId>
 							<version>2.7</version>
 						</plugin>
-						<plugin>
-							<groupId>org.codehaus.mojo</groupId>
-							<artifactId>taglist-maven-plugin</artifactId>
-						</plugin>
-						<plugin>
-							<artifactId>maven-pmd-plugin</artifactId>
-							<version>3.6</version>
-							<configuration>
-								<targetJdk>1.7</targetJdk>
-							</configuration>
-						</plugin>
 					</reportPlugins>
 				</configuration>
-				<version>3.3</version>
+				<version>3.6</version>
 			</plugin>
  
-<!-- 			<plugin>
+ 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
 				<version>1.6</version>
@@ -161,7 +177,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin> -->
+			</plugin> 
 			
 		</plugins>
 	</build>
