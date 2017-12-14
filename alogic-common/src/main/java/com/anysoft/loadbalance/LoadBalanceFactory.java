@@ -1,6 +1,5 @@
 package com.anysoft.loadbalance;
 
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 
 /**
@@ -16,7 +15,7 @@ import com.anysoft.util.Factory;
  * 
  */
 public class LoadBalanceFactory<load extends Load> extends Factory<LoadBalance<load>> {
-	public String getClassName(String _module) throws BaseException{
+	public String getClassName(String _module){
 		if (_module.indexOf('.') < 0){
 			return "com.anysoft.loadbalance.impl." + _module;
 		}

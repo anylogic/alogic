@@ -26,7 +26,7 @@ import com.logicbus.models.servant.ServiceDescription;
  */
 public class DbcpList extends AbstractServant {
 
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx){
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		Document doc = msg.getDocument();
@@ -43,7 +43,7 @@ public class DbcpList extends AbstractServant {
 		
 		return 0;
 	}
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		List<Object> list = new ArrayList<Object>();

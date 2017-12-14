@@ -82,7 +82,7 @@ public class Select extends DBOperation {
 		catch (SQLException ex){
 			error = true;
 			msg = ExceptionUtils.getStackTrace(ex);
-			throw new BaseException("core.sql_error",msg);
+			throw new BaseException("core.e1300",msg);
 		}finally{
 			if (traceEnable() && tc != null){
 				Tool.end(tc, "DB", "Query", error ? "FAILED":"OK", msg,String.format("[%s]%s",data,sql),0);
@@ -104,7 +104,7 @@ public class Select extends DBOperation {
 			return null;
 		}
 		catch (SQLException ex){
-			throw new BaseException("core.sql_error",ExceptionUtils.getStackTrace(ex));
+			throw new BaseException("core.e1300",ExceptionUtils.getStackTrace(ex));
 		}		
 	}
 
@@ -112,7 +112,6 @@ public class Select extends DBOperation {
 	 * 以Long形式获取查询结果（单返回值）
 	 * @param dftValue 缺省值
 	 * @return 结果值
-	 * @throws BaseException
 	 * 
 	 * @since 1.6.2.3
 	 */
@@ -140,7 +139,6 @@ public class Select extends DBOperation {
 	 * 以String形式获取查询结果（单返回值）
 	 * @param dftValue 缺省值
 	 * @return 结果值
-	 * @throws BaseException
 	 * 
 	 * @since 1.6.2.3
 	 */
@@ -192,7 +190,6 @@ public class Select extends DBOperation {
 	 * @param result 预创建的结果集
 	 * @param renderer 渲染器
 	 * @return 查询结果
-	 * @throws BaseException
 	 * @since 1.6.2.4
 	 */
 	public Map<String,Object> singleRow(RowRenderer<Object> renderer,Map<String,Object> result){
@@ -229,7 +226,6 @@ public class Select extends DBOperation {
 	 * 获取单行结果
 	 * @param result
 	 * @return 单行结果
-	 * @throws BaseException
 	 * @since 1.6.2.3
 	 */
 	public Map<String,String> singleRowAsString(Map<String,String> result){
@@ -241,7 +237,6 @@ public class Select extends DBOperation {
 	 * @param result 预创建的结果集
 	 * @param renderer 渲染器
 	 * @return 单行结果
-	 * @throws BaseException
 	 */
 	public Map<String,String> singleRowAsString(RowRenderer<String> renderer,Map<String,String> result){
 		try {
@@ -289,7 +284,7 @@ public class Select extends DBOperation {
 			}
 		}
 		catch (SQLException ex){
-			throw new BaseException("core.sql_error",ExceptionUtils.getStackTrace(ex));
+			throw new BaseException("core.e1300",ExceptionUtils.getStackTrace(ex));
 		}		
 	}
 	
@@ -319,7 +314,7 @@ public class Select extends DBOperation {
 			}
 		}
 		catch (SQLException ex){
-			throw new BaseException("core.sql_error",ExceptionUtils.getStackTrace(ex));
+			throw new BaseException("core.e1300",ExceptionUtils.getStackTrace(ex));
 		}
 	}
 
@@ -357,7 +352,7 @@ public class Select extends DBOperation {
 			}
 		}
 		catch (SQLException ex){
-			throw new BaseException("core.sql_error",ExceptionUtils.getStackTrace(ex));
+			throw new BaseException("core.e1300",ExceptionUtils.getStackTrace(ex));
 		}
 	}
 	
@@ -392,7 +387,7 @@ public class Select extends DBOperation {
 		return data.getResult();
 	}
 	
-	public void close() throws BaseException {
+	public void close() {
 		close(rs,stmt);
 	}	
 }

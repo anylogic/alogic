@@ -1,5 +1,6 @@
 package com.anysoft.util.compress.compressor;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -22,11 +23,11 @@ import com.anysoft.util.compress.AbstractCompressor;
 public class BZIP2 extends AbstractCompressor{
 
 	@Override
-	protected InputStream getInputStream(InputStream in) throws Exception {
+	protected InputStream getInputStream(InputStream in) throws IOException {
 		return new BZip2CompressorInputStream(in);
 	}
 	@Override
-	protected OutputStream getOutputStream(OutputStream out)throws Exception{
+	protected OutputStream getOutputStream(OutputStream out) throws IOException{
 		return new BZip2CompressorOutputStream(out);
 	}
 }

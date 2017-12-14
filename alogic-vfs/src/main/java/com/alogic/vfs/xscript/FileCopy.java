@@ -54,11 +54,11 @@ public class FileCopy extends AbstractLogiclet{
 			ExecuteWatcher watcher) {
 		VirtualFileSystem vfsSrc = ctx.getObject(srcVfs);
 		if (vfsSrc == null){
-			throw new BaseException("core.no_vfs_context",String.format("Can not find vfs:%s", srcVfs));
+			throw new BaseException("core.e1001",String.format("Can not find vfs:%s", srcVfs));
 		}
 		VirtualFileSystem vfsDest = ctx.getObject(destVfs);
 		if (vfsDest == null){
-			throw new BaseException("core.no_vfs_context",String.format("Can not find vfs:%s", destVfs));
+			throw new BaseException("core.e1001",String.format("Can not find vfs:%s", destVfs));
 		}		
 		
 		String srcPath = ctx.transform(src);

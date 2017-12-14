@@ -63,7 +63,7 @@ public class DBConnection extends Segment {
 			super.onExecute(root, current, ctx, watcher);
 		} catch (SQLException ex) {
 			hasError = true;
-			throw new BaseException("core.sqlError",ex.getMessage());
+			throw new BaseException("core.e1300",ex.getMessage());
 		} finally {
 			ctx.removeObject(dbconn);
 			pool.recycle(conn, hasError);

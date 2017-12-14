@@ -39,7 +39,7 @@ public abstract class DBOperation extends AbstractLogiclet{
 			ExecuteWatcher watcher) {
 		Connection conn = ctx.getObject(dbconn);
 		if (conn == null){
-			throw new ServantException("core.no_db_connection","It must be in a db context,check your together script.");
+			throw new ServantException("core.e1001","It must be in a db context,check your together script.");
 		}
 		
 		onExecute(conn,root,current,ctx,watcher);
@@ -55,7 +55,7 @@ public abstract class DBOperation extends AbstractLogiclet{
 	
 	protected void onExecute(Connection conn, Map<String,Object> root,Map<String,Object> current, LogicletContext ctx,
 			ExecuteWatcher watcher){
-		throw new BaseException("core.not_supported",
+		throw new BaseException("core.e1000",
 				String.format("Tag %s does not support protocol %s",this.getXmlTag(),root.getClass().getName()));
 	}
 }

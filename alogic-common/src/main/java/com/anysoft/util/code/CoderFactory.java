@@ -1,6 +1,5 @@
 package com.anysoft.util.code;
 
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Pair;
 import com.anysoft.util.Settings;
@@ -32,7 +31,7 @@ public class CoderFactory extends Factory<Coder> {
 	}
 	
 	
-	public String getClassName(String _module) throws BaseException{
+	public String getClassName(String _module) {
 		if (_module.indexOf('.') < 0){
 			return "com.anysoft.util.code.coder." + _module;
 		}

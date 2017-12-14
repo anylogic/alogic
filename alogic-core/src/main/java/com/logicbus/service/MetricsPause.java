@@ -37,7 +37,7 @@ public class MetricsPause extends AbstractServant{
 	}
 
 	
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx) {
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 		
 		Handler<Fragment> handler = MetricsHandlerFactory.getClientInstance();
@@ -57,7 +57,7 @@ public class MetricsPause extends AbstractServant{
 	}
 
 	
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		Handler<Fragment> handler = MetricsHandlerFactory.getClientInstance();

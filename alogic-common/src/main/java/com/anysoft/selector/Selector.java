@@ -85,8 +85,7 @@ abstract public class Selector implements XMLConfigurable {
 	}
 	
 	
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	public void configure(Element _e, Properties _properties){
 		XmlElementProperties p = new XmlElementProperties(_e, _properties);
 		id = PropertiesConstants.getString(p, "selector-id", "",true);
 		defaultValue =PropertiesConstants.getString(p, "selector-default", defaultValue,true);
@@ -101,7 +100,6 @@ abstract public class Selector implements XMLConfigurable {
 	 * 
 	 * @param _e 配置XML节点
 	 * @param _p 变量集
-	 * @throws BaseException
 	 */
 	public abstract void onConfigure(Element _e, Properties _p)
 			throws BaseException;	
@@ -214,7 +212,7 @@ abstract public class Selector implements XMLConfigurable {
 	 * 
 	 */
 	public static class TheFactory extends Factory<Selector>{
-		public String getClassName(String _module) throws BaseException{
+		public String getClassName(String _module){
 			String __module = _module;
 			if (__module.indexOf(".") < 0) {
 				__module = "com.anysoft.selector.impl." + __module;

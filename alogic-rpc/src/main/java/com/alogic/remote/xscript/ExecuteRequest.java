@@ -59,14 +59,14 @@ public class ExecuteRequest extends Segment {
 	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {		
 		Request req = ctx.getObject(pid);
 		if (req == null){
-			throw new BaseException("core.no_request","It must be in a remote-request context,check your script.");
+			throw new BaseException("core.e1001","It must be in a remote-request context,check your script.");
 		}
 		
 		Response response = null;
 		try {
 			String p = ctx.transform(path);
 			if (StringUtils.isEmpty(p)){
-				throw new BaseException("core.no_path","The url path to call is null.");
+				throw new BaseException("core.e1003","The url path to call is null.");
 			}
 			
 			String k = ctx.transform(key);

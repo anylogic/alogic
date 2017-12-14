@@ -1,6 +1,5 @@
 package com.logicbus.kvalue.core;
 
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
@@ -12,6 +11,6 @@ import com.anysoft.util.XMLConfigurable;
  */
 public interface Schema extends AutoCloseable,XMLConfigurable,Reportable{
 	public String getId();
-	public void create(Properties props)throws BaseException;
+	public void create(Properties props);
 	public Table getTable(String name);
 }

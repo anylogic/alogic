@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.alogic.timer.core.ContextHolder;
 import com.alogic.timer.core.Matcher.Abstract;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 
 /**
@@ -19,7 +18,7 @@ public class Once extends Abstract {
 	 */
 	protected int count = 0;
 
-	public void configure(Properties p) throws BaseException {
+	public void configure(Properties p) {
 		//nothing to do
 	}
 

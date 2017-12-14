@@ -27,7 +27,7 @@ import com.logicbus.models.servant.ServiceDescription;
  */
 public class SchemaList extends AbstractServant {
 
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx){
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		Document doc = msg.getDocument();
@@ -44,7 +44,7 @@ public class SchemaList extends AbstractServant {
 		
 		return 0;
 	}
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		List<Object> list = new ArrayList<Object>();
@@ -68,7 +68,7 @@ public class SchemaList extends AbstractServant {
 		
 	}
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
+	protected void onCreate(ServiceDescription sd) {
 
 	}
 

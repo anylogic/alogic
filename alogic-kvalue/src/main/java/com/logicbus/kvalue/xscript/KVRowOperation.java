@@ -47,7 +47,7 @@ public abstract class KVRowOperation extends AbstractLogiclet{
 			ExecuteWatcher watcher) {
 		KeyValueRow r = ctx.getObject(pid);
 		if (r == null){
-			throw new BaseException("core.no_row","It must be in a kvRow context,check your script.");
+			throw new BaseException("core.e1001","It must be in a kvRow context,check your script.");
 		}
 		
 		if (StringUtils.isNotEmpty(id)){
@@ -57,7 +57,7 @@ public abstract class KVRowOperation extends AbstractLogiclet{
 
 	protected void onExecute(KeyValueRow row, Map<String, Object> root, Map<String, Object> current,
 			LogicletContext ctx, ExecuteWatcher watcher) {
-		throw new BaseException("core.not_supported",
+		throw new BaseException("core.e1000",
 				String.format("Tag %s does not support protocol %s",this.getXmlTag(),root.getClass().getName()));		
 	}
 	

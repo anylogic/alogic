@@ -74,15 +74,14 @@ public interface PropertiesFormatter extends Configurable,XMLConfigurable{
 			return id;
 		}
 		
-		public void configure(Properties p) throws BaseException {
+		public void configure(Properties p){
 			id = PropertiesConstants.getString(p,"id","",true);
 			name = PropertiesConstants.getString(p,"name","",true);
 			note = PropertiesConstants.getString(p,"note","",true);
 			type = PropertiesConstants.getString(p,"type",type,true);
 		}
 
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		public void configure(Element _e, Properties _properties) {
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);
 		}
@@ -144,7 +143,7 @@ public interface PropertiesFormatter extends Configurable,XMLConfigurable{
 			super(_id,_name,_note,"String");
 		}
 
-		public void configure(Properties p) throws BaseException {
+		public void configure(Properties p) {
 			super.configure(p);
 			dftValue = PropertiesConstants.getString(p,"defaultValue",dftValue,true);
 		}
@@ -253,8 +252,7 @@ public interface PropertiesFormatter extends Configurable,XMLConfigurable{
 			add(new Default(_id,_name,_note,_type));
 		}
 		
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		public void configure(Element _e, Properties _properties) {
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);
 			
@@ -314,7 +312,7 @@ public interface PropertiesFormatter extends Configurable,XMLConfigurable{
 	 *
 	 */
 	public static class TheFactory extends Factory<PropertiesFormatter>{
-		public String getClassName(String _module) throws BaseException{
+		public String getClassName(String _module){
 			if (_module.equals("Group")){
 				return Group.class.getName();
 			}

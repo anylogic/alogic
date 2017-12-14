@@ -1,5 +1,6 @@
 package com.anysoft.util.compress.compressor;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
@@ -21,12 +22,12 @@ import com.anysoft.util.compress.AbstractCompressor;
 public class GZIP  extends AbstractCompressor{
 
 	@Override
-	protected InputStream getInputStream(InputStream in) throws Exception {
+	protected InputStream getInputStream(InputStream in) throws IOException {
 		return new GZIPInputStream(in);
 	}
 	
 	@Override
-	protected OutputStream getOutputStream(OutputStream out)throws Exception{
+	protected OutputStream getOutputStream(OutputStream out) throws IOException{
 		return new GZIPOutputStream(out);
 	}
 }

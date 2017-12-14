@@ -73,12 +73,12 @@ public class RedisInputStream extends FilterInputStream {
 				}
 			}
 		} catch (IOException e) {
-			throw new RedisConnectException("ioexception",
+			throw new RedisConnectException("core.e1004",
 					"IO Exception when connecting.", e);
 		}
 		String reply = sb.toString();
 		if (reply.length() == 0) {
-			throw new RedisConnectException("closed",
+			throw new RedisConnectException("core.e1701",
 					"It seems like server has closed the connection.");
 		}
 		return reply;

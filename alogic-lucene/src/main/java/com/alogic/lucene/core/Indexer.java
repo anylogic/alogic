@@ -119,12 +119,11 @@ public interface Indexer extends Configurable,XMLConfigurable,Reportable{
 		 */
 		private String analyzer = SmartChineseAnalyzer.class.getName();
 		
-		public void configure(Properties p) throws BaseException {
+		public void configure(Properties p) {
 			analyzer = PropertiesConstants.getString(p,"analyzer", analyzer);
 		}
 		
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		public void configure(Element _e, Properties _properties) {
 			Properties p = new XmlElementProperties(_e,_properties);
 			
 			NodeList nodeList = XmlTools.getNodeListByPath(_e, "builder");

@@ -109,7 +109,7 @@ public class AsJson extends ResponseHandler {
 				ctx.removeObject(masterId);
 			}
 		}catch (IOException ex) {
-			throw new BaseException("core.io_error",ExceptionUtils.getStackTrace(ex));
+			throw new BaseException("core.e1004",ExceptionUtils.getStackTrace(ex));
 		}
 	}
 }

@@ -47,7 +47,7 @@ public class Helloworld extends Servant {
 	protected String m_welcome;
 	
 	
-	public int actionProcess(Context ctx) throws Exception{
+	public int actionProcess(Context ctx) {
 		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);		
 		Element root = msg.getRoot();
 		Document doc = root.getOwnerDocument();

@@ -73,7 +73,7 @@ public class ServiceQuery extends AbstractServant {
 
 	}
 	
-	protected int onXml(Context ctx) throws Exception {
+	protected int onXml(Context ctx)  {
 		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
 		Element root = msg.getRoot();
 		Document doc = root.getOwnerDocument();
@@ -95,7 +95,7 @@ public class ServiceQuery extends AbstractServant {
 	}
 
 	
-	protected int onJson(Context ctx) throws Exception {
+	protected int onJson(Context ctx)  {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		Settings settings = Settings.get();

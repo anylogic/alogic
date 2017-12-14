@@ -54,7 +54,7 @@ public class ZKChildren extends Segment implements Watcher {
 			ExecuteWatcher watcher) {
 		ZooKeeperConnector conn = ctx.getObject(pid);
 		if (conn == null){
-			throw new BaseException("core.no_zkconn","It must be in a zk-conn context,check your script.");
+			throw new BaseException("core.e1001","It must be in a zk-conn context,check your script.");
 		}				
 		
 		int offsetValue = getLong(ctx.transform(offset),0);

@@ -483,7 +483,7 @@ public class SFtp extends VirtualFileSystem.Abstract {
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close()  {
 		if (client0 != null) {
 			client0.close();
 		}

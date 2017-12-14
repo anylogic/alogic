@@ -41,7 +41,7 @@ public class Scan extends Segment{
 			ExecuteWatcher watcher) {
 		Connection conn = ctx.getObject(dbconn);
 		if (conn == null){
-			throw new BaseException("core.no_db_connection","It must be in a db context,check your together script.");
+			throw new BaseException("core.e1001","It must be in a db context,check your together script.");
 		}
 		
 		String listSql = ctx.transform(sql);

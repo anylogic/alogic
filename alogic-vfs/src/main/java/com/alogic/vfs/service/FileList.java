@@ -31,7 +31,7 @@ public class FileList extends AbstractServant{
 	}
 	
 	protected int onXml(Context ctx){
-		throw new ServantException("core.not_supported",
+		throw new ServantException("core.e1000",
 				"Protocol XML is not suppurted.");		
 	}
 
@@ -47,7 +47,7 @@ public class FileList extends AbstractServant{
 		VirtualFileSystem fs = FileSystemSource.get().get(fsId);
 		
 		if (fs == null){
-			throw new ServantException("core.data_not_found","Can not find a vfs named " +  fsId);
+			throw new ServantException("clnt.e2007","Can not find a vfs named " +  fsId);
 		}
 		
 		Map<String,Object> vfs = new HashMap<String,Object>();

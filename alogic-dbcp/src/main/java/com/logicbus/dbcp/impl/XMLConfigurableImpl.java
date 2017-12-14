@@ -8,7 +8,6 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
@@ -38,8 +37,7 @@ public class XMLConfigurableImpl extends AbstractConnectionPool implements XMLCo
 	}
 
 	
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	public void configure(Element _e, Properties _properties) {
 		Properties p = new XmlElementProperties(_e,_properties);
 		
 		model = new ConnectionModel();
@@ -84,7 +82,7 @@ public class XMLConfigurableImpl extends AbstractConnectionPool implements XMLCo
 	}
 
 	
-	protected Connection newConnection() throws BaseException{
+	protected Connection newConnection() {
 		return model.newConnection();
 	}
 	

@@ -9,7 +9,6 @@ import com.alogic.idu.util.IDUBase;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.dbcp.processor.Preprocessor;
 import com.logicbus.dbcp.sql.DBTools;
@@ -25,8 +24,7 @@ import com.logicbus.models.servant.ServiceDescription;
 public class ListAll extends IDUBase {
 
 	@Override
-	protected void onCreate(ServiceDescription sd, Properties p)
-			throws ServantException {
+	protected void onCreate(ServiceDescription sd, Properties p){
 		rootName = PropertiesConstants.getString(p, "data.root", rootName);
 		sqlQuery = PropertiesConstants.getString(p, "sql.Query", rootName);
 		
@@ -35,7 +33,7 @@ public class ListAll extends IDUBase {
 
 	@Override
 	protected void doIt(Context ctx, JsonMessage msg, Connection conn)
-			throws Exception {
+			 {
 		List<Object> data = new ArrayList<Object>();
 		
 		String sql = processor.process(ctx, data);

@@ -78,7 +78,7 @@ public class ServiceDetailQuery extends AbstractServant {
 	}
 
 	
-	protected int onXml(Context ctx) throws Exception {
+	protected int onXml(Context ctx)  {
 		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);	
 		
 		String id = getArgument("service", ctx);		
@@ -109,7 +109,7 @@ public class ServiceDetailQuery extends AbstractServant {
 	}
 
 	
-	protected int onJson(Context ctx) throws Exception {
+	protected int onJson(Context ctx)  {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);	
 		
 		String id = getArgument("service", ctx);		

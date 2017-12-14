@@ -109,7 +109,7 @@ public abstract class Naming <O extends Reportable> implements Context<O>,Watche
 	}	
 
 	@Override
-	public void close() throws Exception {
+	public void close()  {
 		caches.clear();
 		
 		for (Context<O> s:subContexts){

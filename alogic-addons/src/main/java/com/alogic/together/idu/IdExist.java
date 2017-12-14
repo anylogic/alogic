@@ -43,7 +43,7 @@ public class IdExist extends DBOperation {
 		String sql = processor.process(ctx, binded);
 		int exist = DBTools.selectAsInt(conn, sql, 1, binded.toArray());
 		if (exist > 0){
-			throw new ServantException("core.id_used","The given id has been used.");
+			throw new ServantException("clnt.e2008","The given id has been used.");
 		}
 	}
 

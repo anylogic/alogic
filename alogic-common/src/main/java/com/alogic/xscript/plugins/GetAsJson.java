@@ -81,7 +81,7 @@ public class GetAsJson extends Segment{
 				}
 			}		
 		}else{
-			throw new BaseException("core.not_supported",
+			throw new BaseException("core.e1000",
 					String.format("Tag %s does not support protocol %s",
 							getXmlTag(),root.getClass().getName()));	
 		}

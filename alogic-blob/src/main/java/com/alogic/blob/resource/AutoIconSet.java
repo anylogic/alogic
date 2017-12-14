@@ -215,19 +215,19 @@ public class AutoIconSet extends BlobManager.Abstract{
 	
 	@Override
 	public boolean deleteFile(String id) {
-		throw new BaseException("core.not_supported",
+		throw new BaseException("core.e1000",
 				"This function is not suppurted yet.");	
 	}
 
 	@Override
 	public void commit(BlobWriter writer) {
-		throw new BaseException("core.not_supported",
+		throw new BaseException("core.e1000",
 				"This function is not suppurted yet.");	
 	}
 
 	@Override
 	public void cancel(BlobWriter writer) {
-		throw new BaseException("core.not_supported",
+		throw new BaseException("core.e1000",
 				"This function is not suppurted yet.");	
 	}
 }

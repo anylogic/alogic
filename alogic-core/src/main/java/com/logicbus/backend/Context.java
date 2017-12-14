@@ -188,7 +188,7 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	 * @param clazz Message实现类
 	 * @throws ServantException 当创建Message实例发生异常的时候，抛出异常代码为:core.instance_create_error
 	 */
-	public <message extends Message> Message asMessage(Class<message> clazz) throws ServantException{
+	public <message extends Message> Message asMessage(Class<message> clazz){
 		if (msg != null)
 			return msg;
 		try {
@@ -196,7 +196,7 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 			msg.init(this);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ServantException("core.instance_create_error",
+			throw new ServantException("core.e1002",
 					"Can not create instance of " + clazz.getName() + ":" + e.getMessage());
 		}
 		return msg;

@@ -38,7 +38,7 @@ public interface Pool<pooled extends AutoCloseable> extends Reportable{
 	 * @return pooled
 	 * @throws BaseException
 	 */
-	public pooled borrowObject(int priority,int timeout) throws BaseException;
+	public pooled borrowObject(int priority,int timeout) ;
 	
 	/**
 	 * 归还缓冲对象

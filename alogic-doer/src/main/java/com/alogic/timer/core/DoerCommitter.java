@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Counter;
 import com.anysoft.util.Properties;
@@ -77,12 +75,11 @@ public interface DoerCommitter extends Reportable,Configurable,XMLConfigurable{
 			}
 		}
 
-		public void configure(Properties p) throws BaseException {
+		public void configure(Properties p) {
 			counter = new SimpleCounter(p);
 		}
 
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		public void configure(Element _e, Properties _properties) {
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);	
 		}

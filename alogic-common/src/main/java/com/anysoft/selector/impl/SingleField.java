@@ -3,7 +3,6 @@ package com.anysoft.selector.impl;
 import org.w3c.dom.Element;
 
 import com.anysoft.formula.DataProvider;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.selector.Selector;
@@ -21,7 +20,7 @@ import com.anysoft.selector.Selector;
 public class SingleField extends Selector {
 
 	
-	public void onConfigure(Element _e, Properties _p) throws BaseException {
+	public void onConfigure(Element _e, Properties _p) {
 		fieldName = PropertiesConstants.getString(_p, "selector-field", id,true);
 	}
 

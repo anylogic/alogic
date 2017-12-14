@@ -38,7 +38,7 @@ public class CacheExpire  extends AbstractServant {
 		
 		CacheStore found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find a cache :" + id);
+			throw new ServantException("clnt.e2007","Can not find a cache :" + id);
 		}
 		
 		String objectId = getArgument("objectId","",ctx);
@@ -65,7 +65,7 @@ public class CacheExpire  extends AbstractServant {
 		
 		CacheStore found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find a cache :" + id);
+			throw new ServantException("clnt.e2007","Can not find a cache :" + id);
 		}
 		
 		String objectId = getArgument("objectId","",ctx);

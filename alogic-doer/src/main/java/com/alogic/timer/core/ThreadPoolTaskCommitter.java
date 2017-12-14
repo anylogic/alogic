@@ -2,8 +2,6 @@ package com.alogic.timer.core;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -36,7 +34,7 @@ public class ThreadPoolTaskCommitter extends DoerCommitter.Abstract{
 		}
 	}
 	
-	public void configure(Properties p) throws BaseException {
+	public void configure(Properties p) {
 		super.configure(p);		
 		async = PropertiesConstants.getBoolean(p,"async",async,true);
 	}

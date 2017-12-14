@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -205,7 +206,6 @@ public class QueuedServantPool2 extends Queued implements ServantPool{
 	 * 根据服务描述创建服务员
 	 * @param desc 服务描述
 	 * @return 服务员
-	 * @throws ServantException
 	 */
 	protected Servant createServant(ServiceDescription desc){
 		String class_name = desc.getModule();
@@ -247,17 +247,17 @@ public class QueuedServantPool2 extends Queued implements ServantPool{
 		}catch (ServantException e){
 			throw e;
 		} catch (InstantiationException e) {
-			e.printStackTrace();
-			throw new ServantException("core.error_module",e.getMessage());
+			logger.error(ExceptionUtils.getStackTrace(e));
+			throw new ServantException("core.e1002",e.getMessage());
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			throw new ServantException("core.error_module",e.getMessage());
+			logger.error(ExceptionUtils.getStackTrace(e));
+			throw new ServantException("core.e1002",e.getMessage());
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			throw new ServantException("core.error_module",e.getMessage());
+			logger.error(ExceptionUtils.getStackTrace(e));
+			throw new ServantException("core.e1002",e.getMessage());
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			throw new ServantException("core.error_remote_module",e.getMessage());
+			logger.error(ExceptionUtils.getStackTrace(e));
+			throw new ServantException("core.e1002",e.getMessage());
 		}
 	}
 

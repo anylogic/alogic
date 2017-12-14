@@ -202,7 +202,7 @@ public interface Cluster extends Reportable,Configurable,XMLConfigurable,AutoClo
 		}
 		
 		@Override
-		public void close() throws Exception {
+		public void close()  {
 			Route[] list = getRoutes();
 			for (Route c:list){
 				IOTools.close(c);

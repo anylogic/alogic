@@ -57,12 +57,12 @@ public class XChangePwd extends AbstractLogiclet implements Resolver{
 	protected void onExecute(XsObject root,XsObject current,final LogicletContext ctx,final ExecuteWatcher watcher){
 		Terminal t = ctx.getObject(pid);
 		if (t == null){
-			throw new BaseException("core.no_terminal","It must be in a xshell context,check your together script.");
+			throw new BaseException("core.e1001","It must be in a xshell context,check your together script.");
 		}
 		
 		String password = ctx.transform(pwd);
 		if (!t.changePassword(password, this)){
-			throw new BaseException("core.failed","Failed to modify password");
+			throw new BaseException("core.e1401","Failed to modify password");
 		}
 	}
 }

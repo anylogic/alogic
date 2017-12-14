@@ -7,6 +7,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.anysoft.util.Factory;
+import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XmlTools;
 
@@ -52,10 +53,10 @@ public abstract class SlideHandler<data extends Flowable> extends AbstractHandle
 	}	
 	
 	@Override
-	public void close() throws Exception{
+	public void close() {
 		super.close();
 		if (handler != null){
-			handler.close();
+			IOTools.close(handler);
 		}
 	}
 	

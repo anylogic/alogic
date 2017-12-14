@@ -40,7 +40,7 @@ public class Upload extends Servant implements FileItemHandler{
 	}
 	
 	@Override
-	public int actionProcess(Context ctx) throws Exception{
+	public int actionProcess(Context ctx) {
 		MultiPartForm msg = (MultiPartForm) ctx.asMessage(MultiPartForm.class);
 	
 		String fsId = getArgument("domain","default",ctx);
@@ -49,7 +49,7 @@ public class Upload extends Servant implements FileItemHandler{
 		
 		VirtualFileSystem fs = FileSystemSource.get().get(fsId);
 		if (fs == null){
-			throw new ServantException("core.data_not_found","Can not find a vfs named " +  fsId);
+			throw new ServantException("clnt.e2007","Can not find a vfs named " +  fsId);
 		}		
 		
 		msg.handle(ctx,fs,this);

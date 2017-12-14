@@ -67,7 +67,7 @@ public abstract class AbstractClient implements Client {
 		String routeId = PropertiesConstants.getString(p,"$route",dftRouteId,true);
 		Route route = cluster.getRoute(routeId);
 		if (route == null){
-			throw new CallException("client.route_not_found","Can not find the route,id=" + routeId);
+			throw new CallException("core.e1003","Can not find the route,id=" + routeId);
 		}
 		
 		String app = PropertiesConstants.getString(p,"$app",dftAppId,true);

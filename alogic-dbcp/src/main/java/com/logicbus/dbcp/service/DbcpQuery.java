@@ -23,7 +23,7 @@ import com.logicbus.models.servant.ServiceDescription;
  */
 public class DbcpQuery extends AbstractServant {
 
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx){
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		String id = getArgument("id",ctx);
@@ -34,7 +34,7 @@ public class DbcpQuery extends AbstractServant {
 		DbcpSource src = DbcpSource.get();
 		ConnectionPool found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find the db connection pool :" + id);
+			throw new ServantException("clnt.e2007","Can not find the db connection pool :" + id);
 		}
 		
 		Element elem = doc.createElement("dbcp");
@@ -44,14 +44,14 @@ public class DbcpQuery extends AbstractServant {
 		return 0;
 	}
 	
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		String id = getArgument("id",ctx);
 		
 		DbcpSource src = DbcpSource.get();
 		ConnectionPool found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find the db connection pool :" + id);
+			throw new ServantException("clnt.e2007","Can not find the db connection pool :" + id);
 		}
 		
 		Map<String,Object> map = new HashMap<String,Object>();

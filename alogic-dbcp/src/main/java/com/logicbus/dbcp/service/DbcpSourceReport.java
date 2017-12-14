@@ -8,7 +8,6 @@ import org.w3c.dom.Element;
 
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.dbcp.context.DbcpSource;
@@ -28,11 +27,11 @@ public class DbcpSourceReport extends AbstractServant {
 	}
 
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
+	protected void onCreate(ServiceDescription sd) {
 
 	}
 
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx) {
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		Document doc = msg.getDocument();
@@ -47,7 +46,7 @@ public class DbcpSourceReport extends AbstractServant {
 		
 		return 0;
 	}
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		Map<String,Object> map = new HashMap<String,Object>();

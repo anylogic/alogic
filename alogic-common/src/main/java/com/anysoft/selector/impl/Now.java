@@ -3,7 +3,6 @@ package com.anysoft.selector.impl;
 import org.w3c.dom.Element;
 
 import com.anysoft.formula.DataProvider;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.selector.Selector;
 
@@ -18,7 +17,7 @@ import com.anysoft.selector.Selector;
 public class Now extends Selector {
 
 	
-	public void onConfigure(Element _e, Properties _p) throws BaseException {
+	public void onConfigure(Element _e, Properties _p) {
 	}
 
 	

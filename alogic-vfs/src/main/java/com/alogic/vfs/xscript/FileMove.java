@@ -47,7 +47,7 @@ public class FileMove extends AbstractLogiclet{
 			ExecuteWatcher watcher) {
 		VirtualFileSystem vfs = ctx.getObject(pid);
 		if (vfs == null){
-			throw new BaseException("core.no_vfs_context",String.format("Can not find vfs:%s", pid));
+			throw new BaseException("core.e1001",String.format("Can not find vfs:%s", pid));
 		}
 		
 		String srcPath = ctx.transform(src);

@@ -94,16 +94,16 @@ public class AppAccessController extends ACMAccessController{
 			
 			AccessAppKey keyInfo = findAppKeyInfo(appKey);
 			if (keyInfo == null){
-				throw new BaseException("client.permission_denied",String.format("AppKey %s does not exist", appKey));
+				throw new BaseException("clnt.e2004",String.format("AppKey %s does not exist", appKey));
 			}		
 			
 			AccessVerifier verifier = findAccessVerifier(keyInfo.getVerifier());
 			if (verifier == null){
-				throw new BaseException("client.permission_denied",String.format("Current verifier %s is not valid.", keyInfo.getVerifier()));
+				throw new BaseException("core.e1200",String.format("Current verifier %s is not valid.", keyInfo.getVerifier()));
 			}
 			
 			if (!verifier.verify(keyInfo, ctx)){
-				throw new BaseException("client.permission_denied",String.format("Failed to verify by app key %s",appKey));
+				throw new BaseException("clnt.e2005",String.format("Failed to verify by app key %s",appKey));
 			}
 			
 			return keyInfo.getAppId();

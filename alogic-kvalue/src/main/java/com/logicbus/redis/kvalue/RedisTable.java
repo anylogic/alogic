@@ -68,8 +68,7 @@ public class RedisTable implements Table {
 	 * @param _properties 环境变量集
 	 * 
 	 */
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	public void configure(Element _e, Properties _properties) {
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
 		name = PropertiesConstants.getString(p,"name", "",true);
 		possessive = PropertiesConstants.getBoolean(p,"possessive", possessive);
@@ -172,7 +171,7 @@ public class RedisTable implements Table {
 					);
 			return constructor.newInstance(dataType,key,enableRWSplit,source,part);
 		}catch (Exception ex){
-			throw new BaseException("core.errorinstance","Can not create a KeyValueRow instance.",ex);
+			throw new BaseException("core.e1002","Can not create a KeyValueRow instance.",ex);
 		}
 	}
 

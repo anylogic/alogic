@@ -31,9 +31,9 @@ public class DefaultSessionManager extends SessionManager {
 		
 	}
 	
-	public Session getSession(Context ctx, boolean create) throws ServantException{
+	public Session getSession(Context ctx, boolean create){
 		if (!(ctx instanceof HttpContext)){
-			throw new ServantException("core.nothttpcontext","The Context is not a HttpContext instance.");
+			throw new ServantException("core.e1001","The Context is not a HttpContext instance.");
 		}
 		
 		HttpContext httpContext = (HttpContext)ctx;
@@ -44,8 +44,7 @@ public class DefaultSessionManager extends SessionManager {
 	}
 
 	@Override
-	public Session getSession(HttpServletRequest request, boolean create)
-			throws ServantException {
+	public Session getSession(HttpServletRequest request, boolean create){
 		HttpSession session = request.getSession(create);
 		return session == null?null:new LocalSession(session);
 	}

@@ -14,6 +14,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileCleaningTracker;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +127,7 @@ public class MultiPartForm implements Message {
 	@Override
 	public void init(Context ctx) {
 		if (!(ctx instanceof HttpContext)){
-			throw new ServantException("core.unsupported_context",
+			throw new ServantException("core.e1001",
 					"The context's class must be HttpContext when using UploadFiles");
 		}
 		
@@ -137,8 +138,8 @@ public class MultiPartForm implements Message {
 		try {
 			fileItems = fileUpload.parseRequest(httpCtx.getRequest());
 		} catch (FileUploadException e) {
-			logger.error(e.getMessage());
-			throw new ServantException("core.file_upload_exception",e.getMessage());
+			logger.error(ExceptionUtils.getStackTrace(e));
+			throw new ServantException("core.e1015",e.getMessage());
 		}
 		
 		root = new HashMap<String,Object>(); // NOSONAR
@@ -169,7 +170,7 @@ public class MultiPartForm implements Message {
 			Context.writeToOutpuStream(out, bytes);
 			out.flush();
 		}catch (Exception ex){
-			logger.error("Error when writing data to outputstream",ex);
+			logger.error(ExceptionUtils.getStackTrace(ex));
 		}finally{
 			if (closeStream)
 				IOTools.close(out);

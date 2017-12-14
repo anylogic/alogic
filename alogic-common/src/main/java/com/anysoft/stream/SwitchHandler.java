@@ -14,6 +14,7 @@ import org.w3c.dom.NodeList;
 
 import com.anysoft.selector.Selector;
 import com.anysoft.util.Factory;
+import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XmlTools;
 
@@ -102,14 +103,13 @@ public abstract class SwitchHandler <data extends Flowable> extends AbstractHand
 	}	
 	
 	@Override
-	public void close() throws Exception{
+	public void close() {
 		super.close();
 		Iterator<Handler<data>> iter = cases.values().iterator();
 		
 		while (iter.hasNext()){
 			Handler<data> handler = iter.next();
-			
-			handler.close();
+			IOTools.close(handler);
 		}
 	}
 	

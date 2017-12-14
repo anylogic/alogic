@@ -37,7 +37,7 @@ public class BlobQuery extends AbstractServant {
 		BlobManagerSource src = BlobManagerSource.get();
 		BlobManager found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find the blob manager :" + id);
+			throw new ServantException("clnt.e2007","Can not find the blob manager :" + id);
 		}
 		
 		Element elem = doc.createElement("blob");
@@ -54,7 +54,7 @@ public class BlobQuery extends AbstractServant {
 		BlobManagerSource src = BlobManagerSource.get();
 		BlobManager found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find the blob manager :" + id);
+			throw new ServantException("clnt.e2007","Can not find the blob manager :" + id);
 		}
 		
 		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR

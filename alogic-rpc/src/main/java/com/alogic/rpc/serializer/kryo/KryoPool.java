@@ -27,7 +27,7 @@ public class KryoPool extends QueuedPool2<KryoWrapper>{
 	}
 
 	@Override
-	protected KryoWrapper createObject() throws BaseException {
+	protected KryoWrapper createObject(){
 		return new KryoWrapper();
 	}
 

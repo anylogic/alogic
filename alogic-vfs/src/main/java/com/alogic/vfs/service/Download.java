@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.alogic.vfs.context.FileSystemSource;
 import com.alogic.vfs.core.VirtualFileSystem;
@@ -37,7 +38,7 @@ public class Download extends Servant {
 	}
 	
 	@Override
-	public int actionProcess(Context ctx) throws Exception{
+	public int actionProcess(Context ctx) {
 		ctx.asMessage(FileMessage.class);
 		
 		String path = getArgument("path","/",ctx);
@@ -46,14 +47,14 @@ public class Download extends Servant {
 		VirtualFileSystem fs = FileSystemSource.get().get(fsId);
 		
 		if (fs == null){
-			throw new ServantException("core.data_not_found","Can not find a vfs named " +  fsId);
+			throw new ServantException("clnt.e2007","Can not find a vfs named " +  fsId);
 		}
 
 		InputStream in = null;
-		OutputStream out = ctx.getOutputStream();
+		
 		
 		try {
-			
+			OutputStream out = ctx.getOutputStream();
 			in = fs.readFile(path);
 			if (in == null){
 				throw new ServantException("core.data_not_found","Can not find the file: " +  path);
@@ -69,6 +70,9 @@ public class Download extends Servant {
 	        {  
 	        	out.write(buffer, 0, size);
 	        }  
+		}catch (IOException ex){
+			logger.error(ExceptionUtils.getStackTrace(ex));
+			throw new ServantException("core.e1004",ex.getMessage());
 		}finally{
 			fs.finishRead(path, in);
 		}

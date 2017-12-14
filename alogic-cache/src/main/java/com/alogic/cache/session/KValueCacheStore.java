@@ -163,19 +163,19 @@ public class KValueCacheStore extends AbstractCacheStore {
 		
 		Schema instance = KValueSource.getSchema(schema);
 		if (instance == null){
-			throw new BaseException("core.data_not_found","Can not find a kvalue schema named " + schema);
+			throw new BaseException("core.e1003","Can not find a kvalue schema named " + schema);
 		}
 		
 		ttl = PropertiesConstants.getInt(p, "ttl", ttl);
 		
 		hashTable = instance.getTable(hashTableName);
 		if (hashTable == null){
-			throw new BaseException("core.data_not_found","Can not find a kvalue table named " + hashTable);
+			throw new BaseException("core.e1003","Can not find a kvalue table named " + hashTable);
 		}
 		
 		setTable = instance.getTable(setTableName);
 		if (setTable == null){
-			throw new BaseException("core.data_not_found","Can not find a kvalue table named " + setTableName);
+			throw new BaseException("core.e1003","Can not find a kvalue table named " + setTableName);
 		}		
 	}
 

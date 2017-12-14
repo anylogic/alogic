@@ -29,8 +29,7 @@ public class FileResourceLoader implements ResourceLoader {
 	public InputStream load(URLocation _url, Object _context)
 			throws BaseException {
 		if (!_url.hasPath()) {
-			throw new BaseException(FileResourceLoader.class.getName(),
-					"Can not find path from url:" + _url.toString());
+			throw new BaseException("core.e1007","Can not find path from url:" + _url.toString());
 		}
 		return load(_url.getPath(),_context);
 	}
@@ -40,14 +39,12 @@ public class FileResourceLoader implements ResourceLoader {
 	 * @param _path 文件路径
 	 * @param _context 上下文
 	 * @return　输入流实例
-	 * @throws BaseException 当指定路径文件不存在时抛出
 	 */
-	public InputStream load(String _path,Object _context)  throws BaseException {
+	public InputStream load(String _path,Object _context)  {
 		try {
 			return  new FileInputStream(_path);
 		} catch (FileNotFoundException e) {
-			throw new BaseException(FileResourceLoader.class.getName(),
-					"Can not find file:" + _path);
+			throw new BaseException("core.e1008","Can not find file:" + _path);
 		}
 	}	
 
@@ -57,14 +54,13 @@ public class FileResourceLoader implements ResourceLoader {
 	 * @param _url URL
 	 * @param _context 上下文
 	 * @return　资源对应的URL
-	 * @throws BaseException 当路径格式不正确时抛出
 	 */
 	
-	public URL createURL(URLocation _url, Object _context) throws BaseException {
+	public URL createURL(URLocation _url, Object _context) {
 		try {
 			return _url.makeURL();
 		} catch (MalformedURLException e) {
-			throw new BaseException(HttpResourceLoader.class.getName(),
+			throw new BaseException("core.e1007",
 					"Can not open url:" + _url.toString(), e);
 		}
 	}

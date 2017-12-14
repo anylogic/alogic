@@ -20,8 +20,7 @@ public class DefaultPartition implements Partition {
 	protected String [] replicates = null;
 	
 	
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	public void configure(Element _e, Properties _properties) {
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
 		
 		source = PropertiesConstants.getString(p,"src",source,true);

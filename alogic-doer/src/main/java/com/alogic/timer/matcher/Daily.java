@@ -8,7 +8,6 @@ import com.alogic.timer.core.Matcher.Abstract;
 import com.alogic.timer.matcher.util.SetValueMatcher;
 import com.alogic.timer.matcher.util.parser.HourOfDay;
 import com.alogic.timer.matcher.util.parser.Minute;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -59,7 +58,7 @@ public class Daily extends Abstract {
 		return false;
 	}
 
-	public void configure(Properties p) throws BaseException {
+	public void configure(Properties p) {
 		parseCrontab(PropertiesConstants.getString(p,"minutes", "00")
 				+" "+PropertiesConstants.getString(p,"hours", "*"));
 	}

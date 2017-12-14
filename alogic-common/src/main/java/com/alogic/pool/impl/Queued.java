@@ -253,7 +253,6 @@ public abstract class Queued implements Pool,CloseAware {
 	/**
 	 * 创建缓冲池对象
 	 * @return pooled
-	 * @throws BaseException
 	 */
 	protected abstract <pooled> pooled createObject();
 	

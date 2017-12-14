@@ -39,7 +39,7 @@ public abstract class AbstractServant extends Servant implements MetricsCollecto
 	protected static Handler<Fragment> metricsHandler = null;
 	
 	@Override
-	public int actionProcess(Context ctx) throws Exception{
+	public int actionProcess(Context ctx){
 		boolean json = getArgument("json",jsonDefault,ctx);
 		if (json){
 			return onJson(ctx);
@@ -70,23 +70,22 @@ public abstract class AbstractServant extends Servant implements MetricsCollecto
 	 * 以XML协议进行服务处理
 	 * @param ctx 上下文
 	 * @return 结果
-	 * @throws Exception
+	 * @
 	 * 
 	 * @since 1.4.0
 	 */
-	protected int onXml(Context ctx) throws Exception{ // NOSONAR
-		throw new ServantException("core.not_supported",
-				"Protocol XML is not suppurted.");		
+	protected int onXml(Context ctx){ // NOSONAR
+		throw new ServantException("core.e1000","Protocol XML is not suppurted.");		
 	}
 	
 	/**
 	 * 以JSON协议进行服务处理
 	 * @param ctx 上下文
 	 * @return 结果
-	 * @throws Exception
+	 * @
 	 * @since 1.4.0
 	 */
-	protected abstract int onJson(Context ctx) throws Exception; // NOSONAR
+	protected abstract int onJson(Context ctx); // NOSONAR
 	
 	@Override
 	public void metricsIncr(Fragment fragment){

@@ -64,7 +64,7 @@ public class AuthCode extends Servant{
 	}
 	
 	@Override
-	public int actionProcess(Context ctx) throws Exception {
+	public int actionProcess(Context ctx)  {
 		//采用CodeImage消息
 		CodeImage msg = (CodeImage) ctx.asMessage(CodeImage.class);
 

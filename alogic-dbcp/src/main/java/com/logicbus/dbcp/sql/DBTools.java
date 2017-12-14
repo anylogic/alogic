@@ -142,9 +142,8 @@ public class DBTools {
 	 * @param conn 数据库连接
 	 * @param sqls SQL语句连接
 	 * @return 每个SQL执行的状态
-	 * @throws ServantException 当SQL语句执行错误时，抛出此异常
 	 */
-	public static int [] batch(Connection conn,String [] sqls) throws BaseException{
+	public static int [] batch(Connection conn,String [] sqls) {
 		Update update = new Update(conn);
 		try {
 			return update.executeBatch(sqls);
@@ -337,13 +336,12 @@ public class DBTools {
 	/**
 	 * 提交事务
 	 * @param conn 连接
-	 * @throws ServantException
 	 */
 	public static void commit(Connection conn){
 		try {
 			conn.commit();
 		} catch (SQLException ex) {
-			throw new BaseException("core.sql_error",ex.getMessage());
+			throw new BaseException("core.e1300",ex.getMessage());
 		}
 	}
 	
@@ -376,13 +374,12 @@ public class DBTools {
 	/**
 	 * 回滚事务
 	 * @param conn
-	 * @throws ServantException
 	 */
 	public static void rollback(Connection conn){
 		try {
 			conn.rollback();
 		} catch (SQLException ex) {
-			throw new BaseException("core.sql_error",ex.getMessage());
+			throw new BaseException("core.e1300",ex.getMessage());
 		}
 	}	
 	

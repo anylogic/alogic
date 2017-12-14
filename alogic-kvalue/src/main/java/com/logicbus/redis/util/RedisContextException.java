@@ -6,11 +6,11 @@ public class RedisContextException extends RedisException {
 
 	public RedisContextException(String _code, String _message,
 			Exception _source) {
-		super("context." + _code, _message, _source);
+		super( _code, _message, _source);
 	}
 
 	public RedisContextException(String _code, String _message) {
-		super("context." + _code, _message);
+		super( _code, _message);
 	}
 
 }

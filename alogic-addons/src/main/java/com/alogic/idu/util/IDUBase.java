@@ -62,7 +62,7 @@ abstract public class IDUBase extends Base {
 	}
 
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
+	protected void onCreate(ServiceDescription sd) {
 		Properties p = sd.getProperties();
 
 		dbcpId = PropertiesConstants.getString(p, "dbSource", dbcpId,true);	
@@ -76,41 +76,41 @@ abstract public class IDUBase extends Base {
 		super.onCreate(sd);
 	}
 	
-	protected int onJson(Context ctx,JsonMessage msg) throws Exception {
+	protected int onJson(Context ctx,JsonMessage msg)  {
 		ConnectionPool pool = getConnectionPool();
 		Connection conn = pool.getConnection();
 		boolean hasError = false;
-		boolean autoCommit = conn.getAutoCommit();
+		boolean autoCommit = DBTools.getAutoCommit(conn);
 		try {
 			if (transactionSupport){
-				conn.setAutoCommit(false);
+				DBTools.setAutoCommit(conn, false);
 			}
 			doIt(ctx, msg, conn);
 			if (transactionSupport){
-				conn.commit();
+				DBTools.commit(conn);
 			}
 		} catch (BaseException ex){
-			if (ex.getCode().equals("core.sql_error")){
+			if (ex.getCode().equals("core.e1300")){
 				hasError = true;
 			}
 			if (transactionSupport){
-				conn.rollback();
+				DBTools.rollback(conn);
 			}
 			throw ex;
 		}finally {
-			conn.setAutoCommit(autoCommit);
+			DBTools.setAutoCommit(conn, autoCommit);
 			pool.recycle(conn,hasError);
 		}	
 		return 0;
 	}
 	
 	abstract protected void doIt(Context ctx, JsonMessage msg, Connection conn)
-			throws Exception;	
+			;	
 	
 	protected ConnectionPool getConnectionPool() {
 		ConnectionPool pool = DbcpSource.getPool(dbcpId);
 		if (pool == null) {
-			throw new ServantException("core.no_db_pool",
+			throw new ServantException("core.e1003",
 					"Can not get a connection pool named " + dbcpId);
 		}
 		return pool;
@@ -119,7 +119,7 @@ abstract public class IDUBase extends Base {
 	protected Connection getConnection(ConnectionPool pool) {
 		Connection conn = pool.getConnection(3000, true);
 		if (conn == null) {
-			throw new ServantException("core.no_db_conn",
+			throw new ServantException("core.e1013",
 					"Can not get a connection from pool named " + dbcpId);
 		}
 		return conn;

@@ -8,7 +8,6 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.anysoft.util.BaseException;
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Properties;
 
@@ -89,7 +88,7 @@ public class ModelledImpl extends AbstractConnectionPool{
 
 
 	@Override
-	protected Connection newConnection() throws BaseException{
+	protected Connection newConnection() {
 		return model.newConnection();
 	}
 

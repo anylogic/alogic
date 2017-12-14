@@ -167,12 +167,12 @@ public class ServerSideHandler extends AuthenticationHandler.Abstract{
 			
 			String pwd = encrypter.decode(password, authCode);
 			pwd = md5.encode(pwd, userId);
-			/*
+			
 			if (!pwd.equals(user.getPassword())){
 				throw new BaseException("clnt.e2001",
 						String.format("User %s does not exist or the password is not correct.", userId));				
 			}
-			*/
+			
 			String tokenId = sess.getId();
 			Principal newPrincipal = new CommonPrincipal(sess.getId());
 			store.save(tokenId, newPrincipal, true);

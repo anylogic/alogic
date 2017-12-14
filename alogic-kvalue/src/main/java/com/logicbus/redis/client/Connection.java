@@ -102,7 +102,7 @@ public class Connection implements AutoCloseable {
 			socket.setSoTimeout(0);
 		} catch (SocketException ex) {
 			broken = true;
-			throw new RedisConnectException("socket",
+			throw new RedisConnectException("core.e1004",
 					"Socket exception when connecting.", ex);
 		}
 	}
@@ -113,7 +113,7 @@ public class Connection implements AutoCloseable {
 			socket.setKeepAlive(false);
 		} catch (SocketException ex) {
 			broken = true;
-			throw new RedisConnectException("socket",
+			throw new RedisConnectException("core.e1004",
 					"Socket exception when connecting.", ex);
 		}
 	}
@@ -123,7 +123,7 @@ public class Connection implements AutoCloseable {
 			outputStream.flush();
 		} catch (IOException e) {
 			broken = true;
-			throw new RedisConnectException("ioexception",
+			throw new RedisConnectException("core.e1004",
 					"IO Exception when connecting.", e);
 		}
 	}
@@ -172,7 +172,7 @@ public class Connection implements AutoCloseable {
 				inputStream = new RedisInputStream(socket.getInputStream());
 			} catch (IOException ex) {
 				broken = true;
-				throw new RedisConnectException("ioexception",
+				throw new RedisConnectException("core.e1004",
 						"IO Exception when connecting.", ex);
 			}
 		}
@@ -188,7 +188,7 @@ public class Connection implements AutoCloseable {
 				}
 			} catch (IOException ex) {
 				broken = true;
-				throw new RedisConnectException("ioexception",
+				throw new RedisConnectException("core.e1004",
 						"IO Exception when connecting.", ex);
 			}
 		}
@@ -213,7 +213,7 @@ public class Connection implements AutoCloseable {
 	}
 	
 	
-	public void close() throws Exception {
+	public void close()  {
 		disconnect();
 	}
 	

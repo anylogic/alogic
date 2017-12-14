@@ -126,7 +126,7 @@ public class Client extends Connection implements PooledCloseable{
 			Constructor<? extends Toolkit> c = clazz.getConstructor(Connection.class);
 			return c.newInstance(this);
 		}catch (Exception e){			
-			throw new RedisException("client","can not get toolkit",e);
+			throw new RedisException("core.e1002","can not get toolkit",e);
 		}
 	}
 }

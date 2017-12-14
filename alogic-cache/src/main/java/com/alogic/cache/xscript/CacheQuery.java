@@ -53,7 +53,7 @@ public class CacheQuery extends CacheOperation {
 				Map<String,Object> content = (Map<String,Object>)current.getContent();
 				MultiFieldObject found = cache.get(idValue, true);
 				if (found == null){
-					throw new ServantException("core.data_not_found","Can not find object,id=" + idValue);
+					throw new ServantException("clnt.e2007","Can not find object,id=" + idValue);
 				}
 			
 				if (extend){

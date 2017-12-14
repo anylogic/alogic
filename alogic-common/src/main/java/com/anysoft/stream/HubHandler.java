@@ -53,7 +53,7 @@ public class HubHandler<data extends Flowable> extends AbstractHandler<data> {
 			}
 		}
 	}
-	public void close() throws Exception{
+	public void close() {
 		super.close();
 		for (Handler<data> h:handlers){
 			if (h != null){

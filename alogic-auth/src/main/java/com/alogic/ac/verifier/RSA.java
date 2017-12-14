@@ -65,7 +65,7 @@ public class RSA extends AccessVerifier.Abstract{
 		String signature = ctx.getRequestHeader(signatureId);
 		
 		if (!RSAUtil.verify(toSign.toString(), key.getKeyContent(), signature)){
-			throw new BaseException("client.permission_denied",String.format("The signature is not correct.",signature));
+			throw new BaseException("clnt.e2005",String.format("The signature is not correct.",signature));
 		}
 	}
 	
@@ -73,11 +73,11 @@ public class RSA extends AccessVerifier.Abstract{
 		String now = ctx.getRequestHeader(timestampId);
 		long timestamp = getLong(now,0);
 		if (timestamp <= 0){
-			throw new BaseException("client.permission_denied",String.format("Can not find argument %s.",timestampId));
+			throw new BaseException("clnt.e2000",String.format("Can not find argument %s.",timestampId));
 		}
 		
 		if (Math.abs(System.currentTimeMillis() - timestamp) > ttl){
-			throw new BaseException("client.permission_denied",String.format("Timestamp %d is expired.",timestamp));
+			throw new BaseException("clnt.e2006",String.format("Timestamp %d is expired.",timestamp));
 		}
 	}
 

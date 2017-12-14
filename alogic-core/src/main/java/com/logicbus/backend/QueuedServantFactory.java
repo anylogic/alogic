@@ -84,14 +84,13 @@ public class QueuedServantFactory extends ServantFactory.Abstract {
 	 * 获取指定服务的服务资源池
 	 * @param id 服务ID
 	 * @return 服务资源池
-	 * @throws ServantException 当没有找到服务定义时抛出
 	 */
-	protected ServantPool getServantPool(Path id)throws ServantException
+	protected ServantPool getServantPool(Path id)
 	{
 		ServantRegistry sm = getServantRegistry();
 		ServiceDescription sd = sm.get(id);
 		if (sd == null){
-			throw new ServantException("core.service_not_found","No service desc is found:" + id);
+			throw new ServantException("core.e1014","No service desc is found:" + id);
 		}
 
 		try {
@@ -109,9 +108,8 @@ public class QueuedServantFactory extends ServantFactory.Abstract {
 	 * 重新装入指定服务的资源池
 	 * @param _id 服务id
 	 * @return 服务资源池
-	 * @throws ServantException
 	 */
-	public ServantPool reloadPool(Path _id) throws ServantException{
+	public ServantPool reloadPool(Path _id){
 		lockPools.lock();
 		try {
 			ServantPool temp = m_pools.get(_id.getPath());
@@ -133,7 +131,7 @@ public class QueuedServantFactory extends ServantFactory.Abstract {
 	 * @return 服务资源池
 	 * @throws ServantException
 	 */
-	public ServantPool getPool(Path _id) throws ServantException{
+	public ServantPool getPool(Path _id){
 		ServantPool found = m_pools.get(_id.getPath());
 		if (found == null){
 			lockPools.lock();

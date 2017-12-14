@@ -101,7 +101,6 @@ public abstract class Servant implements Pooled{
 	 * 根据服务描述初始化服务者.
 	 * 
 	 * @param sd service description
-	 * @throws ServantException 
 	 */
 	public void create(ServiceDescription sd){
 		desc = sd;
@@ -155,7 +154,6 @@ public abstract class Servant implements Pooled{
 	 * @param dftValue 缺省值 
 	 * @param ctx 上下文
 	 * @return 参数值
-	 * @throws ServantException
 	 * 
 	 * @since 1.4.0
 	 */
@@ -225,12 +223,11 @@ public abstract class Servant implements Pooled{
 	 * @param id 参数ID
 	 * @param ctx 上下文
 	 * @return 参数值
-	 * @throws ServantException
 	 */
 	public String getArgument(String id,Context ctx){
 		String value = ctx.GetValue(id, "");	
 		if (StringUtils.isEmpty(value)){
-			throw new ServantException("client.args_not_found",
+			throw new ServantException("clnt.e2000",
 					"Can not find parameter:" + id);
 		}
 		return value;
@@ -240,11 +237,11 @@ public abstract class Servant implements Pooled{
 	 * 服务处理过程
 	 * @param ctx 上下文
 	 * @return 处理结果
-	 * @throws Exception
+	 * @
 	 * 
 	 * @since 1.4.0
 	 */
-	public abstract int actionProcess(Context ctx) throws Exception; // NOSONAR
+	public abstract int actionProcess(Context ctx) ; // NOSONAR
 	
 	/**
 	 * 服务处理即将开始

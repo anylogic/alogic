@@ -10,7 +10,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import com.alogic.timer.matcher.Crontab;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Factory;
@@ -159,8 +158,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		 */
 		protected State state = State.Running;
 		
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		public void configure(Element _e, Properties _properties) {
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);
 		}			
@@ -371,7 +369,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		public String getId() {
 			return id;
 		}
-		public void configure(Properties p) throws BaseException {
+		public void configure(Properties p) {
 			// nothing to do
 		}
 
@@ -437,7 +435,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 			return id;
 		}
 
-		public void configure(Properties p) throws BaseException {
+		public void configure(Properties p){
 			id = PropertiesConstants.getString(p,"id","",true);
 			if (id == null || id.length() <= 0){
 				id = newTimerId();
@@ -485,8 +483,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 		}		
 		
 		@Override
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		public void configure(Element _e, Properties _properties){
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);	
 			
@@ -495,7 +492,7 @@ public interface Timer extends Configurable,XMLConfigurable,Reportable {
 				logger.error("Can not create matcher : " + getId());
 			}else{
 				Factory<Matcher> factory = new Factory<Matcher>(){
-					public String getClassName(String _module) throws BaseException{
+					public String getClassName(String _module){
 						if (_module.indexOf(".") >= 0){
 							return _module;
 						}

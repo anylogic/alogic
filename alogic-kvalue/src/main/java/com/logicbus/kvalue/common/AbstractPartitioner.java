@@ -77,8 +77,7 @@ abstract public class AbstractPartitioner implements Partitioner {
 	 * @param _properties 环境变量集
 	 * 
 	 */
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	public void configure(Element _e, Properties _properties) {
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
 				
 		TheFactory factory = new TheFactory();
@@ -130,7 +129,7 @@ abstract public class AbstractPartitioner implements Partitioner {
 	}
 
 
-	public void close() throws Exception {
+	public void close()  {
 		partitions.clear();
 	}
 

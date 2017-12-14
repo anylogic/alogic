@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
@@ -27,8 +25,7 @@ import com.anysoft.util.XmlElementProperties;
 public class FieldList implements XMLConfigurable {
 	protected Logger logger = LoggerFactory.getLogger(FieldList.class);
 
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	public void configure(Element _e, Properties _properties) {
 		XmlElementProperties p = new XmlElementProperties(_e, _properties);
 
 		NodeList children = _e.getChildNodes();

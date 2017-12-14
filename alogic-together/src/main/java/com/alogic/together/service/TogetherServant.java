@@ -50,7 +50,7 @@ public class TogetherServant extends AbstractServant {
 	}
 
 	@Override
-	protected int onJson(Context ctx) throws Exception {
+	protected int onJson(Context ctx)  {
 		if (script != null){
 			JsonMessage msg = (JsonMessage) ctx.asMessage(JsonMessage.class);
 			
@@ -74,7 +74,7 @@ public class TogetherServant extends AbstractServant {
 		return 0;
 	}
 
-	protected int onXml(Context ctx) throws Exception{ 
+	protected int onXml(Context ctx) { 
 		if (script != null){
 			XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 			

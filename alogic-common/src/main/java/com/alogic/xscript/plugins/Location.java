@@ -72,7 +72,7 @@ public class Location extends Segment {
 					log(String.format("[%s]xml path is null",getXmlTag()),"error");
 				}
 			} else {
-				throw new BaseException("core.not_supported", String.format(
+				throw new BaseException("core.e1000", String.format(
 						"Tag %s does not support protocol %s", getXmlTag(),
 						root.getClass().getName()));
 			}

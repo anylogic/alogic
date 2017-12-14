@@ -1,9 +1,11 @@
 package com.anysoft.util.resource;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import com.anysoft.util.BaseException;
 import com.anysoft.util.URLocation;
 
@@ -22,17 +24,15 @@ public class HttpResourceLoader implements ResourceLoader {
 	 * @throws BaseException 当Http连接出现错误时抛出
 	 */	
 	
-	public InputStream load(URLocation _url, Object _context)
-			throws BaseException {
+	public InputStream load(URLocation _url, Object _context){
 		try {
 			URL url = _url.makeURL();
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			return conn.getInputStream();
-		} catch (Exception e) {
-			throw new BaseException(HttpResourceLoader.class.getName(),
-					"Can not open url:" + _url.toString(), e);
+		} catch (IOException e) {
+			throw new BaseException("core.e1004","Can not open url:" + _url.toString(), e);
 		}
 	}
 	/**
@@ -41,15 +41,13 @@ public class HttpResourceLoader implements ResourceLoader {
 	 * @param _url URL
 	 * @param _context 上下文
 	 * @return　资源对应的URL
-	 * @throws BaseException 当路径格式不正确时抛出
 	 */
 	
-	public URL createURL(URLocation _url, Object _context) throws BaseException {
+	public URL createURL(URLocation _url, Object _context){
 		try {
 			return _url.makeURL();
 		} catch (MalformedURLException e) {
-			throw new BaseException(HttpResourceLoader.class.getName(),
-					"Can not open url:" + _url.toString(), e);
+			throw new BaseException("core.e1007","Can not open url:" + _url.toString(), e);
 		}
 	}
 }

@@ -37,7 +37,7 @@ public class Facade {
 		Result ret = call.invoke(id, method, params);
 
 		if (ret == null) {
-			throw new CallException("client.rpc_failed", "Remote call is failed.");
+			throw new CallException("core.e1606", "Remote call is failed.");
 		}
 		if (!ret.code().equals("core.ok")) {
 			throw new CallException(ret.code(), ret.reason());

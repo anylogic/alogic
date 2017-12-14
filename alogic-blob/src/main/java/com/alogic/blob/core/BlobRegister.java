@@ -100,7 +100,7 @@ public interface BlobRegister extends XMLConfigurable,Configurable,Reportable{
 
 		@Override
 		public String list(List<String> ids, String cookies,int limit) {
-			throw new BaseException("core.not_supported",
+			throw new BaseException("core.e1000",
 					"This function is not suppurted yet.");	
 		}
 	}

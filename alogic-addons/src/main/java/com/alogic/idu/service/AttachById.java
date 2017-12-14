@@ -48,13 +48,12 @@ public class AttachById extends IDUBase {
 	
 	@Override
 	protected void doIt(Context ctx, JsonMessage msg, Connection conn)
-			throws Exception {
+			 {
 		//no use
 	}
 
 	@Override
-	protected void onCreate(ServiceDescription sd, Properties p)
-			throws ServantException {
+	protected void onCreate(ServiceDescription sd, Properties p) {
 		sqlUpdate = PropertiesConstants.getString(p, "sql.Update", sqlUpdate);
 		rootName = PropertiesConstants.getString(p, "data.root", rootName);
 		dataId = PropertiesConstants.getString(p,"dataGuard.id", dataId);
@@ -68,36 +67,36 @@ public class AttachById extends IDUBase {
 		
 		blobManager = BlobTool.getBlobManager(domain);
 		if (blobManager == null){
-			throw new ServantException("core.blob_not_found","Can not find a blob manager named: " + domain);
+			throw new ServantException("core.e1003","Can not find a blob manager named: " + domain);
 		}	
 	}
 	
-	public int actionProcess(Context ctx) throws Exception {
+	public int actionProcess(Context ctx)  {
 		boolean json = getArgument("json",jsonDefault,ctx);
 		if (json){
 			MultiPartForm msg = (MultiPartForm) ctx.asMessage(MultiPartForm.class);
 			ConnectionPool pool = getConnectionPool();
 			Connection conn = pool.getConnection();
 			boolean hasError = false;
-			boolean autoCommit = conn.getAutoCommit();
+			boolean autoCommit = DBTools.getAutoCommit(conn);
 			try {
 				if (transactionSupport){
-					conn.setAutoCommit(false);
+					DBTools.setAutoCommit(conn, false);
 				}
 				doIt(ctx, msg, conn);
 				if (transactionSupport){
-					conn.commit();
+					DBTools.commit(conn);
 				}
 			} catch (BaseException ex){
-				if ("core.sql_error".equals(ex.getCode())){
+				if ("core.e1300".equals(ex.getCode())){
 					hasError = true;
 				}
 				if (transactionSupport){
-					conn.rollback();
+					DBTools.rollback(conn);
 				}
 				throw ex;
 			}finally {
-				conn.setAutoCommit(autoCommit);
+				DBTools.setAutoCommit(conn, autoCommit);
 				pool.recycle(conn,hasError);
 			}	
 			return 0;
@@ -117,7 +116,7 @@ public class AttachById extends IDUBase {
 		String id = getArgument("id",ctx);
 		String dataGuardObject = getArgument(dataId,id,ctx);
 		if (!checkPrivilege(userId,dataGuardObject)){
-			throw new ServantException("core.unauthorized","无权访问本服务，用户:" + userId);
+			throw new ServantException("core.e1010","无权访问本服务，用户:" + userId);
 		}
 
 		List<FileItem> items = msg.getFileItems();

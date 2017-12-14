@@ -73,7 +73,7 @@ public class XCmd extends AbstractLogiclet implements Resolver{
 	protected void onExecute(XsObject root,XsObject current,final LogicletContext ctx,final ExecuteWatcher watcher){
 		Terminal t = ctx.getObject(pid);
 		if (t == null){
-			throw new BaseException("core.no_terminal","It must be in a xshell context,check your together script.");
+			throw new BaseException("core.e1001","It must be in a xshell context,check your together script.");
 		}
 		
 		for (String cmd:cmds){

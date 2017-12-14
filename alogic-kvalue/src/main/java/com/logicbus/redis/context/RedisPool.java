@@ -93,15 +93,15 @@ public class RedisPool extends Queued{
 		return "maxIdle";
 	}
 
-	public Client getClient()throws RedisException {
+	public Client getClient() {
 		return getClient(timeout);
 	}
 	
-	public Client getClient(int timeout)throws RedisException{
+	public Client getClient(int timeout){
 		Client found = borrowObject(0, timeout);
 		
 		if (found == null){
-			throw new RedisContextException("busy","The pool is busy , can not get a client.");
+			throw new RedisContextException("core.e1013","The pool is busy , can not get a client.");
 		}
 		return found;
 	}
@@ -156,8 +156,7 @@ public class RedisPool extends Queued{
 		return (pooled)instance;
 	}
 
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	public void configure(Element _e, Properties _properties) {
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
 		
 		id = PropertiesConstants.getString(p, "id", "",true);		

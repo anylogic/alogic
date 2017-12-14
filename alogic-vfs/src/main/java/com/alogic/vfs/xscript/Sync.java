@@ -74,7 +74,7 @@ public class Sync extends AbstractLogiclet {
 			
 			VirtualFileSystem src = ctx.getObject(vfsId);
 			if (src == null){
-				throw new BaseException("core.no_vfs_context",String.format("Can not find vfs:%s", vfsId));
+				throw new BaseException("core.e1001",String.format("Can not find vfs:%s", vfsId));
 			}
 			
 			tool.addSource(new Dir(vfsPath,src));

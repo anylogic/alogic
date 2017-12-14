@@ -163,7 +163,9 @@ public class HttpClientRequest implements Request{
 				error = true;
 				lastErrorCode = ex.getCode();
 				lastErrorMsg = ex.getMessage();
-				if (lastErrorCode.startsWith("internal")){
+				if (lastErrorCode.equals("core.e1602") 
+						|| lastErrorCode.equals("core.e1603")
+						|| lastErrorCode.equals("core.e1604")){
 					//对于internal错误，属于连接错误，可以重试
 					autoRetry = autoRetry >= autoRetryCnt ? 0 : autoRetry + 1;
 					if (autoRetry > 0){
@@ -201,15 +203,15 @@ public class HttpClientRequest implements Request{
 			client.onResponse(response);
 			return response;
 		}catch (SocketTimeoutException ex){
-			throw new CallException("core.socket_timeout",url, ex);
+			throw new CallException("core.e1601",url, ex);
 		}catch (ConnectTimeoutException ex){
-			throw new CallException("internal.conn_timeout",url, ex);
+			throw new CallException("core.e1602",url, ex);
 		}catch (ConnectException ex){
-			throw new CallException("internal.conn_refused",url, ex);
+			throw new CallException("core.e1603",url, ex);
 		}catch (NoHttpResponseException ex){
-			throw new CallException("internal.no_http_response",url, ex);
+			throw new CallException("core.e1604",url, ex);
 		}catch (Exception ex){
-			throw new CallException("core.io_error",url, ex);
+			throw new CallException("core.e1004",url, ex);
 		}
 	}	
 
@@ -224,15 +226,15 @@ public class HttpClientRequest implements Request{
 			client.onResponse(response);			
 			return response;
 		}catch (SocketTimeoutException ex){
-			throw new CallException("core.socket_timeout",url, ex);
+			throw new CallException("core.e1601",url, ex);
 		}catch (ConnectTimeoutException ex){
-			throw new CallException("internal.conn_timeout",url, ex);
+			throw new CallException("core.e1602",url, ex);
 		}catch (ConnectException ex){
-			throw new CallException("internal.conn_refused",url, ex);
+			throw new CallException("core.e1603",url, ex);
 		}catch (NoHttpResponseException ex){
-			throw new CallException("internal.no_http_response",url, ex);
+			throw new CallException("core.e1604",url, ex);
 		}catch (Exception ex){
-			throw new CallException("core.io_error",url, ex);
+			throw new CallException("core.e1004",url, ex);
 		}
 	}
 

@@ -10,7 +10,6 @@ import com.anysoft.util.XmlTools;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.AccessController;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
@@ -29,12 +28,12 @@ public class AclGroupList extends AbstractServant {
 	}
 
 	
-	protected void onCreate(ServiceDescription sd) throws ServantException {
+	protected void onCreate(ServiceDescription sd) {
 
 	}
 
 	
-	protected int onXml(Context ctx) throws Exception {
+	protected int onXml(Context ctx) {
 		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
 		
 		Document doc = msg.getDocument();
@@ -56,7 +55,7 @@ public class AclGroupList extends AbstractServant {
 	}
 
 	
-	protected int onJson(Context ctx) throws Exception {
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		Map<String,Object> root = msg.getRoot();

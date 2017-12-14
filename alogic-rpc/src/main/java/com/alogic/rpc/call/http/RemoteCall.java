@@ -113,9 +113,8 @@ public class RemoteCall extends Call.Abstract {
 			Response response = request.execute(path, sn, callContext);
 			
 			if (response.getStatusCode() != HttpURLConnection.HTTP_OK) {
-				throw new CallException("core.invoke_error",
-						"Error occurs when invoking service :"
-								+ response.getReasonPhrase());
+				throw new CallException("core.e1605",
+						"Error occurs when invoking service :" + response.getReasonPhrase());
 			}
 			
 			InputStream in = response.asStream();
@@ -123,13 +122,13 @@ public class RemoteCall extends Call.Abstract {
 				if (in != null){
 					return serializer.readObject(in, Result.Default.class,callContext);
 				}else{
-					throw new CallException("core.invoke_error","the inputstream from server is null");				
+					throw new CallException("core.e1004","the inputstream from server is null");				
 				}
 			}finally{
 				IOTools.close(in);
 			}
 		}catch (IOException ex){
-			throw new CallException("core.io_error","Can not read result from server.", ex);
+			throw new CallException("core.e1004","Can not read result from server.", ex);
 		}finally{
 			IOTools.close(request);
 		}

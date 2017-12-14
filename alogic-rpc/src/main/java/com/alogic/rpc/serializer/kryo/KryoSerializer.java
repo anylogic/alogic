@@ -41,7 +41,7 @@ public class KryoSerializer extends Serializer.Abstract {
 				pool.returnObject(kyro);
 			}
 		}else{
-			throw new CallException("core.can_not_get_kyro","Can not get a kyro serializer.");
+			throw new CallException("core.e1013","Can not get a kyro serializer.");
 		}
 	}
 
@@ -57,7 +57,7 @@ public class KryoSerializer extends Serializer.Abstract {
 				pool.returnObject(kyro);
 			}
 		}else{
-			throw new CallException("core.can_not_get_kyro","Can not get a kyro serializer.");
+			throw new CallException("core.e1013","Can not get a kyro serializer.");
 		}
 	}
 

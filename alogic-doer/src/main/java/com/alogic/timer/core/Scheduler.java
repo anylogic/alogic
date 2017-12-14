@@ -238,7 +238,7 @@ public interface Scheduler extends Timer,Runnable {
 		@Override
 		public void pause() {
 			if (state != State.Running){
-				throw new BaseException("core.incorrect_state","The current state is not Running,Can not pause.");
+				throw new BaseException("core.e1101","The current state is not Running,Can not pause.");
 			}
 			state = State.Paused;
 		}
@@ -246,7 +246,7 @@ public interface Scheduler extends Timer,Runnable {
 		@Override
 		public void resume() {
 			if (state != State.Paused){
-				throw new BaseException("core.incorrect_state","The current state is not Paused,Can not resume.");
+				throw new BaseException("core.e1101","The current state is not Paused,Can not resume.");
 			}
 			state = State.Running;
 		}
@@ -376,7 +376,7 @@ public interface Scheduler extends Timer,Runnable {
 		protected boolean async = true;
 		
 		@Override
-		public void configure(Properties p) throws BaseException {
+		public void configure(Properties p) {
 			super.configure(p);
 			async = PropertiesConstants.getBoolean(p,"async",async,true);
 		}		
@@ -462,8 +462,7 @@ public interface Scheduler extends Timer,Runnable {
 		protected String dftTimer = Timer.XMLed.class.getName();
 		
 		@Override
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		public void configure(Element _e, Properties _properties) {
 			Properties p = new XmlElementProperties(_e,_properties);
 			
 			dftTimer = PropertiesConstants.getString(p,"dftTimerClass",dftTimer,true);

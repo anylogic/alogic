@@ -85,7 +85,7 @@ public class Repeat extends Segment{
 				}
 			}
 		}else{
-			throw new BaseException("core.not_supported",
+			throw new BaseException("core.e1000",
 					String.format("Tag %s does not support protocol %s",this.getXmlTag(),root.getClass().getName()));	
 		}
 	}

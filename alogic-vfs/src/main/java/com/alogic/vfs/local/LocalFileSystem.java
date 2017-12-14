@@ -69,7 +69,7 @@ public class LocalFileSystem extends VirtualFileSystem.Abstract {
 	}
 	
 	@Override
-	public void close() throws Exception {
+	public void close()  {
 		// nothing to do
 	}
 	

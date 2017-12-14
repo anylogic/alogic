@@ -140,7 +140,7 @@ public class ZKLock implements Lock, Watcher {
 		try {
 			return waitForLock(waitNode,timeout,timeUnit);
 		} catch (InterruptedException e) {
-			throw new BaseException("zk.keeperexception",e.getMessage(),e);
+			throw new BaseException("core.e1006",e.getMessage(),e);
 		}
 	}
 

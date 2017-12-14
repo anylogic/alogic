@@ -161,7 +161,7 @@ abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<p
 	}
 	
 	
-	public pooled borrowObject(int priority,int timeout) throws BaseException {
+	public pooled borrowObject(int priority,int timeout){
 		//当前优先级所允许的最大长度
 		int maxLength = maxQueueLength * (1+priority);
 		if (workingCnt + idleCnt + creatingCnt < maxLength){
@@ -230,7 +230,7 @@ abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<p
 	 * @return pooled
 	 * @throws BaseException
 	 */
-	abstract protected pooled createObject()throws BaseException;
+	abstract protected pooled createObject();
 	
 	
 	public void report(Element xml){

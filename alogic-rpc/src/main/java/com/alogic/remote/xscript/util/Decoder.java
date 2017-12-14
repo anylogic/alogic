@@ -43,7 +43,7 @@ public class Decoder extends AbstractLogiclet{
 			try {
 				ctx.SetValue(id, URLDecoder.decode(val, enc));
 			} catch (UnsupportedEncodingException e) {
-				throw new BaseException("core.encoding_not_supported",String.format("Encoding %s is not supported", enc));
+				throw new BaseException("core.e1005",String.format("Encoding %s is not supported", enc));
 			}
 		}
 	}	

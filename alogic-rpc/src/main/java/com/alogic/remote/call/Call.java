@@ -36,18 +36,16 @@ public interface Call extends AutoCloseable,XMLConfigurable,Reportable,Configura
 	 * 执行运程调用
 	 * @param paras 调用参数
 	 * @return 调用结果
-	 * @throws CallException
 	 */
-	public Result execute(Parameters paras) throws CallException;
+	public Result execute(Parameters paras) ;
 	
 	/**
 	 * 执行运程调用
 	 * @param path 调用路径
 	 * @param paras 调用参数
 	 * @return 调用结果
-	 * @throws CallException
 	 */
-	public Result execute(String path,Parameters paras) throws CallException;
+	public Result execute(String path,Parameters paras) ;
 	
 	/**
 	 * 执行运程调用
@@ -55,9 +53,8 @@ public interface Call extends AutoCloseable,XMLConfigurable,Reportable,Configura
 	 * @param sn 全局序列号
 	 * @param order 调用序号
 	 * @return 调用结果
-	 * @throws CallException
 	 */
-	public Result execute(Parameters paras,String sn,String order) throws CallException;	
+	public Result execute(Parameters paras,String sn,String order);	
 	
 	/**
 	 * 执行运程调用
@@ -65,7 +62,6 @@ public interface Call extends AutoCloseable,XMLConfigurable,Reportable,Configura
 	 * @param sn 全局序列号
 	 * @param order 调用序号
 	 * @return 调用结果
-	 * @throws CallException
 	 */
-	public Result execute(String path,Parameters paras,String sn,String order) throws CallException;
+	public Result execute(String path,Parameters paras,String sn,String order) ;
 }

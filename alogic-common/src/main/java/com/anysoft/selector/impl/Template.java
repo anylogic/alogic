@@ -5,7 +5,6 @@ import org.w3c.dom.Element;
 
 import com.anysoft.formula.DataProvider;
 import com.anysoft.selector.Selector;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.DataProviderProperties;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -18,7 +17,7 @@ import com.anysoft.util.PropertiesConstants;
 public class Template extends Selector {	
 	protected String template = "";	
 	
-	public void onConfigure(Element _e, Properties _p) throws BaseException {
+	public void onConfigure(Element _e, Properties _p) {
 		template = PropertiesConstants.getString(_p, "selector-template", template,true);
 	}
 

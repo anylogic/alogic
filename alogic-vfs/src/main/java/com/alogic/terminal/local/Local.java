@@ -48,9 +48,9 @@ public class Local extends Terminal.Abstract{
 					
 					ret = p.waitFor();
 				} catch (IOException e) {
-					throw new BaseException("core.process_error",String.format("Command[%s] execute error:%s",cmd,e.getMessage()));
+					throw new BaseException("core.e1004",String.format("Command[%s] execute error:%s",cmd,e.getMessage()));
 				} catch (InterruptedException e) {
-					throw new BaseException("core.process_error",String.format("Command[%s] execute error:%s",cmd,e.getMessage()));
+					throw new BaseException("core.e1006",String.format("Command[%s] execute error:%s",cmd,e.getMessage()));
 				}
 			}
 		}
@@ -89,7 +89,7 @@ public class Local extends Terminal.Abstract{
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close()  {
 		disconnect();
 	}
 

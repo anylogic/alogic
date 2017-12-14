@@ -73,7 +73,7 @@ public class RedisSchema implements Schema {
 	 * <br>
 	 * 主要关闭自身内置的RedisContext
 	 */
-	public void close() throws Exception {
+	public void close()  {
 		IOTools.close(source);
 	}
 	
@@ -94,8 +94,7 @@ public class RedisSchema implements Schema {
 	 * @param _properties 环境变量集
 	 * 
 	 */
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	public void configure(Element _e, Properties _properties) {
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
 		
 		Element sourceElement = XmlTools.getFirstElementByTagName(_e, "redis.source");
@@ -213,7 +212,7 @@ public class RedisSchema implements Schema {
 	/**
 	 * 通过变量集创建实例
 	 */
-	public void create(Properties props) throws BaseException {
+	public void create(Properties props) {
 		id = PropertiesConstants.getString(props, "id", "", true);
 	}
 

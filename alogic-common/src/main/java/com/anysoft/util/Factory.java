@@ -55,7 +55,6 @@ public class Factory<OBJECT> {
 	 * @param xml 创建对象所需的XML参数
 	 * @param props 所需的变量集
 	 * @return 对象实例
-	 * @throws BaseException 
 	 */
 	public OBJECT newInstance(Element xml,Properties props){
 		return newInstance(xml,props,"module");
@@ -68,7 +67,6 @@ public class Factory<OBJECT> {
 	 * @param props 所需的变量集
 	 * @param moduleAttr 表示module属性的属性名称
 	 * @return 对象实例
-	 * @throws BaseException
 	 * @see XMLConfigurable
 	 * @see #newInstance(String)
 	 */
@@ -96,7 +94,6 @@ public class Factory<OBJECT> {
 	 * @param moduleAttr 表示module属性的属性名称
 	 * @param dftClass 缺省的类
 	 * @return object
-	 * @throws BaseException
 	 * 
 	 * @since 1.3.5
 	 */
@@ -122,7 +119,6 @@ public class Factory<OBJECT> {
 	 * <p>在某些时候需要选定ClassLoader来创建实例，需定制{@link #classLoader}.</p>
 	 * @param module 类型或者类名
 	 * @return 对象实例
-	 * @throws BaseException 创建过程中抛出此异常
 	 */
 	@SuppressWarnings("unchecked")
 	public OBJECT newInstance(String module){
@@ -192,7 +188,6 @@ public class Factory<OBJECT> {
 	 * 将module转化为全路径类名
 	 * @param module module名
 	 * @return 全路径类名
-	 * @throws BaseException
 	 */
 	public String getClassName(String module){
 		return module;

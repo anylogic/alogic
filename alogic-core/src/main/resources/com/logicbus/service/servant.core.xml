@@ -5,7 +5,9 @@
 			id = "ServiceDetailQuery" 
 			name="ServiceDetailQuery" 
 			note="查询指定的服务信息" 
-			visible="system"
+			visible="protected"
+			privilege="ConsoleUser"
+			acGroupId="console"
 			log = "none" 
 			module="com.logicbus.service.ServiceDetailQuery">
 			<properties>
@@ -20,7 +22,9 @@
 			name="ServiceReload" 
 			note="重新装入服务缓冲池"
 			log = "brief"
-			visible="system"
+			visible="protected"
+			privilege="ConsoleManager"
+			acGroupId="console"
 		>
 			<properties>
 				<parameter id="jsonDefault" value="true"/>
@@ -35,7 +39,9 @@
 			name="ServicePause" 
 			note="暂停服务"
 			log = "brief"
-			visible="system"
+			visible="protected"
+			privilege="ConsoleManager"
+			acGroupId="console"
 		>
 			<properties>
 				<parameter id="jsonDefault" value="true"/>
@@ -50,7 +56,9 @@
 			name="ServiceResume" 
 			note="恢复服务"
 			log = "brief"
-			visible="system"
+			visible="protected"
+			privilege="ConsoleManager"
+			acGroupId="console"
 		>
 			<properties>
 				<parameter id="jsonDefault" value="true"/>
@@ -63,7 +71,9 @@
 			id="ServiceQuery" 
 			name="ServiceQuery" 
 			note="查询系统中所部署的所有服务"
-			visible="system"
+			visible="protected"
+			privilege="ConsoleUser"
+			acGroupId="console"
 			log = "none" 
 			module="com.logicbus.service.ServiceQuery"
 		>
@@ -77,7 +87,9 @@
 			id="ServiceList" 
 			name="ServiceList" 
 			note="查询系统中所部署的所有服务列表(以列表形式输出)"
-			visible="system"
+			visible="protected"
+			privilege="ConsoleUser"
+			acGroupId="console"
 			log = "none" 
 			module="com.logicbus.service.ServiceList"
 		>
@@ -92,7 +104,9 @@
 			id="PooledServiceList" 
 			name="PooledServiceList" 
 			note="查询当前缓冲池中服务列表"
-			visible="system"
+			visible="protected"
+			privilege="ConsoleUser"
+			acGroupId="console"
 			log = "none" 
 			module="com.logicbus.service.PooledServiceList"
 		>
@@ -106,7 +120,9 @@
 			id="AclQuery" 
 			name="AclQuery" 
 			note="查询当前的访问控制列表"
-			visible="system"
+			visible="protected"
+			privilege="ConsoleUser"
+			acGroupId="console"
 			log = "none" 
 			module="com.logicbus.service.AclQuery"
 		>
@@ -120,7 +136,9 @@
 			id="AclReload" 
 			name="AclReload" 
 			note="重新装入当前的访问控制列表"
-			visible="system"
+			visible="protected"
+			privilege="ConsoleManager"
+			acGroupId="console"
 			log = "none" 
 			module="com.logicbus.service.AclReload"
 		>
@@ -136,7 +154,9 @@
 				id="GC" 
 				name="GC" 
 				note="主动触发虚拟机回收内存" 
-				visible="system"
+				visible="protected"
+				privilege="ConsoleManager"
+				acGroupId="console"
 				log = "brief" 
 				module="com.logicbus.service.GC"
 			>
@@ -151,7 +171,9 @@
 				id="Proxy" 
 				name="Proxy" 
 				note="代理服务"
-				visible="system"
+				visible="protected"
+				privilege="Proxy"
+				acGroupId="app"
 				log = "brief" 
 				module="com.logicbus.service.Proxy"
 			>
@@ -170,7 +192,9 @@
 				id="Settings" 
 				name="Settings" 
 				note="查询节点的环境变量"
-				visible="system"
+				visible="protected"
+				privilege="ConsoleUser"
+				acGroupId="console"
 				log = "none" 
 				module="com.logicbus.service.SettingsQuery"
 			>
@@ -185,7 +209,9 @@
 				id="Env" 
 				name="Env" 
 				note="查询JVM环境变量"
-				visible="public"
+				visible="protected"
+				privilege="ConsoleUser"
+				acGroupId="console"
 				log = "none" 
 				module="com.logicbus.service.EnvQuery"
 			>
@@ -202,7 +228,9 @@
 				id="Report" 
 				name="Report" 
 				note="业务日志报告"
-				visible="system"
+				visible="protected"
+				privilege="ConsoleUser"
+				acGroupId="console"
 				log = "none" 
 				module="com.logicbus.service.BizLogReport"
 			>
@@ -216,7 +244,9 @@
 				id="Pause" 
 				name="Pause" 
 				note="暂停BizLogger的处理"
-				visible="system"
+				visible="protected"
+				privilege="ConsoleManager"
+				acGroupId="console"
 				log = "none" 
 				module="com.logicbus.service.BizLoggerPause"
 			>
@@ -230,7 +260,9 @@
 				id="Resume" 
 				name="Resume" 
 				note="恢复BizLogger的处理"
-				visible="system"
+				visible="protected"
+				privilege="ConsoleManager"
+				acGroupId="console"
 				log = "none" 
 				module="com.logicbus.service.BizLoggerResume"
 			>
@@ -246,7 +278,9 @@
 				id="Report" 
 				name="Report" 
 				note="指标处理报告"
-				visible="system"
+				visible="protected"
+				privilege="ConsoleUser"
+				acGroupId="console"
 				log = "none" 
 				module="com.logicbus.service.MetricsReport"
 			>
@@ -260,7 +294,9 @@
 				id="Pause" 
 				name="Pause" 
 				note="暂停MetricsHandler的处理"
-				visible="system"
+				visible="protected"
+				privilege="ConsoleManager"
+				acGroupId="console"
 				log = "brief" 
 				module="com.logicbus.service.MetricsPause"
 			>
@@ -274,7 +310,9 @@
 				id="Resume" 
 				name="Resume" 
 				note="恢复MetricsHandler的处理"
-				visible="system"
+				visible="protected"
+				privilege="ConsoleManager"
+				acGroupId="console"
 				log = "brief" 
 				module="com.logicbus.service.MetricsResume"
 			>

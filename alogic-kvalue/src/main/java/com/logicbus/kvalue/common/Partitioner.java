@@ -24,7 +24,7 @@ public interface Partitioner extends XMLConfigurable,AutoCloseable,Reportable{
 	public Partition getPartition(final String key);
 	
 	public static class TheFactory extends Factory<Partitioner>{
-		public String getClassName(String _module) throws BaseException{
+		public String getClassName(String _module) {
 			String found = alias.get(_module);
 			return found == null ? _module : found;
 		}

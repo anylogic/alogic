@@ -38,13 +38,13 @@ public class Upload extends Servant implements FileItemHandler{
 	}
 	
 	@Override
-	public int actionProcess(Context ctx) throws Exception{
+	public int actionProcess(Context ctx) {
 		MultiPartForm msg = (MultiPartForm) ctx.asMessage(MultiPartForm.class);
 		String domain = getArgument("domain","default",ctx);
 		
 		BlobManager blobManager = BlobTool.getBlobManager(domain);
 		if (blobManager == null){
-			throw new ServantException("core.blob_not_found","Can not find a blob manager named: " + domain);
+			throw new ServantException("clnt.e2007","Can not find a blob manager named: " + domain);
 		}		
 		msg.handle(ctx,blobManager,this);
 		

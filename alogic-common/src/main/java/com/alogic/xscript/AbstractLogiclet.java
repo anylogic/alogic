@@ -345,17 +345,17 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 			if (root instanceof XmlObject){
 				onExecute((Element)root.getContent(),(Element)current.getContent(),ctx,watcher);
 			}else{
-				throw new BaseException("core.not_supported",String.format("Tag %s does not support protocol %s",this.xmlTag,root.getClass().getName()));	
+				throw new BaseException("core.e1000",String.format("Tag %s does not support protocol %s",this.xmlTag,root.getClass().getName()));	
 			}
 		}
 	}
 	
 	protected void onExecute(final Map<String, Object> root, final Map<String, Object> current,final LogicletContext ctx,final ExecuteWatcher watcher){
-		throw new BaseException("core.not_supported",String.format("Tag %s does not support protocol %s",this.xmlTag,root.getClass().getName()));	
+		throw new BaseException("core.e1000",String.format("Tag %s does not support protocol %s",this.xmlTag,root.getClass().getName()));	
 	}
 	
 	protected void onExecute(final Element root, final Element current,final LogicletContext ctx,final ExecuteWatcher watcher){
-		throw new BaseException("core.not_supported",String.format("Tag %s does not support protocol %s",this.xmlTag,root.getClass().getName()));	
+		throw new BaseException("core.e1000",String.format("Tag %s does not support protocol %s",this.xmlTag,root.getClass().getName()));	
 	}
 	
 	public static String getArgument(String id,String dftValue,LogicletContext ctx){
@@ -395,7 +395,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static String getArgument(String id,LogicletContext ctx){
 		String value = ctx.GetValue(id, "");
 		if (StringUtils.isEmpty(value)){
-			throw new BaseException("client.args_not_found","Can not find parameter:" + id);
+			throw new BaseException("clnt.e2000","Can not find parameter:" + id);
 		}
 		return value;
 	}	

@@ -32,11 +32,11 @@ public class TaskCenterReport extends AbstractServant {
 
 	}
 
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx) {
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 		TaskCenter tc = TaskCenter.TheFactory.get();
 		if (tc == null){
-			throw new ServantException("core.tc_not_found","Can not find a valid task center");
+			throw new ServantException("core.e1003","Can not find a valid task center");
 		}
 		
 		Document doc = msg.getDocument();
@@ -48,11 +48,11 @@ public class TaskCenterReport extends AbstractServant {
 		return 0;
 	}
 	
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		TaskCenter tc = TaskCenter.TheFactory.get();
 		if (tc == null){
-			throw new ServantException("core.tc_not_found","Can not find a valid task center");
+			throw new ServantException("core.e1003","Can not find a valid task center");
 		}
 		
 		Map<String,Object> map = new HashMap<String,Object>();

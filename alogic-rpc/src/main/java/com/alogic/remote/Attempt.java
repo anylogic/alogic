@@ -83,7 +83,7 @@ public interface Attempt extends Reportable,Configurable,XMLConfigurable{
 		protected Backend selectBackend(Route route,LoadBalance<Backend> lb,String app,String key,Properties p,boolean excludeNotValid){	
 			List<Backend> backends = route.select(app, p);
 			if (backends == null){
-				throw new CallException("client.route_not_found","Can not find valid backends.");
+				throw new CallException("core.e1600","Can not find valid backends.");
 			}
 			
 			List<Backend> list = backends;
@@ -95,13 +95,13 @@ public interface Attempt extends Reportable,Configurable,XMLConfigurable{
 					}
 				}
 				if (list.isEmpty()){
-					throw new CallException("client.route_not_found","Can not find valid backends,Not all backends is valid");
+					throw new CallException("core.e1600","Can not find valid backends,Not all backends is valid");
 				}
 			}
 			
 			Backend backend = lb.select(key, p, list);
 			if (backend == null){
-				throw new CallException("client.route_not_found","Can not find valid backends,Not all backends is valid");
+				throw new CallException("core.e1600","Can not find valid backends,Not all backends is valid");
 			}
 			
 			return backend;

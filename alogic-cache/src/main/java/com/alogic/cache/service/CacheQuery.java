@@ -37,7 +37,7 @@ public class CacheQuery extends AbstractServant {
 		
 		CacheStore found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find a cache :" + id);
+			throw new ServantException("clnt.e2007","Can not find a cache :" + id);
 		}
 		
 		Element eleCache = doc.createElement("cache");
@@ -56,7 +56,7 @@ public class CacheQuery extends AbstractServant {
 		
 		CacheStore found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find a cache :" + id);
+			throw new ServantException("clnt.e2007","Can not find a cache :" + id);
 		}
 		
 		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR

@@ -27,8 +27,7 @@ import com.logicbus.models.servant.ServiceDescription;
 public class UpdateById extends IDUBase {
 
 	@Override
-	protected void onCreate(ServiceDescription sd, Properties p)
-			throws ServantException {
+	protected void onCreate(ServiceDescription sd, Properties p) {
 		sqlUpdate = PropertiesConstants.getString(p, "sql.Update", sqlUpdate);
 		rootName = PropertiesConstants.getString(p, "data.root", rootName);
 		dataId = PropertiesConstants.getString(p,"dataGuard.id", dataId);
@@ -37,12 +36,12 @@ public class UpdateById extends IDUBase {
 
 	@Override
 	protected void doIt(Context ctx, JsonMessage msg, Connection conn)
-			throws Exception {
+			 {
 		String userId = getArgument("user.id","",ctx);
 		String id = getArgument("id",ctx);
 		String dataGuardObject = getArgument(dataId,id,ctx);
 		if (!checkPrivilege(userId,dataGuardObject)){
-			throw new ServantException("core.unauthorized","无权访问本服务，用户:" + userId);
+			throw new ServantException("core.e1010","无权访问本服务，用户:" + userId);
 		}
 		
 		List<Object> data = new ArrayList<Object>();

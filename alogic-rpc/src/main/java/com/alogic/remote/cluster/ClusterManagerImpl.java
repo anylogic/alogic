@@ -127,7 +127,7 @@ public class ClusterManagerImpl implements ClusterManager {
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close()  {
 		Cluster [] list = getClusters();
 		for (Cluster c:list){
 			IOTools.close(c);

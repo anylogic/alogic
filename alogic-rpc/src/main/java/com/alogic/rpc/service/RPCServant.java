@@ -85,7 +85,7 @@ public class RPCServant extends Servant {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		if (instance == null){
-			throw new ServantException("core.impl_is_null","The impl instance is null.");
+			throw new ServantException("core.e1002","The impl instance is null.");
 		}
 		
 		Map<String,Object> root = msg.getRoot();
@@ -129,14 +129,14 @@ public class RPCServant extends Servant {
 		keepAliveEnable = PropertiesConstants.getBoolean(p,"rpc.http.keepAlive.enable",keepAliveEnable);
 		String impl = PropertiesConstants.getString(p,"servant.impl","");
 		if (StringUtils.isEmpty(impl)){
-			throw new ServantException("core.servant_no_impl","Can not find impl class name in proeprties.");
+			throw new ServantException("core.e1003","Can not find impl class name in proeprties.");
 		}
 
 		try {
 			Factory<Object> f = new Factory<Object>();
 			instance = f.newInstance(impl, p);
 		}catch (Exception ex){
-			throw new ServantException("core.instance_failed","Can not create impl instance:" + impl);
+			throw new ServantException("core.e1002","Can not create impl instance:" + impl);
 		}
 		
 		theCall = new LocalCall();

@@ -45,7 +45,7 @@ public abstract class ZKOperation extends AbstractLogiclet implements Watcher{
 			ExecuteWatcher watcher) {
 		ZooKeeperConnector conn = ctx.getObject(pid);
 		if (conn == null){
-			throw new BaseException("core.no_zkconn","It must be in a zk-conn context,check your script.");
+			throw new BaseException("core.e1001","It must be in a zk-conn context,check your script.");
 		}
 		
 		if (StringUtils.isNotEmpty(id)){

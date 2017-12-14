@@ -12,7 +12,6 @@ import com.anysoft.util.XmlTools;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.AccessController;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.models.servant.ServiceDescription;
@@ -56,12 +55,12 @@ public class AclQuery extends AbstractServant {
 	}
 
 	
-	protected void onCreate(ServiceDescription sd) throws ServantException {
+	protected void onCreate(ServiceDescription sd) {
 
 	}
 
 	
-	protected int onXml(Context ctx) throws Exception {
+	protected int onXml(Context ctx) {
 		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
 		int offset = getArgument("offset", 0, ctx);
 		int limit = getArgument("limit", 30, ctx);	
@@ -93,7 +92,7 @@ public class AclQuery extends AbstractServant {
 	}
 
 	
-	protected int onJson(Context ctx) throws Exception {
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		int offset = getArgument("offset", 0, ctx);
 		int limit = getArgument("limit", 30, ctx);

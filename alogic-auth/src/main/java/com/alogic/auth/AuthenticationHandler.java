@@ -183,7 +183,7 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 		@Override
 		public Principal getCurrent(Context ctx) {
 			if (!(ctx instanceof HttpContext)){
-				throw new BaseException("core.nothttpcontext","The Context is not a HttpContext instance.");
+				throw new BaseException("core.e1002","The Context is not a HttpContext instance.");
 			}
 			
 			HttpContext httpContext = (HttpContext)ctx;
@@ -194,7 +194,7 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 		@Override
 		public Principal login(Context ctx) {
 			if (!(ctx instanceof HttpContext)){
-				throw new BaseException("core.nothttpcontext","The Context is not a HttpContext instance.");
+				throw new BaseException("core.e1002","The Context is not a HttpContext instance.");
 			}
 			
 			HttpContext httpContext = (HttpContext)ctx;

@@ -3,7 +3,6 @@ package com.anysoft.selector.impl;
 import org.w3c.dom.Element;
 
 import com.anysoft.formula.DataProvider;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlTools;
@@ -20,7 +19,7 @@ import com.anysoft.selector.Selector;
 public class DateFormatter extends Selector {
 
 	
-	public void onConfigure(Element _e, Properties _p) throws BaseException {
+	public void onConfigure(Element _e, Properties _p) {
 		pattern = PropertiesConstants.getString(_p,"pattern",pattern,true);
 		
 		Element _selector = XmlTools.getFirstElementByPath(_e, "selector");

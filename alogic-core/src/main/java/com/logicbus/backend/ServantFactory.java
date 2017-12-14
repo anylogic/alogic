@@ -51,7 +51,6 @@ public interface ServantFactory extends ServiceDescriptionWatcher,AutoCloseable,
 	 * 重新装入指定服务的资源池
 	 * @param _id 服务id
 	 * @return 服务资源池
-	 * @throws ServantException
 	 */
 	public ServantPool reloadPool(Path _id);
 	
@@ -59,7 +58,6 @@ public interface ServantFactory extends ServiceDescriptionWatcher,AutoCloseable,
 	 * 获取指定服务的的服务资源池
 	 * @param _id 服务Id
 	 * @return 服务资源池
-	 * @throws ServantException
 	 */
 	public ServantPool getPool(Path _id);
 	

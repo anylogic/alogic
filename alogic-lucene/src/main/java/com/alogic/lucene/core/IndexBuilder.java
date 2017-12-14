@@ -46,12 +46,11 @@ public interface IndexBuilder extends Configurable,XMLConfigurable,Reportable{
 		protected static final Logger logger = LoggerFactory.getLogger(IndexBuilder.class);
 		protected long docCnt = 0;
 		
-		public void configure(Properties p) throws BaseException {
+		public void configure(Properties p){
 			
 		}
 
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		public void configure(Element _e, Properties _properties){
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);
 		}

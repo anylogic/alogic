@@ -92,7 +92,7 @@ public class RemoteWriter extends MetricsSummaryWriter{
 		}
 	}
 	
-	public void close() throws Exception {
+	public void close()  {
 		IOTools.close(theCall);
 		super.close();
 	}

@@ -3,6 +3,7 @@ package com.logicbus.backend.server;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +135,7 @@ public class MessageRouter {
 			ServantFactory factory = servantFactory;
 			pool = factory.getPool(id);		
 			if (!pool.isRunning()){
-				throw new ServantException("core.service_paused",
+				throw new ServantException("core.e1009",
 						"The Service is paused:service id:" + id);
 			}
 
@@ -145,7 +146,7 @@ public class MessageRouter {
 				priority = ac.accessStart(sessionId,id, pool.getDescription(), ctx);
 				if (priority < 0){
 					logger.info("Unauthorized Access:" + ctx.getClientIp() + ",url:" + ctx.getRequestURL());
-					ctx.setReturn("client.permission_denied","Permission denied!service id: "+ id);
+					ctx.setReturn("core.e1010","Permission denied!service id: "+ id);
 					return 0;
 				}
 			}
@@ -154,7 +155,7 @@ public class MessageRouter {
 			servant = pool.borrowObject(priority);
 			if (servant == null){
 				logger.warn("Can not get a servant from pool in the limited time,check servant.queueTimeout variable.");
-				ctx.setReturn("core.time_out", "Can not get a servant from pool in the limited time,check servant.queueTimeout variable.");
+				ctx.setReturn("core.e1011", "Can not get a servant from pool in the limited time,check servant.queueTimeout variable.");
 			}else{
 				if (!threadMode){
 					//在非线程模式下,不支持服务超时
@@ -164,23 +165,23 @@ public class MessageRouter {
 					ServantWorkerThread thread = new ServantWorkerThread(servant,ctx,latch,tc != null ? tc.newChild() : null);
 					thread.start();
 					if (!latch.await(servant.getTimeOutValue(), TimeUnit.MILLISECONDS)){
-						ctx.setReturn("core.time_out","Time out or interrupted.");
+						ctx.setReturn("core.e1011","Time out or interrupted.");
 					}
 					thread = null;
 				}
 			}
 		}catch (ServantException ex){
 			ctx.setReturn(ex.getCode(), ex.getMessage());
-			logger.error(ex.getCode() + ":" + ex.getMessage(),ex);
+			logger.error(ExceptionUtils.getStackTrace(ex));
 		}catch (BaseException ex){
 			ctx.setReturn(ex.getCode(), ex.getMessage());
-			logger.error(ex.getCode() + ":" + ex.getMessage(),ex);
+			logger.error(ExceptionUtils.getStackTrace(ex));
 		}catch (Exception ex){
-			ctx.setReturn("core.fatalerror",ex.getMessage());
-			logger.error("core.fatalerror:" + ex.getMessage(),ex);
+			ctx.setReturn("core.e1012",ex.getMessage());
+			logger.error(ExceptionUtils.getStackTrace(ex));
 		}catch (Throwable t){
-			ctx.setReturn("core.fatalerror",t.getMessage());
-			logger.error("core.fatalerror:" + t.getMessage(),t);			
+			ctx.setReturn("core.e1012",t.getMessage());
+			logger.error(ExceptionUtils.getStackTrace(t));		
 		}
 		finally {
 			ctx.setEndTime(System.nanoTime());
@@ -234,7 +235,7 @@ public class MessageRouter {
 		return 0;
 	}
 	
-	protected static int execute(Servant servant,Context ctx) throws Exception {
+	protected static int execute(Servant servant,Context ctx)  {
 		servant.actionBefore( ctx);
 		servant.actionProcess( ctx);
 		servant.actionAfter( ctx);

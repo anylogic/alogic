@@ -37,7 +37,7 @@ public abstract class CacheOperation extends AbstractLogiclet{
 			ExecuteWatcher watcher) {
 		CacheStore cache = ctx.getObject(cacheConn);
 		if (cache == null){
-			throw new ServantException("core.no_cache","It must be in a cache context,check your together script.");
+			throw new ServantException("core.e1001","It must be in a cache context,check your together script.");
 		}
 		onExecute(cache,root,current,ctx,watcher);
 	}
@@ -52,7 +52,7 @@ public abstract class CacheOperation extends AbstractLogiclet{
 	
 	protected void onExecute(CacheStore cache, Map<String,Object> root,Map<String,Object> current, LogicletContext ctx,
 			ExecuteWatcher watcher){
-		throw new BaseException("core.not_supported",
+		throw new BaseException("core.e1000",
 				String.format("Tag %s does not support protocol %s",this.getXmlTag(),root.getClass().getName()));
 	}
 }

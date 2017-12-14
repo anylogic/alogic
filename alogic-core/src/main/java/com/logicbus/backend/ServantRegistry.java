@@ -74,7 +74,7 @@ public interface ServantRegistry extends Configurable,XMLConfigurable,AutoClosea
 		}
 
 		@Override
-		public void close() throws Exception {
+		public void close()  {
 			
 		}
 

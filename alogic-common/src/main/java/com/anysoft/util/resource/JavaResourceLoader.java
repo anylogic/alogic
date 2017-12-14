@@ -21,14 +21,11 @@ public class JavaResourceLoader implements ResourceLoader {
 	 * @param _url URL
 	 * @param _context 上下文
 	 * @return 输入流实例
-	 * @throws BaseException 当URL中不包含路径时抛出
 	 */		
 	
-	public InputStream load(URLocation _url, Object _context)
-			throws BaseException {
+	public InputStream load(URLocation _url, Object _context) {
 		if (!_url.hasPath()) {
-			throw new BaseException(JavaResourceLoader.class.getName(),
-					"Can not find path from url:" + _url.toString());
+			throw new BaseException("core.e1007","Can not find path from url:" + _url.toString());
 		}
 		@SuppressWarnings("rawtypes")
 		Class clazz = getCurrentClass(_url);
@@ -83,8 +80,7 @@ public class JavaResourceLoader implements ResourceLoader {
 	
 	public URL createURL(URLocation _url, Object _context) throws BaseException {
 		if (!_url.hasPath()) {
-			throw new BaseException(JavaResourceLoader.class.getName(),
-					"Can not find path from url:" + _url.toString());
+			throw new BaseException("core.e1007","Can not find path from url:" + _url.toString());
 		}
 		
 		@SuppressWarnings("rawtypes")

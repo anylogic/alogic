@@ -54,7 +54,7 @@ public class GC extends AbstractServant {
 
 	}
 	
-	protected int onXml(Context ctx) throws Exception {
+	protected int onXml(Context ctx)  {
 		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);	
 		
 		SystemStatus before = new SystemStatus();
@@ -73,7 +73,7 @@ public class GC extends AbstractServant {
 	}
 
 	
-	protected int onJson(Context ctx) throws Exception {
+	protected int onJson(Context ctx)  {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		SystemStatus before = new SystemStatus();

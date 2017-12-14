@@ -6,6 +6,8 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import com.alogic.blob.client.BlobTool;
 import com.alogic.blob.core.BlobInfo;
 import com.alogic.blob.core.BlobManager;
@@ -44,7 +46,7 @@ public class Download extends Servant {
 	}
 	
 	@Override
-	public int actionProcess(Context ctx) throws Exception{
+	public int actionProcess(Context ctx) {
 		ctx.asMessage(BlobMessage.class);
 		
 		String fileId = getArgument("fileId",ctx); // NOSONAR
@@ -52,12 +54,12 @@ public class Download extends Servant {
 		
 		BlobManager manager = BlobTool.getBlobManager(domain);
 		if (manager == null){
-			throw new ServantException("core.blob_not_found","Can not find a blob manager named " + domain);
+			throw new ServantException("clnt.e2007","Can not find a blob manager named " + domain);
 		}
 		
 		BlobReader reader = manager.getFile(fileId);
 		if (reader == null){
-			throw new ServantException("core.blob_not_found","Can not find a blob file named " + fileId);
+			throw new ServantException("clnt.e2007","Can not find a blob file named " + fileId);
 		}
 		
 		BlobInfo info = reader.getBlobInfo();
@@ -65,15 +67,18 @@ public class Download extends Servant {
 		ctx.setResponseContentType(info.contentType());
 		
 		InputStream in = reader.getInputStream(0);
-		OutputStream out = ctx.getOutputStream();
-		
+
 		try {
+			OutputStream out = ctx.getOutputStream();
 	        int size=0;  
 	        
 	        while((size=in.read(buffer))!=-1)  
 	        {  
 	        	out.write(buffer, 0, size);
 	        }  
+		}catch (IOException ex){
+			logger.error(ExceptionUtils.getStackTrace(ex));
+			throw new ServantException("core.e1004",ex.getMessage());
 		}finally{
 			IOTools.close(in);
 		}

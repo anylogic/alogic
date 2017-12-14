@@ -19,7 +19,7 @@ public class SafeEncoder {
 			}
 			return str.getBytes(ENCODING);
 		} catch (UnsupportedEncodingException e) {
-			throw new RedisException("encoding", "unsupported encoding", e);
+			throw new RedisException("core.e1005", "unsupported encoding", e);
 		}
 	}
 	
@@ -43,7 +43,7 @@ public class SafeEncoder {
 		try {
 			return new String(data, ENCODING);
 		} catch (UnsupportedEncodingException e) {
-			throw new RedisException("encoding", "unsupported encoding", e);
+			throw new RedisException("core.e1005", "unsupported encoding", e);
 		}
 	}
 	

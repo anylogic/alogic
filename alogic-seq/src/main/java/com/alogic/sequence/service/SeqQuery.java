@@ -28,7 +28,7 @@ import com.logicbus.models.servant.ServiceDescription;
 public class SeqQuery extends AbstractServant {
 
 	@Override
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx) {
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		String id = getArgument("id",ctx);
@@ -39,7 +39,7 @@ public class SeqQuery extends AbstractServant {
 		SequenceSource src = SequenceSource.get();
 		SequenceGenerator found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find the seq generator :" + id);
+			throw new ServantException("clnt.e2007","Can not find the seq generator :" + id);
 		}
 		
 		Element elem = doc.createElement("seq");
@@ -50,14 +50,14 @@ public class SeqQuery extends AbstractServant {
 	}
 	
 	@Override
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		String id = getArgument("id",ctx);
 		
 		SequenceSource src = SequenceSource.get();
 		SequenceGenerator found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find the seq generator :" + id);
+			throw new ServantException("clnt.e2007","Can not find the seq generator :" + id);
 		}
 		
 		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR

@@ -20,19 +20,18 @@ import com.logicbus.models.servant.ServiceDescription;
 public class IdExist extends IDUBase {
 
 	@Override
-	protected void onCreate(ServiceDescription sd, Properties p)
-			throws ServantException {
+	protected void onCreate(ServiceDescription sd, Properties p) {
 		sqlIdExist = PropertiesConstants.getString(p,"sql.IdExist",sqlIdExist);
 	}
 
 	@Override
 	protected void doIt(Context ctx, JsonMessage msg, Connection conn)
-			throws Exception {
+			 {
 		String id = getArgument("id",ctx);
 		
 		int exist = DBTools.selectAsInt(conn, sqlIdExist, 1, id);
 		if (exist > 0){
-			throw new ServantException("core.id_used","The given id has been used.");
+			throw new ServantException("clnt.e2008","The given id has been used.");
 		}
 	}
 

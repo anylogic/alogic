@@ -49,7 +49,7 @@ public class CreateRequest extends NS {
 	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {		
 		Client client = ClientFactory.getCall(clientId);
 		if (client == null){
-			throw new BaseException("core.client_not_found","Can not find client :" + clientId);
+			throw new BaseException("core.e1003","Can not find client :" + clientId);
 		}
 		Request req = null;
 		try {

@@ -44,14 +44,14 @@ public final class Protocol {
 				os.writeCrLf();
 			}
 		} catch (IOException e) {
-			throw new RedisConnectException("ioexception",
+			throw new RedisConnectException("core.e1004",
 					"IO Exception when connecting.", e);
 		}
 	}
 
 	private static void processError(final RedisInputStream is) {
 		String message = is.readLine();
-		throw new RedisDataException("resp",message);
+		throw new RedisDataException("core.e1703",message);
 	}
 
 	private static Object process(final RedisInputStream is) {
@@ -68,10 +68,10 @@ public final class Protocol {
 			} else if (b == PLUS_BYTE) {
 				return processStatusCodeReply(is);
 			} else {
-				throw new RedisConnectException("unknownreply", "Unknown reply: "+ (char) b);
+				throw new RedisConnectException("core.e1700", "Unknown reply: "+ (char) b);
 			}
 		} catch (IOException e) {
-			throw new RedisConnectException("ioexception",
+			throw new RedisConnectException("core.e1004",
 					"IO Exception when connecting.", e);
 		}
 		return null;
@@ -92,14 +92,14 @@ public final class Protocol {
 			while (offset < len) {
 				int size = is.read(read, offset, (len - offset));
 				if (size == -1)
-					throw new RedisConnectException("closed",
+					throw new RedisConnectException("core.e1701",
 							"It seems like server has closed the connection.");
 				offset += size;
 			}
 			is.readByte();
 			is.readByte();
 		} catch (IOException e) {
-			throw new RedisConnectException("ioexception",
+			throw new RedisConnectException("core.e1004",
 					"IO Exception when connecting.", e);
 		}
 

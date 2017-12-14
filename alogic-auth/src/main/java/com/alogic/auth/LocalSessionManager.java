@@ -33,7 +33,7 @@ public class LocalSessionManager implements SessionManager{
 	@Override
 	public Session getSession(Context ctx, boolean create) {
 		if (!(ctx instanceof HttpContext)){
-			throw new BaseException("core.nothttpcontext","The Context is not a HttpContext instance.");
+			throw new BaseException("core.e1002","The Context is not a HttpContext instance.");
 		}
 		
 		HttpContext httpContext = (HttpContext)ctx;

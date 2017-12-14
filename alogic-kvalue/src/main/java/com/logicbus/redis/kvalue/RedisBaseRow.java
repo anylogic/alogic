@@ -54,7 +54,7 @@ public class RedisBaseRow implements KeyValueRow {
 
 		Client client = getClient(src);
 		if (client == null){
-			throw new RedisException("noclient",
+			throw new RedisException("core.e1003",
 					"Can not get a client by source name:" + src);
 		}
 		

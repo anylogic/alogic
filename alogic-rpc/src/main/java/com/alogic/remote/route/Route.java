@@ -118,7 +118,7 @@ public interface Route extends Reportable,Configurable,XMLConfigurable,AutoClose
 		}	
 		
 		@Override
-		public void close() throws Exception {
+		public void close()  {
 			// nothing to do
 		}	
 		

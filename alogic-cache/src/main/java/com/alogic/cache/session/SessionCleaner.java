@@ -39,7 +39,7 @@ public class SessionCleaner implements HttpSessionListener {
 	 */
 	protected CacheStore getCacheStore(){
 		if (cacheId == null || cacheId.length() <= 0){
-			throw new ServantException("core.cache_not_defined","The relational cache is not defined");
+			throw new ServantException("core.e1003","The relational cache is not defined");
 		}
 		
 		CacheSource cs = CacheSource.get();
@@ -47,7 +47,7 @@ public class SessionCleaner implements HttpSessionListener {
 		CacheStore store = cs.get(cacheId);
 		
 		if (store == null){
-			throw new ServantException("core.cache_not_found","The cache is not found,cacheId=" + cacheId);
+			throw new ServantException("core.e1003","The cache is not found,cacheId=" + cacheId);
 		}
 		
 		return store;

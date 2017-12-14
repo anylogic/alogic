@@ -1,9 +1,11 @@
 package com.logicbus.service;
 
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,22 +52,22 @@ import com.logicbus.models.servant.ServiceDescription;
 public class Proxy extends Servant {
 
 	
-	public int actionProcess(Context ctx) throws Exception {
+	public int actionProcess(Context ctx) {
 		ByteMessage msg = (ByteMessage) ctx.asMessage(ByteMessage.class);
 		
 		if (!enable){
-			throw new ServantException("core.servicedisable","the proxy service is disable now.");
+			throw new ServantException("core.e1009","the proxy service is disable now.");
 		}
 		
 		String host = ctx.GetValue("host", "");
 		String service = ctx.GetValue("service", "");
 		
 		if (host == null || host.length() <= 0){
-			throw new ServantException("client.nohost","Can not get host from url.");
+			throw new ServantException("clnt.e2000","Can not get host from url.");
 		}
 		
 		if (service == null || service.length() <= 0){
-			throw new ServantException("client.noservice","Can not get service from url.");
+			throw new ServantException("clnt.e2000","Can not get service from url.");
 		}
 		
 		String contextPath = ctx.GetValue("contexPath", "");
@@ -121,16 +123,16 @@ public class Proxy extends Servant {
 			int ret = conn.getResponseCode();
 			if (ret!= HttpURLConnection.HTTP_OK){
 				IOTools.close(conn.getInputStream());
-				throw new ServantException("client.invoke_error", 
+				throw new ServantException("core.e1605", 
 						"Error occurs when invoking service :"
 						+ conn.getResponseMessage());
 			}
 			
 			input(conn,msg);
-		}catch (Exception ex){
-			error = true;
-			errorMsg = ex.getMessage();
-			throw ex;
+		} catch (MalformedURLException e) {
+			throw new ServantException("core.e1007",e.getMessage());
+		} catch (IOException e) {
+			throw new ServantException("core.e1004",e.getMessage());
 		}
 		finally{
 			if (traceEnable){
@@ -153,7 +155,7 @@ public class Proxy extends Servant {
 				conn.setDoOutput(false);
 			}
 		}catch (Exception ex){
-			throw new ServantException("core.io_error","Can not write data to network.");
+			throw new ServantException("core.e1004","Can not write data to network.");
 		}finally{
 			IOTools.close(out);
 		}
@@ -172,7 +174,7 @@ public class Proxy extends Servant {
 			}
 			msg.setOutput(toRead);		
 		}catch (Exception ex){
-			throw new ServantException("core.io_error","Can not read data from network.");
+			throw new ServantException("core.e1004","Can not read data from network.");
 		}finally{
 			IOTools.close(in);
 		}

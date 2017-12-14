@@ -79,7 +79,7 @@ public class RedisLock implements Lock {
 	public boolean tryLock() {
 		RedisPool pool = RedisSource.get().get(poolId);
 		if (pool == null){
-			throw new RedisContextException("no_redis","Can not find redis pool:" + poolId);
+			throw new RedisContextException("core.e1003","Can not find redis pool:" + poolId);
 		}
 		
 		Client client = pool.getClient();
@@ -107,7 +107,7 @@ public class RedisLock implements Lock {
 		if (locked){
 			RedisPool pool = RedisSource.get().get(poolId);
 			if (pool == null){
-				throw new RedisContextException("no_redis","Can not find redis pool:" + poolId);
+				throw new RedisContextException("core.e1003","Can not find redis pool:" + poolId);
 			}
 			
 			Client client = pool.getClient();

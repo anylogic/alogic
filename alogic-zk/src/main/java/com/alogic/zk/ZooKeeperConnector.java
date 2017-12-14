@@ -138,7 +138,7 @@ public final class ZooKeeperConnector implements Watcher{
 	public String loadData(UPath path,Watcher watcher,boolean ignoreException){
 		if (!isConnected()){
 			if (!ignoreException)
-				throw new BaseException("zk.noconn","the zk is not connected.");
+				throw new BaseException("core.e1500","the zk is not connected.");
 			logger.error("the zk is not connected.");
 			return null;
 		}
@@ -176,7 +176,7 @@ public final class ZooKeeperConnector implements Watcher{
 	public String [] loadChildren(UPath path,Watcher watcher,boolean ignoreException){
 		if (!isConnected()){
 			if (!ignoreException)
-				throw new BaseException("zk.noconn","the zk is not connected.");
+				throw new BaseException("core.e1500","the zk is not connected.");
 			logger.error("the zk is not connected.");
 			return new String[0];
 		}		
@@ -193,7 +193,7 @@ public final class ZooKeeperConnector implements Watcher{
 	public List<String> getChildren(UPath path,Watcher watcher,boolean ignoreException){
 		if (!isConnected()){
 			if (!ignoreException)
-				throw new BaseException("zk.noconn","the zk is not connected.");
+				throw new BaseException("core.e1500","the zk is not connected.");
 			logger.error("the zk is not connected.");
 			return null;
 		}		
@@ -206,10 +206,10 @@ public final class ZooKeeperConnector implements Watcher{
 			}
 		}catch (KeeperException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.keeperexception",e.getMessage(),e);
+				throw new BaseException("core.e1501",e.getMessage(),e);
 		} catch (InterruptedException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.interrupted",e.getMessage(),e);
+				throw new BaseException("core.e1006",e.getMessage(),e);
 		}
 		return children;
 	}
@@ -224,7 +224,7 @@ public final class ZooKeeperConnector implements Watcher{
 	public boolean existPath(UPath path,Watcher watcher,boolean ignoreException){
 		if (!isConnected()){
 			if (!ignoreException)
-				throw new BaseException("zk.noconn","the zk is not connected.");
+				throw new BaseException("core.e1500","the zk is not connected.");
 			logger.error("the zk is not connected.");
 			return false;
 		}		
@@ -237,10 +237,10 @@ public final class ZooKeeperConnector implements Watcher{
 			}
 		}catch (KeeperException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.keeperexception",e.getMessage(),e);
+				throw new BaseException("core.e1501",e.getMessage(),e);
 		} catch (InterruptedException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.interrupted",e.getMessage(),e);
+				throw new BaseException("core.e1006",e.getMessage(),e);
 		}
 		return stat != null;
 	}
@@ -258,7 +258,7 @@ public final class ZooKeeperConnector implements Watcher{
 			Watcher watcher,boolean ignoreException){
 		if (!isConnected()){
 			if (!ignoreException)
-				throw new BaseException("zk.noconn","the zk is not connected.");
+				throw new BaseException("core.e1500","the zk is not connected.");
 			logger.error("the zk is not connected.");
 			return ;
 		}		
@@ -277,13 +277,13 @@ public final class ZooKeeperConnector implements Watcher{
 			}
 		}catch (KeeperException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.keeperexception",e.getMessage(),e);
+				throw new BaseException("core.e1501",e.getMessage(),e);
 		} catch (InterruptedException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.interrupted",e.getMessage(),e);
+				throw new BaseException("core.e1006",e.getMessage(),e);
 		}catch (UnsupportedEncodingException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.unsupportedencoding",e.getMessage(),e);
+				throw new BaseException("core.e1005",e.getMessage(),e);
 		}		
 	}
 	
@@ -298,7 +298,7 @@ public final class ZooKeeperConnector implements Watcher{
 	public String create(UPath path,String data,List<ACL> acls,CreateMode mode,boolean ignoreException){
 		if (!isConnected()){
 			if (!ignoreException)
-				throw new BaseException("zk.noconn","the zk is not connected.");
+				throw new BaseException("core.e1500","the zk is not connected.");
 			logger.error("the zk is not connected.");
 			return null;
 		}		
@@ -307,13 +307,13 @@ public final class ZooKeeperConnector implements Watcher{
 			return zookeeper.create(_thePath,data.getBytes(encoding),acls,mode);
 		}catch (KeeperException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.keeperexception",e.getMessage(),e);
+				throw new BaseException("core.e1501",e.getMessage(),e);
 		} catch (InterruptedException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.interrupted",e.getMessage(),e);
+				throw new BaseException("core.e1006",e.getMessage(),e);
 		}catch (UnsupportedEncodingException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.unsupportedencoding",e.getMessage(),e);
+				throw new BaseException("core.e1005",e.getMessage(),e);
 		}	
 		return null;
 	}
@@ -343,7 +343,7 @@ public final class ZooKeeperConnector implements Watcher{
 	public void delete(UPath path,boolean ignoreException){
 		if (!isConnected()){
 			if (!ignoreException)
-				throw new BaseException("zk.noconn","the zk is not connected.");
+				throw new BaseException("core.e1500","the zk is not connected.");
 			logger.error("the zk is not connected.");
 			return ;
 		}		
@@ -351,10 +351,10 @@ public final class ZooKeeperConnector implements Watcher{
 			zookeeper.delete(path.getPath(), -1);
 		} catch (InterruptedException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.interrupted",e.getMessage(),e);
+				throw new BaseException("core.e1006",e.getMessage(),e);
 		} catch (KeeperException e) {
 			if (!ignoreException)
-				throw new BaseException("zk.keeperexception",e.getMessage(),e);
+				throw new BaseException("core.e1501",e.getMessage(),e);
 		}
 	}
 	

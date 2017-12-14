@@ -41,7 +41,7 @@ public class Update extends DBOperation {
 	}
 
 	
-	public void close() throws Exception {
+	public void close()  {
 		
 	}
 
@@ -52,7 +52,7 @@ public class Update extends DBOperation {
 	 * @return 结果
 	 * @throws SQLException
 	 */
-	public int execute(String sql,Object...params) throws BaseException{
+	public int execute(String sql,Object...params){
 		PreparedStatement stmt = null;
 		TraceContext tc = traceEnable()?Tool.start():null;
 		boolean error = false;
@@ -75,7 +75,7 @@ public class Update extends DBOperation {
 		}catch (SQLException ex){
 			error = true;
 			msg = ExceptionUtils.getStackTrace(ex);
-			throw new BaseException("core.sql_error",msg);
+			throw new BaseException("core.e1300",msg);
 		}
 		finally{
 			close(stmt);
@@ -91,7 +91,7 @@ public class Update extends DBOperation {
 	 * @return 执行结果
 	 * @throws SQLException
 	 */
-	public int[] executeBatch(String...sqls) throws BaseException{
+	public int[] executeBatch(String...sqls){
 		Statement stmt = null;
 		TraceContext tc = traceEnable()?Tool.start():null;
 		boolean error = false;
@@ -106,7 +106,7 @@ public class Update extends DBOperation {
 		}catch (SQLException ex){
 			error = true;
 			msg = ExceptionUtils.getStackTrace(ex);
-			throw new BaseException("core.sql_error",msg);
+			throw new BaseException("core.e1300",msg);
 		}
 		finally{
 			close(stmt);

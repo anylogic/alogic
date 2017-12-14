@@ -38,7 +38,7 @@ public abstract class MetricsBuilder extends AbstractLogiclet{
 			ExecuteWatcher watcher) {
 		Fragment f = ctx.getObject(pid);
 		if (f == null){
-			throw new BaseException("core.no_metrics_context",
+			throw new BaseException("core.e1001",
 					String.format("%s must be in a metrics context", getXmlTag()));
 		}
 		

@@ -198,7 +198,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	/**
 	 * 设置服务说明
-	 * @param note 服务说明
+	 * @param n 服务说明
 	 */
 	public void setNote(String n){note = n;}
 	
@@ -211,7 +211,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	/**
 	 * 设置服务路径
-	 * @param path 
+	 * @param p 服务路径
 	 */
 	public void setPath(String p){this.path = p;}
 	
@@ -224,11 +224,10 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	/**
 	 * 设置服务实现代码
-	 * @param module 
+	 * @param m module
 	 */
 	public void setModule(String m){module = m;}
 	
-
 	@Override
 	public String getAcGroup() {
 		return this.acGroupId;
@@ -272,7 +271,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 
 	/**
 	 * 设置Properties
-	 * @param props
+	 * @param props 属性集
 	 * 
 	 * @since 1.2.4.4
 	 */
@@ -282,7 +281,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	/**
 	 * 输出到打印流
-	 * @param out
+	 * @param out 打印输出流
 	 */
 	public void List(PrintStream out)
 	{

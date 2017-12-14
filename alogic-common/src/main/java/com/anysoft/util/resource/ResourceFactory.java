@@ -36,9 +36,8 @@ public class ResourceFactory {
 	 * @param secondary 备用的资源URL
 	 * @param _context 上下文
 	 * @return 输入流 
-	 * @throws BaseException
 	 */
-	public InputStream load(String master,String secondary,Object _context)throws BaseException{
+	public InputStream load(String master,String secondary,Object _context){
 		InputStream in = null;
 		try {
 			in = load(master,_context);
@@ -70,9 +69,8 @@ public class ResourceFactory {
 	 * @param _path 资源的URL
 	 * @param _context 上下文
 	 * @return 输入流 
-	 * @throws BaseException
 	 */	
-	public InputStream load(String _path, Object _context) throws BaseException {
+	public InputStream load(String _path, Object _context) {
 		URLocation url = new URLocation(_path);
 		String scheme = url.hasScheme() ? url.getScheme() : "java";
 		ResourceLoader loader = getLoader(scheme);
@@ -104,9 +102,8 @@ public class ResourceFactory {
 	 * @param _path 字符串型URL
 	 * @param _context 上下文
 	 * @return URL
-	 * @throws BaseException
 	 */
-	public URL createURL(String _path, Object _context) throws BaseException {
+	public URL createURL(String _path, Object _context) {
 		URLocation url = new URLocation(_path);
 		String scheme = url.hasScheme() ? url.getScheme() : "java";
 		ResourceLoader loader = getLoader(scheme);

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
@@ -59,12 +58,11 @@ public interface ContextHolder extends Reportable,Configurable,XMLConfigurable{
 			ctx = _ctx;
 		}
 
-		public void configure(Properties p) throws BaseException {
+		public void configure(Properties p) {
 			// nothing to do
 		}
 
-		public void configure(Element _e, Properties _properties)
-				throws BaseException {
+		public void configure(Element _e, Properties _properties){
 			Properties p = new XmlElementProperties(_e,_properties);
 			configure(p);				
 		}

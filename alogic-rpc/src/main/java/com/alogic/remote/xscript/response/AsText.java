@@ -45,7 +45,7 @@ public class AsText extends ResponseHandler {
 			try {
 				ctx.SetValue(out, res.asString());
 			} catch (IOException ex) {
-				throw new BaseException("core.io_error",ExceptionUtils.getStackTrace(ex));
+				throw new BaseException("core.e1004",ExceptionUtils.getStackTrace(ex));
 			}
 		}
 	}

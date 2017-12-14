@@ -86,7 +86,7 @@ public class HttpCall implements Call {
 	protected String rootPath = "/services";
 	
 	@Override
-	public void close() throws Exception {
+	public void close()  {
 	}
 
 	@Override
@@ -171,28 +171,26 @@ public class HttpCall implements Call {
 	}
 
 	@Override
-	public Result execute(Parameters paras) throws CallException {
+	public Result execute(Parameters paras){
 		return execute(false,this.rootPath,paras,null,null);
 	}
 
 	@Override
-	public Result execute(Parameters paras, String sn,String order)throws CallException {
+	public Result execute(Parameters paras, String sn,String order) {
 		return execute(false,this.rootPath,paras,sn,order);
 	}
 
 	@Override
-	public Result execute(String fullPath, Parameters paras) throws CallException {
+	public Result execute(String fullPath, Parameters paras)  {
 		return execute(true,fullPath,paras,null,null);
 	}
 	
 	@Override
-	public Result execute(String fullPath, Parameters paras, String sn, String order)
-			throws CallException {
+	public Result execute(String fullPath, Parameters paras, String sn, String order) {
 		return execute(true,fullPath,paras,sn,order);
 	}	
 
-	protected Result execute(boolean isFullPath,String path, Parameters paras, String sn, String order)
-			throws CallException {
+	protected Result execute(boolean isFullPath,String path, Parameters paras, String sn, String order) {
 		HttpQuery query = new HttpQuery(path);
 		
 		if (paras != null && queryParameters != null){

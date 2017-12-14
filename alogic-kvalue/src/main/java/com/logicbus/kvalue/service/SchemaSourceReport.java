@@ -33,7 +33,7 @@ public class SchemaSourceReport extends AbstractServant {
 
 	}
 
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx) {
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		Document doc = msg.getDocument();
@@ -48,7 +48,7 @@ public class SchemaSourceReport extends AbstractServant {
 		
 		return 0;
 	}
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		Map<String,Object> map = new HashMap<String,Object>();

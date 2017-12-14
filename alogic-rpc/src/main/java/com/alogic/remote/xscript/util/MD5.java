@@ -53,7 +53,7 @@ public class MD5 extends AbstractLogiclet{
 				}
 				ctx.SetValue(id, buf.toString());
 			} catch (NoSuchAlgorithmException e) {
-				throw new BaseException("core.not_supported","Md5 algorithm is not supported");
+				throw new BaseException("core.e1000","Md5 algorithm is not supported");
 			}
 		}
 	}	

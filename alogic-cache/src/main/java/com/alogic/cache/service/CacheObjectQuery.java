@@ -41,7 +41,7 @@ public class CacheObjectQuery extends AbstractServant {
 		
 		CacheStore found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find a cache :" + id); // NOSONAR
+			throw new ServantException("clnt.e2007","Can not find a cache :" + id); // NOSONAR
 		}
 		
 		MultiFieldObject object = found.get(objectId, true);
@@ -66,12 +66,12 @@ public class CacheObjectQuery extends AbstractServant {
 		
 		CacheStore found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find a cache :" + id);
+			throw new ServantException("clnt.e2007","Can not find a cache :" + id);
 		}
 		
 		MultiFieldObject object = found.get(objectId, true);
 		if (object == null){
-			throw new ServantException("user.data_not_found","Can not find the object :" + objectId);
+			throw new ServantException("clnt.e2007","Can not find the object :" + objectId);
 		}
 		
 		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR

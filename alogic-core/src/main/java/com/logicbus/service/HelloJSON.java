@@ -31,7 +31,7 @@ import com.logicbus.backend.message.RawMessage;
  */
 public class HelloJSON extends Servant {
 	
-	public int actionProcess(Context ctx) throws Exception {
+	public int actionProcess(Context ctx)  {
 		RawMessage msg = (RawMessage)ctx.asMessage(RawMessage.class);
 		StringBuffer buf = msg.getBuffer();
 		buf.setLength(0);

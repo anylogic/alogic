@@ -69,7 +69,7 @@ public class FacadeFactoryImpl extends FacadeFactory.Abstract{
 					if (facade == null){
 						Call call = CallFactory.getCall(callId);
 						if (call == null){
-							throw new CallException("client.call_not_found","Can not find a call named " + callId);
+							throw new CallException("core.e1003","Can not find a call named " + callId);
 						}
 						Class<I> facadeClass = makeFacadeClass(StringUtils.isEmpty(service)?clazz.getName():service,className,clazz);
 						facade = (Facade) facadeClass.newInstance();
@@ -80,17 +80,17 @@ public class FacadeFactoryImpl extends FacadeFactory.Abstract{
 			}
 			return (I)facade;
 		} catch (NotFoundException e) {
-			throw new CallException("client.class_not_found",e.getMessage(),e);
+			throw new CallException("core.e1002",e.getMessage(),e);
 		} catch (CannotCompileException e) {
-			throw new CallException("client.cannot_compile",e.getMessage(),e);
+			throw new CallException("core.e1002",e.getMessage(),e);
 		} catch (IOException e) {
-			throw new CallException("client.io_except",e.getMessage(),e);
+			throw new CallException("core.e1004",e.getMessage(),e);
 		} catch (InstantiationException e) {
-			throw new CallException("client.instantiation",e.getMessage(),e);
+			throw new CallException("core.e1002",e.getMessage(),e);
 		} catch (IllegalAccessException e) {
-			throw new CallException("client.illegal_access",e.getMessage(),e);
+			throw new CallException("core.e1002",e.getMessage(),e);
 		} catch (ClassNotFoundException e) {
-			throw new CallException("client.class_not_found",e.getMessage(),e);
+			throw new CallException("core.e1002",e.getMessage(),e);
 		}
 	}	
 

@@ -36,7 +36,7 @@ public class VFSQuery extends AbstractServant {
 		
 		VirtualFileSystem found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find a vfs :" + id);
+			throw new ServantException("clnt.e2007","Can not find a vfs :" + id);
 		}
 		
 		Element ele = doc.createElement("vfs");
@@ -55,7 +55,7 @@ public class VFSQuery extends AbstractServant {
 		
 		VirtualFileSystem found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find a vfs :" + id);
+			throw new ServantException("clnt.e2007","Can not find a vfs :" + id);
 		}
 		
 		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR

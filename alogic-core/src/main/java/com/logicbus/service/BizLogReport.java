@@ -39,7 +39,7 @@ public class BizLogReport extends AbstractServant{
 	}
 
 	
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx) {
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 		int offset = getArgument("offset", 0, ctx);
 		int limit = getArgument("limit", 30, ctx);	
@@ -65,7 +65,7 @@ public class BizLogReport extends AbstractServant{
 	}
 
 	
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		int offset = getArgument("offset", 0, ctx);
 		int limit = getArgument("limit", 30, ctx);	

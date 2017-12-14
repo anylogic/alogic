@@ -90,7 +90,7 @@ public class DispatchHandler<data extends Flowable> extends AbstractHandler<data
 		}
 	}
 	
-	public void close() throws Exception{
+	public void close() {
 		super.close();
 		
 		if (children != null){

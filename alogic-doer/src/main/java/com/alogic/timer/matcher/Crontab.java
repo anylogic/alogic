@@ -11,7 +11,6 @@ import com.alogic.timer.matcher.util.parser.DayOfWeek;
 import com.alogic.timer.matcher.util.parser.HourOfDay;
 import com.alogic.timer.matcher.util.parser.Minute;
 import com.alogic.timer.matcher.util.parser.MonthOfYear;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -70,7 +69,7 @@ public class Crontab extends Abstract {
 		return false;
 	}
 
-	public void configure(Properties p) throws BaseException {
+	public void configure(Properties p) {
 		parseCrontab(PropertiesConstants.getString(p,"crontab", "00 * * * *"));
 	}
 

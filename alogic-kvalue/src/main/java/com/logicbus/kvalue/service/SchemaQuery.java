@@ -23,7 +23,7 @@ import com.logicbus.models.servant.ServiceDescription;
  */
 public class SchemaQuery  extends AbstractServant {
 
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx){
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 
 		String id = getArgument("id",ctx);
@@ -44,7 +44,7 @@ public class SchemaQuery  extends AbstractServant {
 		return 0;
 	}
 	
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		String id = getArgument("id",ctx);
 		

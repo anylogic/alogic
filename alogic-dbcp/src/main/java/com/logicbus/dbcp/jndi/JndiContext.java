@@ -8,7 +8,6 @@ import javax.sql.DataSource;
 
 import org.w3c.dom.Element;
 
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Watcher;
 import com.logicbus.dbcp.core.ConnectionPool;
@@ -16,12 +15,11 @@ import com.logicbus.dbcp.core.ConnectionPool;
 public class JndiContext implements com.anysoft.context.Context<ConnectionPool>{
 
 	
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	public void configure(Element _e, Properties _properties) {
 	}
 
 	
-	public void close() throws Exception {
+	public void close()  {
 	}
 
 	

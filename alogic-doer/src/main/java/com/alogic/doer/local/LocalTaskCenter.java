@@ -74,7 +74,7 @@ public class LocalTaskCenter implements TaskCenter{
 		
 		if (!found.offer(task)){
 			onFinish(task.id(),State.Failed, 10000,"The queue is full.queue:" + task.id());
-			throw new BaseException("core.queue_is_full","The queue is full.queue:" + task.id());
+			throw new BaseException("core.e1100","The queue is full.queue:" + task.id());
 		}else{
 			onQueued(task.id(),State.Queued, 10000,"");
 		}

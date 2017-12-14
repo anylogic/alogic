@@ -7,7 +7,6 @@ import org.w3c.dom.Element;
 
 import com.alogic.tlog.TLog;
 import com.anysoft.stream.AbstractHandler;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
@@ -68,7 +67,7 @@ public class Log4j extends AbstractHandler<TLog>{
 	
 	protected String host = null;	
 	
-	protected void onConfigure(Element _e, Properties p) throws BaseException {
+	protected void onConfigure(Element _e, Properties p) {
 		thread = PropertiesConstants.getInt(p, "thread", 0);
 		delimeter = PropertiesConstants.getString(p,"delimeter", delimeter);
 		eol = PropertiesConstants.getString(p,"eol", eol);

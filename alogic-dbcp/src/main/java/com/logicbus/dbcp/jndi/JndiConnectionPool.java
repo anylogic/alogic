@@ -135,7 +135,7 @@ public class JndiConnectionPool implements ConnectionPool {
 	}
 
 	
-	public void close() throws Exception {
+	public void close()  {
 	}
 
 }

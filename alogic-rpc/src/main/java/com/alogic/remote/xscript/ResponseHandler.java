@@ -35,7 +35,7 @@ public abstract class ResponseHandler extends AbstractLogiclet{
 	protected void onExecute(final XsObject root,final XsObject current,final LogicletContext ctx,final ExecuteWatcher watcher){
 		Response req = ctx.getObject(pid);
 		if (req == null){
-			throw new BaseException("core.no_response","It must be in a remote-call context,check your script.");
+			throw new BaseException("core.e1001","It must be in a remote-call context,check your script.");
 		}
 		
 		onExecute(req,root,current,ctx,watcher);

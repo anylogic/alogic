@@ -53,14 +53,14 @@ public class Password extends AccessVerifier.Abstract{
 		}
 		
 		if (StringUtils.isEmpty(pwd)){
-			throw new BaseException("client.permission_denied",String.format("Can not find argument %s.",pwdId));
+			throw new BaseException("clnt.e2000",String.format("Can not find argument %s.",pwdId));
 		}
 		
 		String pwdDecrypted = des3Coder.decode(pwd, id + "$" + now);
 		String pwdMd5 = md5Coder.encode(pwdDecrypted, id);
 		
 		if (!pwdMd5.equals(key.getKeyContent())){
-			throw new BaseException("client.permission_denied","The password is not correct.");
+			throw new BaseException("clnt.e2001","The password is not correct.");
 		}		
 		
 	}
@@ -69,11 +69,11 @@ public class Password extends AccessVerifier.Abstract{
 		String now = ctx.getRequestHeader(timestampId);
 		long timestamp = getLong(now,0);
 		if (timestamp <= 0){
-			throw new BaseException("client.permission_denied",String.format("Can not find argument %s.",timestampId));
+			throw new BaseException("clnt.e2000",String.format("Can not find argument %s.",timestampId));
 		}
 		
 		if (Math.abs(System.currentTimeMillis() - timestamp) > ttl){
-			throw new BaseException("client.permission_denied",String.format("Timestamp %d is expired.",timestamp));
+			throw new BaseException("clnt.e2006",String.format("Timestamp %d is expired.",timestamp));
 		}
 	}
 	

@@ -5,7 +5,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
@@ -41,11 +40,11 @@ public class AreYouAlive extends AbstractServant {
 	}
 
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
+	protected void onCreate(ServiceDescription sd) {
 
 	}
 	
-	protected int onXml(Context ctx) throws Exception {
+	protected int onXml(Context ctx) {
 		XMLMessage msg = (XMLMessage)ctx.asMessage(XMLMessage.class);
 		Element root = msg.getRoot();
 		Document doc = root.getOwnerDocument();
@@ -54,7 +53,7 @@ public class AreYouAlive extends AbstractServant {
 	}
 
 	
-	protected int onJson(Context ctx) throws Exception {
+	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
 		Map<String,Object> root = msg.getRoot();

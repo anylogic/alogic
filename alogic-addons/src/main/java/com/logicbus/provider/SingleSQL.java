@@ -27,7 +27,7 @@ public class SingleSQL extends MultiFieldObjectProvider.Abstract {
 	protected MultiFieldObject loadObject(String id, boolean cacheAllowed) {
 		ConnectionPool pool = DbcpSource.getPool(dbcp);
 		if (pool == null) {
-			throw new ServantException("core.no_db_pool",
+			throw new ServantException("core.e1003",
 					"Can not get a connection pool named " + dbcp);
 		}
 		Connection conn = pool.getConnection();

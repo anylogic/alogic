@@ -36,7 +36,7 @@ public class HmacSHA256 implements Coder {
             byte[] bytes = mac.doFinal(data.getBytes());  
             return Base64.encodeBase64URLSafeString(bytes);
 		}catch (Exception ex){
-			throw new BaseException("core.hmac_error",ExceptionUtils.getStackTrace(ex));
+			throw new BaseException("core.e1000",ExceptionUtils.getStackTrace(ex));
 		}
 	}
 
@@ -52,7 +52,7 @@ public class HmacSHA256 implements Coder {
 	        SecretKey key = generator.generateKey();  
 	        return Base64.encodeBase64URLSafeString(key.getEncoded());
 		} catch (NoSuchAlgorithmException e) {
-			throw new BaseException("core.no_such_algorithm",ExceptionUtils.getStackTrace(e));
+			throw new BaseException("core.e1000",ExceptionUtils.getStackTrace(e));
 		} 
 	}
 	

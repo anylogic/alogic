@@ -38,7 +38,7 @@ public abstract class FilterHandler <data extends Flowable> extends AbstractHand
 		}
 	}
 	
-	public void close() throws Exception{
+	public void close() {
 		super.close();
 		IOTools.close(handler);
 	}	

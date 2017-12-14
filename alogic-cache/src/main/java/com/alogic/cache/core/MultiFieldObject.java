@@ -261,62 +261,62 @@ public interface MultiFieldObject extends Cacheable,DataProvider {
 
 		@Override
 		public String hGet(String id, String field, String dftValue) {
-			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+			throw new BaseException("core.e1000","Hash is not suppurted yet.");	
 		}
 
 		@Override
 		public void hSet(String id, String field, String value) {
-			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+			throw new BaseException("core.e1000","Hash is not suppurted yet.");	
 		}
 
 		@Override
 		public boolean hExist(String id, String field) {
-			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+			throw new BaseException("core.e1000","Hash is not suppurted yet.");	
 		}
 
 		@Override
 		public Map<String, String> hGetAll(String id) {
-			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+			throw new BaseException("core.e1000","Hash is not suppurted yet.");	
 		}
 
 		@Override
 		public int hLen(String id) {
-			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+			throw new BaseException("core.e1000","Hash is not suppurted yet.");	
 		}
 
 		@Override
 		public String[] hKeys(String id) {
-			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+			throw new BaseException("core.e1000","Hash is not suppurted yet.");	
 		}
 
 		@Override
 		public String[] hValues(String id) {
-			throw new BaseException("core.not_supported","Hash is not suppurted yet.");	
+			throw new BaseException("core.e1000","Hash is not suppurted yet.");	
 		}
 
 		@Override
 		public void sAdd(String id, String... member) {
-			throw new BaseException("core.not_supported","Set is not suppurted yet.");	
+			throw new BaseException("core.e1000","Set is not suppurted yet.");	
 		}
 
 		@Override
 		public void sDel(String id, String... member) {
-			throw new BaseException("core.not_supported","Set is not suppurted yet.");	
+			throw new BaseException("core.e1000","Set is not suppurted yet.");	
 		}
 
 		@Override
 		public int sSize(String id) {
-			throw new BaseException("core.not_supported","Set is not suppurted yet.");	
+			throw new BaseException("core.e1000","Set is not suppurted yet.");	
 		}
 		
 		@Override
 		public boolean sExist(String id,String member){
-			throw new BaseException("core.not_supported","Set is not suppurted yet.");	
+			throw new BaseException("core.e1000","Set is not suppurted yet.");	
 		}
 
 		@Override
 		public String[] sMembers(String id) {
-			throw new BaseException("core.not_supported","Set is not suppurted yet.");	
+			throw new BaseException("core.e1000","Set is not suppurted yet.");	
 		}
 
 		@Override

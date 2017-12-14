@@ -22,20 +22,19 @@ import com.logicbus.models.servant.ServiceDescription;
 public class QueryById extends Base {
 	protected String rootName = "data";
 	@Override
-	protected void onCreate(ServiceDescription sd, Properties p)
-			throws ServantException {
+	protected void onCreate(ServiceDescription sd, Properties p) {
 		rootName = PropertiesConstants.getString(p, "data.root", rootName);
 	}
 
 	@Override
-	protected int onJson(Context ctx, JsonMessage msg) throws Exception {
+	protected int onJson(Context ctx, JsonMessage msg)  {
 		String id = getArgument("id",ctx);
 		
 		CacheStore cache = getCacheStore();
 		
 		MultiFieldObject found = cache.get(id, true);
 		if (found == null){
-			throw new ServantException("core.data_not_found","Can not find object,id=" + id);
+			throw new ServantException("clnt.e2007","Can not find object,id=" + id);
 		}
 	
 		Map<String,Object> data = new HashMap<String,Object>();

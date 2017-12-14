@@ -27,8 +27,7 @@ import com.logicbus.models.servant.ServiceDescription;
 public class NewById extends IDUBase {
 
 	@Override
-	protected void onCreate(ServiceDescription sd, Properties p)
-			throws ServantException {
+	protected void onCreate(ServiceDescription sd, Properties p) {
 		sqlInsert = PropertiesConstants.getString(p, "sql.Insert", sqlInsert);
 		rootName = PropertiesConstants.getString(p, "data.root", rootName);
 		dataId = PropertiesConstants.getString(p,"dataGuard.id", dataId);
@@ -37,19 +36,19 @@ public class NewById extends IDUBase {
 
 	@Override
 	protected void doIt(Context ctx, JsonMessage msg, Connection conn)
-			throws Exception {
+			 {
 		String userId = getArgument("user.id","",ctx);
 		String id = getArgument("id",ctx);
 		String dataGuardObject = getArgument(dataId,id,ctx);
 		if (!checkPrivilege(userId,dataGuardObject)){
-			throw new ServantException("core.unauthorized","无权访问本服务，用户:" + userId);
+			throw new ServantException("core.e1010","无权访问本服务，用户:" + userId);
 		}
 		
 		CacheStore cache = getCacheStore();
 		
 		MultiFieldObject found = cache.get(id, true);
 		if (found != null){
-			throw new ServantException("core.data_exists","The object exists,id=" + id);
+			throw new ServantException("clnt.e2008","The object exists,id=" + id);
 		}
 		
 		List<Object> data = new ArrayList<Object>();

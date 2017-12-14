@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.alogic.timer.core.ContextHolder;
 import com.alogic.timer.core.Matcher.Abstract;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -40,7 +39,7 @@ public class Counter extends Abstract {
 		interval = _interval;
 	}	
 	
-	public void configure(Properties p) throws BaseException {
+	public void configure(Properties p) {
 		count = PropertiesConstants.getLong(p,"count",count,true);
 		interval = PropertiesConstants.getLong(p,"interval",interval,true);
 	}

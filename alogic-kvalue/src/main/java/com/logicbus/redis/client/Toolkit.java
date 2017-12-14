@@ -92,7 +92,7 @@ public class Toolkit {
 	
 	private Connection conn(){
 		if (conn == null){
-			throw new RedisConnectException("isnull","the connection instance is null");
+			throw new RedisConnectException("core.e1702","the connection instance is null");
 		}
 		return conn;
 	}

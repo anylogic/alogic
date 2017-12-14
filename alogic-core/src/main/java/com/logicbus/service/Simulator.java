@@ -2,12 +2,15 @@ package com.logicbus.service;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
+import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
@@ -46,7 +49,7 @@ public class Simulator extends AbstractServant {
 	}
 
 	@Override
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx) {
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 		
 		int avg = getArgument("avg",dftAvg,ctx);
@@ -54,7 +57,11 @@ public class Simulator extends AbstractServant {
 		
 		int duration = (int)((r.nextGaussian()/4 + 1) * avg);
 		
-		TimeUnit.MILLISECONDS.sleep(duration);
+		try {
+			TimeUnit.MILLISECONDS.sleep(duration);
+		} catch (InterruptedException e) {
+			throw new ServantException("core.e1006",e.getMessage());
+		}
 		
 		Document doc = msg.getDocument();
 		Element root = msg.getRoot();
@@ -65,7 +72,7 @@ public class Simulator extends AbstractServant {
 	}	
 	
 	@Override
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage) ctx.asMessage(JsonMessage.class);
 		
 		int avg = getArgument("avg",dftAvg,ctx);
@@ -73,7 +80,11 @@ public class Simulator extends AbstractServant {
 		
 		int duration = (int)((r.nextGaussian()/4 + 1) * avg);
 		
-		TimeUnit.MILLISECONDS.sleep(duration);
+		try {
+			TimeUnit.MILLISECONDS.sleep(duration);
+		} catch (InterruptedException e) {
+			throw new ServantException("core.e1006",e.getMessage());
+		}
 		
 		msg.getRoot().put("msg", "I have sleep " + duration + " ms.");
 		

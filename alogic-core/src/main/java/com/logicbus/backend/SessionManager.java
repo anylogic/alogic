@@ -26,14 +26,14 @@ abstract public class SessionManager{
 	 * @param create 当Session不存在的时候,而create为true，则创建一个Session
 	 * @return Session
 	 */
-	abstract public Session getSession(Context ctx,boolean create) throws ServantException;
+	abstract public Session getSession(Context ctx,boolean create);
 	
 	/**
 	 * 获取当前的Session，如果Session不存在，则创建一个
 	 * @param ctx 上下文
 	 * @return Session
 	 */
-	public Session getSession(Context ctx) throws ServantException{
+	public Session getSession(Context ctx){
 		return getSession(ctx,true);
 	}
 	
@@ -43,18 +43,16 @@ abstract public class SessionManager{
 	 * @param request request
 	 * @param create 当Session不存在的时候,而create为true，则创建一个Session
 	 * @return Session
-	 * @throws ServantException
 	 */
-	abstract public Session getSession(HttpServletRequest request,boolean create) throws ServantException;
+	abstract public Session getSession(HttpServletRequest request,boolean create);
 	
 	/**
 	 * 直接通过HttpServletRequest获取当前的Session,如果Session不存在，则创建一个
 	 * 
 	 * @param request request
 	 * @return Session
-	 * @throws ServantException
 	 */	
-	public Session getSession(HttpServletRequest request) throws ServantException{
+	public Session getSession(HttpServletRequest request) {
 		return getSession(request,true);
 	}
 	

@@ -133,7 +133,7 @@ public class SSH extends Terminal.Abstract{
 			session.waitForCondition(ChannelCondition.EXIT_STATUS | ChannelCondition.EXIT_SIGNAL, 5000);
 			return session.getExitStatus();
 		} catch (IOException e) {
-			throw new BaseException("core.ssh_session", "Error occurs", e);
+			throw new BaseException("core.e1004", "Error occurs", e);
 		} finally {
 			if (session != null) {
 				session.close();
@@ -196,7 +196,7 @@ public class SSH extends Terminal.Abstract{
 			}
 			return 0;
 		} catch (IOException e) {
-			throw new BaseException("core.ssh_session", "Error occurs", e);
+			throw new BaseException("core.e1004", "Error occurs", e);
 		} finally {
 			if (session != null) {
 				session.close();
@@ -263,7 +263,7 @@ public class SSH extends Terminal.Abstract{
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close()  {
 		disconnect();
 	}
 
@@ -281,10 +281,10 @@ public class SSH extends Terminal.Abstract{
             boolean isAuthenticated = conn.authenticateWithPassword(username, password);  
             
             if (!isAuthenticated){ 
-            	throw new BaseException("core.ssh_auth","Authentication failed.");			
+            	throw new BaseException("core.e1400","Authentication failed.");			
             }   
 		} catch (IOException e) {
-			throw new BaseException("core.ssh_connect","Can not connect to ssh server",e);
+			throw new BaseException("core.e1004","Can not connect to ssh server",e);
 		}
 	}
 
@@ -360,7 +360,7 @@ public class SSH extends Terminal.Abstract{
             }
 
         } catch (IOException e) {
-        	throw new BaseException("core.ssh_session", "Error occurs", e);
+        	throw new BaseException("core.e1004", "Error occurs", e);
         }finally{
         	resolver.resolveEnd(cookies);
         	sess.close();

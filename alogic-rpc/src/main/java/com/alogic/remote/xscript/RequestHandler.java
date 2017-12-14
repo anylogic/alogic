@@ -35,7 +35,7 @@ public abstract class RequestHandler extends AbstractLogiclet{
 	protected void onExecute(final XsObject root,final XsObject current,final LogicletContext ctx,final ExecuteWatcher watcher){
 		Request req = ctx.getObject(pid);
 		if (req == null){
-			throw new BaseException("core.no_request","It must be in a remote-request context,check your script.");
+			throw new BaseException("core.e1001","It must be in a remote-request context,check your script.");
 		}
 		
 		onExecute(req,root,current,ctx,watcher);

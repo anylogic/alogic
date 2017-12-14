@@ -42,10 +42,10 @@ public class Copy extends AbstractLogiclet{
 		if (current instanceof JsonObject){
 			XsObject json = ctx.getObject(masterId);
 			if (json == null){
-				throw new BaseException("core.no_master_doc","It must be in a remote-as-json context,check your script.");
+				throw new BaseException("core.e1001","It must be in a remote-as-json context,check your script.");
 			}
 			if (!(json instanceof JsonObject)){
-				throw new BaseException("core.no_master_doc","The master doc is not a JsonObject.");
+				throw new BaseException("core.e1001","The master doc is not a JsonObject.");
 			}
 			
 			@SuppressWarnings("unchecked")

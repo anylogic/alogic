@@ -15,7 +15,6 @@ import com.alogic.metrics.Fragment;
 import com.alogic.metrics.stream.MetricsCollector;
 import com.alogic.metrics.stream.MetricsHandlerFactory;
 import com.anysoft.stream.Handler;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
@@ -162,14 +161,13 @@ public class RRModel<data extends RRData> implements XMLConfigurable,Configurabl
 	}
 
 	@Override
-	public void configure(Element _e, Properties _properties)
-			throws BaseException {
+	public void configure(Element _e, Properties _properties) {
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);		
 		configure(p);
 	}
 
 	@Override
-	public void configure(Properties p) throws BaseException {
+	public void configure(Properties p) {
 		String[] _rras = PropertiesConstants.getString(p,"rrm.rras","minute,halfhour,hour").split(",");
 		for (int i = 0 ;i < _rras.length ; i ++){
 			String id = _rras[i];

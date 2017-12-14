@@ -49,7 +49,7 @@ public class KVZAdd extends KVRowOperation {
 			String[] _items = items.split(delimeter);
 			String[] _scores = scores.split(delimeter);
 			if (_items.length != _scores.length) {
-				throw new ServantException("core.failed", String.format(
+				throw new ServantException("core.e1003", String.format(
 						"items length not equels scores length,please to check,items :%s，scores:%s", items, scores));
 			}
 

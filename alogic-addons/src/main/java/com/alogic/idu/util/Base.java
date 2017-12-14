@@ -75,18 +75,12 @@ public abstract class Base extends AbstractServant {
 	 * 处理Create事件
 	 * @param sd 服务描述
 	 * @param p 服务属性
-	 * @throws ServantException
 	 */
-	 protected abstract void onCreate(ServiceDescription sd, Properties p) throws ServantException;	// NOSONAR
+	 protected abstract void onCreate(ServiceDescription sd, Properties p);	// NOSONAR
 	
+
 	@Override
-	protected int onXml(Context ctx) throws Exception{
-		throw new ServantException("core.not_supported",
-				"Protocol XML is not suppurted.");		
-	}
-	
-	@Override
-	protected int onJson(Context ctx) throws Exception {
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage) ctx.asMessage(JsonMessage.class);
 		return onJson(ctx,msg);
 	}
@@ -95,9 +89,9 @@ public abstract class Base extends AbstractServant {
 	 * 处理Json协议的调用
 	 * @param ctx 上下文
 	 * @param msg 消息
-	 * @throws Exception
+	 * @
 	 */
-	abstract protected int onJson(Context ctx, JsonMessage msg)	throws Exception;// NOSONAR
+	abstract protected int onJson(Context ctx, JsonMessage msg)	;// NOSONAR
 	
 	/**
 	 * 指定的id是否为空
@@ -130,7 +124,7 @@ public abstract class Base extends AbstractServant {
 	 */
 	protected CacheStore getCacheStore(){
 		if (isNull(cacheId)){
-			throw new ServantException("core.cache_not_defined","The relational cache is not defined");
+			throw new ServantException("core.e1003","The relational cache is not defined");
 		}
 		
 		CacheSource cs = CacheSource.get();
@@ -138,7 +132,7 @@ public abstract class Base extends AbstractServant {
 		CacheStore store = cs.get(cacheId);
 		
 		if (store == null){
-			throw new ServantException("core.cache_not_found","The cache is not found,cacheId=" + cacheId);
+			throw new ServantException("core.e1003","The cache is not found,cacheId=" + cacheId);
 		}
 		
 		return store;
@@ -205,7 +199,6 @@ public abstract class Base extends AbstractServant {
 	 * 根据环境变量创建Guard实例
 	 * @param p 环境变量
 	 * @return Guard
-	 * @throws ServantException
 	 */
 	protected Guard createGuard(Properties p){
 		Factory<Guard> factory = new Factory<Guard>();
@@ -218,7 +211,6 @@ public abstract class Base extends AbstractServant {
 	 * 根据环境变量创建DataGuard实例
 	 * @param p 环境变量
 	 * @return DataGuard
-	 * @throws ServantException
 	 */
 	protected DataGuard createDataGuard(Properties p){
 		Factory<DataGuard> factory = new Factory<DataGuard>();

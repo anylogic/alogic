@@ -29,15 +29,15 @@ public class SchedulerResume extends AbstractServant {
 	}
 
 	@Override
-	protected void onCreate(ServiceDescription sd) throws ServantException {
+	protected void onCreate(ServiceDescription sd) {
 
 	}
 
-	protected int onXml(Context ctx) throws Exception{
+	protected int onXml(Context ctx){
 		XMLMessage msg = (XMLMessage) ctx.asMessage(XMLMessage.class);
 		Scheduler scheduler = SchedulerFactory.get();
 		if (scheduler == null){
-			throw new ServantException("core.scheduler_not_found","Can not find a valid scheduler");
+			throw new ServantException("core.e1003","Can not find a valid scheduler");
 		}
 		scheduler.resume();
 		
@@ -50,11 +50,11 @@ public class SchedulerResume extends AbstractServant {
 		return 0;
 	}
 	
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		Scheduler scheduler = SchedulerFactory.get();
 		if (scheduler == null){
-			throw new ServantException("core.scheduler_not_found","Can not find a valid scheduler");
+			throw new ServantException("core.e1003","Can not find a valid scheduler");
 		}
 		scheduler.resume();
 		Map<String,Object> _scheduler = new HashMap<String,Object>();

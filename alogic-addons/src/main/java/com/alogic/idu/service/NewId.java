@@ -20,17 +20,16 @@ import com.logicbus.models.servant.ServiceDescription;
 public class NewId extends IDUBase {
 
 	@Override
-	protected void onCreate(ServiceDescription sd, Properties p)
-			throws ServantException {
+	protected void onCreate(ServiceDescription sd, Properties p) {
 		sequenceId = PropertiesConstants.getString(p, "sequence.id", sequenceId,true);
 	}
 
 	@Override
 	protected void doIt(Context ctx, JsonMessage msg, Connection conn)
-			throws Exception {
+			 {
 		String userId = getArgument("user.id","",ctx);
 		if (!checkPrivilege(userId)){
-			throw new ServantException("core.unauthorized","无权访问本服务，用户:" + userId);
+			throw new ServantException("core.e1010","无权访问本服务，用户:" + userId);
 		}
 		
 		long newId = SeqTool.nextLong(sequenceId);

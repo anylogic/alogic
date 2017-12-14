@@ -6,7 +6,6 @@ import com.anysoft.formula.DataProvider;
 import com.anysoft.formula.DefaultFunctionHelper;
 import com.anysoft.formula.Expression;
 import com.anysoft.formula.Parser;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.selector.Selector;
@@ -21,7 +20,7 @@ import com.anysoft.selector.Selector;
 public class Formula extends Selector {
 
 	
-	public void onConfigure(Element _e, Properties _p) throws BaseException {
+	public void onConfigure(Element _e, Properties _p)  {
 		formula = PropertiesConstants.getString(_p, "formula", formula,true);
 		Parser parser = new Parser(new DefaultFunctionHelper(null));
 		expr = parser.parse(formula);

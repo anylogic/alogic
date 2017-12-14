@@ -24,9 +24,8 @@ public class RAM extends Indexer.Abstract{
 		return index;
 	}
 	
-	public void configure(Properties p) throws BaseException {
+	public void configure(Properties p) {
 		super.configure(p);
-		
 		build(true);
 	}
 }

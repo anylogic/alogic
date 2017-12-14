@@ -40,7 +40,7 @@ public class BlobFileList extends AbstractServant {
 		BlobManagerSource src = BlobManagerSource.get();
 		BlobManager found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find the blob manager :" + id);
+			throw new ServantException("clnt.e2007","Can not find the blob manager :" + id);
 		}
 		
 		String cookies = getArgument("cookies","",ctx); // NOSONAR
@@ -82,14 +82,14 @@ public class BlobFileList extends AbstractServant {
 	}
 	
 	@Override
-	protected int onJson(Context ctx) throws Exception{
+	protected int onJson(Context ctx) {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		String id = getArgument("id",ctx);
 		
 		BlobManagerSource src = BlobManagerSource.get();
 		BlobManager found = src.get(id);
 		if (found == null){
-			throw new ServantException("user.data_not_found","Can not find the blob manager :" + id);
+			throw new ServantException("clnt.e2007","Can not find the blob manager :" + id);
 		}
 		
 		String cookies = getArgument("cookies","",ctx);

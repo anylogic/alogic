@@ -2,6 +2,10 @@ package com.logicbus.backend;
 
 import java.util.concurrent.CountDownLatch;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
 
@@ -27,6 +31,11 @@ import com.alogic.tracer.TraceContext;
  * - trace可选择关闭 <br>
  */
 public class ServantWorkerThread extends Thread {
+	/**
+	 * a logger of slf4j
+	 */
+	protected final static Logger LOG = LoggerFactory.getLogger(ServantWorkerThread.class);
+	
 	/**
 	 * 当前工作的服务员
 	 */
@@ -68,18 +77,18 @@ public class ServantWorkerThread extends Thread {
 			m_servant.actionAfter(m_ctx);
 		}catch (ServantException ex){
 			error = true;
-			ex.printStackTrace();
+			LOG.error(ExceptionUtils.getStackTrace(ex));
 			m_servant.actionException(m_ctx ,ex);
 		}catch (Exception ex){
 			error = true;
-			ex.printStackTrace();
+			LOG.error(ExceptionUtils.getStackTrace(ex));
 			m_servant.actionException( m_ctx, 
-					new ServantException("core.fatalerror",ex.getMessage()));
+					new ServantException("core.e1012",ex.getMessage()));
 		}catch (Throwable t){
 			error = true;
-			t.printStackTrace();
+			LOG.error(ExceptionUtils.getStackTrace(t));
 			m_servant.actionException( m_ctx, 
-					new ServantException("core.fatalerror",t.getMessage()));
+					new ServantException("core.e1012",t.getMessage()));
 		}finally{
 			if (latch != null){
 				//告知，事情已经做完
