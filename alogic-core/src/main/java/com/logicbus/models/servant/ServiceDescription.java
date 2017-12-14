@@ -13,6 +13,8 @@ import com.anysoft.util.JsonSerializer;
  * @version 1.0.3 [20140410 duanyy]<br>
  * + 增加调用参数列表<br>
  * 
+ * @version 1.0.8 [20140421 duanyy]<br>
+ * - 修正{@link com.logicbus.models.servant.ServiceDescription#getArgument(String) getArgument(String)}空指针错误. <br>
  * 
  * @version 1.2.3 [20140617 duanyy]<br>
  * - 增加日志的相关属性 <br>
@@ -71,18 +73,6 @@ public interface ServiceDescription extends XmlSerializer,JsonSerializer,Reporta
 	public String getVisible();
 	
 	/**
-	 * 获取访问控制组id
-	 * @return acGroupId
-	 */
-	public String getAcGroup();
-	
-	/**
-	 * 获取所需的权限项
-	 * @return　privilege
-	 */
-	public String getPrivilege();
-	
-	/**
 	 * 获得服务名称
 	 * @return name
 	 */
@@ -117,4 +107,18 @@ public interface ServiceDescription extends XmlSerializer,JsonSerializer,Reporta
 	 * @return 文件列表
 	 */
 	public String [] getModules();
+	
+	/**
+	 * 获取服务调用参数列表
+	 * @return 调用参数列表
+	 * @since 1.0.3
+	 */
+	public Argument [] getArgumentList();
+	
+	/**
+	 * 获取指定ID的参数
+	 * @param id 参数Id
+	 * @return 指定ID的参数
+	 */
+	public Argument getArgument(String id);	
 }

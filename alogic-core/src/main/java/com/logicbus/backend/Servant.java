@@ -240,7 +240,7 @@ public abstract class Servant implements Pooled{
 	 * 
 	 * @since 1.4.0
 	 */
-	public abstract int actionProcess(Context ctx) ; // NOSONAR
+	public abstract int actionProcess(Context ctx) throws Exception; // NOSONAR
 	
 	/**
 	 * 服务处理即将开始

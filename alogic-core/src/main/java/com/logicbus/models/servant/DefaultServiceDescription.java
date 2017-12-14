@@ -39,49 +39,43 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.8.7 [20170412 duanyy] <br>
  * - DefaultProperties容器由Hashtable更改为HashMap <br>
- * 
- * @version 1.6.10.12 [20171211 duanyy] <br>
- * - 增加访问控制组和权限项属性 <br>
  */
 public class DefaultServiceDescription implements ServiceDescription{
 	/**
 	 * 服务ID
 	 */
-	private String serviceId;
+	private String m_service_id;
 	/**
 	 * 服务名称
 	 */
-	private String name = "";
+	private String m_name = "";
 	/**
 	 * 说明
 	 */
-	private String note = "";
+	private String m_note = "";
 	/**
 	 * module
 	 */
-	private String module = "";
+	private String m_module = "";
 	/**
 	 * 服务路径
 	 */
-	private String path = "";
+	private String m_path = "";
 	/**
 	 * 服务参数
 	 */
-	private DefaultProperties properties;
+	private DefaultProperties m_properties;
 	
 	/**
 	 * 服务参数规格
 	 */
-	private Map<String,PropertySpec> propertySpecs;
+	private Map<String,PropertySpec> m_property_specs;
 	
 	/**
 	 * 服务的可见性(public,login,limited)
 	 */
 	private String visible = "public";
 
-	/**
-	 * 是否纳入监管
-	 */
 	private boolean guard = false;
 	
 	/**
@@ -90,35 +84,19 @@ public class DefaultServiceDescription implements ServiceDescription{
 	private LogType logType = LogType.none;
 	
 	/**
-	 * 访问控制组id
-	 */
-	private String acGroupId = "default";
-	
-	/**
-	 * 所需要的权限项
-	 */
-	private String privilege = "default";
-	
-	/**
-	 * 服务所依赖的库文件
-	 */
-	private Vector<String> modulesMaster = null;
-	
-	/**
 	 * constructor
 	 * @param id 服务ID
 	 */
 	public DefaultServiceDescription(String id){
-		this.serviceId = id;
-		this.properties = new DefaultProperties("Default",Settings.get());
-		this.propertySpecs = new HashMap<String,PropertySpec>();
+		m_service_id = id;
+		m_properties = new DefaultProperties("Default",Settings.get());
+		m_property_specs = new HashMap<String,PropertySpec>();
 	}	
 	
 	/**
 	 * 获取日志类型
 	 * @return 日志类型
 	 */
-	@Override
 	public LogType getLogType(){return logType;}
 	
 	/**
@@ -143,154 +121,163 @@ public class DefaultServiceDescription implements ServiceDescription{
 	}	
 	
 	/**
-	 * 设置Guard属性
-	 * @param guard 是否监管
-	 */
-	public void setGuard(boolean guard){
-		this.guard = guard;
-	}
-	
-	/**
 	 * 获得服务ID
 	 * @return 服务ID
 	 */
-	@Override
-	public String getServiceID(){return this.serviceId;}
+	public String getServiceID(){return m_service_id;}
 	
 	/**
 	 * 设置服务ID
 	 * @param id 服务ID
 	 */
-	public void setServiceID(String id){this.serviceId = id;}
+	public void setServiceID(String id){m_service_id = id;}
 	
 	/**
 	 * 获得服务的可见性
 	 * @return 可见性
 	 */
-	@Override
 	public String getVisible(){return visible;}
 	
 	/**
 	 * 设置服务的可见性
-	 * @param v 可见性
+	 * @param _visible
 	 */
-	public void setVisible(String v){this.visible = v;}
+	public void setVisible(String _visible){visible = _visible;}
 	
 	/**
 	 * 获得服务名称
 	 * @return name
 	 */
-	@Override
-	public String getName(){return name;}
+	public String getName(){return m_name;}
 	
 	/**
 	 * 设置服务名称
-	 * @param ｎ name
+	 * @param name name
 	 */
-	public void setName(String n){name = n;}
+	public void setName(String name){m_name = name;}
 	
 	/**
 	 * 获取服务说明
 	 * @return 服务说明
 	 */
-	@Override
-	public String getNote(){return note;}
+	public String getNote(){return m_note;}
 	
 	/**
 	 * 设置服务说明
-	 * @param n 服务说明
+	 * @param note 服务说明
 	 */
-	public void setNote(String n){note = n;}
+	public void setNote(String note){m_note = note;}
 	
 	/**
 	 * 获得服务路径
 	 * @return 服务路径
 	 */
-	@Override
-	public String getPath(){return this.path;}
+	public String getPath(){return m_path;}
 	
 	/**
 	 * 设置服务路径
-	 * @param p 服务路径
+	 * @param path 
 	 */
-	public void setPath(String p){this.path = p;}
+	public void setPath(String path){m_path = path;}
 	
 	/**
 	 * 获得服务实现模块
 	 * @return 实现模块的类名
 	 */
-	@Override
-	public String getModule(){return module;}
+	public String getModule(){return m_module;}
 	
 	/**
 	 * 设置服务实现代码
-	 * @param m module
+	 * @param module 
 	 */
-	public void setModule(String m){module = m;}
-	
-	@Override
-	public String getAcGroup() {
-		return this.acGroupId;
-	}
-
-	@Override
-	public String getPrivilege() {
-		return this.privilege;
-	}
-	
-	/**
-	 * 设置权限控制分组id
-	 * @param group groupId
-	 */
-	public void setAcGroup(String group){
-		this.acGroupId = group;
-	}
-	
-	/**
-	 * 设置访问本服务所需的权限项
-	 * @param p　权限项
-	 */
-	public void setPrivilege(String p){
-		this.privilege = p;
-	}
+	public void setModule(String module){m_module = module;}
 	
 	/**
 	 * 获取参数变量集
 	 * @return 参数变量集
 	 */
-	@Override
-	public Properties getProperties(){return this.properties;}
-		
+	public Properties getProperties(){return m_properties;}
+	
+	/**
+	 * 服务所依赖的库文件
+	 */
+	protected Vector<String> modulesMaster = null;
+	
 	/**
 	 * 获取服务依赖库文件列表
 	 * @return 库文件列表
 	 */
-	@Override
 	public String [] getModules(){return modulesMaster == null ? 
 			null : modulesMaster.toArray(new String[0]);}
-
+	
+	/**
+	 * 服务调用参数列表
+	 * 
+	 * @since 1.0.3
+	 */
+	protected HashMap<String,Argument> argumentList = null;
+	
+	/**
+	 * 获取服务调用参数列表
+	 * @return 参数列表
+	 * @since 1.0.3
+	 */
+	public Argument [] getArgumentList(){
+		if (argumentList == null)
+			return null;
+		
+		return argumentList.values().toArray(new Argument[0]);
+	}
+	
+	/**
+	 * 获取指定ID的参数
+	 * @param id 参数Id
+	 * @return 指定ID的参数
+	 */
+	public Argument getArgument(String id){
+		if (argumentList == null)
+			return null;		
+		return argumentList.get(id);
+	}
+	
+	/**
+	 * 设置ArgumentList
+	 * @param list
+	 * 
+	 * @since 1.2.4.4
+	 * 
+	 */
+	public void setArgumentList(Argument [] list){
+		argumentList.clear();
+		for (Argument argu:list){
+			DefaultArgument newArgu = new DefaultArgument();
+			newArgu.copyFrom((DefaultArgument)argu);
+			argumentList.put(argu.getId(),argu);
+		}
+	}
+	
 	/**
 	 * 设置Properties
-	 * @param props 属性集
+	 * @param props
 	 * 
 	 * @since 1.2.4.4
 	 */
 	public void setProperties(DefaultProperties props){
-		this.properties.copyFrom(props);
+		m_properties.copyFrom(props);
 	}
 	
 	/**
 	 * 输出到打印流
-	 * @param out 打印输出流
+	 * @param out
 	 */
 	public void List(PrintStream out)
 	{
-		out.println("Service ID:" + serviceId);
-		out.println("Name:" + name);
-		out.println("Module:" + module);
-		out.println("Note:" + note);
+		out.println("Service ID:" + m_service_id);
+		out.println("Name:" + m_name);
+		out.println("Module:" + m_module);
+		out.println("Note:" + m_note);
 		
-		DefaultProperties props = (DefaultProperties)this.properties;
+		DefaultProperties props = (DefaultProperties)m_properties;
 		out.println("Parameters:");
 		props.list(out);
 	}
@@ -298,18 +285,24 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	public void toXML(Element root){
 		Document doc = root.getOwnerDocument();
+			
+		//id
+		root.setAttribute("id",getServiceID());
+		//name
+		root.setAttribute("name", getName());
+		//note
+		root.setAttribute("note", getNote());
+		//module
+		root.setAttribute("module",getModule());
+		//visible
+		root.setAttribute("visible",getVisible());
+		//path
+		root.setAttribute("path",getPath());
+		//Properties
+		root.setAttribute("log", logType.toString());
 		
-		XmlTools.setString(root,"id",getServiceID());
-		XmlTools.setString(root,"name",getName());
-		XmlTools.setString(root,"note",getNote());
-		XmlTools.setString(root,"module",getModule());
-		XmlTools.setString(root,"visible",getVisible());
-		XmlTools.setString(root,"path",getPath());
-		XmlTools.setString(root, "log", logType.toString());
-		XmlTools.setString(root,"guard",Boolean.toString(guard));
-		XmlTools.setString(root,"acGroupId",getAcGroup());
-		XmlTools.setString(root,"privilege",getPrivilege());
-
+		root.setAttribute("guard", Boolean.toString(guard));
+		
 		{
 			DefaultProperties properties = (DefaultProperties) getProperties();
 			Iterator<String> __keys = properties.keys().iterator();
@@ -323,7 +316,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 					e.setAttribute("id",__name);
 					e.setAttribute("value",__value);
 					
-					PropertySpec spec = this.propertySpecs.get(__name);
+					PropertySpec spec = m_property_specs.get(__name);
 					if (spec != null){
 						spec.toXML(e);
 					}
@@ -345,6 +338,21 @@ public class DefaultServiceDescription implements ServiceDescription{
 			
 			root.appendChild(eModules);
 		}
+
+		if (argumentList != null && argumentList.size() > 0){
+			Element eArguments = doc.createElement("arguments");
+			Argument [] _argumentList = getArgumentList();
+			for (Argument argu:_argumentList){
+				Element eArgu = doc.createElement("argu");
+				
+				argu.toXML(eArgu);
+				
+				eArguments.appendChild(eArgu);
+			}
+			
+			root.appendChild(eArguments);
+		}
+		
 	}
 	
 	private LogType parseLogType(String type){
@@ -371,17 +379,15 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	
 	public void fromXML(Element root){
-		setServiceID(XmlTools.getString(root,"id",""));
-		setName(XmlTools.getString(root, "name", getName()));		
-		setModule(XmlTools.getString(root, "module", getModule()));
-		setNote(XmlTools.getString(root,"note",getNote()));
-		setVisible(XmlTools.getString(root, "visible", visible));
-		setPath(XmlTools.getString(root, "path", getPath()));
-		setLogType(parseLogType(XmlTools.getString(root, "log", logType.toString())));
-		setGuard(XmlTools.getBoolean(root, "guard", guard()));
-		setAcGroup(XmlTools.getString(root,"acGroupId",getAcGroup()));
-		setPrivilege(XmlTools.getString(root,"privilege",getAcGroup()));
-		
+		setServiceID(root.getAttribute("id"));
+		setName(root.getAttribute("name"));
+		setModule(root.getAttribute("module"));
+		setNote(root.getAttribute("note"));
+		setVisible(root.getAttribute("visible"));
+		setPath(root.getAttribute("path"));
+		logType = parseLogType(root.getAttribute("log"));
+		guard = Boolean.parseBoolean(root.getAttribute("guard"));
+				
 		NodeList eProperties = XmlTools.getNodeListByPath(root, "properties/parameter");
 		if (eProperties != null){
 			for (int i = 0 ; i < eProperties.getLength() ; i ++){
@@ -395,7 +401,8 @@ public class DefaultServiceDescription implements ServiceDescription{
 				if (StringUtils.isNotEmpty(_id) && StringUtils.isNotEmpty(_value)){
 					PropertySpec spec = new PropertySpec();
 					spec.fromXML(e);
-					this.propertySpecs.put(_id, spec);					
+					m_property_specs.put(_id, spec);
+					
 					getProperties().SetValue(_id,_value);
 				}
 			}
@@ -421,6 +428,29 @@ public class DefaultServiceDescription implements ServiceDescription{
 				}
 			}
 		}
+		
+		NodeList eArguments = XmlTools.getNodeListByPath(root, "arguments/argu");
+		if (eArguments != null){
+			if (argumentList == null){
+				argumentList = new HashMap<String,Argument>();
+			}else{
+				argumentList.clear();
+			}
+			
+			for (int i = 0 ; i < eArguments.getLength() ; i ++){
+				Node n = eArguments.item(i);
+				if (n.getNodeType() != Node.ELEMENT_NODE){
+					continue;
+				}
+				Element e = (Element) n;
+				Argument argu = new DefaultArgument();
+				argu.fromXML(e);
+				if (argu.getId().length() <= 0){
+					continue;
+				}
+				argumentList.put(argu.getId(),argu);
+			}
+		}
 	}
 	
 	/**
@@ -429,18 +459,14 @@ public class DefaultServiceDescription implements ServiceDescription{
 	 */
 	@SuppressWarnings("unchecked")
 	public void fromJson(Map<String,Object> json){
-		setServiceID(JsonTools.getString(json, "id", ""));
-		setName(JsonTools.getString(json, "name", getName()));
-		setModule(JsonTools.getString(json, "module", getModule()));
-		setNote(JsonTools.getString(json, "note", getNote()));
-		setVisible(JsonTools.getString(json, "visible", getVisible()));
-		setPath(JsonTools.getString(json, "path", getPath()));
-		
-		setAcGroup(JsonTools.getString(json,"acGroupId",getAcGroup()));
-		setPrivilege(JsonTools.getString(json,"privilege",getAcGroup()));
-		
-		setGuard(JsonTools.getBoolean(json, "guard", guard()));
-		setLogType(parseLogType(JsonTools.getString(json, "log", getLogType().toString())));
+		setServiceID((String)json.get("id"));
+		setName((String)json.get("name"));
+		setModule((String)json.get("module"));
+		setNote((String)json.get("note"));
+		setVisible((String)json.get("visible"));
+		setPath((String)json.get("path"));
+		guard = Boolean.parseBoolean((String)json.get("guard"));
+		logType = parseLogType((String)json.get("log"));
 		
 		Object propertiesObj = json.get("properties");
 		if (propertiesObj != null && propertiesObj instanceof List){
@@ -458,7 +484,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 
 						PropertySpec spec = new PropertySpec();
 						spec.fromJson(paraMap);
-						this.propertySpecs.put(id, spec);						
+						m_property_specs.put(id, spec);						
 						
 						getProperties().SetValue(id,value);
 					}
@@ -478,6 +504,23 @@ public class DefaultServiceDescription implements ServiceDescription{
 				modulesMaster.add((String)module);
 			}
 		}
+		
+		Object argumentsObj = json.get("arguments");
+		if (argumentsObj != null && argumentsObj instanceof List){
+			List<Object> arguList = (List<Object>)argumentsObj;
+			for (Object argumentObj : arguList){
+				if (! (argumentObj instanceof Map)){
+					continue;
+				}
+				Map<String,Object> argumentMap = (Map<String,Object>) argumentObj;
+				Argument argu = new DefaultArgument();
+				argu.fromJson(argumentMap);
+				if (argu.getId().length() <= 0){
+					continue;
+				}
+				argumentList.put(argu.getId(),argu);
+			}
+		}
 	}
 	
 	/**
@@ -485,11 +528,8 @@ public class DefaultServiceDescription implements ServiceDescription{
 	 * @param json
 	 */
 	public void toJson(Map<String,Object> json){
-		JsonTools.setString(json,"type","service");
-		JsonTools.setString(json, "id", getServiceID());
-		JsonTools.setString(json, "acGroupId",getAcGroup());
-		JsonTools.setString(json, "privilege", getPrivilege());
-		
+		json.put("type", "service");
+		json.put("id", getServiceID());
 		json.put("name",getName());
 		json.put("module",getModule());
 		json.put("note", getNote());
@@ -510,7 +550,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 					pair.put("id", __name);
 					pair.put("value", __value);		
 			
-					PropertySpec spec = this.propertySpecs.get(__name);
+					PropertySpec spec = m_property_specs.get(__name);
 					if (spec != null){
 						spec.toJson(pair);
 					}					
@@ -530,6 +570,19 @@ public class DefaultServiceDescription implements ServiceDescription{
 			
 			json.put("modules", modulesList);
 		}		
+		if (argumentList != null && argumentList.size() > 0){
+			List<Object> arguList = new Vector<Object>();
+			Argument [] _argumentList = getArgumentList();
+			for (Argument argument:_argumentList){
+				Map<String,Object> argumentMap = new HashMap<String,Object>();
+				
+				argument.toJson(argumentMap);
+				
+				arguList.add(argumentMap);
+			}
+			
+			json.put("arguments", arguList);
+		}
 	}
 
 	
@@ -589,5 +642,4 @@ public class DefaultServiceDescription implements ServiceDescription{
 			}
 		}
 	}
-
 }

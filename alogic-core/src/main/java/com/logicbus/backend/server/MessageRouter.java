@@ -235,7 +235,7 @@ public class MessageRouter {
 		return 0;
 	}
 	
-	protected static int execute(Servant servant,Context ctx)  {
+	protected static int execute(Servant servant,Context ctx) throws Exception {
 		servant.actionBefore( ctx);
 		servant.actionProcess( ctx);
 		servant.actionAfter( ctx);

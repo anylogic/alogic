@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.github.anylogic</groupId>
     <artifactId>alogic</artifactId>
-    <version>1.6.10</version>
+    <version>1.6.10-SNAPSHOT</version>
   </parent>
   <artifactId>alogic-seq</artifactId>
   <name>alogic-seq</name>
