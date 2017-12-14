@@ -1,7 +1,6 @@
 package com.alogic.rpc.serializer.kryo;
 
 import com.anysoft.pool.QueuedPool2;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Settings;
 
 /**

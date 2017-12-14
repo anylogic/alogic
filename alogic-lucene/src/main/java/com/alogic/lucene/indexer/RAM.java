@@ -4,7 +4,6 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 
 import com.alogic.lucene.core.Indexer;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 
 

@@ -1,8 +1,6 @@
 package com.logicbus.kvalue.common;
 
 import java.util.HashMap;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;

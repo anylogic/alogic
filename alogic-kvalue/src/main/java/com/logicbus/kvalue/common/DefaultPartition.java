@@ -3,8 +3,6 @@ package com.logicbus.kvalue.common;
 import java.util.Map;
 
 import org.w3c.dom.Element;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;

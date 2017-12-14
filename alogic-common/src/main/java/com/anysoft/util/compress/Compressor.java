@@ -19,7 +19,6 @@ public interface Compressor {
 	 * 压缩bytes
 	 * @param data 数据
 	 * @return 压缩后的数据
-	 * @
 	 */
 	public byte[] compress(byte[] data) ; // NOSONAR
 	
@@ -27,7 +26,6 @@ public interface Compressor {
 	 * 解压bytes
 	 * @param data 压缩数据
 	 * @return 原始数据
-	 * @
 	 */
 	public byte[] decompress(byte[] data) ; // NOSONAR
 	
@@ -35,7 +33,6 @@ public interface Compressor {
 	 * 压缩
 	 * @param in 输入流
 	 * @param out 输出流
-	 * @
 	 */
 	public void compress(InputStream in,OutputStream out);// NOSONAR
 	
@@ -43,7 +40,6 @@ public interface Compressor {
 	 * 解压
 	 * @param in 输入流
 	 * @param out 输出流
-	 * @
 	 */
 	public void decompress(InputStream in,OutputStream out);// NOSONAR
 	

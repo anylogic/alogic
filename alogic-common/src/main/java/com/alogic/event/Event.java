@@ -55,7 +55,7 @@ public interface Event extends Comparable<Event>,Flowable,JsonSerializer{
 	
 	/**
 	 * 清除指定的属性
-	 * @param k 属性的key
+	 * @param key 属性的key
 	 */
 	public void removeProperty(String key);
 	

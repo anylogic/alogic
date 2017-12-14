@@ -9,7 +9,6 @@ import org.w3c.dom.Element;
 import com.alogic.pool.impl.Queued;
 import com.alogic.sda.SDAFactory;
 import com.alogic.sda.SecretDataArea;
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;
@@ -18,7 +17,6 @@ import com.anysoft.util.code.CoderFactory;
 import com.logicbus.redis.client.Client;
 import com.logicbus.redis.client.Protocol;
 import com.logicbus.redis.util.RedisContextException;
-import com.logicbus.redis.util.RedisException;
 
 /**
  * 连接池

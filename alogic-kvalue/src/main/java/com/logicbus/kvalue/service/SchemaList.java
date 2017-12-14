@@ -11,7 +11,6 @@ import org.w3c.dom.Element;
 
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
-import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.kvalue.context.KValueSource;

@@ -70,7 +70,6 @@ public abstract class AbstractServant extends Servant implements MetricsCollecto
 	 * 以XML协议进行服务处理
 	 * @param ctx 上下文
 	 * @return 结果
-	 * @
 	 * 
 	 * @since 1.4.0
 	 */
@@ -82,7 +81,6 @@ public abstract class AbstractServant extends Servant implements MetricsCollecto
 	 * 以JSON协议进行服务处理
 	 * @param ctx 上下文
 	 * @return 结果
-	 * @
 	 * @since 1.4.0
 	 */
 	protected abstract int onJson(Context ctx); // NOSONAR

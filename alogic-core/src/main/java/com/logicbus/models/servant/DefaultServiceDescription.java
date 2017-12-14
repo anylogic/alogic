@@ -172,7 +172,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	/**
 	 * 设置服务的可见性
-	 * @param _visible
+	 * @param v 可见性
 	 */
 	public void setVisible(String v){this.visible = v;}
 	
@@ -185,7 +185,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	/**
 	 * 设置服务名称
-	 * @param name name
+	 * @param ｎ name
 	 */
 	public void setName(String n){name = n;}
 	

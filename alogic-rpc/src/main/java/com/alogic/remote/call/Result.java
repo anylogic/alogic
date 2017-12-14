@@ -19,7 +19,7 @@ public interface Result {
 	/**
 	 * 获取服务的主机
 	 * 
-	 * @return
+	 * @return 主机端口
 	 */
 	public String getHost();
 	
@@ -74,7 +74,7 @@ public interface Result {
 	/**
 	 * 获取指定的对象
 	 * @param id 对象id
-	 * @return
+	 * @return　指定的对象
 	 */
 	public <data> data getData(String id);
 }

@@ -8,8 +8,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-
-import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Reportable;
