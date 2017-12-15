@@ -22,6 +22,9 @@ import com.logicbus.backend.Context;
  * 
  * @author duanyy
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 修正退出登录方法<br>
  */
 public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	
@@ -144,8 +147,13 @@ public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	}
 
 	@Override
-	public void logout(Principal principal) {
-		authHandler.logout(principal);
+	public void logout(Context ctx) {
+		authHandler.logout(ctx);
+	}
+
+	@Override
+	public void logout(HttpServletRequest request) {
+		authHandler.logout(request);
 	}
 
 }

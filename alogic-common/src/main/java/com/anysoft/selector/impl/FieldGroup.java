@@ -13,11 +13,12 @@ import com.anysoft.selector.Selector;
  * 
  * @author duanyy
  * @since 1.5.2
- * 
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加final属性 <br>
  */
 public class FieldGroup extends Selector {
 
-	
+	@Override
 	public void onConfigure(Element _e, Properties _p) {
 		seperator = PropertiesConstants.getString(_p, "seperator", seperator,true);
 		noSeperator = PropertiesConstants.getBoolean(_p, "noSeperator", noSeperator,true);
@@ -25,7 +26,7 @@ public class FieldGroup extends Selector {
 		fieldList.configure(_e, _p);
 	}
 
-	
+	@Override
 	public String onSelect(DataProvider _dataProvider) {
 		StringBuffer buffer = new StringBuffer();
 		int index = 0;

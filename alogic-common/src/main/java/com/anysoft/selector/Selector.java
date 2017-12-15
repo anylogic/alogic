@@ -8,6 +8,7 @@ import org.w3c.dom.Element;
 
 import com.anysoft.formula.DataProvider;
 import com.anysoft.util.BaseException;
+import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -31,8 +32,11 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加final属性 <br>
  */
-abstract public class Selector implements XMLConfigurable {
+abstract public class Selector implements XMLConfigurable,Configurable {
 	
 	/**
 	 * a logger of log4j
@@ -43,6 +47,13 @@ abstract public class Selector implements XMLConfigurable {
 	 * id
 	 */
 	protected String id;
+	
+	/**
+	 * Final属性
+	 */
+	protected boolean isFinal = false;
+	
+	
 
 	/**
 	 * to get the id
@@ -52,6 +63,14 @@ abstract public class Selector implements XMLConfigurable {
 		return id;
 	}
 
+	/**
+	 * 获取final属性
+	 * @return final
+	 */
+	public boolean isFinal(){
+		return isFinal;
+	}
+	
 	/**
 	 * default value
 	 */
@@ -84,15 +103,19 @@ abstract public class Selector implements XMLConfigurable {
 	protected Selector() {
 	}
 	
-	
+	@Override
 	public void configure(Element _e, Properties _properties){
 		XmlElementProperties p = new XmlElementProperties(_e, _properties);
+		onConfigure(_e, p);
+		configure(p);
+	}
+	
+	@Override
+	public void configure(Properties p){
 		id = PropertiesConstants.getString(p, "selector-id", "",true);
 		defaultValue =PropertiesConstants.getString(p, "selector-default", defaultValue,true);
-		
-		ignoreException = PropertiesConstants.getBoolean(p,
-				"selector-ignoreException", ignoreException,true);
-		onConfigure(_e, p);
+		isFinal = PropertiesConstants.getBoolean(p, "selector-final", false);
+		ignoreException = PropertiesConstants.getBoolean(p,"selector-ignoreException", ignoreException,true);		
 	}
 	
 	/**
@@ -101,8 +124,9 @@ abstract public class Selector implements XMLConfigurable {
 	 * @param _e 配置XML节点
 	 * @param _p 变量集
 	 */
-	public abstract void onConfigure(Element _e, Properties _p)
-			throws BaseException;	
+	public void onConfigure(Element _e, Properties _p){
+		// nothing to do
+	}
 	
 	/**
 	 * 统计数据

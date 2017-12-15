@@ -72,7 +72,7 @@ public class HybirdAccessController implements AccessController {
 	public void configure(Element e, Properties p) {
 		Properties props = new XmlElementProperties(e,p);
 		
-		NodeList nodeList = XmlTools.getNodeListByPath(e, "group");
+		NodeList nodeList = XmlTools.getNodeListByPath(e, "ac");
 		
 		Factory<AccessController> f = new Factory<AccessController>();
 		

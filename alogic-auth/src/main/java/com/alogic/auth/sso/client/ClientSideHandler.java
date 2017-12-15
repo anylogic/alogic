@@ -28,7 +28,8 @@ import com.anysoft.util.XmlTools;
 /**
  * SSO客户端的验证器
  * @author yyduan
- *
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加获取登录id的方法<br>
  */
 public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	/**
@@ -157,15 +158,15 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	public Principal login(HttpServletRequest request) {
 		throw new BaseException("core.e1000","In sso client mode,it's not supported to login.");
 	}
-	
-	@Override
-	public void logout(Principal principal) {
-		throw new BaseException("core.e1000","In sso client mode,it's not supported to logout.");
-	}
 
 	@Override
 	public void setSessionManager(SessionManager sm) {
 		this.sessionManager = sm;
+	}
+
+	@Override
+	public void logout(HttpServletRequest request) {
+		throw new BaseException("core.e1000","In sso client mode,it's not supported to logout.");
 	}
 
 }

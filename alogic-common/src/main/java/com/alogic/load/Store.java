@@ -12,6 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author yyduan
  *
  * @param <O> 
+ * 
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加有效期的判定 <br>
  */
 public interface Store<O extends Loadable> extends Loader<O> {
 	
@@ -53,7 +56,15 @@ public interface Store<O extends Loadable> extends Loader<O> {
 
 		@Override
 		protected O loadFromSelf(String id, boolean cacheAllowed) {
-			return data.get(id);
+			O found = null;
+			if (cacheAllowed){
+				found = data.get(id);
+				if (isExpired(found)){
+					data.remove(id);
+					found = null;
+				}
+			}
+			return found;
 		}
 		
 		@Override

@@ -47,6 +47,16 @@ public interface ServiceDescription extends XmlSerializer,JsonSerializer,Reporta
 	public enum LogType {none,brief,detail};
 	
 	/**
+	 * 可见性：public
+	 */
+	public static final String PUBLIC = "public";
+	
+	/**
+	 * 可见性：protected
+	 */
+	public static final String PROTECTED = "protected";
+	
+	/**
 	 * 获取日志类型
 	 * @return 日志类型
 	 */

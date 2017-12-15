@@ -32,6 +32,7 @@ public abstract class SwitchHandler <data extends Flowable> extends AbstractHand
 	 * 后续的handler
 	 */
 	protected Map<String,Handler<data>> cases = new HashMap<String,Handler<data>>();
+	
 	/**
 	 * 选择器
 	 */

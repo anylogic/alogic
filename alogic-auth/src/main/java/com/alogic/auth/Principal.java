@@ -13,6 +13,9 @@ import com.anysoft.util.JsonSerializer;
  * 
  * @author yyduan
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加获取登录id的方法<br>
  */
 public interface Principal extends Loadable,Constants,JsonSerializer{
 	
@@ -24,6 +27,12 @@ public interface Principal extends Loadable,Constants,JsonSerializer{
 	 * @return id
 	 */
 	public String getId();
+	
+	/**
+	 * 获取登录用户的id
+	 * @return 登录用户的id
+	 */
+	public String getLoginId();
 	
 	/**
 	 * 获取登录时间

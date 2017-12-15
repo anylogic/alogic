@@ -1,7 +1,6 @@
 package com.alogic.auth.service;
 
 
-import com.alogic.auth.Principal;
 import com.alogic.auth.PrincipalManager;
 import com.alogic.auth.SessionManagerFactory;
 import com.logicbus.backend.AbstractServant;
@@ -16,6 +15,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author yyduan
  * 
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加获取登录id的方法<br>
  */
 public class Logout extends AbstractServant{
 
@@ -33,20 +35,15 @@ public class Logout extends AbstractServant{
 	protected int onJson(Context ctx){
 		ctx.asMessage(JsonMessage.class);
 		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
-		Principal principal = sm.getCurrent(ctx);		
-		//logout
-		sm.logout(principal);
+		sm.logout(ctx);
 		return 0;
 	}
 
 	@Override
 	protected int onXml(Context ctx){
 		ctx.asMessage(XMLMessage.class);
-		
 		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
-		Principal principal = sm.getCurrent(ctx);		
-		//logout
-		sm.logout(principal);
+		sm.logout(ctx);
 		return 0;
 	}
 }

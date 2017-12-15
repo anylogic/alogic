@@ -1,8 +1,6 @@
 package com.anysoft.selector.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
-
 import com.anysoft.formula.DataProvider;
 import com.anysoft.selector.Selector;
 import com.anysoft.util.DataProviderProperties;
@@ -13,14 +11,19 @@ import com.anysoft.util.PropertiesConstants;
  * Template
  * @author yyduan
  * @since 1.6.6.13
+ * 
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加final属性 <br>
  */
 public class Template extends Selector {	
 	protected String template = "";	
 	
-	public void onConfigure(Element _e, Properties _p) {
-		template = PropertiesConstants.getString(_p, "selector-template", template,true);
+	@Override
+	public void configure(Properties p){
+		super.configure(p);
+		template = PropertiesConstants.getString(p, "selector-template", template,true);
 	}
-
+	
 	@Override
 	public String onSelect(DataProvider provider) {
 		DataProviderProperties p = new DataProviderProperties(provider);

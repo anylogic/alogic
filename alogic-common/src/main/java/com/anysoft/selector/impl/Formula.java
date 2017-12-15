@@ -1,7 +1,5 @@
 package com.anysoft.selector.impl;
 
-import org.w3c.dom.Element;
-
 import com.anysoft.formula.DataProvider;
 import com.anysoft.formula.DefaultFunctionHelper;
 import com.anysoft.formula.Expression;
@@ -15,18 +13,23 @@ import com.anysoft.selector.Selector;
  * 
  * @author duanyy
  * @since 1.5.2
- * 
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加final属性 <br>
  */
 public class Formula extends Selector {
 
+	protected String formula = "0";
+	protected Expression expr = null;	
 	
-	public void onConfigure(Element _e, Properties _p)  {
-		formula = PropertiesConstants.getString(_p, "formula", formula,true);
+	@Override
+	public void configure(Properties p){
+		super.configure(p);
+		formula = PropertiesConstants.getString(p, "formula", formula,true);
 		Parser parser = new Parser(new DefaultFunctionHelper(null));
 		expr = parser.parse(formula);
 	}
 
-	
+	@Override
 	public String onSelect(DataProvider _dataProvider) {
 		try{
 			return expr.getValue(_dataProvider).toString();
@@ -35,6 +38,4 @@ public class Formula extends Selector {
 		}
 	}
 
-	protected String formula = "0";
-	protected Expression expr = null;	
 }

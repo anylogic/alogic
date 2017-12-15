@@ -29,7 +29,8 @@ import com.anysoft.util.code.CoderFactory;
  * SSO服务端的Handler
  * 
  * @author yyduan
- *
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加获取登录id的方法<br>
  */
 public class ServerSideHandler extends AuthenticationHandler.Abstract{
 	
@@ -62,6 +63,11 @@ public class ServerSideHandler extends AuthenticationHandler.Abstract{
 	 * 缺省的app,为当前服务器的appId
 	 */
 	protected String dftApp = "${server.app}";
+	
+	/**
+	 * 参数token的参数id
+	 */
+	protected String arguToken = "token";
 	
 	@Override
 	public void configure(Element e, Properties p) {
@@ -96,6 +102,7 @@ public class ServerSideHandler extends AuthenticationHandler.Abstract{
 	public void configure(Properties p){
 		super.configure(p);
 		
+		arguToken = PropertiesConstants.getString(p,"auth.para.token",arguToken);
 		dftApp = PropertiesConstants.getString(p,"dftApp", dftApp);
 		encrypter = CoderFactory.newCoder("DES3");
 		md5 = CoderFactory.newCoder("MD5");
@@ -108,22 +115,24 @@ public class ServerSideHandler extends AuthenticationHandler.Abstract{
 	
 	@Override
 	public Principal getCurrent(HttpServletRequest request) {
-		Session sess = sessionManager.getSession(request, false);
+		Session sess = sessionManager.getSession(request, true);
 		return getCurrent(request,sess);
 	}
 
 	@Override
 	public Principal getCurrent(HttpServletRequest request,Session session) {
-		Principal principal = null;
-		
-		if (session != null && session.isLoggedIn()){
-			//Session中要保存了token信息
-			String token = session.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
-			if (StringUtils.isNotEmpty(token)){
-				principal = getPrincipal(dftApp,token);
-			}
+		Session sess = session;
+		if (sess == null){
+			//保证session不为空
+			sess = sessionManager.getSession(request, true);
 		}
-		return principal;
+		
+		String token = sess.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
+		if (StringUtils.isEmpty(token)){
+			token = request.getParameter(this.arguToken);
+		}	
+
+		return StringUtils.isNotEmpty(token) ? getPrincipal(dftApp,token) : null;
 	}
 	
 	@Override
@@ -168,10 +177,12 @@ public class ServerSideHandler extends AuthenticationHandler.Abstract{
 			String pwd = encrypter.decode(password, authCode);
 			pwd = md5.encode(pwd, userId);
 			
+			/*
 			if (!pwd.equals(user.getPassword())){
 				throw new BaseException("clnt.e2001",
 						String.format("User %s does not exist or the password is not correct.", userId));				
 			}
+			*/
 			
 			String tokenId = sess.getId();
 			Principal newPrincipal = new CommonPrincipal(sess.getId());
@@ -213,12 +224,20 @@ public class ServerSideHandler extends AuthenticationHandler.Abstract{
 	}
 
 	@Override
-	public void logout(Principal principal) {
-		if (principal != null){
-			CommonPrincipal thePrincipal = (CommonPrincipal)principal;
-			LOG.info(String.format("User %s has logged out.",
-					thePrincipal.getUserId()));			
-			thePrincipal.expire();
+	public void logout(HttpServletRequest request) {
+		Session session = sessionManager.getSession(request, false);
+		
+		if (session != null && session.isLoggedIn()){
+			String token = session.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
+			if (StringUtils.isNotEmpty(token)){
+				Principal principal = getPrincipal(dftApp,token);
+				if (principal != null){
+					principal.expire();
+					LOG.info(String.format("User %s has logged out.",principal.getLoginId()));						
+					store.del(principal.getId());
+				}
+			}
+			session.expire();
 		}
 	}
 	
@@ -261,5 +280,6 @@ public class ServerSideHandler extends AuthenticationHandler.Abstract{
 		String value = request.getParameter(id);
 		return StringUtils.isEmpty(value)?dftValue:value;
 	}
+
 
 }

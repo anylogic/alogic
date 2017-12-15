@@ -14,11 +14,12 @@ import com.anysoft.selector.Selector;
  * @author duanyy
  * 
  * @since 1.5.2
- *
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加final属性 <br>
  */
 public class DateFormatter extends Selector {
 
-	
+	@Override
 	public void onConfigure(Element _e, Properties _p) {
 		pattern = PropertiesConstants.getString(_p,"pattern",pattern,true);
 		
@@ -30,7 +31,7 @@ public class DateFormatter extends Selector {
 		}
 	}
 
-	
+	@Override
 	public String onSelect(DataProvider _dataProvider) {
 		String value = selector.select(_dataProvider);
 		long t = Long.parseLong(value);	

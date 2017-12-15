@@ -20,7 +20,8 @@ import com.anysoft.util.XmlTools;
  * 通用的Principal
  * 
  * @author yyduan
- *
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加获取登录id的方法<br>
  */
 public class CommonPrincipal extends Principal.Abstract{
 	
@@ -39,30 +40,27 @@ public class CommonPrincipal extends Principal.Abstract{
 	}
 
 	public String getUserId() {
-		return this.getProperty(USERID, "");
+		return this.getProperty(USERID, "anonymous");
 	}
 
 	public String getName() {
-		return this.getProperty(NAME, "");
+		return this.getProperty(NAME, "anonymous");
 	}
 
 	public String getAvatar() {
 		return this.getProperty(AVATAR, "");
 	}
+
+	@Override
+	public String getLoginId(){
+		return this.getProperty(USERID, "anonymous");
+	}
 	
-	/**
-	 * 获取登录时间
-	 * @return 登录时间(毫秒数)
-	 */
 	@Override
 	public String getLoginTime(){
 		return this.getProperty(LOGIN_TIME, "");
 	}
 	
-	/**
-	 * 获取登录ip
-	 * @return 登录ip
-	 */
 	@Override
 	public String getLoginIp(){
 		return this.getProperty(FROM_IP, "");

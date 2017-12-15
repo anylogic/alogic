@@ -27,6 +27,10 @@ import com.logicbus.backend.server.http.HttpContext;
  * @author duanyy
  *
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 修正退出登录方法<br>
+ * 
  */
 public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	/**
@@ -89,7 +93,12 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	/**
 	 * 退出登录
 	 */
-	public void logout(Principal principal);	
+	public void logout(HttpServletRequest request);	
+	
+	/**
+	 * 退出登录
+	 */
+	public void logout(Context ctx);	
 	
 	/**
 	 * 判断当前用户是否对指定的业务对象具备操作权限
@@ -200,6 +209,17 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 			HttpContext httpContext = (HttpContext)ctx;
 			HttpServletRequest request = httpContext.getRequest();
 			return login(request);
+		}
+		
+		@Override
+		public void logout(Context ctx){
+			if (!(ctx instanceof HttpContext)){
+				throw new BaseException("core.e1002","The Context is not a HttpContext instance.");
+			}
+			
+			HttpContext httpContext = (HttpContext)ctx;
+			HttpServletRequest request = httpContext.getRequest();
+			logout(request);			
 		}
 		
 		@Override

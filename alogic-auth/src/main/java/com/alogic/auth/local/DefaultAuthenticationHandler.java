@@ -33,6 +33,9 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @author duanyy
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 增加获取登录id的方法<br>
  */
 public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract{
 	
@@ -168,16 +171,6 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 		}
 		return false;
 	}
-
-	@Override
-	public void logout(Principal principal) {
-		if (principal != null){
-			SessionPrincipal thePrincipal = (SessionPrincipal)principal;
-			LOG.info(String.format("User %s has logged out.",
-					thePrincipal.getUserId()));			
-			thePrincipal.expire();
-		}
-	}
 	
 	@Override
 	public void setSessionManager(SessionManager sm){
@@ -217,6 +210,20 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	protected String getParameter(HttpServletRequest request,String id,String dftValue){
 		String value = request.getParameter(id);
 		return StringUtils.isEmpty(value)?dftValue:value;
+	}
+
+	@Override
+	public void logout(HttpServletRequest request) {
+		Session session = sessionManager.getSession(request, false);
+
+		if (session != null && session.isLoggedIn()){
+			String token = session.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
+			if (StringUtils.isNotEmpty(token)){
+				Principal principal = new SessionPrincipal(session);
+				LOG.info(String.format("User %s has logged out.",principal.getLoginId()));						
+				principal.expire();
+			}
+		}
 	}
 
 }

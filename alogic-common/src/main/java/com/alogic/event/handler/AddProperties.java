@@ -11,32 +11,29 @@ import com.anysoft.selector.Selector;
 import com.anysoft.stream.Handler;
 import com.anysoft.stream.SlideHandler;
 import com.anysoft.util.Properties;
-import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlTools;
 
 /**
  * 为事件增加属性
  * 
  * @author yyduan
- *
+ * 
+ * @version 1.6.11.1 [20171215 duanyy] <br>
+ * - 可以按照属性来设置overwrite行为 <br>
+ * 
  */
 public class AddProperties extends SlideHandler<Event>{
 	/**
 	 * 待增加的属性
 	 */
 	protected List<Selector> properties = new ArrayList<Selector>();
-
-	/**
-	 * 是否覆盖
-	 */
-	protected boolean overwrite;
 	
 	@Override
 	protected void onHandle(Event e, long timestamp) {
 		for (Selector p:properties){
 			String k = p.getId();
 			String v = p.select(e);
-			e.setProperty(k, v, overwrite);
+			e.setProperty(k, v, !p.isFinal());
 		}
 		
 		Handler<Event> handler = getSlidingHandler();
@@ -48,8 +45,6 @@ public class AddProperties extends SlideHandler<Event>{
 	@Override
 	protected void onConfigure(Element e, Properties p) {
 		super.onConfigure(e, p);
-		
-		overwrite = PropertiesConstants.getBoolean(p, "overwrite", true);
 		
 		NodeList nodeList = XmlTools.getNodeListByPath(e, "properties/property");
 		for (int i = 0 ;i < nodeList.getLength() ; i ++){
