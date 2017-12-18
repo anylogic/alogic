@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alogic.event.Event;
+import com.alogic.event.EventBus;
 import com.alogic.metrics.Fragment;
 import com.alogic.metrics.stream.MetricsHandlerFactory;
 import com.alogic.xscript.ExecuteWatcher;
@@ -81,6 +83,9 @@ import com.logicbus.backend.bizlog.BizLogger;
  * 
  * @version 1.6.8.14 <br>
  * - 调整init及destroy时各组件的启动次序 <br>
+ * 
+ * @version 1.6.11.2 [20171218 duanyy] <br>
+ * - 将事件处理框架作为内置组件 <br>
  */
 public class LogicBusApp implements WebApp {
 	/**
@@ -91,6 +96,12 @@ public class LogicBusApp implements WebApp {
 	protected void onInit(Settings settings){	
 		XmlTools.setDefaultEncoding(settings.GetValue("http.encoding","utf-8"));
 		
+		//初始化事件处理器
+		try {
+			settings.registerObject("eventHandler", EventBus.getDefault());
+		}catch (Exception ex){
+			logger.error("Failed to create an event handler.", ex);
+		}
 		//初始化AccessController
 		
 		AccessController ac = null;
@@ -282,6 +293,16 @@ public class LogicBusApp implements WebApp {
 		}
 		
 		settings.unregisterObject("accessController");
+		
+		// since 1.2.8
+		@SuppressWarnings("unchecked")
+		Handler<Event> eventHandler = (Handler<Event>)settings.get("eventHandler");
+		if (eventHandler != null){
+			eventHandler.flush(System.currentTimeMillis());
+			logger.info("The event handler is closing..");
+			settings.unregisterObject("eventHandler");
+			IOTools.close(metricsHandler);
+		}
 	}
 	
 	@Override

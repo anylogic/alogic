@@ -15,3 +15,9 @@ alogic-1.6.11
 - alogic-auth:Principal增加获取登录id的方法;
 - alogic-common:Store框架增加有效期的判定;
 - alogic-common:Selector增加final属性;
+
+### 1.6.11.2 [20171218 duanyy]
+
+- alogic-auth:AuthGuard在重定向登录页面的时候，支持集群负载均衡;
+- alogic-common:事件处理框架增加xscript相关插件;
+- alogic-core:将事件处理框架作为内置组件;

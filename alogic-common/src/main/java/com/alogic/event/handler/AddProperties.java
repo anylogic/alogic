@@ -46,7 +46,7 @@ public class AddProperties extends SlideHandler<Event>{
 	protected void onConfigure(Element e, Properties p) {
 		super.onConfigure(e, p);
 		
-		NodeList nodeList = XmlTools.getNodeListByPath(e, "properties/property");
+		NodeList nodeList = XmlTools.getNodeListByPath(e, "property");
 		for (int i = 0 ;i < nodeList.getLength() ; i ++){
 			Node n = nodeList.item(i);
 			

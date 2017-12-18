@@ -29,6 +29,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @author yyduan
  * @since 1.6.11.1
+ * 
+ * @version 1.6.11.2 [20171218 duanyy] <br>
+ * - 增加扫描路径时的日志 <br>
  */
 public class FromClasspath extends Loader.Abstract<Process>{
 	/**
@@ -90,6 +93,7 @@ public class FromClasspath extends Loader.Abstract<Process>{
 				LOG.error(ExceptionUtils.getStackTrace(e));
 				return;
 			}
+			LOG.info(String.format("Scan event processor in %s",url.toString()));
 			scanFileSystem(home,file,clazz);
         }
         else{
@@ -104,6 +108,7 @@ public class FromClasspath extends Loader.Abstract<Process>{
 					LOG.error(ExceptionUtils.getStackTrace(e));
 					return;
 				}
+	        	LOG.info(String.format("Scan event processor in %s",url.toString()));
 	        	scanJar(home,jfile,clazz);
         	}
         }		
@@ -124,6 +129,7 @@ public class FromClasspath extends Loader.Abstract<Process>{
 				String path = '/' + name.substring(0, end);
 				if (path.equals(home)) {
 					// got
+					LOG.info(String.format("Found event processor : %s",entry.getName()));
 					String classPath = "/" + name;;
 					InputStream in = null;
 					try {
@@ -154,6 +160,7 @@ public class FromClasspath extends Loader.Abstract<Process>{
         File[] files = file.listFiles();
         for (File item:files){
         	if (item.getName().endsWith(".xml")){
+        		LOG.info(String.format("Found event processor : %s",item.getName()));
         		InputStream in = null;
         		try {
         			in = new FileInputStream(item);
