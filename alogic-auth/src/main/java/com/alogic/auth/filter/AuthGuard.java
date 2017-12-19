@@ -34,8 +34,6 @@ import com.anysoft.util.Settings;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
 import com.anysoft.webloader.FilterConfigProperties;
-import com.logicbus.backend.Context;
-import com.logicbus.backend.server.http.HttpContext;
 
 /**
  * AuthGuard
@@ -48,6 +46,10 @@ import com.logicbus.backend.server.http.HttpContext;
  * 
  * @version 1.6.11.2 [20171218 duanyy] <br>
  * - 在重定向登录页面的时候，支持集群负载均衡 <br>
+ * 
+ * @version 1.6.11.3 [20171219 duanyy] <br>
+ * - 集群模式可通过开关开启 <br>
+ * 
  */
 public class AuthGuard implements Filter{
 	/**
@@ -93,6 +95,11 @@ public class AuthGuard implements Filter{
 	 */
 	protected String app = "alogic-sso-server";
 	
+	/**
+	 * 优先集群
+	 */
+	protected boolean clusterFirst = false;
+	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		FilterConfigProperties props = new FilterConfigProperties(filterConfig);
@@ -102,23 +109,26 @@ public class AuthGuard implements Filter{
 		scheme =  PropertiesConstants.getString(props, "auth.page.scheme", scheme);
 		path = PropertiesConstants.getString(props, "auth.page.path", path);
 		app = PropertiesConstants.getString(props, "auth.page.app", app);
+		clusterFirst = PropertiesConstants.getBoolean(props,"auth.page.cluster",clusterFirst);
 		
 		String master = PropertiesConstants.getString(props, "app.proxy.master", DEFAULT);
 		String secondary = PropertiesConstants.getString(props, "app.proxy.secondary", DEFAULT);
 		
-		Document doc = loadDocument(master,secondary);
-		if (doc != null){
-			Factory<Client> f = new Factory<Client>();
-			try {
-				client = f.newInstance(doc.getDocumentElement(), props, "module", HttpClient.class.getName());
-			}catch (Exception ex){
-				LOG.error(String.format("Can not create remote client with %s",XmlTools.node2String(doc.getDocumentElement())),ex);
+		if (clusterFirst){
+			Document doc = loadDocument(master,secondary);
+			if (doc != null){
+				Factory<Client> f = new Factory<Client>();
+				try {
+					client = f.newInstance(doc.getDocumentElement(), props, "module", HttpClient.class.getName());
+				}catch (Exception ex){
+					LOG.error(String.format("Can not create remote client with %s",XmlTools.node2String(doc.getDocumentElement())),ex);
+				}
 			}
-		}
-		if (client == null){
-			client = new HttpClient();
-			client.configure(props);			
-			LOG.info(String.format("Using default remote client:%s",client.getClass().getName()));
+			if (client == null){
+				client = new HttpClient();
+				client.configure(props);			
+				LOG.info(String.format("Using default remote client:%s",client.getClass().getName()));
+			}
 		}
 	}
 
@@ -153,6 +163,9 @@ public class AuthGuard implements Filter{
 	 * @return 页面地址
 	 */
 	protected String getLoginPage(String sessionId,String dftPage){
+		if (client == null){
+			return dftPage;
+		}
 		try {
 			Properties props = new DefaultProperties();			
 			props.SetValue("$app", app);

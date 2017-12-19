@@ -22,6 +22,9 @@ import com.anysoft.util.JsonTools;
  * 
  * @version 1.6.9.8 [20170821] <br>
  * - tlog增加keyword字段 <br>
+ * 
+ * @version 1.6.11.3 [20171219 duanyy] <br>
+ * - 增加isAsync方法，用来标记数据是否允许异步处理 <br>
  */
 public class TLog implements Comparable<TLog>,Flowable,JsonSerializer{
 	protected static final String PATTERN = 
@@ -95,6 +98,11 @@ public class TLog implements Comparable<TLog>,Flowable,JsonSerializer{
 	public String id(){
 		return sn;
 	}	
+	
+	@Override
+	public boolean isAsync(){
+		return true;
+	}
 	
 	public String toString(){
 		return String.format(PATTERN, sn,order,type,app,host,method,startDate,duration,contentLength,code,parameter,keyword,reason);

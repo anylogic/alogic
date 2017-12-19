@@ -50,7 +50,7 @@ public class Processor extends SlideHandler<Event>{
 					ctx.SetValue("$task", e.id());
 					ctx.SetValue("$event", e.getEventType());
 					script.execute(doc, doc, ctx, null);
-					result = PropertiesConstants.getString(ctx, "$result", result);
+					result = PropertiesConstants.getString(ctx, "$code", result);
 					reason = PropertiesConstants.getString(ctx, "$reason", reason);
 				}catch (BaseException ex){
 					result = ex.getCode();
@@ -60,7 +60,7 @@ public class Processor extends SlideHandler<Event>{
 				}
 				Handler<Event> dftHandler = this.getSlidingHandler();			
 				if (dftHandler != null){
-					e.setProperty("$result", result, true);
+					e.setProperty("$code", result, true);
 					e.setProperty("$reason", reason, true);
 					dftHandler.handle(e, timestamp);
 				}

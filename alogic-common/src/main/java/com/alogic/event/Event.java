@@ -15,7 +15,10 @@ import com.anysoft.util.JsonTools;
  * 通用事件
  * 
  * @author yyduan
- *
+ * 
+ * @version 1.6.11.3 [20171219 duanyy] <br>
+ * - 增加isAsync方法，用来标记数据是否允许异步处理 <br>
+ * 
  */
 public interface Event extends Comparable<Event>,Flowable,JsonSerializer{
 	
@@ -98,13 +101,19 @@ public interface Event extends Comparable<Event>,Flowable,JsonSerializer{
 		protected String eventType;
 		
 		/**
+		 * 是否可异步处理
+		 */
+		protected boolean async = true;
+		
+		/**
 		 * 生成日期
 		 */
 		protected long createTime = System.currentTimeMillis();
 		
-		protected Abstract(String id,String type){
+		protected Abstract(String id,String type,boolean async){
 			this.id = id;
 			this.eventType = type;
+			this.async = async;
 		}
 		
 		@Override
@@ -120,6 +129,11 @@ public interface Event extends Comparable<Event>,Flowable,JsonSerializer{
 		@Override
 		public String id() {
 			return id;
+		}
+		
+		@Override
+		public boolean isAsync(){
+			return async;
 		}
 		
 		public void setId(final String id){
@@ -170,8 +184,8 @@ public interface Event extends Comparable<Event>,Flowable,JsonSerializer{
 	public static class Default extends Abstract{
 		protected Map<String,String> properties = null;
 		
-		public Default(String id, String type) {
-			super(id, type);
+		public Default(String id, String type,boolean async) {
+			super(id, type,async);
 		}
 
 		protected Map<String,String> getMapObject(boolean create){
@@ -269,7 +283,7 @@ public interface Event extends Comparable<Event>,Flowable,JsonSerializer{
 		
 		@Override
 		public Event copySelf(){
-			Default copied = new Default(id(),getEventType());
+			Default copied = new Default(id(),getEventType(),this.isAsync());
 			copied.setCreateTime(getCreateTime());
 			return copyTo(copied);
 		}

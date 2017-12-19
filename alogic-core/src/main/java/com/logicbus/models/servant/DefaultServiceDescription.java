@@ -72,7 +72,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	/**
 	 * 服务参数规格
 	 */
-	private Map<String,PropertySpec> propertySpecs;
+	protected Map<String,PropertySpec> propertySpecs;
 	
 	/**
 	 * 服务的可见性(public,login,limited)

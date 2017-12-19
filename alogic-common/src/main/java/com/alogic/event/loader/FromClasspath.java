@@ -153,8 +153,9 @@ public class FromClasspath extends Loader.Abstract<Process>{
 
 	/**
 	 * 扫描文件系统
-	 * @param home 文件路径
-	 * @param file 目录File
+	 * @param path
+	 * @param file
+	 * @param clazz
 	 */
 	protected void scanFileSystem(String path, File file,Class<?> clazz) {
         File[] files = file.listFiles();

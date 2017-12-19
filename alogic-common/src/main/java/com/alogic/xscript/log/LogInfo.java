@@ -34,6 +34,11 @@ public class LogInfo implements Flowable {
 		return activity;
 	}	
 	
+	@Override
+	public boolean isAsync(){
+		return true;
+	}
+	
 	public LogInfo(String _activity,String _message,String _level,int _progress){
 		activity = _activity;
 		message = _message;

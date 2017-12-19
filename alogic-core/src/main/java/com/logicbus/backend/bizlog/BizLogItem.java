@@ -100,6 +100,11 @@ public class BizLogItem implements Comparable<BizLogItem>,Flowable {
 		return sn;
 	}
 	
+	@Override
+	public boolean isAsync(){
+		return true;
+	}
+	
 	public int compareTo(BizLogItem other) {		
 		return sn.compareTo(other.sn);
 	}

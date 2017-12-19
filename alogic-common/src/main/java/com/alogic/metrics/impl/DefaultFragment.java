@@ -149,6 +149,11 @@ public class DefaultFragment implements Fragment{
 	}
 	
 	@Override
+	public boolean isAsync(){
+		return true;
+	}
+	
+	@Override
 	public String type(){
 		return type;
 	}

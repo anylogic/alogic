@@ -6,7 +6,8 @@ import com.anysoft.util.Properties;
  * 将Event包裹成一个Properties
  * 
  * @author yyduan
- *
+ * @version 1.6.11.3 [20171219 duanyy] <br>
+ * - 修正event为空的问题 <br>
  */
 public class EventProperties extends Properties {
 	
@@ -15,8 +16,9 @@ public class EventProperties extends Properties {
 	 */
 	protected Event event = null;
 	
-	public EventProperties(Event event,Properties parent){
+	public EventProperties(Event e,Properties parent){
 		super("default",parent);
+		this.event = e;
 	}
 	
 	@Override

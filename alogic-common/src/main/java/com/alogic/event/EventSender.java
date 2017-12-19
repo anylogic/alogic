@@ -3,17 +3,11 @@ package com.alogic.event;
 import org.apache.commons.lang3.StringUtils;
 import com.alogic.event.xscript.SetProperties;
 import com.alogic.event.xscript.SetProperty;
-import com.alogic.metrics.Fragment;
-import com.alogic.metrics.impl.DefaultFragment;
-import com.alogic.metrics.stream.MetricsHandlerFactory;
-import com.alogic.metrics.xscript.AddDimension;
-import com.alogic.metrics.xscript.AddMeasure;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.plugins.Segment;
-import com.anysoft.stream.Handler;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
@@ -22,6 +16,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @author yyduan
  * @since 1.6.11.2
+ * 
+ * @version 1.6.11.3 [20171219 duanyy] <br>
+ * - 可以创建异步或同步事件 <br>
  */
 public class EventSender extends Segment {
 	/**
@@ -39,6 +36,11 @@ public class EventSender extends Segment {
 	 */
 	protected String cid = "$event";
 	
+	/**
+	 * 是否可以异步处理
+	 */
+	protected String async = "true";
+	
 	public EventSender(String tag, Logiclet p) {
 		super(tag, p);	
 		
@@ -52,6 +54,7 @@ public class EventSender extends Segment {
 		id = PropertiesConstants.getRaw(p,"id", "");
 		cid = PropertiesConstants.getString(p,"cid",cid,true);
 		type = PropertiesConstants.getRaw(p,"type",type);
+		async = PropertiesConstants.getRaw(p,"async",async);
 	}
 	
 	@Override
@@ -60,7 +63,8 @@ public class EventSender extends Segment {
 		String eventType = ctx.transform(type);
 		
 		if (StringUtils.isNotEmpty(eventType)){
-			Event e = EventBus.newEvent(ctx.transform(id), eventType);
+			Event e = EventBus.newEvent(ctx.transform(id), eventType,
+					PropertiesConstants.transform(ctx, async, true));
 			try{
 				ctx.setObject(cid, e);
 				super.onExecute(root, current, ctx, watcher);

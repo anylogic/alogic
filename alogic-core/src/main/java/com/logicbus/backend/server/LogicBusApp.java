@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -243,6 +244,7 @@ public class LogicBusApp implements WebApp {
 				}
 			}catch (Exception ex){
 				logger.error("Failed to execute script:" + script);
+				logger.error(ExceptionUtils.getStackTrace(ex));
 			}
 		}		
 	}
@@ -262,6 +264,7 @@ public class LogicBusApp implements WebApp {
 				}
 			}catch (Exception ex){
 				logger.error("Failed to execute script:" + script);
+				logger.error(ExceptionUtils.getStackTrace(ex));
 			}
 		}		
 	}

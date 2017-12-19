@@ -48,6 +48,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.8.1 [20170321 duanyy] <br>
  * - 增加配置参数abandonWhenFull,当异步队列满的时候，可选择抛弃后续的数据; <br>
+ * 
+ * @version 1.6.11.3 [20171219 duanyy] <br>
+ * - 修改异步处理的条件，只有数据和handler同时允许异步处理的时候才异步处理 <br>
  */
 public abstract class AbstractHandler<data extends Flowable> implements Handler<data> {
 	
@@ -257,7 +260,7 @@ public abstract class AbstractHandler<data extends Flowable> implements Handler<
 		}
 		if (isRunning){
 			//只有在running状体下才执行
-			if (async && asyncWorker != null){
+			if (_data.isAsync() && async && asyncWorker != null){
 				asyncWorker.handle(_data,timestamp);
 			}else{
 				onHandle(_data,timestamp);

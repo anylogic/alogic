@@ -21,3 +21,10 @@ alogic-1.6.11
 - alogic-auth:AuthGuard在重定向登录页面的时候，支持集群负载均衡;
 - alogic-common:事件处理框架增加xscript相关插件;
 - alogic-core:将事件处理框架作为内置组件;
+
+### 1.6.11.3 [20171219 duanyy]
+
+- alogic-auth:集群模式可通过开关开启;
+- alogic-common:流处理框架可根据数据来设置同步/异步处理模式;
+- alogic-common:增加本地路径下事件处理器的装载器;
+- alogic-together:增加2.0版本的实现;

@@ -1,11 +1,14 @@
 package com.alogic.event;
 
 import java.io.InputStream;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.alogic.event.handler.Debug;
 import com.anysoft.stream.Handler;
 import com.anysoft.util.Factory;
@@ -21,7 +24,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 事件总线
  * 
  * @author yyduan
- *
+ * 
+ * @version 1.6.11.3 [20171219 duanyy] <br>
+ * - 可以创建异步或同步事件 <br>
  */
 public class EventBus extends Factory<Handler<Event>>{
 	/**
@@ -37,7 +42,7 @@ public class EventBus extends Factory<Handler<Event>>{
 	/**
 	 * 缺省的配置文件路径
 	 */
-	public static final String DEFAULT = "java://com/alogic/event/event.handler.xml#" + EventBus.class.getName();
+	public static final String DEFAULT = "java:///com/alogic/event/event.handler.xml#" + EventBus.class.getName();
 	
 	/**
 	 * 获取缺省的Handler
@@ -101,8 +106,8 @@ public class EventBus extends Factory<Handler<Event>>{
 	 * @param id　事件id
 	 * @param type 事件类型
 	 */
-	public static Event newEvent(String id,String type){
-		return new Event.Default(id, type);
+	public static Event newEvent(String id,String type,boolean async){
+		return new Event.Default(StringUtils.isEmpty(id)?newId():id, type,async);
 	}
 	
 	/**
@@ -110,8 +115,8 @@ public class EventBus extends Factory<Handler<Event>>{
 	 * @param type　事件类型
 	 * @return　事件实例
 	 */
-	public static Event newEvent(String type){
-		return new Event.Default(newId(), type);
+	public static Event newEvent(String type,boolean async){
+		return new Event.Default(newId(), type,async);
 	}
 	
 	/**
