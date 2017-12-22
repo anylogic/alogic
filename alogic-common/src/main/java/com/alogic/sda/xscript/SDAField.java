@@ -16,6 +16,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @author yyduan
  * @since 1.6.10.8
+ * 
+ * @version 1.6.11.4 [20171222 duanyy] <br>
+ * - field参数不配置的情况下，取值同id参数<br>
  */
 public class SDAField extends AbstractLogiclet {
 	protected String pid;	
@@ -48,7 +51,7 @@ public class SDAField extends AbstractLogiclet {
 	protected void onExecute(SecretDataArea sda, XsObject root, XsObject current,
 			LogicletContext ctx, ExecuteWatcher watcher){
 		String varId = PropertiesConstants.transform(ctx, id, "");
-		String fieldId = PropertiesConstants.transform(ctx, field, "");
+		String fieldId = PropertiesConstants.transform(ctx, field, varId);
 		if (StringUtils.isNotEmpty(varId) && StringUtils.isNotEmpty(fieldId)){
 			String dftValue = PropertiesConstants.transform(ctx, dft, "");
 			ctx.SetValue(varId, sda.getField(fieldId, dftValue));

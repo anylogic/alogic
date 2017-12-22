@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -19,6 +20,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
@@ -46,6 +48,8 @@ import com.anysoft.util.resource.ResourceFactory;
  * @version 1.6.10.6 [20171114 duanyy] <br>
  * - 优化日志输出  <br>
  * 
+ * @version 1.6.11.4 [20171222 duanyy] <br>
+ * - 增加Hot实现 <br>
  */
 public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable,Reportable{
 	
@@ -362,18 +366,39 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 	public static class Container<O extends Loadable> extends Sinkable<O>{
 
 		private Map<String,O> objects = new ConcurrentHashMap<String,O>();
-		
+	
+		/**
+		 * 向缓存加入对象
+		 * @param id 对象id
+		 * @param o 对象
+		 */
 		public void add(String id,O o){
 			objects.put(id, o);
 		}
 		
+		/**
+		 * 从缓存中删除对象
+		 * @param id 对象
+		 */
 		public void remove(String id){
 			objects.remove(id);
 		}
 		
+		/**
+		 * 清楚缓存所有对象
+		 */
 		public void clear(){
 			objects.clear();
 		}
+		
+		/**
+		 * 获取缓存中的对象
+		 * @param id 对象id
+		 * @return 对象实例
+		 */
+		public O get(String id){
+			return objects.get(id);
+		}		
 		
 		@Override
 		protected O loadFromSelf(String id, boolean cacheAllowed) {
@@ -522,6 +547,162 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 				IOTools.closeStream(in);
 			}
 			return loader;
+		}
+	}
+	
+	/**
+	 * 热部署Loader
+	 * @author yyduan
+	 *
+	 * @param <O>
+	 */
+	public static abstract class Hot<O extends Loadable> extends Loader.Abstract<O> implements Runnable{
+		/**
+		 * 监听器
+		 */
+		private List<Watcher<O>> watchers = new ArrayList<Watcher<O>>();
+		
+		/**
+		 * 扫描线程池
+		 */
+		private ScheduledThreadPoolExecutor threadPool = new ScheduledThreadPoolExecutor(1);
+		
+		/**
+		 * 扫描间隔，缺省:60s
+		 */
+		private long interval = 60;
+		
+		/**
+		 * 线程启动延迟，缺省:60s
+		 */
+		private long delay = 60;
+		
+		/**
+		 * 缓存的对象
+		 */
+		private Map<String,O> objects = new ConcurrentHashMap<String,O>();
+		
+		/**
+		 * 向缓存加入对象
+		 * @param id 对象id
+		 * @param o 对象
+		 */
+		protected void add(String id,O o){
+			objects.put(id, o);
+		}
+		
+		/**
+		 * 从缓存中删除对象
+		 * @param id 对象
+		 */
+		protected void remove(String id){
+			objects.remove(id);
+		}
+		
+		/**
+		 * 清楚缓存所有对象
+		 */
+		protected void clear(){
+			objects.clear();
+		}
+		
+		/**
+		 * 获取缓存中的对象
+		 * @param id 对象id
+		 * @return 对象实例
+		 */
+		protected O get(String id){
+			return objects.get(id);
+		}
+		
+		/**
+		 * 缓存中是否包含指定id的对象
+		 * @param id 对象id
+		 * @return 是否包含指定id的对象
+		 */
+		protected boolean contain(String id){
+			return objects.containsKey(id);
+		}
+		
+		@Override
+		public void addWatcher(Watcher<O> watcher) {
+			super.addWatcher(watcher);
+			watchers.add(watcher);
+		}
+		
+		@Override
+		public void removeWatcher(Watcher<O> watcher) {
+			super.removeWatcher(watcher);
+			watchers.remove(watcher);
+		}
+		
+		@Override
+		public void configure(Properties p) {
+			super.configure(p);
+			
+			//初次加载
+			doLoad(true);
+			
+			//启动扫描线程
+			threadPool.scheduleAtFixedRate(this, delay, interval, TimeUnit.SECONDS);
+		}
+		
+		/**
+		 * 执行扫描加载过程
+		 * @param first 是否第一次加载
+		 */
+		protected abstract void doLoad(boolean first);
+
+		@Override
+		public void run(){
+			doLoad(false);
+		}
+
+		@Override
+		public O load(String id, boolean cacheAllowed) {
+			return get(id);
+		}
+		
+		/**
+		 * 触发对象增加事件
+		 * @param id 对象id
+		 * @param o 对象实例
+		 */
+		protected void fireAdded(String id,O o){
+			for (Watcher<O> w:watchers){
+				w.added(id, o);
+			}
+		}
+		
+		/**
+		 * 触发对象被删除事件
+		 * @param id 对象id
+		 * @param o 对象实例
+		 */
+		protected void fireRemove(String id,O o){
+			for (Watcher<O> w:watchers){
+				w.removed(id, o);
+			}
+		}
+		
+		/**
+		 * 触发对象变更事件
+		 * @param id 对象id
+		 * @param o 对象实例
+		 */
+		protected void fireChanged(String id,O o){
+			for (Watcher<O> w:watchers){
+				w.changed(id, o);
+			}
+		}
+		
+		/**
+		 * 触发所有对象变更事件
+		 */
+		protected void fireAllChanged(){
+			for (Watcher<O> w:watchers){
+				w.allChanged();
+			}
 		}
 	}
 	

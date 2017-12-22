@@ -52,6 +52,8 @@ import com.anysoft.util.code.CoderFactory;
  * @version 1.6.10.8 [20171122 duanyy] <br>
  * - 支持用户名密码等信息实时从SDA获取 <br>
  * 
+ * @version 1.6.11.4 [20171222 duanyy] <br>
+ * - 优化异常输出信息<br>
  */
 public class ConnectionModel implements Cacheable{
 	/**
@@ -328,6 +330,11 @@ public class ConnectionModel implements Cacheable{
 	 */
 	public Connection newConnection(){
 		Connection conn = null;
+		String _driver = driver;
+		String _url = url;
+		String _username = username;
+		String _password = password;
+		
 		try {
 			ClassLoader cl = Settings.getClassLoader();
 			SecretDataArea sda = null;
@@ -342,29 +349,29 @@ public class ConnectionModel implements Cacheable{
 			}
 			
 			if (sda != null){
-				String _driver = sda.getField("driver", driver);
-				String _url = sda.getField("url", url);
-				String _username = sda.getField("username", username);
-				String _password = sda.getField("password", password);
-				
-				Class.forName(_driver,true,cl);
-				conn = DriverManager.getConnection(_url, _username,_password);
+				_driver = sda.getField("driver", _driver);
+				_url = sda.getField("url", _url);
+				_username = sda.getField("username", _username);
+				_password = sda.getField("password", _password);
 			}else{
-				String _password = password;
 				if (StringUtils.isNotEmpty(coder)){
 					//通过coder进行密码解密
 					try {
 						Coder _coder = CoderFactory.newCoder(coder);
-						_password = _coder.decode(password, username);
+						_password = _coder.decode(_password, _username);
 					}catch (Exception ex){
 						logger.error("Can not find coder:" + coder);
 					}
-				}				
-				Class.forName(driver, true, cl);
-				conn = DriverManager.getConnection(url, username, _password);				
+				}							
 			}
+			Class.forName(_driver,true,cl);
+			conn = DriverManager.getConnection(_url, _username,_password);
 		}catch (Exception ex){
-			logger.error("Can not create a connection to " + url,ex);
+			logger.error("Can not create db connection.");
+			logger.error(String.format("Driver=%s",_driver));
+			logger.error(String.format("URL=%s",_url));
+			logger.error(String.format("USER=%s/%s",_username,_password));
+			logger.error(ExceptionUtils.getStackTrace(ex));
 		}		
 		return conn;
 	}	

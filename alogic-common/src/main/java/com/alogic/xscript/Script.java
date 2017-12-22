@@ -6,19 +6,23 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.log.Default;
 import com.alogic.xscript.log.LogInfo;
 import com.alogic.xscript.plugins.Segment;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Settings;
+import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
 
 /**
  * Script
  * @author duanyy
- *
+ * 
+ * @version 1.6.11.4 [20171222 duanyy] <br>
+ * - 增加Container辅助插件<br>
  */
 public class Script extends Segment {
 	public Script(String tag, Logiclet p) {
@@ -110,5 +114,40 @@ public class Script extends Segment {
 		}
 		
 		return script;			
+	}
+	
+	/**
+	 * 脚本容器
+	 * @author yyduan
+	 *
+	 */
+	public static class Container extends AbstractLogiclet{
+		protected Script script = null;
+		
+		public Container(String tag, Logiclet p) {
+			super(tag, p);
+		}
+		
+		@Override
+		public void configure(Element e, Properties p) {
+			Properties props = new XmlElementProperties(e,p);
+			
+			Element elem = XmlTools.getFirstElementByPath(e, "script");
+			if (elem != null){
+				script = new Script("script",this);
+				script.configure(elem, props);
+			}else{
+				logger.error("Can not find script element in " + XmlTools.node2String(e));
+			}
+			
+			configure(props);
+		}
+		
+		@Override
+		public void execute(XsObject root,XsObject current,LogicletContext ctx,ExecuteWatcher watcher){
+			if (script != null){
+				script.execute(root, current, ctx, watcher);
+			}
+		}
 	}
 }

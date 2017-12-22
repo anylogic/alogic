@@ -17,6 +17,9 @@ import com.anysoft.util.XmlElementProperties;
  * @author yyduan
  *
  * @since 1.6.8.3
+ * 
+ * @version 1.6.11.4 [20171222 duanyy] <br>
+ * - 增加Null实现 <br>
  */
 public interface FailoverController extends Configurable,XMLConfigurable,Reportable{
 	
@@ -62,5 +65,31 @@ public interface FailoverController extends Configurable,XMLConfigurable,Reporta
 				JsonTools.setString(json,"module",getClass().getName());
 			}
 		}
+	}
+	
+	/**
+	 * Null实现
+	 * @author yyduan
+	 *
+	 */
+	public static class Null extends Abstract{
+
+		@Override
+		public boolean isActive() {
+			return true;
+		}
+
+		@Override
+		public void start(FailoverListener listener) {
+		}
+
+		@Override
+		public void stop() {
+		}
+
+		@Override
+		public void configure(Properties p) {
+		}
+		
 	}
 }

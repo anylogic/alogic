@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gateway
+	gw.tlog = "${tracer.servant.enable}"
+	gw.acm = "${acm.enable}"
+>
+	<api loader="com.alogic.gw.loader.FromInner">
+		<service id="default" acGroupId="app" backendApp="${server.app}" backendPath="/Default"/>
+	</api>
+</gateway>

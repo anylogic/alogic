@@ -1,5 +1,6 @@
 package com.logicbus.backend.message;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.IOTools;
 import com.anysoft.util.JsonTools;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
@@ -44,6 +46,9 @@ import com.logicbus.backend.server.http.HttpContext;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.11.4 [20171222 duanyy] <br>
+ * - 缺省上传目录设定到ketty.temp.home<br>
  */
 public class MultiPartForm implements Message {
 	/**
@@ -85,7 +90,15 @@ public class MultiPartForm implements Message {
 					factory = (FileItemFactory)settings.get(ID);
 					
 					if (factory == null){
-						factory = new DiskFileItemFactory(); 
+						File repos = new File(
+								PropertiesConstants.getString(settings, "http.upload.home", "${ketty.temp.home}/upload")
+								);
+						if (!repos.exists()){
+							repos.mkdirs();
+						}
+						factory = new DiskFileItemFactory(
+								PropertiesConstants.getInt(settings, "http.upload.threshold", DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD * 10),
+								repos); 
 					}
 				}
 			}

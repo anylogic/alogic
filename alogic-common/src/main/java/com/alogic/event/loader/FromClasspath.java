@@ -32,6 +32,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.11.2 [20171218 duanyy] <br>
  * - 增加扫描路径时的日志 <br>
+ * 
+ * @version 1.6.11.4 [20171222 duanyy] <br>
+ * - 修正资源无法找到的错误 <br>
  */
 public class FromClasspath extends Loader.Abstract<Process>{
 	/**
@@ -133,7 +136,7 @@ public class FromClasspath extends Loader.Abstract<Process>{
 					String classPath = "/" + name;;
 					InputStream in = null;
 					try {
-						in = clazz.getResourceAsStream(path);
+						in = clazz.getResourceAsStream(classPath);
 						Document doc = XmlTools.loadFromInputStream(in);
 						Process p = new Process.Default();
 						p.configure(doc.getDocumentElement(), Settings.get());

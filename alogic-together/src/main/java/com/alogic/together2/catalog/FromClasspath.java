@@ -33,6 +33,10 @@ import com.logicbus.models.servant.impl.XMLResourceServantCatalog;
  * 
  * @author yyduan
  * @since 1.6.11.3
+ * 
+ * @version 1.6.11.4 [20171222 duanyy] <br>
+ * - 优化异常处理信息 <br>
+ * 
  */
 public class FromClasspath extends XMLResourceServantCatalog{
 	
@@ -60,7 +64,7 @@ public class FromClasspath extends XMLResourceServantCatalog{
 				Class<?> bootstrap = cl.loadClass(clazz);
 				scanResource(new XmlElementProperties(node,Settings.get()),catalogNode,home,bootstrap);
 			}catch (Exception ex){
-				logger.error("Can not load class:" + clazz,ex);
+				logger.error(String.format("Failed to scan resource:%s#%s",home,clazz));
 			}
 		}
 		
@@ -70,30 +74,34 @@ public class FromClasspath extends XMLResourceServantCatalog{
 	protected void scanResource(Properties p,ServantCatalogNodeImpl node, String home, Class<?> bootstrap) {
 		URL url = bootstrap.getResource(home);
 		
-		if(url.toString().startsWith("file:")){
-            File file;
-			try {
-				file = new File(url.toURI());
-			} catch (URISyntaxException e) {
-				logger.error("Can not scan home:" + home,e);
-				return;
-			}
-			scanFileSystem(p,node,home,file,bootstrap);
-        }
-        else{
-        	if (url.toString().startsWith("jar:")){
-	        	JarFile jfile;
-	        	try {
-	        		String jarUrl = url.toString();
-	        		jarUrl = jarUrl.substring(9, jarUrl.indexOf('!'));
-					jfile = new JarFile(jarUrl);
-				} catch (IOException e) {
+		if (url != null){
+			if(url.toString().startsWith("file:")){
+	            File file;
+				try {
+					file = new File(url.toURI());
+				} catch (URISyntaxException e) {
 					logger.error("Can not scan home:" + home,e);
 					return;
 				}
-	        	scanJar(p,node,home,jfile,bootstrap);
-        	}
-        }
+				scanFileSystem(p,node,home,file,bootstrap);
+	        }
+	        else{
+	        	if (url.toString().startsWith("jar:")){
+		        	JarFile jfile;
+		        	try {
+		        		String jarUrl = url.toString();
+		        		jarUrl = jarUrl.substring(9, jarUrl.indexOf('!'));
+						jfile = new JarFile(jarUrl);
+					} catch (IOException e) {
+						logger.error("Can not scan home:" + home,e);
+						return;
+					}
+		        	scanJar(p,node,home,jfile,bootstrap);
+	        	}
+	        }
+		}else{
+			logger.warn(String.format("Can not find resource in %s#%s", home,bootstrap.getName()));
+		}
 	}
 
 	protected void scanJar(Properties p,ServantCatalogNodeImpl node, String home, JarFile jfile,Class<?> bootstrap) {
@@ -130,7 +138,7 @@ public class FromClasspath extends XMLResourceServantCatalog{
 		Path childPath = node.getPath().append(id);
 		ServiceDescription sd = loadServiceDescription(id,childPath.getPath(),src,bootstrap,p);
 		if (sd != null){
-			logger.info(String.format("Service %s-%s is found.", sd.getPath(),sd.getServiceID()));
+			logger.info(String.format("Service %s is found.", sd.getPath(),sd.getServiceID()));
 			node.addService(sd.getServiceID(), sd);
 		}
 	}

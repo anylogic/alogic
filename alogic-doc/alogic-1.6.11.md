@@ -28,3 +28,10 @@ alogic-1.6.11
 - alogic-common:流处理框架可根据数据来设置同步/异步处理模式;
 - alogic-common:增加本地路径下事件处理器的装载器;
 - alogic-together:增加2.0版本的实现;
+
+### 1.6.11.4 [20171222 duanyy]
+
+- alogic-auth:SessionAccessController将当前用户id写入到上下文；
+- alogic-common:Loader框架增加Hot实现，用于热部署场景下的加载;
+- alogic-common:tlog框架增加服务统计插件;
+- alogic-rpc:增加gateway功能；
