@@ -35,3 +35,7 @@ alogic-1.6.11
 - alogic-common:Loader框架增加Hot实现，用于热部署场景下的加载;
 - alogic-common:tlog框架增加服务统计插件;
 - alogic-rpc:增加gateway功能；
+
+### 1.6.11.5 [20171227 duanyy]
+
+- alogic-common:新增uid框架，作为全局序列号的实现，替代alogic-seq

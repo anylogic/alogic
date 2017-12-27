@@ -1,0 +1,6 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<uid-gen>
+	<context module="com.alogic.uid.naming.Inner">
+		<uid id="default" module="com.alogic.uid.impl.Simple"/>
+	</context>
+</uid-gen>

@@ -73,7 +73,7 @@ public class DBTools {
 		if (isNotNull(s)) {
 			try {
 				value = Long.valueOf(s);
-			}catch (Exception ex){
+			}catch (NumberFormatException ex){
 			}
 		}
 		return value;
@@ -93,7 +93,7 @@ public class DBTools {
 		if (isNotNull(s)) {
 			try {
 				value = Integer.valueOf(s);
-			}catch (Exception ex){
+			}catch (NumberFormatException ex){
 			}
 		}
 		return value;
