@@ -7,6 +7,8 @@ import com.anysoft.util.Properties;
  * 
  * @author duanyy
  * @since 1.6.4.6
+ * 
+ * @deprecated
  */
 public interface DataGuard {
 	

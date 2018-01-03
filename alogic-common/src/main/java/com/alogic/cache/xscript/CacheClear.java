@@ -2,7 +2,9 @@ package com.alogic.cache.xscript;
 
 
 import org.apache.commons.lang3.StringUtils;
-import com.alogic.cache.core.CacheStore;
+
+import com.alogic.cache.CacheObject;
+import com.alogic.load.Store;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
@@ -14,6 +16,9 @@ import com.anysoft.util.PropertiesConstants;
  * CacheClear
  * 
  * @since 1.6.10.5
+ * 
+ * @version 1.6.11.6 [20180103 duanyy] <br>
+ * - 从alogic-cache中迁移过来
  */
 public class CacheClear extends CacheOperation{
 	protected String id = "id";
@@ -29,11 +34,11 @@ public class CacheClear extends CacheOperation{
 	}
 
 	@Override
-	protected void onExecute(CacheStore cache, XsObject root,XsObject current, LogicletContext ctx,
+	protected void onExecute(Store<CacheObject> cache, XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		String idValue = ctx.transform(id);
 		if (StringUtils.isNotEmpty(idValue)){
-			cache.expire(idValue);
+			cache.del(idValue);
 		}
 	}
 

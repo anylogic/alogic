@@ -24,6 +24,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.4.23 [20160114 duanyy] <br>
  * - 修改权限模型 <br>
+ * 
+ * @deprecated
  */
 public abstract class Base extends AbstractServant {
 	/**

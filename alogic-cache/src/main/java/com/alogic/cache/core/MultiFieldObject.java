@@ -35,6 +35,8 @@ import com.anysoft.util.JsonTools;
  * 
  * @version 1.6.5.32 [duanyy 20160721] <br>
  * - 修正set接口的bug <br>
+ * 
+ * @deprecated
  */
 public interface MultiFieldObject extends Cacheable,DataProvider {
 	/**

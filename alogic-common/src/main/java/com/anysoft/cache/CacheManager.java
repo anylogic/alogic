@@ -40,6 +40,8 @@ import com.anysoft.util.WatcherHub;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @deprecated
  */
 public class CacheManager<D1 extends Cacheable> extends Manager<D1> 
 implements Provider<D1>,Watcher<D1> {

@@ -44,6 +44,8 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.4.20 [20151222 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @deprecated
  */
 public class SimpleModel extends Properties implements Cacheable {
 	protected String id = "";

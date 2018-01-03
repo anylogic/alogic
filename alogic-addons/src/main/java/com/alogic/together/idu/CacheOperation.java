@@ -20,6 +20,8 @@ import com.logicbus.backend.ServantException;
  * @author duanyy
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
+ * @deprecated
  */
 public abstract class CacheOperation extends AbstractLogiclet{
 	protected String cacheConn = "cacheConn";

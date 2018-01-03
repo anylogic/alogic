@@ -9,7 +9,7 @@ import com.anysoft.context.Inner;
  * 
  * @author duanyy
  * @since 1.6.3.3
- * 
+ * @deprecated
  */
 public class InnerContext extends Inner<CacheStore> {
 

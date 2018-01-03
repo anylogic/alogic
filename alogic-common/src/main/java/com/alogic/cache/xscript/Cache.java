@@ -1,16 +1,18 @@
 package com.alogic.cache.xscript;
 
 import org.apache.commons.lang3.StringUtils;
-import com.alogic.cache.context.CacheSource;
-import com.alogic.cache.core.CacheStore;
+
+import com.alogic.cache.CacheObject;
+import com.alogic.cache.naming.CacheStoreFactory;
+import com.alogic.load.Store;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.plugins.Segment;
+import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-import com.logicbus.backend.ServantException;
 
 /**
  * 缓存作用域
@@ -18,11 +20,12 @@ import com.logicbus.backend.ServantException;
  * @author duanyy
  *
  * @since 1.6.10.5
- * 
+ * @version 1.6.11.6 [20180103 duanyy] <br>
+ * - 从alogic-cache中迁移过来
  */
 public class Cache extends Segment {
 	protected String cacheId;
-	protected String cacheConn = "cacheConn";
+	protected String cid = "$cache";
 	
 	public Cache(String tag, Logiclet p) {
 		super(tag, p);
@@ -30,33 +33,33 @@ public class Cache extends Segment {
 		registerModule("cache",Cache.class);
 		registerModule("cache-expire",CacheClear.class);
 		registerModule("cache-load",CacheQuery.class);
+		registerModule("cache-locate",CacheLocate.class);
+		registerModule("cache-hget",CacheHashGet.class);
 	}
 
 	@Override
 	public void configure(Properties p){
 		cacheId = PropertiesConstants.getString(p,"cacheId",cacheId);
-		cacheConn = PropertiesConstants.getString(p,"cacheConn",cacheConn);
+		cid = PropertiesConstants.getString(p,"cid",cid);
 	}
 	
 	@Override
 	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		if (StringUtils.isEmpty(cacheId)){
-			throw new ServantException("core.e1003","The relational cache is not defined");
+			throw new BaseException("core.e1003","The relational cache is not defined");
 		}
 		
-		CacheSource cs = CacheSource.get();
-		
-		CacheStore store = cs.get(cacheId);
+		Store<CacheObject> store = CacheStoreFactory.get(cacheId);
 		
 		if (store == null){
-			throw new ServantException("core.e1003","The cache is not found,cacheId=" + cacheId);
+			throw new BaseException("core.e1003","The cache is not found,cacheId=" + cacheId);
 		}
-		ctx.setObject(cacheConn, store);
+		ctx.setObject(cid, store);
 		try {
 			super.onExecute(root, current, ctx, watcher);
 		}finally{
-			ctx.removeObject(cacheConn);
+			ctx.removeObject(cid);
 		}
 	}
 }

@@ -17,7 +17,7 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author duanyy
  * @since 1.6.4.6
- * 
+ * @deprecated
  */
 abstract public class IDUBase extends Base {
 	/**

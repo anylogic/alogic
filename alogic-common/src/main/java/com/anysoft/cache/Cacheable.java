@@ -14,6 +14,8 @@ import com.anysoft.util.XmlSerializer;
  * 
  * @version 1.6.3.2 <br> 
  * - 增加方法{@link #expire()},对象可在该方法实现中释放资源<br>
+ * 
+ * @deprecated
  */
 public interface Cacheable extends XmlSerializer,JsonSerializer{
 	

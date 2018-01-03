@@ -21,6 +21,8 @@ import com.logicbus.dbcp.sql.DBTools;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @deprecated
  */
 public class MySQLSequence extends SequenceGenerator.Abstract{
 	protected int stringWidth = 20;

@@ -10,6 +10,8 @@ import com.anysoft.context.XMLResource;
  * 
  * @author duanyy
  * @since 1.6.3.3
+ * 
+ * @deprecated
  */
 public class XRC extends XMLResource<CacheStore>{
 

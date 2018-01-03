@@ -185,7 +185,7 @@ public class DefaultServiceDescription implements ServiceDescription{
 	
 	/**
 	 * 设置服务名称
-	 * @param ｎ name
+	 * @param n name
 	 */
 	public void setName(String n){name = n;}
 	

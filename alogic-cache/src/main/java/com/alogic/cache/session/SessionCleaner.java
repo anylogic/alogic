@@ -14,7 +14,7 @@ import com.logicbus.backend.ServantException;
  * 会话信息清理工具
  * 
  * @author duanyy
- *
+ * @deprecated
  */
 public class SessionCleaner implements HttpSessionListener {
 	protected String cacheId = "sessions";

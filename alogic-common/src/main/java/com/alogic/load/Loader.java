@@ -155,7 +155,7 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 			Properties props = new XmlElementProperties(e,p);
 			configure(props);
 			
-			NodeList nodeList = XmlTools.getNodeListByPath(e, "sink");
+			NodeList nodeList = XmlTools.getNodeListByPath(e, getSinkTag());
 			Factory<Loader<O>> factory = new Factory<Loader<O>>();
 			
 			for (int i = 0 ;i < nodeList.getLength() ; i ++){
@@ -178,6 +178,14 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 				}
 			}
 			
+		}
+		
+		/**
+		 * 获取Sink的tag名
+		 * @return tag名
+		 */
+		protected String getSinkTag(){
+			return "sink";
 		}
 		
 		@Override

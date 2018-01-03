@@ -16,7 +16,7 @@ import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
 
 /**
- * 工程类
+ * 工厂类
  * @author yyduan
  * @since 1.6.11.5
  */

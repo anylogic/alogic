@@ -20,6 +20,8 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.4.19 [duanyy 20151218] <br>
  * - 按照SONAR建议修改代码 <br>
+ * 
+ * @deprecated
  */
 public class XmlData extends MultiFieldObjectProvider.Abstract {
 	protected Element dataElement = null;

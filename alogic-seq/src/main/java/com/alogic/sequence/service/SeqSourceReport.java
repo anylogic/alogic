@@ -20,6 +20,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * @since 1.6.4.4
  * @version 1.6.4.19 [duanyy 20151218] <br>
  * - 按照SONAR建议修改代码 <br>
+ * 
+ * @deprecated
  */
 public class SeqSourceReport extends AbstractServant {
 

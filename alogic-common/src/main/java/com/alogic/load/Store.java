@@ -1,7 +1,13 @@
 package com.alogic.load;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.anysoft.util.Pager;
 
 /**
  * Store
@@ -32,6 +38,13 @@ public interface Store<O extends Loadable> extends Loader<O> {
 	 * @param id 对象id
 	 */
 	public void del(String id);
+	
+	/**
+	 * 遍历Store的内容
+	 * @param result 查询结果 
+	 * @param pager Pager
+	 */
+	public void scan(List<O> result,Pager pager);
 	
 	/**
 	 * 基于本地内存ConcurrentHashMap的Store
@@ -70,6 +83,29 @@ public interface Store<O extends Loadable> extends Loader<O> {
 		@Override
 		public void del(String id){
 			data.remove(id);
+		}
+
+		@Override
+		public void scan(List<O> result,Pager pager) {
+			Collection<O> list = data.values();
+			
+			String keyword = pager.getKeyword();
+			int offset = pager.getOffset();
+			int limit = pager.getLimit();
+			
+			int current = 0;
+			for (O o:list){
+				String id = o.getId();
+				boolean match = StringUtils.isEmpty(pager.getKeyword()) || id.contains(keyword);
+				if (match){
+					if (current >= offset && current < offset + limit){
+						result.add(o);
+					}
+					current ++;
+				}
+			}
+			
+			pager.setAll(data.size()).setTotal(current);
 		}
 	}
 }

@@ -34,6 +34,8 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @deprecated
  */
 public interface MultiFieldObjectProvider extends Provider<MultiFieldObject>,XMLConfigurable,Reportable {
 	

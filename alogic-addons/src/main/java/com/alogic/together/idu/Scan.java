@@ -22,6 +22,8 @@ import com.logicbus.dbcp.sql.DBTools;
  * @author yyduan
  * 
  * @since 1.6.10.1
+ * 
+ * @deprecated
  */
 public class Scan extends Segment{
 	protected String dbconn = "dbconn";

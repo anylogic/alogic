@@ -10,8 +10,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.anysoft.cache.Cacheable;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.StringMatcher;
@@ -40,7 +38,7 @@ import com.anysoft.util.XmlTools;
  * - 增加credentials和verifier属性 <br>
  */
 
-public class AccessControlModel implements Cacheable {
+public class AccessControlModel  {
 	
 	/**
 	 * id

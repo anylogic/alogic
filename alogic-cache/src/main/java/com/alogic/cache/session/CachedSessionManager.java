@@ -29,6 +29,8 @@ import com.logicbus.backend.server.http.HttpContext;
  * @author duanyy
  * @version 1.6.4.43 [20160411 duanyy] <br>
  * - DataProvider增加获取原始值接口 <br>
+ * 
+ * @deprecated
  */
 public class CachedSessionManager extends SessionManager{
 	protected String cacheId = "sessions";

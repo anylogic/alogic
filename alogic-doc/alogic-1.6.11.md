@@ -39,3 +39,10 @@ alogic-1.6.11
 ### 1.6.11.5 [20171227 duanyy]
 
 - alogic-common:新增uid框架，作为全局序列号的实现，替代alogic-seq
+
+### 1.6.11.6 [20180103 duanyy]
+
+- alogic-seq:设置为deprecated
+- alogic-cache:设置为deprecated
+- alogic-common:新增cache框架，用于替代alogic-cache
+- alogic-addons:idu相关的设置为deprecated

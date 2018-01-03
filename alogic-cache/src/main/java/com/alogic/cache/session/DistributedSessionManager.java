@@ -15,7 +15,7 @@ import com.logicbus.backend.Session;
  * 分布式环境下的会话管理器
  * 
  * @author duanyy
- *
+ * @deprecated
  */
 public class DistributedSessionManager extends CachedSessionManager {
 	/**

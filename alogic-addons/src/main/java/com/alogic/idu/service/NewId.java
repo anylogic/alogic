@@ -16,6 +16,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author duanyy
  * @since 1.6.4.6
+ * 
+ * @deprecated
  */
 public class NewId extends IDUBase {
 

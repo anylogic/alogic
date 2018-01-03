@@ -14,6 +14,8 @@ import com.alogic.xscript.plugins.Segment;
  * 
  * @version 1.6.10.1 [duanyy 20170911] <br>
  * - DB和Cache操作增加相应的前缀 <br>
+ * 
+ * @deprecated
  */
 public class IDU extends Segment{
 	public IDU(String tag, Logiclet p) {

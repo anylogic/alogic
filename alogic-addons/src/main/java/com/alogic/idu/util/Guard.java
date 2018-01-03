@@ -12,6 +12,8 @@ import com.anysoft.util.Properties;
  * 
  * @version 1.6.4.23 [20160114 duanyy] <br>
  * - 修改权限模型 <br>
+ * 
+ * @deprecated
  */
 public interface Guard{
 	

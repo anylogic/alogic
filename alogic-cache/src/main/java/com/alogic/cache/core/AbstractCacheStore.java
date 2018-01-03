@@ -30,6 +30,8 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @deprecated
  */
 public abstract class AbstractCacheStore implements CacheStore {
 	/**

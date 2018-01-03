@@ -185,6 +185,8 @@ public class KValueCacheStore extends AbstractCacheStore {
 	 * @author duanyy
 	 * @version 1.6.4.43 [20160411 duanyy] <br>
 	 * - DataProvider增加获取原始值接口 <br>
+	 * 
+	 * @deprecated
 	 */
 	public static class KValueMultiFieldObject implements MultiFieldObject {
 		protected String id;

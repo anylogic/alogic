@@ -18,6 +18,8 @@ import com.anysoft.util.Watcher;
  * - 淘汰load(String)方法
  * @version 1.6.4.17 [20151216 duanyy] <br>
  * - 根据sonar建议优化代码 <br>
+ * 
+ * @deprecated
  */
 public interface Provider<D1 extends Cacheable> {
 	/**

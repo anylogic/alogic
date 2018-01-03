@@ -3,6 +3,11 @@ package com.alogic.sequence.context;
 import com.alogic.sequence.core.SequenceGenerator;
 import com.anysoft.context.Inner;
 
+/**
+ * XmlInner
+ * @author yyduan
+ * @deprecated
+ */
 public class XmlInner extends Inner<SequenceGenerator> {
 
 	@Override

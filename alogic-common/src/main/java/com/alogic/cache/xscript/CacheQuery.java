@@ -7,16 +7,16 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.alogic.cache.core.CacheStore;
-import com.alogic.cache.core.MultiFieldObject;
+import com.alogic.cache.CacheObject;
+import com.alogic.load.Store;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.doc.json.JsonObject;
+import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-import com.logicbus.backend.ServantException;
 
 /**
  * 查询当前缓存中指定id的对象，并输出到当前文档
@@ -24,6 +24,9 @@ import com.logicbus.backend.ServantException;
  * @author duanyy
  * 
  * @since 1.6.10.5
+ * 
+ * @version 1.6.11.6 [20180103 duanyy] <br>
+ * - 从alogic-cache中迁移过来
  */
 public class CacheQuery extends CacheOperation {
 	protected String tag = "data";
@@ -43,7 +46,7 @@ public class CacheQuery extends CacheOperation {
 	}	
 	
 	@Override
-	protected void onExecute(CacheStore cache, XsObject root,XsObject current, LogicletContext ctx,
+	protected void onExecute(Store<CacheObject> cache, XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		String idValue = ctx.transform(id);
 		
@@ -51,9 +54,9 @@ public class CacheQuery extends CacheOperation {
 			if (StringUtils.isNotEmpty(idValue)){
 				@SuppressWarnings("unchecked")
 				Map<String,Object> content = (Map<String,Object>)current.getContent();
-				MultiFieldObject found = cache.get(idValue, true);
+				CacheObject found = cache.load(idValue, true);
 				if (found == null){
-					throw new ServantException("clnt.e2007","Can not find object,id=" + idValue);
+					throw new BaseException("clnt.e2007","Can not find object,id=" + idValue);
 				}
 			
 				if (extend){
@@ -68,9 +71,9 @@ public class CacheQuery extends CacheOperation {
 			}
 		}else{
 			if (StringUtils.isNotEmpty(idValue)){
-				MultiFieldObject found = cache.get(idValue, true);
+				CacheObject found = cache.load(idValue, true);
 				if (found == null){
-					throw new ServantException("core.data_not_found","Can not find object,id=" + idValue);
+					throw new BaseException("core.data_not_found","Can not find object,id=" + idValue);
 				}
 
 				Map<String,Object> result = new HashMap<String,Object>();		

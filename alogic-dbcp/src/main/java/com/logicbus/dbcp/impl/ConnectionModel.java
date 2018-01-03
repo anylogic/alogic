@@ -18,7 +18,6 @@ import org.w3c.dom.NodeList;
 
 import com.alogic.sda.SDAFactory;
 import com.alogic.sda.SecretDataArea;
-import com.anysoft.cache.Cacheable;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
@@ -35,7 +34,7 @@ import com.anysoft.util.code.CoderFactory;
  * @version 1.3.0.2 [20141106 duanyy] <br>
  * - 从XML的id属性中获取name <br>
  * @version 1.6.3.2 [20150213 duanyy] <br>
- * - 接口{@link com.anysoft.cache.Cacheable Cacheable}增加了{@link com.anysoft.cache.Cacheable#expire() Cacheable.expire}方法 <br>
+ * - 接口Cacheable增加了Cacheable.expire方法 <br>
  * 
  * @version 1.6.3.17 [20150413 duanyy] <br>
  * - 增加控制属性timeout <br>
@@ -55,7 +54,7 @@ import com.anysoft.util.code.CoderFactory;
  * @version 1.6.11.4 [20171222 duanyy] <br>
  * - 优化异常输出信息<br>
  */
-public class ConnectionModel implements Cacheable{
+public class ConnectionModel{
 	/**
 	 * a logger of log4j
 	 */

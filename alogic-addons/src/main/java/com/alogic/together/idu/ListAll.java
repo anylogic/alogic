@@ -27,7 +27,7 @@ import com.logicbus.dbcp.sql.DBTools;
  * 
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
- * 
+ * @deprecated
  */
 public class ListAll extends DBOperation{
 	protected String tag = "data";

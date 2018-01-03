@@ -15,6 +15,8 @@ import com.anysoft.util.PropertiesConstants;
  * @author yyduan
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
+ * @deprecated
  */
 public class CacheClear extends CacheOperation{
 	protected String id = "id";

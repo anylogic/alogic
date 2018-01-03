@@ -30,7 +30,7 @@ import com.logicbus.dbcp.sql.RowRenderer;
  * 
  * @version 1.6.9.3 [20170615 duanyy] <br>
  * - 修正在查询记录为空时的异常问题
- * 
+ * @deprecated
  */
 public class Query extends DBOperation{
 	protected String tag = "data";

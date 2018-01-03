@@ -13,6 +13,8 @@ import com.anysoft.util.XMLConfigurable;
  * 
  * @version 1.6.4.9 [20151023 duanyy] <br>
  * - 缓存接口增加set方法 <br>
+ * 
+ * @deprecated
  */
 public interface CacheStore extends Provider<MultiFieldObject>,XMLConfigurable,Reportable {
 	
