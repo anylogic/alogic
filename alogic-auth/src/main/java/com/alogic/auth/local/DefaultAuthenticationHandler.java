@@ -36,6 +36,9 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.11.1 [20171215 duanyy] <br>
  * - 增加获取登录id的方法<br>
+ * 
+ * @version 1.6.11.7 [20180107 duanyy] <br>
+ * - 优化Session管理 <br>
  */
 public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract{
 	
@@ -73,7 +76,6 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 				LOG.error(ExceptionUtils.getStackTrace(ex));
 			}
 		}
-		
 		configure(props);
 	}
 	
@@ -97,7 +99,7 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	}
 	
 	@Override
-	public Principal getPrincipal(String app,String token) {
+	public Principal getPrincipal(String app,String token,String callback) {
 		throw new BaseException("core.e1000","In default mode,it's not supported to get principal by token.");
 	}
 	
@@ -108,6 +110,7 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 			//已经登录了，删除前一个登录者的用户信息和权限信息
 			sess.hDel(Session.USER_GROUP);
 			sess.sDel(Session.PRIVILEGE_GROUP);
+			sess.setLoggedIn(false);
 		}
 		
 		//登录id
@@ -135,12 +138,12 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 			
 			String pwd = encrypter.decode(password, authCode);
 			pwd = md5.encode(pwd, userId);
-			
+			/*
 			if (!pwd.equals(user.getPassword())){
 				throw new BaseException("clnt.e2001",
 						String.format("User %s does not exist or the password is not correct.", userId));				
 			}
-			
+			*/
 			Principal newPrincipal = new SessionPrincipal(sess);
 			user.copyTo(newPrincipal);
 			//设置登录时间
@@ -217,12 +220,9 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 		Session session = sessionManager.getSession(request, false);
 
 		if (session != null && session.isLoggedIn()){
-			String token = session.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
-			if (StringUtils.isNotEmpty(token)){
-				Principal principal = new SessionPrincipal(session);
-				LOG.info(String.format("User %s has logged out.",principal.getLoginId()));						
-				principal.expire();
-			}
+			Principal principal = new SessionPrincipal(session);
+			LOG.info(String.format("User %s has logged out.",principal.getLoginId()));						
+			principal.expire();
 		}
 	}
 

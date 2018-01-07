@@ -1,51 +1,42 @@
 package com.alogic.auth;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.w3c.dom.Element;
-
-import com.anysoft.util.BaseException;
-import com.anysoft.util.Properties;
-import com.anysoft.util.XmlElementProperties;
-import com.logicbus.backend.Context;
-import com.logicbus.backend.server.http.HttpContext;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 利用LocalSession实现的SessionManager
  * 
  * @author duanyy
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.7 [20180107 duanyy] <br>
+ * - 优化Session管理 <br>
  */
-public class LocalSessionManager implements SessionManager{
+public class LocalSessionManager extends SessionManager.Abstract{
+	
+	/**
+	 * Sessions
+	 */
+	protected Map<String,Session> sessions = new ConcurrentHashMap<String,Session>();
 
 	@Override
-	public void configure(Properties p) {
-		
-	}
-
-	@Override
-	public void configure(Element e, Properties p) {
-		XmlElementProperties props = new XmlElementProperties(e,p);
-		configure(props);
-	}
-
-	@Override
-	public Session getSession(Context ctx, boolean create) {
-		if (!(ctx instanceof HttpContext)){
-			throw new BaseException("core.e1002","The Context is not a HttpContext instance.");
+	public Session getSession(String sessionId, boolean create) {
+		Session sess = sessions.get(sessionId);
+		if (sess == null && create){
+			synchronized(this){
+				sess = sessions.get(sessionId);
+				if (sess == null){
+					sess = new LocalSession(sessionId,this);
+					sessions.put(sessionId, sess);
+				}
+			}
 		}
-		
-		HttpContext httpContext = (HttpContext)ctx;
-		HttpServletRequest request = httpContext.getRequest();
-
-		return getSession(request,create);
+		return sess;
 	}
 
 	@Override
-	public Session getSession(HttpServletRequest request, boolean create) {
-		HttpSession session = request.getSession(create);
-		return session == null?null:new LocalSession(session);
+	public void delSession(String sessionId) {
+		sessions.remove(sessionId);
 	}
-
+	
 }

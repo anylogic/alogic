@@ -30,6 +30,9 @@ import com.anysoft.util.XmlTools;
  * @author yyduan
  * @version 1.6.11.1 [20171215 duanyy] <br>
  * - 增加获取登录id的方法<br>
+ * 
+ * @version 1.6.11.7 [20180107 duanyy] <br>
+ * - 优化Session管理 <br>
  */
 public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	/**
@@ -150,7 +153,7 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	}
 
 	@Override
-	public Principal getPrincipal(String app, String token) {
+	public Principal getPrincipal(String app, String token,String callback) {
 		throw new BaseException("core.e1000","In sso client mode,it's not supported to get principal by token.");
 	}
 

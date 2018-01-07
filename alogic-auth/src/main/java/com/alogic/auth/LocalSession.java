@@ -8,9 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
@@ -19,6 +16,7 @@ import com.anysoft.util.JsonTools;
 import com.anysoft.util.Pair;
 import com.anysoft.util.StringMatcher;
 import com.anysoft.util.XmlTools;
+import com.alogic.load.Loadable;
 
 /**
  * 本地服务的Session
@@ -28,20 +26,35 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.7 [20180107 duanyy] <br>
+ * - 优化Session管理 <br>
  */
-public class LocalSession implements Session{
-		
-	/**
-	 * HttpSession代理
-	 */
-	private HttpSession httpSession = null;
+public class LocalSession extends Loadable.Abstract implements Session{
 	
 	/**
-	 * 通过一个HttpSession来构造
-	 * @param session HttpSession
+	 * Session Id
 	 */
-	public LocalSession(HttpSession session){
-		this.httpSession = session;
+	protected String id;	
+	
+	/**
+	 * Session管理器
+	 */
+	protected SessionManager sm = null;
+	
+	/**
+	 * Set组
+	 */
+	protected Map<String,Set<String>> setGroups = null;
+	
+	/**
+	 * Hash组
+	 */
+	protected Map<String,Map<String,String>> hashGroups = null;
+	
+	public LocalSession(String id,SessionManager sm){
+		this.id = id;
+		this.sm = sm;
 	}
 	
 	@Override
@@ -54,16 +67,30 @@ public class LocalSession implements Session{
 		this.hSet(DEFAULT_GROUP,LOGIN_KEY, BooleanUtils.toStringTrueFalse(loggedIn), true);
 	}
 	
-	@Override
-	public void setAttribute(String name, Object value) {
-		this.httpSession.setAttribute(name, value);
-	}
-
-	@Override
-	public Object getAttribute(String name) {
-		return this.httpSession.getAttribute(name);
+	protected Map<String,Set<String>> getSetGroup(boolean create){
+		if (setGroups == null && create){
+			synchronized (this){
+				if (setGroups == null){
+					setGroups = new ConcurrentHashMap<String,Set<String>>();
+				}
+			}
+		}
+		
+		return setGroups;
 	}
 	
+	protected Map<String,Map<String,String>> getHashGroup(boolean create){
+		if (hashGroups == null && create){
+			synchronized (this){
+				if (hashGroups == null){
+					hashGroups = new ConcurrentHashMap<String,Map<String,String>>();
+				}
+			}
+		}
+		
+		return hashGroups;
+	}
+
 	/**
 	 * 获取内置的setObject
 	 * 
@@ -74,19 +101,23 @@ public class LocalSession implements Session{
 	 * @param create 当不存在时是否创建
 	 * @return 内置的setObject
 	 */
-	@SuppressWarnings("unchecked")
-	protected Set<String> getSetObject(String group,boolean create){
-		Object setObject = httpSession.getAttribute(group);
-		if (setObject == null && create){
-			synchronized(this){
-				setObject = httpSession.getAttribute(group);
-				if (setObject == null){
-					setObject = Collections.newSetFromMap(new ConcurrentHashMap<String,Boolean>());
-					httpSession.setAttribute(group, setObject);
+	protected Set<String> getSetObject(String group,boolean create){		
+		Set<String> setObject = null;
+		
+		Map<String,Set<String>> groups = getSetGroup(create);
+		if (groups != null){
+			setObject = groups.get(group);
+			if (setObject == null && create){
+				synchronized(this){
+					setObject = groups.get(group);
+					if (setObject == null){
+						setObject = Collections.newSetFromMap(new ConcurrentHashMap<String,Boolean>());
+						groups.put(group, setObject);
+					}
 				}
 			}
 		}
-		return (Set<String>) setObject;
+		return setObject;
 	}
 	
 	/**
@@ -99,15 +130,19 @@ public class LocalSession implements Session{
 	 * @param create 当不存在时是否创建
 	 * @return 内置的mapObject
 	 */
-	@SuppressWarnings("unchecked")
 	protected  Map<String,String> getMapObject(String group,boolean create){
-		Object mapObject = httpSession.getAttribute(group);
-		if (mapObject == null){
-			synchronized(this){
-				mapObject = httpSession.getAttribute(group);
-				if (mapObject == null){
-					mapObject = new ConcurrentHashMap<String,String>();
-					httpSession.setAttribute(group, mapObject);
+		Map<String,String> mapObject = null;
+		
+		Map<String,Map<String,String>> groups = getHashGroup(create);
+		if (groups != null){
+			mapObject = groups.get(group);
+			if (mapObject == null){
+				synchronized(this){
+					mapObject = groups.get(group);
+					if (mapObject == null){
+						mapObject = new ConcurrentHashMap<String,String>();
+						groups.put(group, mapObject);
+					}
 				}
 			}
 		}
@@ -183,22 +218,13 @@ public class LocalSession implements Session{
 
 	@Override
 	public String getId() {
-		return httpSession.getId();
-	}
-
-	@Override
-	public long getTimestamp() {
-		return httpSession.getLastAccessedTime();
-	}
-
-	@Override
-	public boolean isExpired() {
-		return false;
+		return id;
 	}
 
 	@Override
 	public void expire() {
-		httpSession.invalidate();
+		super.expire();
+		sm.delSession(getId());
 	}
 
 	@Override

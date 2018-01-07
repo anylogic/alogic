@@ -25,6 +25,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.11.1 [20171215 duanyy] <br>
  * - 修正退出登录方法<br>
+ * 
+ * @version 1.6.11.7 [20180107 duanyy] <br>
+ * - 优化Session管理 <br>
  */
 public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	
@@ -117,8 +120,8 @@ public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	}
 	
 	@Override
-	public Principal getPrincipal(String app,String token) {
-		return authHandler.getPrincipal(app,token);
+	public Principal getPrincipal(String app,String token,String callback) {
+		return authHandler.getPrincipal(app,token,callback);
 	}
 	
 	@Override
@@ -154,6 +157,16 @@ public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	@Override
 	public void logout(HttpServletRequest request) {
 		authHandler.logout(request);
+	}
+
+	@Override
+	public Session getSession(String sessionId,boolean create) {
+		return sessionManager.getSession(sessionId,create);
+	}
+
+	@Override
+	public void delSession(String sessionId) {
+		sessionManager.delSession(sessionId);
 	}
 
 }

@@ -24,11 +24,16 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author yyduan
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.7 [20180107 duanyy] <br>
+ * - 优化Session管理 <br>
  */
 public class GetTokenInfo extends AbstractServant{
 	protected String dftApp = "${server.app}";
 	protected String arguToken = "token";
 	protected String arguFromIp = "fromIp";
+	protected String arguCallback = "callback";
+	
 	@Override
 	protected void onDestroy() {
 
@@ -40,6 +45,7 @@ public class GetTokenInfo extends AbstractServant{
 		dftApp = PropertiesConstants.getString(p, "dftApp", dftApp);
 		arguToken = PropertiesConstants.getString(p, "auth.para.token", arguToken);
 		arguFromIp = PropertiesConstants.getString(p, "auth.para.fromIp", arguFromIp);
+		arguCallback = PropertiesConstants.getString(p, "auth.para.callback", arguCallback);
 	}
 
 	@Override
@@ -48,13 +54,14 @@ public class GetTokenInfo extends AbstractServant{
 		
 		String token = getArgument(arguToken, ctx);
 		String fromIp = getArgument(arguFromIp,ctx);
+		String callback = getArgument(arguCallback,"",ctx);
 		
 		String app = getArgument("$app",dftApp,ctx);
 		
 		Map<String,Object> data = new HashMap<String,Object>();
 		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
 		
-		Principal principal = sm.getPrincipal(app, token);
+		Principal principal = sm.getPrincipal(app, token,callback);
 		if (principal == null){
 			JsonTools.setString(data,"isLoggedIn","false");
 		}else{
@@ -78,12 +85,13 @@ public class GetTokenInfo extends AbstractServant{
 		String token = getArgument(arguToken, ctx);
 		String fromIp = getArgument(arguFromIp,ctx);
 		String app = getArgument("$app",dftApp,ctx);
+		String callback = getArgument(arguCallback,"",ctx);
 		
 		Document doc = msg.getDocument();
 		Element data = doc.createElement("data");
 		
 		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
-		Principal principal = sm.getPrincipal(app, token);
+		Principal principal = sm.getPrincipal(app, token,callback);
 		if (principal == null){
 			XmlTools.setString(data,"isLoggedIn","false");
 		}else{

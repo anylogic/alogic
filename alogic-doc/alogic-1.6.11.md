@@ -46,3 +46,8 @@ alogic-1.6.11
 - alogic-cache:设置为deprecated
 - alogic-common:新增cache框架，用于替代alogic-cache
 - alogic-addons:idu相关的设置为deprecated
+
+### 1.6.11.7 [20180107 duanyy]
+
+- alogic-auth:优化Session管理
+

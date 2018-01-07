@@ -31,6 +31,8 @@ import com.logicbus.backend.server.http.HttpContext;
  * @version 1.6.11.1 [20171215 duanyy] <br>
  * - 修正退出登录方法<br>
  * 
+ * @version 1.6.11.7 [20180107 duanyy] <br>
+ * - 优化Session管理 <br>
  */
 public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	/**
@@ -48,9 +50,10 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	 * 
 	 * @param app 应用id
 	 * @param token token
+	 * @param callback 退出时的回调服务地址
 	 * @return Principal实例，如果没有找到指定的token，返回为null
 	 */
-	public Principal getPrincipal(String app,String token);
+	public Principal getPrincipal(String app,String token,String callback);
 	
 	/**
 	 * 通过Servlet请求进行登录
