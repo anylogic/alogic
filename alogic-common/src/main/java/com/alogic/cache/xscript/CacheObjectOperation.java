@@ -17,6 +17,9 @@ import com.anysoft.util.PropertiesConstants;
  * 缓存对象操作
  * @author yyduan
  * @since 1.6.11.6
+ * 
+ * @version 1.6.11.8 [20180109] duanyy <br>
+ * - 优化缓存相关的xscript插件 <br>
  */
 public abstract class CacheObjectOperation extends AbstractLogiclet{
 	protected String pid = "$cache-object";
@@ -27,7 +30,7 @@ public abstract class CacheObjectOperation extends AbstractLogiclet{
 	
 	public void configure(Properties p){
 		super.configure(p);
-		pid = PropertiesConstants.getString(p,"pid", pid);
+		pid = PropertiesConstants.getString(p,"pid", pid,true);
 	}
 
 	@Override

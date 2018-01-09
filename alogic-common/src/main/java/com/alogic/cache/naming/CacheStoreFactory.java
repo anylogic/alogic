@@ -20,6 +20,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 工厂类
  * @author yyduan
  * @since 1.6.11.6
+ * 
+ * @version 1.6.11.8 [20180109] duanyy <br>
+ * - 优化缓存相关的xscript插件 <br>
  */
 public class CacheStoreFactory extends Naming<Store<CacheObject>>{
 	/**
@@ -54,9 +57,7 @@ public class CacheStoreFactory extends Naming<Store<CacheObject>>{
 		CacheStoreFactory src = CacheStoreFactory.get();
 		return src.lookup(id);
 	}
-	
 
-	
 	/**
 	 * 获取唯一实例
 	 * @return 唯一实例

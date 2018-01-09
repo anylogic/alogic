@@ -51,3 +51,7 @@ alogic-1.6.11
 
 - alogic-auth:优化Session管理
 
+### 1.6.11.8 [20180109 duanyy]
+
+- alogic-common:优化缓存相关的xscript插件;
+- alogic-dbcp:优化缓存相关的SQLLoader;

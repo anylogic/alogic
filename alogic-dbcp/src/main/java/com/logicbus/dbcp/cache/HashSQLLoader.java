@@ -1,29 +1,37 @@
 package com.logicbus.dbcp.cache;
 
+
 import java.sql.Connection;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alogic.cache.CacheObject;
 import com.alogic.load.Loader;
+import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-import com.logicbus.backend.ServantException;
 import com.logicbus.dbcp.context.DbcpSource;
 import com.logicbus.dbcp.core.ConnectionPool;
-import com.logicbus.dbcp.sql.Select;
+import com.logicbus.dbcp.sql.DBTools;
 
 /**
- * 多主键单SQL语句实现的Loader
+ * 通过SQL语句装入Hash类型的对象数据
+ * 
  * @author yyduan
  * @since 1.6.11.6
+ * 
+ * @version 1.6.11.8 [20180109] duanyy <br>
+ * - 优化缓存相关的xscript插件 <br>
  */
-public class MultiKeySingleSQL extends Loader.Abstract<CacheObject>{
+public class HashSQLLoader extends Loader.Abstract<CacheObject>{
 	protected String sql;
 	protected String dbcp;
-	protected String delimeter = "%";
+	protected String delimeter = "";
 	
 	@Override
 	public void configure(Properties p) {
+		super.configure(p);
 		sql = PropertiesConstants.getString(p,"sql","");
 		dbcp = PropertiesConstants.getString(p,"dbcpId","default");
 		delimeter = PropertiesConstants.getString(p,"delimeter", delimeter);
@@ -31,28 +39,29 @@ public class MultiKeySingleSQL extends Loader.Abstract<CacheObject>{
 
 	@Override
 	public CacheObject load(String id, boolean cacheAllowed) {
-		return loadObject(id.split(delimeter),cacheAllowed);
+		if (StringUtils.isEmpty(delimeter)){
+			return loadObject(id,new String[]{id});
+		}else{
+			return loadObject(id,id.split(delimeter));
+		}
 	}
 	
-	protected CacheObject loadObject(Object[] id, boolean cacheAllowed) {
+	protected CacheObject loadObject(String id,Object[] ids) {
 		ConnectionPool pool = DbcpSource.getPool(dbcp);
 		if (pool == null) {
-			throw new ServantException("core.e1003",
+			throw new BaseException("core.e1003",
 					"Can not get a connection pool named " + dbcp);
 		}
 		Connection conn = pool.getConnection();
-		Select select = new Select(conn);
-	
 		try {
-			Map<String,Object> result = select.execute(sql, id).singleRow();
+			Map<String,Object> result = DBTools.selectAsObjects(conn,sql, id);
 			if (result != null){
-				CacheObject found = new CacheObject.Simple();
+				CacheObject found = new CacheObject.Simple(id);
 				found.fromJson(result);
 				return found;
 			}
 			return null;
 		} finally {
-			Select.close(select);
 			pool.recycle(conn);
 		}
 	}	

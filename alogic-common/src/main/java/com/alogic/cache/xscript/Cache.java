@@ -22,6 +22,9 @@ import com.anysoft.util.PropertiesConstants;
  * @since 1.6.10.5
  * @version 1.6.11.6 [20180103 duanyy] <br>
  * - 从alogic-cache中迁移过来
+ * 
+ * @version 1.6.11.8 [20180109] duanyy <br>
+ * - 优化缓存相关的xscript插件 <br>
  */
 public class Cache extends Segment {
 	protected String cacheId;
@@ -35,12 +38,13 @@ public class Cache extends Segment {
 		registerModule("cache-load",CacheQuery.class);
 		registerModule("cache-locate",CacheLocate.class);
 		registerModule("cache-hget",CacheHashGet.class);
+		registerModule("cache-smembers",CacheSetMembers.class);
 	}
 
 	@Override
 	public void configure(Properties p){
-		cacheId = PropertiesConstants.getString(p,"cacheId",cacheId);
-		cid = PropertiesConstants.getString(p,"cid",cid);
+		cacheId = PropertiesConstants.getString(p,"cacheId",cacheId,true);
+		cid = PropertiesConstants.getString(p,"cid",cid,true);
 	}
 	
 	@Override

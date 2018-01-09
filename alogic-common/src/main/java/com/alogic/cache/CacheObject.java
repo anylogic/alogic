@@ -1,11 +1,13 @@
 package com.alogic.cache;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +26,9 @@ import com.anysoft.util.XmlTools;
  * 缓存对象
  * @author yyduan
  * @since 1.6.11.6
+ * 
+ * @version 1.6.11.8 [20180109] duanyy <br>
+ * - 优化缓存相关的xscript插件 <br>
  */
 public interface CacheObject extends HashObject,SetObject,JsonSerializer{
 	/**
@@ -326,6 +331,7 @@ public interface CacheObject extends HashObject,SetObject,JsonSerializer{
 	 */
 	public static class Simple extends Abstract{
 		protected Map<String,String> keyvalues = null;
+		protected Set<String> sets = null;
 		
 		public Simple() {
 		}
@@ -346,6 +352,14 @@ public interface CacheObject extends HashObject,SetObject,JsonSerializer{
 						another.hSet(DEFAULT_GROUP, e.getKey(), e.getValue(), true);
 					}
 				}
+				Set<String> set = getSetObject(DEFAULT_GROUP,false);
+				if (set != null){
+					Iterator<String> iter = set.iterator();
+					
+					while(iter.hasNext()){
+						another.sAdd(DEFAULT_GROUP, iter.next());
+					}
+				}
 			}
 		}
 
@@ -364,8 +378,15 @@ public interface CacheObject extends HashObject,SetObject,JsonSerializer{
 
 		@Override
 		protected Set<String> getSetObject(String group, boolean create) {
-			// not supported
-			return null;
+			if (sets == null && create){
+				synchronized(this){
+					if (sets == null){
+						sets = Collections.newSetFromMap(new ConcurrentHashMap<String,Boolean>());
+					}
+				}
+			}
+			
+			return sets;
 		}
 
 		@Override

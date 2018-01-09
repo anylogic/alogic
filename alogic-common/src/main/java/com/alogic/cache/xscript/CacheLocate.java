@@ -18,6 +18,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @author yyduan
  * @since 1.6.11.6
+ * 
+ * @version 1.6.11.8 [20180109] duanyy <br>
+ * - 优化缓存相关的xscript插件 <br>
  */
 public class CacheLocate extends Segment {
 	
@@ -44,8 +47,8 @@ public class CacheLocate extends Segment {
 	public void configure(Properties p){
 		super.configure(p);
 		id = PropertiesConstants.getRaw(p, "id", "");		
-		pid = PropertiesConstants.getString(p,"pid", pid);
-		cid = PropertiesConstants.getString(p,"cid", cid);
+		pid = PropertiesConstants.getString(p,"pid", pid,true);
+		cid = PropertiesConstants.getString(p,"cid", cid,true);
 	}	
 	
 	@Override

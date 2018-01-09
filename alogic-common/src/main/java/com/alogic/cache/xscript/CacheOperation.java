@@ -23,6 +23,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.11.6 [20180103 duanyy] <br>
  * - 从alogic-cache中迁移过来
+ * 
+ * @version 1.6.11.8 [20180109] duanyy <br>
+ * - 优化缓存相关的xscript插件 <br>
  */
 public abstract class CacheOperation extends AbstractLogiclet{
 	protected String pid = "$cache";
@@ -32,7 +35,7 @@ public abstract class CacheOperation extends AbstractLogiclet{
 	
 	public void configure(Properties p){
 		super.configure(p);
-		pid = PropertiesConstants.getString(p,"pid", pid);
+		pid = PropertiesConstants.getString(p,"pid", pid,true);
 	}
 
 	@Override
