@@ -55,3 +55,8 @@ alogic-1.6.11
 
 - alogic-common:优化缓存相关的xscript插件;
 - alogic-dbcp:优化缓存相关的SQLLoader;
+
+### 1.6.11.9 [20180111 duanyy]
+
+- alogic-common:增加证书的创建和签发功能;
+- alogic-common:优化缓存相关的xscript插件;

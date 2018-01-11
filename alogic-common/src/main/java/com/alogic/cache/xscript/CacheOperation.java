@@ -2,7 +2,10 @@ package com.alogic.cache.xscript;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alogic.cache.CacheObject;
+import com.alogic.cache.naming.CacheStoreFactory;
 import com.alogic.load.Store;
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
@@ -26,9 +29,13 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.11.8 [20180109] duanyy <br>
  * - 优化缓存相关的xscript插件 <br>
+ * 
+ * @version 1.6.11.9 [20180111] duanyy <br>
+ * - 优化缓存相关的xscript插件 <br>
  */
 public abstract class CacheOperation extends AbstractLogiclet{
 	protected String pid = "$cache";
+	protected String cacheId;
 	public CacheOperation(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -36,6 +43,7 @@ public abstract class CacheOperation extends AbstractLogiclet{
 	public void configure(Properties p){
 		super.configure(p);
 		pid = PropertiesConstants.getString(p,"pid", pid,true);
+		cacheId = PropertiesConstants.getString(p,"cacheId", "",true);
 	}
 
 	@Override
@@ -43,7 +51,13 @@ public abstract class CacheOperation extends AbstractLogiclet{
 			ExecuteWatcher watcher) {
 		Store<CacheObject> cache = ctx.getObject(pid);
 		if (cache == null){
-			throw new BaseException("core.e1001","It must be in a cache context,check your together script.");
+			if (StringUtils.isNotEmpty(cacheId)){
+				cache = CacheStoreFactory.get(cacheId);
+			}
+			
+			if (cache == null){
+				throw new BaseException("core.e1001","It must be in a cache context,check your together script.");
+			}
 		}
 		onExecute(cache,root,current,ctx,watcher);
 	}

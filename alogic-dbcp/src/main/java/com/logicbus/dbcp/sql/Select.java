@@ -305,7 +305,7 @@ public class Select extends DBOperation {
 								cookies,
 								i + 1, 
 								metadata, 
-								value
+								value.toString()
 								);
 					}
 				}

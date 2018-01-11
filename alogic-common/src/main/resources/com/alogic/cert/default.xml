@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<certificate-store 
+	module="com.alogic.cert.CertificateStoreImpl"
+	jks.type = "jks"
+	jks.path = "/alogic.store"
+	jks.pwd = "alogic"
+	jks.root = "rootCA"
+	
+	ttl = "10"
+	CN = "ALOGIC CA"
+	OU = "ALOGIC.COM"
+	O = "ALOGIC"
+	L = "GUANGZHOU"
+	ST = "GUANDDONG"
+	C = "CN"
+>
+</certificate-store>

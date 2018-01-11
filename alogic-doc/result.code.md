@@ -24,6 +24,8 @@ Result Code
  - core.e1013 无法从连接池获取对象
  - core.e1014 无法找到服务配置
  - core.e1015 上传文件错误
+ - core.e1016 文件已经存在
+ - core.e1017 文件不能写入
  
  - core.e1100 队列已满(alogic-doer)
  - core.e1101 对象状态错误(alogic-doer)

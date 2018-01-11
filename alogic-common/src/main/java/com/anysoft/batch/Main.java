@@ -28,6 +28,7 @@ import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Settings;
 import com.anysoft.util.SystemProperties;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
@@ -208,9 +209,11 @@ public class Main implements CommandHelper,Process{
 		//装入配置文件,从参数conf中读入，缺省为config.xml
 		String filename = PropertiesConstants.getString(p,"conf","");
 		if (filename != null && filename.length() > 0){
+			LOG.info("Load config from " + filename);
 			loadConfigFromLocalFile(p,filename);
 		}else{
 			filename = PropertiesConstants.getString(p,"conf.url","java:///config.xml");
+			LOG.info("Load config from " + filename);
 			loadConfigFromResource(p,filename);
 		}
 	}	
@@ -236,14 +239,14 @@ public class Main implements CommandHelper,Process{
 				String id = parameter.getAttribute("id");
 				String value = parameter.getAttribute("value");
 				
-				boolean fromEnv = XmlTools.getBoolean(e, "fromEnv", false);
+				boolean fromEnv = XmlTools.getBoolean(parameter, "fromEnv", false);
 				if (fromEnv){
 					value = System.getenv(value);
 					if (StringUtils.isEmpty(value)){
 						value = XmlTools.getString(e, "dft", "");
 					}
 				}else{
-					boolean fromProperties = XmlTools.getBoolean(e, "fromProperties", false);
+					boolean fromProperties = XmlTools.getBoolean(parameter, "fromProperties", false);
 					if (fromProperties){
 						value = System.getProperty(value);
 						if (StringUtils.isEmpty(value)){
@@ -252,21 +255,39 @@ public class Main implements CommandHelper,Process{
 					}
 				}
 				
-				boolean system =  XmlTools.getBoolean(e, "system", false);
+				boolean system =  XmlTools.getBoolean(parameter, "system", false);
 				if (system){
 					if (id != null && value != null){ // NOSONAR
 						System.setProperty(id, value);
 					}
 				}else{
 					// 支持final标示,如果final为true,则不覆盖原有的取值
-					boolean isFinal = XmlTools.getBoolean(e, "final", false);
+					boolean isFinal = XmlTools.getBoolean(parameter, "final", false);
 					if (isFinal) { // NOSONAR
 						String oldValue = p.GetValue(id, "", false, true);
-						if (oldValue == null || oldValue.length() <= 0) {
+						if (StringUtils.isEmpty(oldValue)) {
 							p.SetValue(id, value);
 						}
 					} else {
 						p.SetValue(id, value);
+					}
+				}
+
+				boolean toSettings = XmlTools.getBoolean(parameter, "toSettings", false);
+				if (toSettings){
+					if (StringUtils.isNotEmpty(id) && StringUtils.isNotEmpty(value)){
+						// 支持final标示,如果final为true,则不覆盖原有的取值
+						boolean isFinal = XmlTools.getBoolean(parameter, "final", false);
+						if (isFinal) { // NOSONAR
+							String oldValue = Settings.get().GetValue(id, "", false, true);
+							if (StringUtils.isEmpty(oldValue)) {
+								LOG.info(String.format("Add %s = %s to settings..",id,value));
+								Settings.get().SetValue(id, value);
+							}
+						} else {
+							LOG.info(String.format("Add %s = %s to settings..",id,value));
+							Settings.get().SetValue(id, value);
+						}
 					}
 				}
 			}
