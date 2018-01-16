@@ -25,6 +25,9 @@ import com.jayway.jsonpath.JsonPath;
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
+ * @version 1.6.11.10 [20180116 duanyy] <br>
+ * - 去掉定位失败的警告 <br>
+ * 
  */
 
 public class Location extends Segment {
@@ -52,8 +55,7 @@ public class Location extends Segment {
 				if (result instanceof Map<?, ?>) {
 					newCurrent = new JsonObject("node",
 							(Map<String, Object>) result);
-				} else {
-					log("Can not locate the path:" + jsonPath,"error");
+					super.onExecute(root, newCurrent, ctx, watcher);
 				}
 			}else{
 				log(String.format("[%s]json path is null",getXmlTag()),"error");
@@ -65,8 +67,7 @@ public class Location extends Segment {
 							(Element) current.getContent(), xmlPath);
 					if (result != null && result instanceof Element) {
 						newCurrent = new XmlObject("node", (Element) result);
-					} else {
-						logger.error("Can not locate the path:" + xmlPath);
+						super.onExecute(root, newCurrent, ctx, watcher);
 					}
 				}else{
 					log(String.format("[%s]xml path is null",getXmlTag()),"error");
@@ -77,6 +78,6 @@ public class Location extends Segment {
 						root.getClass().getName()));
 			}
 		}
-		super.onExecute(root, newCurrent, ctx, watcher);
+		
 	}
 }

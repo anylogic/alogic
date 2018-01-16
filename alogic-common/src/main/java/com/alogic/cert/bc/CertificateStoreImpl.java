@@ -1,47 +1,52 @@
-package com.alogic.cert;
+package com.alogic.cert.bc;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+
+import com.alogic.cert.CertificateContent;
+import com.alogic.cert.CertificateStore;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;
-import sun.security.x509.CertAndKeyGen;
-import sun.security.x509.X500Name;
-import sun.security.x509.X509CertInfo;
-import sun.security.x509.CertificateVersion;
-import sun.security.x509.CertificateSerialNumber;
-import sun.security.x509.AlgorithmId;
-import sun.security.x509.CertificateAlgorithmId;
-import sun.security.x509.CertificateSubjectName;
-import sun.security.x509.CertificateX509Key;
-import sun.security.x509.CertificateValidity;
-import sun.security.x509.CertificateIssuerName;
-import sun.security.x509.X509CertImpl;
+
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.cert.X509CertificateHolder;  
+import org.bouncycastle.cert.X509v3CertificateBuilder;  
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;  
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;  
 
 /**
- * CertificateStore实现
+ * 基于 Bouncy Castle的证书api实现
+ * 
  * 
  * @author yyduan
  *
- * @since 1.6.11.9
+ * @since 1.6.11.10
  */
-@SuppressWarnings("restriction")
 public class CertificateStoreImpl implements CertificateStore{
 	/**
 	 * a logger of slf4j
@@ -194,6 +199,8 @@ public class CertificateStoreImpl implements CertificateStore{
 
 	protected void init() {
 		try {
+			Security.addProvider(new BouncyCastleProvider());
+			
 			keyStore = KeyStore.getInstance(jksType);
 			
 			File file = new File(jksPath);
@@ -212,16 +219,31 @@ public class CertificateStoreImpl implements CertificateStore{
 			
 			if (rootCert == null || rootKey == null){
 				//创建root
-				CertAndKeyGen rootCertAndKeyGen = new CertAndKeyGen("RSA",algorithm, null);  
-				rootCertAndKeyGen.setRandom(secureRandom); 
-				rootCertAndKeyGen.generate(1024); 
+				KeyPairGenerator kpg=KeyPairGenerator.getInstance("RSA");  
+		        KeyPair  kp = kpg.generateKeyPair();  
+		        PublicKey pubk = kp.getPublic();  
+		        PrivateKey prik = kp.getPrivate(); 
+		        
+		        long now = System.currentTimeMillis();
+		        
+				X509v3CertificateBuilder builder = new X509v3CertificateBuilder(
+					new X500Name(getRootX500Name()),
+					BigInteger.valueOf(now), 
+					new Date(now), 
+					new Date(now + rootTTL * 365 * 24L * 60L * 60L * 1000L), 
+					new X500Name(getRootX500Name()), 
+					SubjectPublicKeyInfo.getInstance(pubk.getEncoded())
+				);
 				
-				X509Certificate rootCertificate = rootCertAndKeyGen.getSelfCertificate(  
-						new X500Name(getRootX500Name()), rootTTL * 365 * 24L * 60L * 60L); 
+	            X509CertificateHolder holder = builder.build(
+	            	new JcaContentSignerBuilder(algorithm).setSecureRandom(secureRandom).setProvider("BC").build(prik)
+	            );  
+	  
+	            X509Certificate rootCertificate = new JcaX509CertificateConverter().getCertificate(holder);
 				
 				X509Certificate[] X509Certificates = new X509Certificate[] { rootCertificate };
 				
-				keyStore.setKeyEntry(jksRootAlias, rootCertAndKeyGen.getPrivateKey(), jksPwd.toCharArray(), X509Certificates);
+				keyStore.setKeyEntry(jksRootAlias, prik, jksPwd.toCharArray(), X509Certificates);
 				
 				OutputStream out = new FileOutputStream(file);				
 				try {
@@ -268,35 +290,35 @@ public class CertificateStoreImpl implements CertificateStore{
 	protected CertificateContent newCertificate(CertificateContent content,String subject,Properties p){
 		try {
 			long ttl = p == null ? rootTTL : PropertiesConstants.getLong(p, "ttl", rootTTL);
+			long now = System.currentTimeMillis();
 			
-			CertAndKeyGen certAndKeyGen = new CertAndKeyGen("RSA", algorithm,null); 
+			//生成RSA公钥和私钥
+			KeyPairGenerator kpg=KeyPairGenerator.getInstance("RSA");  
+	        KeyPair kp = kpg.generateKeyPair();  
+	        PublicKey pubk = kp.getPublic();  
+	        PrivateKey prik = kp.getPrivate(); 
+	        
+	        //构造证书
+			X509v3CertificateBuilder builder = new X509v3CertificateBuilder(
+				new X500Name(getRootX500Name()),
+				BigInteger.valueOf(now), 
+				new Date(now), 
+				new Date(now + ttl * 365 * 24L * 60L * 60L * 1000L), 
+				new X500Name(subject), 
+				SubjectPublicKeyInfo.getInstance(pubk.getEncoded())
+			);
 			
-			certAndKeyGen.setRandom(secureRandom);
-			certAndKeyGen.generate(1024);  
-			
-			X509CertInfo info = new X509CertInfo();
-			info.set(X509CertInfo.VERSION, 
-					new CertificateVersion(CertificateVersion.V3));
-			info.set(X509CertInfo.SERIAL_NUMBER, 
-					new CertificateSerialNumber(new java.util.Random().nextInt() & 0x7fffffff));
-			info.set(X509CertInfo.ALGORITHM_ID, 
-					new CertificateAlgorithmId(AlgorithmId.get(algorithm)));
-			info.set(X509CertInfo.SUBJECT, 
-					new CertificateSubjectName(new X500Name(subject)));
-			info.set(X509CertInfo.KEY, 
-					new CertificateX509Key(certAndKeyGen.getPublicKey()));
-			info.set(X509CertInfo.VALIDITY, 
-					new CertificateValidity(new Date(),new Date(System.currentTimeMillis() + ttl * 365 * 24L * 60L * 60L * 1000)));			
-			info.set(X509CertInfo.ISSUER, 
-					new CertificateIssuerName(new X500Name(getRootX500Name())));
-			
-			X509CertImpl cert = new X509CertImpl(info);
-			cert.sign(rootKey, algorithm);
-			
-			content.setContent(cert.getEncoded(), certAndKeyGen.getPrivateKey().getEncoded());
+			//用根证书的Key进行签名
+			X509CertificateHolder holder = builder.build(
+            		new JcaContentSignerBuilder(algorithm).setSecureRandom(secureRandom).setProvider("BC").build(rootKey)
+            		);  
+  
+            X509Certificate certifacate = new JcaX509CertificateConverter().getCertificate(holder);
+			content.setContent(certifacate.getEncoded(), prik.getEncoded());
 		}catch (Exception ex){
 			LOG.error(ExceptionUtils.getStackTrace(ex));
 		}
 		return content;
 	}
 }
+

@@ -8,13 +8,13 @@
 	</parent>
 	<artifactId>alogic-common</artifactId>
 	<name>alogic-common</name>
-  	<description>基础类库</description>    	
+  	<description>基础类库</description>
 	<dependencies>
 		<dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-api</artifactId>
-		    <version>1.7.22</version>
-		</dependency>	
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.22</version>
+		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -47,15 +47,15 @@
 			<version>3.1.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>ch.qos.logback</groupId>
-		    <artifactId>logback-classic</artifactId>
-		    <version>1.1.9</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.9</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.51</version>
-		</dependency>					
+			<artifactId>bcpkix-jdk15on</artifactId>
+			<version>1.59</version>
+		</dependency>
 	</dependencies>
 </project>

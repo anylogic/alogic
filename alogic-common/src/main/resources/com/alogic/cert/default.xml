@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <certificate-store 
-	module="com.alogic.cert.CertificateStoreImpl"
+	module="com.alogic.cert.bc.CertificateStoreImpl"
 	jks.type = "jks"
 	jks.path = "/alogic.store"
 	jks.pwd = "alogic"

@@ -60,3 +60,10 @@ alogic-1.6.11
 
 - alogic-common:增加证书的创建和签发功能;
 - alogic-common:优化缓存相关的xscript插件;
+
+### 1.6.11.10 [20180116 duanyy]
+
+- alogic-auth:增加可授权签名模式的服务端插件;
+- alogic-rpc:增加可授权签名模式的客户端插件;
+- alogic-common:增加cache-sexist的缓存操作插件;
+- alogic-common:x509证书采用Bouncy Castle的类库来生成;

@@ -39,6 +39,7 @@ public class Cache extends Segment {
 		registerModule("cache-locate",CacheLocate.class);
 		registerModule("cache-hget",CacheHashGet.class);
 		registerModule("cache-smembers",CacheSetMembers.class);
+		registerModule("cache-sexist",CacheSetExist.class);
 	}
 
 	@Override

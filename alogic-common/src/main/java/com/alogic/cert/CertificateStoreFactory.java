@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.alogic.cert.bc.CertificateStoreImpl;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
@@ -21,6 +22,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * @author yyduan
  * 
  * @since 1.6.11.9
+ * 
+ * @version 1.6.11.10 [20180116 duanyy] <br>
+ * - x509证书采用Bouncy Castle的类库来生成;
  */
 public class CertificateStoreFactory extends Factory<CertificateStore>{
 	/**
