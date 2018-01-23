@@ -79,8 +79,8 @@ public class HybirdBlobManager extends BlobManager.Abstract{
 	}
 	
 	@Override
-	public BlobWriter newFile(Properties p) {
-		return master != null ? master.newFile(p) : null;
+	public BlobWriter newFile(String id) {
+		return master != null ? master.newFile(id) : null;
 	}
 
 	@Override

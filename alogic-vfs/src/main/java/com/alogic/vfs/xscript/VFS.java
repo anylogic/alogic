@@ -35,8 +35,10 @@ public class VFS extends Segment{
 		registerModule("vfs-load",FileLoad.class);
 		registerModule("vfs-del",FileDelete.class);
 		registerModule("vfs-mkdir",MakePath.class);
-		registerModule("upload",UploadScan.class);
-		registerModule("upload-blob",UploadSaveBlob.class);
-		registerModule("upload-vfs",UploadSaveVFS.class);
+		registerModule("upload",Upload.class);
+		registerModule("upload-blob",UploadToBlob.class);
+		registerModule("upload-vfs",UploadToVFS.class);
+		registerModule("download-blob",DownloadFromBlob.class);
+		registerModule("download-vfs",DownloadFromVFS.class);		
 	}
 }

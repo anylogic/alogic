@@ -121,12 +121,9 @@ public class VFSBlobManager extends BlobManager.Abstract{
 	}
 	
 	@Override
-	public BlobWriter newFile(Properties p) {
-		String fileId = PropertiesConstants.getString(p,"id","");
-		if (StringUtils.isEmpty(fileId)){
-			fileId = String.format("%d%s",System.currentTimeMillis(),KeyGen.uuid(6, 0, 9));
-		}
-		
+	public BlobWriter newFile(String id) {
+		String fileId = StringUtils.isEmpty(id)?newFileId():id;
+
 		String path = getRealPath(fileId);
 		if (!vfs.exist(path)){
 			vfs.makeDirs(path);
@@ -140,6 +137,10 @@ public class VFSBlobManager extends BlobManager.Abstract{
 				vfs);
 	}
 
+	protected String newFileId(){
+		return String.format("%d%s",System.currentTimeMillis(),KeyGen.uuid(6, 0, 9));
+	}
+	
 	@Override
 	public BlobReader getFile(String id) {
 		String path = getRealPath(id);		

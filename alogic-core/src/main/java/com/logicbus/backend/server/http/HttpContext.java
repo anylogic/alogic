@@ -63,6 +63,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.10.9 [20171124 duanyy] <br>
  * - 规范化URL和URI的取值 <br>
+ * 
+ * @version 1.6.11.12 [20170123 duanyy] <br>
+ * - http响应的缓存属性改成由服务来个性化控制 <br>
  */
 
 public class HttpContext extends Context {
@@ -321,6 +324,14 @@ public class HttpContext extends Context {
 					}
 				}else{
 					response.setCharacterEncoding(encoding);
+					if (enableClientCache()){
+						response.setHeader("Cache-Control", "public");
+					}else{
+						response.setHeader("Expires", "Mon, 26 Jul 1970 05:00:00 GMT");
+						response.setHeader("Last-Modified", "Mon, 26 Jul 1970 05:00:00 GMT");
+						response.setHeader("Cache-Control", "no-cache, must-revalidate");
+						response.setHeader("Pragma", "no-cache");
+					}
 					msg.finish(this,!cometMode());
 				}
 			}

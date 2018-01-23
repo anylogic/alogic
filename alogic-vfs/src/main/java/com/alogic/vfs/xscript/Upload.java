@@ -19,7 +19,7 @@ import com.logicbus.backend.message.MultiPartForm;
  * @author yyduan
  *
  */
-public class UploadScan extends Segment {
+public class Upload extends Segment {
 	
 	/**
 	 * 上层对象id
@@ -29,9 +29,9 @@ public class UploadScan extends Segment {
 	/**
 	 * 当前对象id
 	 */
-	protected String cid = "$upload-file";
+	protected String cid = "$upload";
 	
-	public UploadScan(String tag, Logiclet p) {
+	public Upload(String tag, Logiclet p) {
 		super(tag, p);
 	}
 	
@@ -46,7 +46,7 @@ public class UploadScan extends Segment {
 	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 		MultiPartForm msg = ctx.getObject(pid);
 		if (msg == null){
-			throw new BaseException("core.e1001","It must be in a message context,check your together script.");
+			throw new BaseException("core.e1001","It must be in a UploadTogetherServant servant,check your together script.");
 		}
 		
 		List<FileItem> fileItems = msg.getFileItems();

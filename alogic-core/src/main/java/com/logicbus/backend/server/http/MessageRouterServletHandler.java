@@ -67,6 +67,9 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.6.9.8 [20170821 duanyy] <br>
  * - 优化代码 <br>
+ * 
+ * @version 1.6.11.12 [20170123 duanyy] <br>
+ * - http响应的缓存属性改成由服务来个性化控制 <br>
  */
 public class MessageRouterServletHandler implements ServletHandler {
 	/**
@@ -105,8 +108,6 @@ public class MessageRouterServletHandler implements ServletHandler {
 	protected static String defaultAllowOrigin = "*";
 	
 	protected String methodAllow = "GET,PUT,POST";
-
-	protected boolean cacheAllowed = false; 
 	
 	protected boolean corsSupport = true;
 	
@@ -117,7 +118,6 @@ public class MessageRouterServletHandler implements ServletHandler {
 		defaultAllowOrigin = PropertiesConstants.getString(props,"http.alloworigin",defaultAllowOrigin);
 		corsSupport = PropertiesConstants.getBoolean(props, "http.cors", corsSupport);
 		methodAllow = PropertiesConstants.getString(props, "http.method.allow", methodAllow);
-		cacheAllowed = PropertiesConstants.getBoolean(props, "cacheAllowed", cacheAllowed);
 		interceptMode = PropertiesConstants.getBoolean(props, "intercept.mode", interceptMode);
 	
 		String normalizerClass = PropertiesConstants.getString(props, "normalizer", "com.logicbus.backend.DefaultNormalizer");
@@ -146,15 +146,7 @@ public class MessageRouterServletHandler implements ServletHandler {
 			logger.info("Get server info:" + settings.GetValue("server.host", "") + ":" + settings.GetValue("server.port",""));
 			getServerInfo = true;
 		}
-		
-		if (cacheAllowed){
-			response.setHeader("Cache-Control", "public");
-		}else{
-			response.setHeader("Expires", "Mon, 26 Jul 1970 05:00:00 GMT");
-			response.setHeader("Last-Modified", "Mon, 26 Jul 1970 05:00:00 GMT");
-			response.setHeader("Cache-Control", "no-cache, must-revalidate");
-			response.setHeader("Pragma", "no-cache");
-		}
+	
 		// 1.2.1 duanyy
 		// to support CORS
 		if (corsSupport){

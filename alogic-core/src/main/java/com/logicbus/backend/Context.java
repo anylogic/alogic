@@ -103,6 +103,11 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	protected boolean ignored = false;	
 	
 	/**
+	 * 是否允许cache
+	 */
+	protected boolean enableClientCache = false;
+	
+	/**
 	 * 构造上下文
 	 * 
 	 * @param _encoding
@@ -180,6 +185,14 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	
 	public void setKeyword(String keyword){
 		this.keyword = keyword;
+	}
+	
+	public void enableClientCache(boolean enable){
+		this.enableClientCache = enable;
+	}
+	
+	public boolean enableClientCache(){
+		return this.enableClientCache;
 	}
 
 	/**

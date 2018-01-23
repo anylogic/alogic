@@ -73,3 +73,9 @@ alogic-1.6.11
 - alogic-blob:淘汰alogic-blob,采用alogic-vfs功能替代;
 - alogic-addons:淘汰idu相关的服务框架;
 - alogic-seq:淘汰alogic-seq,采用alogic-common中的uid框架替代;
+
+### 1.6.11.12 [20180123 duanyy]
+
+- alogic-core:http响应的缓存属性改成由服务来个性化控制;
+- alogic-together:增加下载类服务的组装功能;
+- 

@@ -74,7 +74,7 @@ public abstract class ResourceBlobManager extends BlobManager.Abstract{
 	public String getContentType(){return contentType;}	
 	
 	@Override
-	public BlobWriter newFile(Properties p) {
+	public BlobWriter newFile(String id) {
 		throw new BaseException("core.e1000","This function is not suppurted yet.");	
 	}
 

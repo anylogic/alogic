@@ -32,11 +32,12 @@ public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 	
 	/**
 	 * 新建Blob文件
-	 * @param p 参数集
+	 * 
+	 * @param id 文件ID
 	 * @return BlobWriter实例
 	 * 
 	 */
-	public BlobWriter newFile(Properties p);
+	public BlobWriter newFile(String id);
 	
 	/**
 	 * 查找已存在的Blob文件

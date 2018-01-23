@@ -3,9 +3,10 @@ package com.alogic.vfs.xscript;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang3.StringUtils;
+
 import com.alogic.blob.BlobManager;
-import com.alogic.blob.BlobWriter;
+import com.alogic.blob.BlobReader;
 import com.alogic.blob.naming.BlobManagerFactory;
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
@@ -13,22 +14,24 @@ import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.BaseException;
-import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.logicbus.backend.Context;
 
 /**
- * 将上传文件存储到BlobManager
+ * 从blob中下载
  * @author yyduan
- *
+ * @since 1.6.11.12
  */
-public class UploadSaveBlob extends AbstractLogiclet{
-	protected String pid = "$upload-file";
+public class DownloadFromBlob extends AbstractLogiclet{
+	protected String pid = "$context";
 	protected String blobId = "default";
 	protected String id;
 	protected int bufferSize = 10 * 1024;
+	protected String $fileId = "";
+	protected String $contentType = "text/plain";
 	
-	public UploadSaveBlob(String tag, Logiclet p) {
+	public DownloadFromBlob(String tag, Logiclet p) {
 		super(tag, p);
 	}
 	
@@ -40,13 +43,15 @@ public class UploadSaveBlob extends AbstractLogiclet{
 		id = PropertiesConstants.getString(p,"id","$" + getXmlTag(),true);
 		bufferSize = PropertiesConstants.getInt(p, "bufferSize", bufferSize);
 		blobId = PropertiesConstants.getString(p,"blobId",blobId,true);
+		$fileId = PropertiesConstants.getRaw(p, "fileId", $fileId);
+		$contentType = PropertiesConstants.getRaw(p, "contentType", $contentType);
 	}
 
 	@Override
 	protected void onExecute(XsObject root,XsObject current,final LogicletContext ctx,final ExecuteWatcher watcher){
-		FileItem fileItem = ctx.getObject(pid);
-		if (fileItem == null){
-			throw new BaseException("core.e1001","It must be in a upload-scan context,check your together script.");
+		Context serviceContext = ctx.getObject(pid);
+		if (serviceContext == null){
+			throw new BaseException("core.e1001","It must be in a DownloadTogetherServant servant,check your together script.");
 		}
 		
 		BlobManager bm = BlobManagerFactory.get(blobId);
@@ -54,12 +59,20 @@ public class UploadSaveBlob extends AbstractLogiclet{
 			throw new BaseException("core.e1001",String.format("Can not find blob manager:%s", blobId));
 		}
 		
-		BlobWriter writer = bm.newFile(ctx);
-		OutputStream out = null;
+		String fileId = PropertiesConstants.transform(ctx, $fileId, "");
+		BlobReader reader = bm.getFile(fileId);
+		if (reader == null){
+			throw new BaseException("core.e1001",String.format("Can not find file:%s", fileId));
+		}
 		InputStream in = null;
 		try {
-			in = fileItem.getInputStream();
-			out = writer.getOutputStream();
+			String contentType = PropertiesConstants.transform(ctx, $contentType, "text/plain");
+			if (StringUtils.isEmpty(contentType)){
+				contentType = reader.getBlobInfo().getContentType();
+			}
+			serviceContext.setResponseContentType(contentType);
+			OutputStream out = serviceContext.getOutputStream();
+			in = reader.getInputStream(0);
 			int size = 0;
 			byte[] buffer = new byte[bufferSize];
 			while ((size = in.read(buffer)) != -1) {
@@ -71,8 +84,7 @@ public class UploadSaveBlob extends AbstractLogiclet{
 			ctx.SetValue(id, "false");
 			throw new BaseException("core.e1004", ex.getMessage());
 		} finally {
-			IOTools.close(in);
-			writer.finishWrite(out);
+			reader.finishRead(in);
 		}
 	}
 }
