@@ -8,6 +8,9 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.code.Coder;
@@ -20,11 +23,12 @@ import com.anysoft.util.code.Coder;
  *
  */
 public class DES3 implements Coder {
-
+	
+	protected static final Logger LOG = LoggerFactory.getLogger(DES3.class);
+	
 	public String getAlgorithm() {
 		return "DESede";
 	}
-	
 	
 	public String encode(String data,String key) {
 		try {
@@ -42,6 +46,7 @@ public class DES3 implements Coder {
             byte [] result = c.doFinal(data.getBytes());
             return new String(Base64.encodeBase64(result));
 		}catch (Exception ex){
+			LOG.error(ExceptionUtils.getStackTrace(ex));
 			return data;
 		}
 	}
@@ -63,6 +68,7 @@ public class DES3 implements Coder {
 			byte [] result = Base64.decodeBase64(data.getBytes());
 			return  new String(c.doFinal(result));
 		}catch (Exception ex){
+			LOG.error(ExceptionUtils.getStackTrace(ex));
 			return data;
 		}
 	}	
@@ -79,7 +85,7 @@ public class DES3 implements Coder {
 	
 	protected String padding(String key){
 		if (key.length() > 24){
-			return key.substring(0,23);
+			return key.substring(0,24);
 		}else{
 			for (int i = key.length() ; i < 24 ; i ++){
 				key += "0";

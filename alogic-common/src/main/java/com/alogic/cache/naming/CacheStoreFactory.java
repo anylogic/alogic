@@ -49,9 +49,9 @@ public class CacheStoreFactory extends Naming<Store<CacheObject>>{
 	}
 	
 	/**
-	 * 根据id获取IdGen
-	 * @param id generator的id
-	 * @return IdGen实例
+	 * 根据id获取Store
+	 * @param id Store的id
+	 * @return Store实例
 	 */
 	public static Store<CacheObject> get(String id){
 		CacheStoreFactory src = CacheStoreFactory.get();

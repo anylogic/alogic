@@ -4,6 +4,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.code.Coder;
@@ -17,6 +20,7 @@ import com.anysoft.util.code.Coder;
  * @since 1.0.13
  */
 public class SHA1 implements Coder {
+	protected static final Logger LOG = LoggerFactory.getLogger(SHA1.class);
 	public String getAlgorithm() {
 		return "sha-1";
 	}
@@ -29,6 +33,7 @@ public class SHA1 implements Coder {
 			byte result[] = m.digest();
 			return new String(Base64.encodeBase64(result));
 		} catch (NoSuchAlgorithmException e) {
+			LOG.error(ExceptionUtils.getStackTrace(e));
 			return data;
 		}
 	}

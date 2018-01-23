@@ -2,6 +2,7 @@ package com.alogic.naming;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -75,6 +76,14 @@ public abstract class Naming <O extends Reportable> implements Context<O>,Watche
 	 * @return 对象实例
 	 */
 	protected abstract Context<O> newInstance(Element e, Properties p, String attrName);
+	
+	/**
+	 * 获取当前的cache列表
+	 * @return cache列表
+	 */
+	public Collection<O> current(){
+		return caches.values();
+	}
 	
 	@Override
 	public void configure(Element root, Properties props) {

@@ -260,24 +260,22 @@ public class Main implements CommandHelper,Process{
 					if (id != null && value != null){ // NOSONAR
 						System.setProperty(id, value);
 					}
-				}else{
-					// 支持final标示,如果final为true,则不覆盖原有的取值
-					boolean isFinal = XmlTools.getBoolean(parameter, "final", false);
-					if (isFinal) { // NOSONAR
-						String oldValue = p.GetValue(id, "", false, true);
-						if (StringUtils.isEmpty(oldValue)) {
-							p.SetValue(id, value);
-						}
-					} else {
+				}
+				// 支持final标示,如果final为true,则不覆盖原有的取值
+				boolean isFinal = XmlTools.getBoolean(parameter, "final", false);
+				if (isFinal) { // NOSONAR
+					String oldValue = p.GetValue(id, "", false, true);
+					if (StringUtils.isEmpty(oldValue)) {
 						p.SetValue(id, value);
 					}
+				} else {
+					p.SetValue(id, value);
 				}
+				
 
 				boolean toSettings = XmlTools.getBoolean(parameter, "toSettings", false);
 				if (toSettings){
 					if (StringUtils.isNotEmpty(id) && StringUtils.isNotEmpty(value)){
-						// 支持final标示,如果final为true,则不覆盖原有的取值
-						boolean isFinal = XmlTools.getBoolean(parameter, "final", false);
 						if (isFinal) { // NOSONAR
 							String oldValue = Settings.get().GetValue(id, "", false, true);
 							if (StringUtils.isEmpty(oldValue)) {

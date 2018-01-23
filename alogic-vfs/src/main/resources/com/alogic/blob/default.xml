@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blobs>
+	<context>
+		<blob 
+			id="default"
+			home="/com/alogic/blob/icon/auto"
+			bootstrap="com.alogic.blob.resource.AutoIconSet"
+			module="com.alogic.blob.resource.AutoIconSet"
+			contentType="image/png"
+	      />
+		<blob 
+			id="avatar"
+			home="/com/alogic/blob/icon/avatar"
+			bootstrap="com.alogic.blob.resource.IconSet"
+			module="com.alogic.blob.resource.IconSet"
+			contentType="image/png"
+	      />	 
+		<blob 
+			id="project"
+			home="/com/alogic/blob/icon/project"
+			bootstrap="com.alogic.blob.resource.IconSet"
+			module="com.alogic.blob.resource.IconSet"
+			contentType="image/png"
+	      />		           
+	</context>
+</blobs>

@@ -22,17 +22,7 @@
 		</dependency>		
 		<dependency>
 			<groupId>com.github.anylogic</groupId>
-			<artifactId>alogic-blob</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.anylogic</groupId>
 			<artifactId>alogic-dbcp</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.anylogic</groupId>
-			<artifactId>alogic-seq</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

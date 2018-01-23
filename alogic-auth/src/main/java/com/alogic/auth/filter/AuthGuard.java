@@ -145,7 +145,7 @@ public class AuthGuard implements Filter{
 			//未登录，重定向到登录页面
 			HttpServletResponse httpResp = (HttpServletResponse)response;
 			StringBuffer redirectURL = new StringBuffer(getLoginPage(sess.getId(),loginPage));
-			redirectURL.append("?").append(returnURL).append("=");						
+			redirectURL.append("&").append(returnURL).append("=");						
 			redirectURL.append(URLEncoder.encode(getRequestURL(httpReq), encoding));		
 			httpResp.sendRedirect(redirectURL.toString());
 		}
@@ -198,6 +198,8 @@ public class AuthGuard implements Filter{
 		String query = request.getQueryString();
 		if (StringUtils.isNotEmpty(query)){
 			url.append("?").append(query);
+		}else{
+			url.append("?true");
 		}
 		return url.toString();
 	}

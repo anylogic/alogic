@@ -138,12 +138,12 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 			
 			String pwd = encrypter.decode(password, authCode);
 			pwd = md5.encode(pwd, userId);
-			/*
+			
 			if (!pwd.equals(user.getPassword())){
 				throw new BaseException("clnt.e2001",
 						String.format("User %s does not exist or the password is not correct.", userId));				
 			}
-			*/
+			
 			Principal newPrincipal = new SessionPrincipal(sess);
 			user.copyTo(newPrincipal);
 			//设置登录时间

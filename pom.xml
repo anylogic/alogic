@@ -46,8 +46,6 @@
 		<module>alogic-kvalue</module>
 		<module>alogic-cache</module>
 		<module>alogic-doer</module>
-		<module>alogic-seq</module>
-		<module>alogic-blob</module>
 		<module>alogic-lucene</module>
 		<module>alogic-vfs</module>
 		<module>alogic-rpc</module>

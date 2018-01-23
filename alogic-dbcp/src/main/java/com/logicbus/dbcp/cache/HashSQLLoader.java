@@ -54,7 +54,7 @@ public class HashSQLLoader extends Loader.Abstract<CacheObject>{
 		}
 		Connection conn = pool.getConnection();
 		try {
-			Map<String,Object> result = DBTools.selectAsObjects(conn,sql, id);
+			Map<String,Object> result = DBTools.selectAsObjects(conn,sql, ids);
 			if (result != null){
 				CacheObject found = new CacheObject.Simple(id);
 				found.fromJson(result);

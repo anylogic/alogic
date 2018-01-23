@@ -67,3 +67,9 @@ alogic-1.6.11
 - alogic-rpc:增加可授权签名模式的客户端插件;
 - alogic-common:增加cache-sexist的缓存操作插件;
 - alogic-common:x509证书采用Bouncy Castle的类库来生成;
+
+### 1.6.11.11 [20180123 duanyy]
+
+- alogic-blob:淘汰alogic-blob,采用alogic-vfs功能替代;
+- alogic-addons:淘汰idu相关的服务框架;
+- alogic-seq:淘汰alogic-seq,采用alogic-common中的uid框架替代;

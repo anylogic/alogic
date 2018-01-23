@@ -9,6 +9,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.BaseException;
 import com.anysoft.util.code.Coder;
@@ -21,7 +23,7 @@ import com.anysoft.util.code.Coder;
  * 
  */
 public class HmacSHA256 implements Coder {
-
+	protected static final Logger LOG = LoggerFactory.getLogger(MD5.class);
 	public String getAlgorithm() {
 		return "HmacSHA256";
 	}
@@ -36,7 +38,8 @@ public class HmacSHA256 implements Coder {
             byte[] bytes = mac.doFinal(data.getBytes());  
             return Base64.encodeBase64URLSafeString(bytes);
 		}catch (Exception ex){
-			throw new BaseException("core.e1000",ExceptionUtils.getStackTrace(ex));
+			LOG.error(ExceptionUtils.getStackTrace(ex));
+			return data;
 		}
 	}
 

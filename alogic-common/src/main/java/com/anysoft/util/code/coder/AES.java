@@ -7,6 +7,9 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.code.Coder;
@@ -19,7 +22,7 @@ import com.anysoft.util.code.Coder;
  *
  */
 public class AES implements Coder {
-
+	protected static final Logger LOG = LoggerFactory.getLogger(DES3.class);
 	public String getAlgorithm() {
 		return "AES";
 	}
@@ -38,6 +41,7 @@ public class AES implements Coder {
 			byte [] result = c.doFinal(data.getBytes());
 			return new String(Base64.encodeBase64(result));
 		}catch (Exception ex){
+			LOG.error(ExceptionUtils.getStackTrace(ex));
 			return data;
 		}
 	}
@@ -56,6 +60,7 @@ public class AES implements Coder {
 			c.init(Cipher.DECRYPT_MODE, secretKey);  
 			return  new String(c.doFinal(result));
 		}catch (Exception ex){
+			LOG.error(ExceptionUtils.getStackTrace(ex));
 			return data;
 		}
 	}

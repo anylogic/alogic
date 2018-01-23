@@ -74,7 +74,7 @@ public class AuthLogin implements Filter{
 				HttpServletResponse httpResp = (HttpServletResponse)response;
 				Principal principal = sm.getCurrent(httpReq,sess);
 				if (principal != null){
-					httpResp.sendRedirect(String.format("%s&%s=%s",returnURL,token,principal.getId()));
+					httpResp.sendRedirect(String.format("%s&%s=%s",redirectURL,token,principal.getId()));
 				}else{
 					chain.doFilter(request, response);
 				}

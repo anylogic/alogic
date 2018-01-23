@@ -26,7 +26,6 @@ public class IDU extends Segment{
 		registerModule("idExist",IdExist.class);
 		registerModule("list",ListAll.class);
 		registerModule("new",New.class);
-		registerModule("newId",NewId.class);
 		registerModule("query",Query.class);
 		registerModule("update",Update.class);
 		registerModule("cache",Cache.class);
@@ -35,12 +34,10 @@ public class IDU extends Segment{
 		registerModule("commit",Commit.class);
 		registerModule("rollback",Rollback.class);
 		registerModule("scan",Scan.class);
-		
 		registerModule("db-del", Delete.class);
 		registerModule("db-id-exist",IdExist.class);
 		registerModule("db-list",ListAll.class);
 		registerModule("db-insert",New.class);
-		registerModule("db-sequence",NewId.class);
 		registerModule("db-select",Query.class);
 		registerModule("db-update",Update.class);
 		registerModule("cache-expire",CacheClear.class);
