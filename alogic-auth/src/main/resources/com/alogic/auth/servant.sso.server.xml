@@ -7,6 +7,7 @@
 			note="验证token并获取token的信息." 
 			visible="protected"
 			log = "brief" 
+			acGroupId ="session"
 			module="com.alogic.auth.service.GetTokenInfo">
 			<properties>
 				<parameter id="jsonDefault" value="true" 
@@ -23,6 +24,7 @@
 			note="通过用户名，密码和验证码进行登录." 
 			visible="public"
 			log = "brief" 
+			acGroupId ="session"
 			module="com.alogic.auth.service.Login">
 			<properties>
 				<parameter id="jsonDefault" value="true" 
@@ -39,6 +41,7 @@
 			note="获取验证码图片." 
 			visible="public"
 			log = "brief" 
+			acGroupId ="session"
 			module="com.alogic.auth.service.AuthCode">
 			<properties>
 				<parameter id="jsonDefault" value="true" 
@@ -55,6 +58,7 @@
 			note="当前用户退出登录." 
 			visible="public"
 			log = "brief" 
+			acGroupId ="session"
 			module="com.alogic.auth.service.Logout">
 			<properties>
 				<parameter id="jsonDefault" value="true" 
@@ -71,6 +75,7 @@
 			note="获取当前登录信息." 
 			visible="public"
 			log = "brief" 
+			acGroupId ="session"
 			module="com.alogic.auth.service.CurrentLogin">
 			<properties>
 				<parameter id="jsonDefault" value="true" 
@@ -87,6 +92,7 @@
 			note="检查当前用户是否具备指定的权限." 
 			visible="public"
 			log = "brief" 
+			acGroupId ="session"
 			module="com.alogic.auth.service.CheckSinglePrivilege">
 			<properties>
 				<parameter id="jsonDefault" value="true" 
@@ -103,6 +109,7 @@
 			note="检查当前用户是否具备指定的菜单权限." 
 			visible="public"
 			log = "brief" 
+			acGroupId ="session"
 			module="com.alogic.auth.service.CheckMenuPrivilege">
 			<properties>
 				<parameter id="jsonDefault" value="true" 
