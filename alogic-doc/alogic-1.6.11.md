@@ -78,4 +78,8 @@ alogic-1.6.11
 
 - alogic-core:http响应的缓存属性改成由服务来个性化控制;
 - alogic-together:增加下载类服务的组装功能;
-- 
+
+### 1.6.11.13 [20180125 duanyy]
+
+- alogic-cache:淘汰alogic-cache工程;
+- alogic-kvalue:增加基于kvalue的分布式缓存实现;

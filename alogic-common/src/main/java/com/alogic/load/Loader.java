@@ -93,6 +93,14 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 		 */
 		protected long ttl = 0;
 		
+		/**
+		 * 获取对象有效期
+		 * @return ttl
+		 */
+		public long getTTL(){
+			return ttl;
+		}
+		
 		@Override
 		public void configure(Properties p) {
 			ttl = PropertiesConstants.getLong(p,"ttl", ttl);

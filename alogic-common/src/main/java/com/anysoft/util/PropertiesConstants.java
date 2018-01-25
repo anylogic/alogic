@@ -56,6 +56,9 @@ public class PropertiesConstants {
 	 * @return 转换值
 	 */
 	public static String transform(Properties p,String pattern,String dftValue){
+		if (StringUtils.isEmpty(pattern)){
+			return dftValue;
+		}
 		String value = p.transform(pattern);
 		return StringUtils.isNotEmpty(value) ? value : dftValue;
 	}
@@ -69,6 +72,9 @@ public class PropertiesConstants {
 	 * @return 转换值
 	 */
 	public static long transform(Properties p, String pattern, long dftValue) {
+		if (StringUtils.isEmpty(pattern)){
+			return dftValue;
+		}
 		String value = p.transform(pattern);
 		if (StringUtils.isEmpty(value)) {
 			return dftValue;
@@ -90,6 +96,9 @@ public class PropertiesConstants {
 	 * @return 转换值
 	 */
 	public static int transform(Properties p, String pattern, int dftValue) {
+		if (StringUtils.isEmpty(pattern)){
+			return dftValue;
+		}
 		String value = p.transform(pattern);
 		if (StringUtils.isEmpty(value)) {
 			return dftValue;
@@ -111,6 +120,9 @@ public class PropertiesConstants {
 	 * @return 转换值
 	 */
 	public static double transform(Properties p, String pattern, double dftValue) {
+		if (StringUtils.isEmpty(pattern)){
+			return dftValue;
+		}
 		String value = p.transform(pattern);
 		if (StringUtils.isEmpty(value)) {
 			return dftValue;
@@ -132,6 +144,9 @@ public class PropertiesConstants {
 	 * @return 转换值
 	 */
 	public static float transform(Properties p, String pattern, float dftValue) {
+		if (StringUtils.isEmpty(pattern)){
+			return dftValue;
+		}
 		String value = p.transform(pattern);
 		if (StringUtils.isEmpty(value)) {
 			return dftValue;
@@ -153,6 +168,10 @@ public class PropertiesConstants {
 	 * @return 转换值
 	 */
 	public static boolean transform(Properties p, String pattern, boolean dftValue) {
+		if (StringUtils.isEmpty(pattern)){
+			return dftValue;
+		}
+		
 		String value = p.transform(pattern);
 		if (StringUtils.isEmpty(value)) {
 			return dftValue;

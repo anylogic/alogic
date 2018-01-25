@@ -1,12 +1,11 @@
-package com.alogic.cache.service;
+package com.logicbus.cache.service;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.alogic.cache.context.CacheSource;
+import com.alogic.cache.naming.CacheStoreFactory;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.message.JsonMessage;
@@ -45,7 +44,7 @@ public class CacheSourceReport extends AbstractServant {
 		
 		Element eleSource = doc.createElement("source");
 		
-		CacheSource src = CacheSource.get();
+		CacheStoreFactory src = CacheStoreFactory.get();
 		src.report(eleSource);
 		
 		root.appendChild(eleSource);
@@ -59,7 +58,7 @@ public class CacheSourceReport extends AbstractServant {
 		
 		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR
 		
-		CacheSource src = CacheSource.get();
+		CacheStoreFactory src = CacheStoreFactory.get();
 		
 		src.report(map);
 		

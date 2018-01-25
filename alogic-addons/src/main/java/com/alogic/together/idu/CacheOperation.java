@@ -2,7 +2,8 @@ package com.alogic.together.idu;
 
 import java.util.Map;
 
-import com.alogic.cache.core.CacheStore;
+import com.alogic.cache.CacheObject;
+import com.alogic.load.Store;
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
@@ -21,6 +22,8 @@ import com.logicbus.backend.ServantException;
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
+ * @version 1.6.11.13 [20180125 duanyy] <br>
+ * - 切换到新的缓存实现 <br>
  * @deprecated
  */
 public abstract class CacheOperation extends AbstractLogiclet{
@@ -37,7 +40,7 @@ public abstract class CacheOperation extends AbstractLogiclet{
 	@Override
 	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
-		CacheStore cache = ctx.getObject(cacheConn);
+		Store<CacheObject> cache = ctx.getObject(cacheConn);
 		if (cache == null){
 			throw new ServantException("core.e1001","It must be in a cache context,check your together script.");
 		}
@@ -45,14 +48,14 @@ public abstract class CacheOperation extends AbstractLogiclet{
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void onExecute(CacheStore cache, XsObject root,XsObject current, LogicletContext ctx,
+	protected void onExecute(Store<CacheObject> cache, XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher){
 		if (current instanceof JsonObject){
 			onExecute(cache,(Map<String,Object>)root.getContent(),(Map<String,Object>)current.getContent(),ctx,watcher);
 		}
 	}
 	
-	protected void onExecute(CacheStore cache, Map<String,Object> root,Map<String,Object> current, LogicletContext ctx,
+	protected void onExecute(Store<CacheObject> cache, Map<String,Object> root,Map<String,Object> current, LogicletContext ctx,
 			ExecuteWatcher watcher){
 		throw new BaseException("core.e1000",
 				String.format("Tag %s does not support protocol %s",this.getXmlTag(),root.getClass().getName()));

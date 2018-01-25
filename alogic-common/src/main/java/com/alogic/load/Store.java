@@ -21,6 +21,9 @@ import com.anysoft.util.Pager;
  * 
  * @version 1.6.11.1 [20171215 duanyy] <br>
  * - 增加有效期的判定 <br>
+ * 
+ * @version 1.6.11.13 [20180125 duanyy] <br>
+ * - 增加newObject方法 <br>
  */
 public interface Store<O extends Loadable> extends Loader<O> {
 	
@@ -34,6 +37,13 @@ public interface Store<O extends Loadable> extends Loader<O> {
 	public void save(String id,O o,boolean overwrite);
 	
 	/**
+	 * 创建一个新的对象
+	 * @param id 对象id
+	 * @return 对象实例
+	 */
+	public O newObject(String id);
+	
+	/**
 	 * 删除指定的对象
 	 * @param id 对象id
 	 */
@@ -44,7 +54,7 @@ public interface Store<O extends Loadable> extends Loader<O> {
 	 * @param result 查询结果 
 	 * @param pager Pager
 	 */
-	public void scan(List<O> result,Pager pager);
+	public void scan(List<String> result,Pager pager);
 	
 	/**
 	 * 基于本地内存ConcurrentHashMap的Store
@@ -52,19 +62,28 @@ public interface Store<O extends Loadable> extends Loader<O> {
 	 * @author yyduan
 	 *
 	 */
-	public static class HashStore<O extends Loadable> extends Loader.Sinkable<O> implements Store<O>{
+	public abstract static class HashStore<O extends Loadable> extends Loader.Sinkable<O> implements Store<O>{
 		protected Map<String,O> data = new ConcurrentHashMap<String,O>();
 		
 		@Override
 		public void save(String id, O o, boolean overwrite) {
-			O found = data.get(id);
-			if (found == null){
+			boolean exist = data.containsKey(id);
+			if (!exist || overwrite){
 				data.put(id, o);
-			}else{
-				if (overwrite){
-					data.put(id, o);
+			}
+		}
+		
+		@Override
+		public O load(String id, boolean cacheAllowed) {
+			O found = loadFromSelf(id,cacheAllowed);
+			if (found == null){
+				found = loadFromSink(id,cacheAllowed);
+				if (found != null){
+					save(id,found,true);
 				}
 			}
+			
+			return found;
 		}
 
 		@Override
@@ -86,7 +105,7 @@ public interface Store<O extends Loadable> extends Loader<O> {
 		}
 
 		@Override
-		public void scan(List<O> result,Pager pager) {
+		public void scan(List<String> result,Pager pager) {
 			Collection<O> list = data.values();
 			
 			String keyword = pager.getKeyword();
@@ -99,7 +118,7 @@ public interface Store<O extends Loadable> extends Loader<O> {
 				boolean match = StringUtils.isEmpty(pager.getKeyword()) || id.contains(keyword);
 				if (match){
 					if (current >= offset && current < offset + limit){
-						result.add(o);
+						result.add(id);
 					}
 					current ++;
 				}

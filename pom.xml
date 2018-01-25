@@ -44,7 +44,6 @@
 		<module>alogic-addons</module>
 		<module>alogic-together</module>
 		<module>alogic-kvalue</module>
-		<module>alogic-cache</module>
 		<module>alogic-doer</module>
 		<module>alogic-lucene</module>
 		<module>alogic-vfs</module>

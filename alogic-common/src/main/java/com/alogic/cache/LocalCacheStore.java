@@ -10,4 +10,9 @@ import com.alogic.load.Store;
  */
 public class LocalCacheStore extends Store.HashStore<CacheObject>{
 
+	@Override
+	public CacheObject newObject(String id) {
+		return new CacheObject.Simple(id);
+	}
+
 }

@@ -2,7 +2,6 @@ package com.alogic.auth;
 
 import com.alogic.load.HashObject;
 import com.alogic.load.SetObject;
-import com.alogic.load.Store;
 
 /**
  * Web服务器的会话，用于替代HttpSession
@@ -15,6 +14,9 @@ import com.alogic.load.Store;
  * 
  * @version 1.6.11.7 [20180107 duanyy] <br>
  * - 优化Session管理 <br>
+ * 
+ * @version 1.6.11.13 [20180125 duanyy] <br>
+ * - 不再提供基于Session的Store实现 <br>
  */
 public interface Session extends SetObject,HashObject,Constants{
 		
@@ -31,14 +33,4 @@ public interface Session extends SetObject,HashObject,Constants{
 	 * @param loggedIn 当前是否登录
 	 */
 	public void setLoggedIn(boolean loggedIn);
-	
-	/**
-	 * 本地缓存实现
-	 * 
-	 * @author yyduan
-	 *
-	 */
-	public static class LocalCacheStore extends Store.HashStore<Session>{
-		
-	}
 }

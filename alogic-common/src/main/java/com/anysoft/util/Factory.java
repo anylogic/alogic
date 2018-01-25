@@ -71,7 +71,7 @@ public class Factory<OBJECT> {
 	 * @see #newInstance(String)
 	 */
 	public OBJECT newInstance(Element xml,Properties props,String moduleAttr){
-		String module = xml.getAttribute(moduleAttr);
+		String module = PropertiesConstants.transform(props,xml.getAttribute(moduleAttr), "");
 		if (StringUtils.isEmpty(module)){
 			throw new BaseException(Factory.class.getName(),
 					"Can not find attr in the element,attr id = " + moduleAttr);
@@ -98,13 +98,8 @@ public class Factory<OBJECT> {
 	 * @since 1.3.5
 	 */
 	public OBJECT newInstance(Element xml,Properties props,String moduleAttr,String dftClass){
-		String module = xml.getAttribute(moduleAttr);
-		if (StringUtils.isEmpty(module)){
-			module = dftClass;
-		}
-		
-		OBJECT instance = newInstance(module);
-		
+		String module = PropertiesConstants.transform(props,xml.getAttribute(moduleAttr), dftClass);		
+		OBJECT instance = newInstance(module);		
 		if (instance instanceof XMLConfigurable){
 			((XMLConfigurable)instance).configure(xml, props);
 		}

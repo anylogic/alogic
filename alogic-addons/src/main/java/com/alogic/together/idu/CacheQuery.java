@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.alogic.cache.core.CacheStore;
-import com.alogic.cache.core.MultiFieldObject;
+import com.alogic.cache.CacheObject;
+import com.alogic.load.Store;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
@@ -25,6 +25,8 @@ import com.logicbus.backend.ServantException;
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
+ * @version 1.6.11.13 [20180125 duanyy] <br>
+ * - 切换到新的缓存实现 <br>
  * @deprecated
  */
 public class CacheQuery extends CacheOperation {
@@ -45,7 +47,7 @@ public class CacheQuery extends CacheOperation {
 	}	
 	
 	@Override
-	protected void onExecute(CacheStore cache, XsObject root,XsObject current, LogicletContext ctx,
+	protected void onExecute(Store<CacheObject> cache, XsObject root,XsObject current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		String idValue = ctx.transform(id);
 		
@@ -53,7 +55,7 @@ public class CacheQuery extends CacheOperation {
 			if (StringUtils.isNotEmpty(idValue)){
 				@SuppressWarnings("unchecked")
 				Map<String,Object> content = (Map<String,Object>)current.getContent();
-				MultiFieldObject found = cache.get(idValue, true);
+				CacheObject found = cache.load(idValue, true);
 				if (found == null){
 					throw new ServantException("clnt.e2007","Can not find object,id=" + idValue);
 				}
@@ -70,7 +72,7 @@ public class CacheQuery extends CacheOperation {
 			}
 		}else{
 			if (StringUtils.isNotEmpty(idValue)){
-				MultiFieldObject found = cache.get(idValue, true);
+				CacheObject found = cache.load(idValue, true);
 				if (found == null){
 					throw new ServantException("core.data_not_found","Can not find object,id=" + idValue);
 				}

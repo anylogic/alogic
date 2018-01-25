@@ -1,11 +1,14 @@
-package com.alogic.cache.service;
+package com.logicbus.cache.service;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import com.alogic.cache.context.CacheSource;
-import com.alogic.cache.core.CacheStore;
+
+import com.alogic.cache.CacheObject;
+import com.alogic.cache.naming.CacheStoreFactory;
+import com.alogic.load.Store;
 import com.logicbus.backend.AbstractServant;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.ServantException;
@@ -14,17 +17,16 @@ import com.logicbus.backend.message.XMLMessage;
 import com.logicbus.models.servant.ServiceDescription;
 
 /**
- * 查询指定cache信息
+ * 过期指定的cache或者cache中指定的数据
  * 
  * @author duanyy
  * @since 1.6.3.3
- * 
  * @version 1.6.4.19 [duanyy 20151218] <br>
  * - 按照SONAR建议修改代码 <br>
  * 
- * @deprecated
+ * 
  */
-public class CacheQuery extends AbstractServant {
+public class CacheExpire  extends AbstractServant {
 
 	@Override
 	protected int onXml(Context ctx){
@@ -35,12 +37,13 @@ public class CacheQuery extends AbstractServant {
 		Document doc = msg.getDocument();
 		Element root = msg.getRoot();
 		
-		CacheSource src = CacheSource.get();
-		
-		CacheStore found = src.get(id);
+		Store<CacheObject> found = CacheStoreFactory.get(id);
 		if (found == null){
 			throw new ServantException("clnt.e2007","Can not find a cache :" + id);
 		}
+		
+		String objectId = getArgument("objectId",ctx);
+		found.del(objectId);
 		
 		Element eleCache = doc.createElement("cache");
 		found.report(eleCache);
@@ -54,12 +57,13 @@ public class CacheQuery extends AbstractServant {
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		String id = getArgument("cacheId",ctx);
 		
-		CacheSource src = CacheSource.get();
-		
-		CacheStore found = src.get(id);
+		Store<CacheObject> found = CacheStoreFactory.get(id);
 		if (found == null){
 			throw new ServantException("clnt.e2007","Can not find a cache :" + id);
 		}
+		
+		String objectId = getArgument("objectId",ctx);
+		found.del(objectId);
 		
 		Map<String,Object> map = new HashMap<String,Object>(); // NOSONAR
 		found.report(map);
@@ -72,7 +76,6 @@ public class CacheQuery extends AbstractServant {
 	protected void onDestroy() {
 		// nothing to do
 	}
-	
 	@Override
 	protected void onCreate(ServiceDescription sd) {
 		// nothing to do

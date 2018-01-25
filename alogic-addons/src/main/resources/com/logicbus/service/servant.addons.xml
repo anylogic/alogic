@@ -369,7 +369,7 @@
 					visible="protected"
 					privilege="console.user"
 					acGroupId="console"
-					module="com.alogic.cache.service.CacheSourceReport"
+					module="com.logicbus.cache.service.CacheSourceReport"
 					log = "none" 
 			>
 				<properties>
@@ -388,7 +388,7 @@
 					visible="protected"
 					privilege="console.user"
 					acGroupId="console"
-					module="com.alogic.cache.service.CacheList"
+					module="com.logicbus.cache.service.CacheList"
 					log = "none" 
 			>
 				<properties>
@@ -407,7 +407,7 @@
 					visible="protected"
 					privilege="console.user"
 					acGroupId="console"
-					module="com.alogic.cache.service.CacheQuery"
+					module="com.logicbus.cache.service.CacheQuery"
 					log = "none" 
 			>
 				<properties>
@@ -426,7 +426,7 @@
 					visible="protected"
 					privilege="console.user"
 					acGroupId="console"
-					module="com.alogic.cache.service.CacheObjectQuery"
+					module="com.logicbus.cache.service.CacheObjectQuery"
 					log = "none" 
 			>
 				<properties>
@@ -445,7 +445,7 @@
 					visible="protected"
 					privilege="console.mngr"
 					acGroupId="console"
-					module="com.alogic.cache.service.CacheExpire"
+					module="com.logicbus.cache.service.CacheExpire"
 					log = "none" 
 			>
 				<properties>

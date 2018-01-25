@@ -24,12 +24,12 @@ public class Pager {
 	/**
 	 * 匹配本次查询keyword的总数据量，作为查询的输出（查询引擎不一定支持）
 	 */
-	protected int total = 0;
+	protected long total = 0;
 	
 	/**
 	 * 整个数据集的数据量，作为查询的输出（查询引擎不一定支持）
 	 */
-	protected int all = 0;
+	protected long all = 0;
 	
 	public Pager(String keyword,int offset,int limit){
 		this.keyword = keyword;
@@ -57,11 +57,11 @@ public class Pager {
 		return keyword;
 	}
 	
-	public int getTotal(){
+	public long getTotal(){
 		return total;
 	}
 	
-	public int getAll(){
+	public long getAll(){
 		return all;
 	}
 	
@@ -80,12 +80,12 @@ public class Pager {
 		return this;
 	}
 	
-	public Pager setTotal(int total){
+	public Pager setTotal(long total){
 		this.total = total;
 		return this;
 	}
 	
-	public Pager setAll(int all){
+	public Pager setAll(long all){
 		this.all = all;
 		return this;
 	}

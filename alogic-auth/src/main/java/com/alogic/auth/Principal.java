@@ -3,7 +3,6 @@ package com.alogic.auth;
 import java.util.List;
 
 import com.alogic.load.Loadable;
-import com.alogic.load.Store;
 import com.anysoft.util.JsonSerializer;
 
 /**
@@ -16,6 +15,9 @@ import com.anysoft.util.JsonSerializer;
  * 
  * @version 1.6.11.1 [20171215 duanyy] <br>
  * - 增加获取登录id的方法<br>
+ * 
+ * @version 1.6.11.13 [20180125 duanyy] <br>
+ * - 不再提供基于Principal的Store实现 <br>
  */
 public interface Principal extends Loadable,Constants,JsonSerializer{
 	
@@ -138,15 +140,5 @@ public interface Principal extends Loadable,Constants,JsonSerializer{
 		public String getId() {
 			return id;
 		}
-	}
-	
-	/**
-	 * 本地缓存实现
-	 * 
-	 * @author yyduan
-	 *
-	 */
-	public static class LocalCacheStore extends Store.HashStore<Principal>{
-		
 	}
 }

@@ -37,11 +37,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.anylogic</groupId>
-			<artifactId>alogic-cache</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.anylogic</groupId>
 			<artifactId>alogic-vfs</artifactId>
 			<version>${project.version}</version>
 		</dependency>
