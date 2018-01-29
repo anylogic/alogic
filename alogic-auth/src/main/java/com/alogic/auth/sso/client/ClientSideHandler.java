@@ -114,21 +114,19 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 		}else{
 			token = sess.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
 		}
-
 		if (StringUtils.isNotEmpty(token)) {
 			try {
 				Parameters paras = theCall.createParameter();
 
 				paras.param("token", token);
 				paras.param("fromIp", getClientIp(request));
-				
 				Result result = theCall.execute(paras);
 				if (result.getCode().equals("core.ok")) {
 					Map<String, Object> data = result.getData("data");
-
 					boolean isLoggedIn = JsonTools.getBoolean(data,
 							"isLoggedIn", false);
 					if (isLoggedIn) {
+						LOG.info("4 Token is " + token);
 						principal = new SessionPrincipal(token,sess);
 						principal.fromJson(data);
 						sess.setLoggedIn(isLoggedIn);			
@@ -174,7 +172,13 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 
 	@Override
 	public void logout(HttpServletRequest request,HttpServletResponse response) {
-		throw new BaseException("core.e1000","In sso client mode,it's not supported to logout.");
+		Session session = sessionManager.getSession(request,response, false);
+
+		if (session != null && session.isLoggedIn()){
+			Principal principal = new SessionPrincipal(session.getId(),session);
+			LOG.info(String.format("User %s has logged out.",principal.getLoginId()));						
+			principal.expire();
+		}
 	}
 
 }

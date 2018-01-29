@@ -58,7 +58,7 @@ public class AuthLogout implements Filter{
 		HttpServletResponse httpResp = (HttpServletResponse)response;
 		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
 		Session sess = sm.getSession(httpReq,httpResp, false);
-		if (sess.isLoggedIn()){
+		if (sess != null && sess.isLoggedIn()){
 			try {
 				sm.logout(httpReq, httpResp);
 			}catch (Exception ex){
