@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,15 +34,19 @@ import com.logicbus.backend.server.http.HttpContext;
  * 
  * @version 1.6.11.7 [20180107 duanyy] <br>
  * - 优化Session管理 <br>
+ * 
+ * @version 1.6.11.14 [duanyy 20180129] <br>
+ * - 优化AuthenticationHandler接口 <br>
  */
 public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	/**
 	 * 通过Servlet请求获取Principal 
 	 * 
 	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
 	 * @return Principal实例，如果当前没有登录，返回为null.
 	 */
-	public Principal getCurrent(HttpServletRequest request);
+	public Principal getCurrent(HttpServletRequest request,HttpServletResponse response);
 	
 	/**
 	 * 通过Token来查找指定的Principal
@@ -61,7 +66,7 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	 * @param request HttpServletRequest
 	 * @return Principal实例，如果成功，返回登录后的Principal，反之，以异常的形式抛出.
 	 */
-	public Principal login(HttpServletRequest request);
+	public Principal login(HttpServletRequest request,HttpServletResponse response);
 	
 	/**
 	 * 通过Session获取Principal
@@ -69,7 +74,7 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	 * @param session 会话
 	 * @return Principal实例，如果当前没有登录，返回为null.
 	 */
-	public Principal getCurrent(HttpServletRequest request,Session session);
+	public Principal getCurrent(HttpServletRequest request,HttpServletResponse response,Session session);
 	
 	/**
 	 * 通过服务上下文获取Principal 
@@ -96,7 +101,7 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	/**
 	 * 退出登录
 	 */
-	public void logout(HttpServletRequest request);	
+	public void logout(HttpServletRequest request,HttpServletResponse response);	
 	
 	/**
 	 * 退出登录
@@ -200,7 +205,8 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 			
 			HttpContext httpContext = (HttpContext)ctx;
 			HttpServletRequest request = httpContext.getRequest();
-			return getCurrent(request);
+			HttpServletResponse response = httpContext.getResponse();
+			return getCurrent(request,response);
 		}
 		
 		@Override
@@ -211,7 +217,8 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 			
 			HttpContext httpContext = (HttpContext)ctx;
 			HttpServletRequest request = httpContext.getRequest();
-			return login(request);
+			HttpServletResponse response = httpContext.getResponse();
+			return login(request,response);
 		}
 		
 		@Override
@@ -222,7 +229,8 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 			
 			HttpContext httpContext = (HttpContext)ctx;
 			HttpServletRequest request = httpContext.getRequest();
-			logout(request);			
+			HttpServletResponse response = httpContext.getResponse();
+			logout(request,response);			
 		}
 		
 		@Override

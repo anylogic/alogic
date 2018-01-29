@@ -3,6 +3,7 @@ package com.alogic.auth;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.w3c.dom.Element;
@@ -28,6 +29,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.11.7 [20180107 duanyy] <br>
  * - 优化Session管理 <br>
+ * 
+ * @version 1.6.11.14 [duanyy 20180129] <br>
+ * - 优化AuthenticationHandler接口 <br>
  */
 public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	
@@ -95,18 +99,18 @@ public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	}
 	
 	@Override
-	public Session getSession(HttpServletRequest request, boolean create) {
-		return sessionManager.getSession(request, create);
+	public Session getSession(HttpServletRequest request,HttpServletResponse reponse,boolean create) {
+		return sessionManager.getSession(request,reponse,create);
 	}
 
 	@Override
-	public Principal getCurrent(HttpServletRequest req) {
-		return authHandler.getCurrent(req);
+	public Principal getCurrent(HttpServletRequest req,HttpServletResponse res) {
+		return authHandler.getCurrent(req,res);
 	}
 
 	@Override
-	public Principal login(HttpServletRequest req) {
-		return authHandler.login(req);
+	public Principal login(HttpServletRequest req,HttpServletResponse res) {
+		return authHandler.login(req,res);
 	}
 
 	@Override
@@ -115,8 +119,8 @@ public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	}
 
 	@Override
-	public Principal getCurrent(HttpServletRequest req,Session session) {
-		return authHandler.getCurrent(req,session);
+	public Principal getCurrent(HttpServletRequest req,HttpServletResponse res,Session session) {
+		return authHandler.getCurrent(req,res,session);
 	}
 	
 	@Override
@@ -155,8 +159,8 @@ public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	}
 
 	@Override
-	public void logout(HttpServletRequest request) {
-		authHandler.logout(request);
+	public void logout(HttpServletRequest request,HttpServletResponse response) {
+		authHandler.logout(request,response);
 	}
 
 	@Override

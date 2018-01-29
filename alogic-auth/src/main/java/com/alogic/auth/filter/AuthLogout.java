@@ -10,10 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
-
-import com.alogic.auth.Principal;
 import com.alogic.auth.PrincipalManager;
 import com.alogic.auth.Session;
 import com.alogic.auth.SessionManagerFactory;
@@ -21,18 +18,16 @@ import com.anysoft.util.PropertiesConstants;
 import com.anysoft.webloader.FilterConfigProperties;
 
 /**
- * AuthLogin
+ * AuthLogout
  * 
  * <p>
- * AuthLogin是一个标准的Filter，用来处理登录页面的重定向。在已经登录的情况下，要重定向到原页面.
+ * AuthLogout是一个标准的Filter，用来处理注销页面的重定向。
  * 
  * @author yyduan
- * @since 1.6.10.10
+ * @since 1.6.11.14
  * 
- * @version 1.6.11.14 [duanyy 20180129] <br>
- * - 增加redirectURL的容错； <br>
  */
-public class AuthLogin implements Filter{
+public class AuthLogout implements Filter{
 	/**
 	 * 重定向的参数名
 	 */
@@ -44,12 +39,7 @@ public class AuthLogin implements Filter{
 	protected String encoding = "utf-8";
 	
 	/**
-	 * token的参数名
-	 */
-	protected String token = "token";
-	
-	/**
-	 * 成功登录之后的缺省页面
+	 * 注销之后的缺省页面
 	 */
 	protected String mainPage = "";
 	
@@ -57,8 +47,7 @@ public class AuthLogin implements Filter{
 	public void init(FilterConfig filterConfig) throws ServletException {
 		FilterConfigProperties props = new FilterConfigProperties(filterConfig);
 		returnURL = PropertiesConstants.getString(props,"auth.para.url",returnURL);
-		mainPage = PropertiesConstants.getString(props,"auth.page.main",mainPage);
-		token = PropertiesConstants.getString(props,"auth.para.token",token);
+		mainPage = PropertiesConstants.getString(props,"auth.page.login",mainPage);
 		encoding = PropertiesConstants.getString(props,"http.encoding",encoding);
 	}
 
@@ -68,28 +57,16 @@ public class AuthLogin implements Filter{
 		HttpServletRequest httpReq = (HttpServletRequest)request;
 		HttpServletResponse httpResp = (HttpServletResponse)response;
 		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
-		Session sess = sm.getSession(httpReq,httpResp, true);
+		Session sess = sm.getSession(httpReq,httpResp, false);
 		if (sess.isLoggedIn()){
-			//已经登录
-			String redirectURL = getParameter(httpReq,returnURL,mainPage);
-			if (StringUtils.isNotEmpty(redirectURL)){
-				//客户端提供了参数returnURL
-				Principal principal = sm.getCurrent(httpReq,httpResp,sess);
-				if (principal != null){
-					if (redirectURL.indexOf("?") < 0){
-						httpResp.sendRedirect(String.format("%s?redirect&%s=%s",redirectURL,token,principal.getId()));
-					}else{
-						httpResp.sendRedirect(String.format("%s&redirect&%s=%s",redirectURL,token,principal.getId()));
-					}
-				}else{
-					chain.doFilter(request, response);
-				}
-			}else{
-				chain.doFilter(request, response);
+			try {
+				sm.logout(httpReq, httpResp);
+			}catch (Exception ex){
+				// nothing to do
 			}
-		}else{
-			chain.doFilter(request, response);
 		}
+		String redirectURL = getParameter(httpReq,returnURL,mainPage);
+		httpResp.sendRedirect(StringUtils.isEmpty(redirectURL)?mainPage:redirectURL);
 	}
 
 	@Override

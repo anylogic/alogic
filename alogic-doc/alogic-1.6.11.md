@@ -83,3 +83,9 @@ alogic-1.6.11
 
 - alogic-cache:淘汰alogic-cache工程;
 - alogic-kvalue:增加基于kvalue的分布式缓存实现;
+
+### 1.6.11.14 [20180129 duanyy]
+
+- alogic-auth:优化接口;
+- alogic-auth:增加基于cookies的Session管理方式;
+- 

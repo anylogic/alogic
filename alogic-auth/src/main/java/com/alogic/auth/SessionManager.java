@@ -1,6 +1,8 @@
 package com.alogic.auth;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -12,6 +14,7 @@ import org.w3c.dom.Element;
 
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
+import com.anysoft.util.KeyGen;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XMLConfigurable;
@@ -49,10 +52,11 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 	 * 用来从HttpServletRequest中获取当前的Session实例，当当前Session不存在的时候，如果create为true，则创建Session,反之返回为null.
 	 * 
 	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
 	 * @param create 是否创建
 	 * @return 当前的Session实例
 	 */
-	public Session getSession(HttpServletRequest request,boolean create);
+	public Session getSession(HttpServletRequest request,HttpServletResponse response,boolean create);
 	
 	/**
 	 * 根据Id来获取Session对象
@@ -84,9 +88,21 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 		 */
 		protected long ttl = 30 * 60 * 1000L;
 		
+		/**
+		 * 是否使用cookie来保存会话id
+		 */
+		protected boolean cookieEnable = false;
+		
+		/**
+		 * cookie的名称
+		 */
+		protected String cookieName = "tgc";
+		
 		@Override
 		public void configure(Properties p) {
 			ttl = PropertiesConstants.getLong(p,"ttl", ttl);
+			cookieEnable = PropertiesConstants.getBoolean(p,"cookieEnable", cookieEnable);
+			cookieName = PropertiesConstants.getString(p,"cookieName",cookieName);
 		}
 
 		@Override
@@ -101,9 +117,22 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 		 * @param create 是否创建
 		 * @return 当前的SessionId
 		 */
-		protected String getSessionId(HttpServletRequest request, boolean create){
-			HttpSession httpSession = request.getSession(create);
-			return httpSession == null ? null : httpSession.getId();
+		protected String getSessionId(HttpServletRequest request,HttpServletResponse response,boolean create){
+			String sessionId = null;
+			
+			//先从HttpSession中获取
+			
+			if (cookieEnable){
+				sessionId = getCookie(request,cookieName,sessionId);
+				if (StringUtils.isEmpty(sessionId) && create){
+					sessionId = KeyGen.uuid();
+					setCookie(response,cookieName,sessionId);
+				}
+			}else{
+				HttpSession httpSession = request.getSession(create);
+				sessionId = httpSession == null ? null : httpSession.getId();
+			}
+			return sessionId;
 		}
 
 		@Override
@@ -114,19 +143,36 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 			
 			HttpContext httpContext = (HttpContext)ctx;
 			HttpServletRequest request = httpContext.getRequest();
-
-			return getSession(request,create);
+			HttpServletResponse response = httpContext.getResponse();
+			return getSession(request,response,create);
 		}
 
 		@Override
-		public Session getSession(HttpServletRequest request, boolean create) {
-			String sessionId = getSessionId(request,create);
+		public Session getSession(HttpServletRequest request,HttpServletResponse response,boolean create) {
+			String sessionId = getSessionId(request,response,create);
 			return StringUtils.isNotEmpty(sessionId)?getSession(sessionId,create):null;
 		}
 
 		protected boolean isExpired(Session sess){
 			return System.currentTimeMillis() - sess.getTimestamp() > ttl;
 		}		
+		
+		protected static String getCookie(HttpServletRequest req,String name,String dft){
+			Cookie [] cookies = req.getCookies();
+			for (Cookie cookie:cookies){
+				if (cookie.getName().equals(name)){
+					return cookie.getValue();
+				}
+			}
+			return dft;
+		}
+		
+		protected static void setCookie(HttpServletResponse response,String name,String value){
+			Cookie cookie = new Cookie(name,value);
+			cookie.setPath("/");
+			response.addCookie(cookie);
+		}
+
 	}
 	
 	public static class SessionCleaner implements HttpSessionListener{

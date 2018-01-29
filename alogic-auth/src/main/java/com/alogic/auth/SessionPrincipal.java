@@ -25,14 +25,15 @@ public class SessionPrincipal implements Principal{
 	 * 数据存放在Session中
 	 */
 	protected Session session = null;
-	
-	public SessionPrincipal(Session session){
+	protected String id;
+	public SessionPrincipal(String id,Session session){
+		this.id = id;
 		this.session = session;
 	}
 	
 	@Override
 	public String getId() {
-		return this.session.getId();
+		return id;
 	}
 
 	@Override

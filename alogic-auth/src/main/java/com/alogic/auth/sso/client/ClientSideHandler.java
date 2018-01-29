@@ -4,6 +4,7 @@ package com.alogic.auth.sso.client;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -33,6 +34,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.11.7 [20180107 duanyy] <br>
  * - 优化Session管理 <br>
+ * 
+ * @version 1.6.11.14 [duanyy 20180129] <br>
+ * - 优化AuthenticationHandler接口 <br>
  */
 public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	/**
@@ -76,17 +80,17 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	}
 	
 	@Override
-	public Principal getCurrent(HttpServletRequest request) {
-		Session sess = sessionManager.getSession(request, true);
-		return getCurrent(request,sess);
+	public Principal getCurrent(HttpServletRequest request,HttpServletResponse response) {
+		Session sess = sessionManager.getSession(request,response, true);
+		return getCurrent(request,response,sess);
 	}
 
 	@Override
-	public Principal getCurrent(HttpServletRequest request,Session session) {
+	public Principal getCurrent(HttpServletRequest request,HttpServletResponse response,Session session) {
 		Session sess = session;
 		if (sess == null){
 			//保证session不为空
-			sess = sessionManager.getSession(request, true);
+			sess = sessionManager.getSession(request,response, true);
 		}
 		
 		Principal principal = null;
@@ -94,45 +98,46 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 		String token = request.getParameter(arguToken);
 		if (StringUtils.isNotEmpty(token)){
 			//参数中指定了新的token
-			String oldToken = session.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
+			String oldToken = sess.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
 			if (token.equals(oldToken)){
 				//和以前的token一致
-				if (session.isLoggedIn()){
-					return new SessionPrincipal(session);
+				if (sess.isLoggedIn()){
+					return new SessionPrincipal(token,sess);
 				}
 			}else{
 				//新的token，删除前一个token的用户信息和权限信息
-				session.hDel(Session.USER_GROUP);
-				session.sDel(Session.PRIVILEGE_GROUP);
+				sess.hDel(Session.USER_GROUP);
+				sess.sDel(Session.PRIVILEGE_GROUP);
 				//记录token到当前的session
-				session.hSet(Session.DEFAULT_GROUP, Session.TOKEN, token, true);
+				sess.hSet(Session.DEFAULT_GROUP, Session.TOKEN, token, true);
 			}
 		}else{
-			token = session.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
+			token = sess.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
 		}
-		
+
 		if (StringUtils.isNotEmpty(token)) {
 			try {
 				Parameters paras = theCall.createParameter();
 
 				paras.param("token", token);
 				paras.param("fromIp", getClientIp(request));
-
+				
 				Result result = theCall.execute(paras);
-
 				if (result.getCode().equals("core.ok")) {
 					Map<String, Object> data = result.getData("data");
 
 					boolean isLoggedIn = JsonTools.getBoolean(data,
 							"isLoggedIn", false);
 					if (isLoggedIn) {
-						principal = new SessionPrincipal(session);
+						principal = new SessionPrincipal(token,sess);
 						principal.fromJson(data);
+						sess.setLoggedIn(isLoggedIn);			
+						sess.hSet(Session.DEFAULT_GROUP, Session.TOKEN, token,true);
+					}else{
+						LOG.error(String.format("Token %s has not logged in.",token));
 					}
-					/**
-					 * 设置已登录标记
-					 */
-					session.setLoggedIn(isLoggedIn);
+				}else{
+					LOG.error(String.format("Remote call failed,Token %s has not logged in.",token));
 				}
 
 			} catch (Exception ex) {
@@ -158,7 +163,7 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	}
 
 	@Override
-	public Principal login(HttpServletRequest request) {
+	public Principal login(HttpServletRequest request,HttpServletResponse response) {
 		throw new BaseException("core.e1000","In sso client mode,it's not supported to login.");
 	}
 
@@ -168,7 +173,7 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	}
 
 	@Override
-	public void logout(HttpServletRequest request) {
+	public void logout(HttpServletRequest request,HttpServletResponse response) {
 		throw new BaseException("core.e1000","In sso client mode,it's not supported to logout.");
 	}
 

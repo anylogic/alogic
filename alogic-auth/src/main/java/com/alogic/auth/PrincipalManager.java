@@ -1,7 +1,10 @@
 package com.alogic.auth;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.w3c.dom.Element;
+
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XmlElementProperties;
@@ -12,6 +15,9 @@ import com.logicbus.backend.server.http.HttpContext;
  * Principal管理器
  * @author yyduan
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.14 [duanyy 20180129] <br>
+ * - 优化AuthenticationHandler接口 <br>
  */
 public interface PrincipalManager extends SessionManager,AuthenticationHandler{
 	
@@ -41,8 +47,8 @@ public interface PrincipalManager extends SessionManager,AuthenticationHandler{
 			
 			HttpContext httpContext = (HttpContext)ctx;
 			HttpServletRequest request = httpContext.getRequest();
-
-			return getSession(request,create);
+			HttpServletResponse response = httpContext.getResponse();
+			return getSession(request,response,create);
 		}
 	}
 }

@@ -14,12 +14,15 @@ import com.alogic.auth.local.DefaultAuthenticationHandler;
  * 
  * @version 1.6.11.7 [20180107 duanyy] <br>
  * - 优化Session管理 <br>
+ * 
+ * @version 1.6.11.14 [duanyy 20180129] <br>
+ * - 优化AuthenticationHandler接口 <br>
  */
 public class ServerSideHandler extends DefaultAuthenticationHandler{
 	
 	@Override
 	public Principal getPrincipal(String app,String token,String callback) {
 		Session session = this.sessionManager.getSession(token,false);
-		return (session != null && session.isLoggedIn()) ? new SessionPrincipal(session):null;
+		return (session != null && session.isLoggedIn()) ? new SessionPrincipal(token,session):null;
 	}	
 }

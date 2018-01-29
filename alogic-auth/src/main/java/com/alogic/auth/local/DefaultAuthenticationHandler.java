@@ -2,6 +2,7 @@ package com.alogic.auth.local;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -39,6 +40,9 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.11.7 [20180107 duanyy] <br>
  * - 优化Session管理 <br>
+ * 
+ * @version 1.6.11.14 [duanyy 20180129] <br>
+ * - 优化AuthenticationHandler接口 <br>
  */
 public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract{
 	
@@ -61,7 +65,11 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	 * 用于数据库密码验证
 	 */
 	protected Coder md5 = null;
-		
+	
+	protected Session getSession(SessionManager sm,HttpServletRequest request,HttpServletResponse response,boolean create){
+		return sm.getSession(request,response,create);
+	}
+	
 	@Override
 	public void configure(Element e, Properties p) {
 		Properties props = new XmlElementProperties(e,p);
@@ -88,14 +96,14 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	}
 	
 	@Override
-	public Principal getCurrent(HttpServletRequest request) {
-		Session sess = sessionManager.getSession(request, false);
-		return getCurrent(request,sess);
+	public Principal getCurrent(HttpServletRequest request,HttpServletResponse response) {
+		Session sess = getSession(sessionManager,request,response, false);
+		return getCurrent(request,response,sess);
 	}
 
 	@Override
-	public Principal getCurrent(HttpServletRequest request,Session session) {
-		return (session != null && session.isLoggedIn()) ? new SessionPrincipal(session):null;
+	public Principal getCurrent(HttpServletRequest request,HttpServletResponse response,Session session) {
+		return (session != null && session.isLoggedIn()) ? new SessionPrincipal(session.getId(),session):null;
 	}
 	
 	@Override
@@ -104,8 +112,8 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	}
 	
 	@Override
-	public Principal login(HttpServletRequest request) {
-		Session sess = sessionManager.getSession(request, true);
+	public Principal login(HttpServletRequest request,HttpServletResponse response) {
+		Session sess = getSession(sessionManager,request,response, true);
 		if (sess.isLoggedIn()){
 			//已经登录了，删除前一个登录者的用户信息和权限信息
 			sess.hDel(Session.USER_GROUP);
@@ -144,7 +152,7 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 						String.format("User %s does not exist or the password is not correct.", userId));				
 			}
 			
-			Principal newPrincipal = new SessionPrincipal(sess);
+			Principal newPrincipal = new SessionPrincipal(sess.getId(),sess);
 			user.copyTo(newPrincipal);
 			//设置登录时间
 			newPrincipal.setProperty(Constants.LOGIN_TIME, String.valueOf(System.currentTimeMillis()), true);
@@ -216,11 +224,11 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	}
 
 	@Override
-	public void logout(HttpServletRequest request) {
-		Session session = sessionManager.getSession(request, false);
+	public void logout(HttpServletRequest request,HttpServletResponse response) {
+		Session session = getSession(sessionManager,request,response, false);
 
 		if (session != null && session.isLoggedIn()){
-			Principal principal = new SessionPrincipal(session);
+			Principal principal = new SessionPrincipal(session.getId(),session);
 			LOG.info(String.format("User %s has logged out.",principal.getLoginId()));						
 			principal.expire();
 		}

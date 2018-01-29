@@ -23,6 +23,9 @@ import com.anysoft.util.XMLConfigurable;
  * 
  * @version 1.6.8.15 [20170511 duanyy] <br>
  * - 增加绝对路径调用功能 <br>
+ * 
+ * @version 1.6.11.14 [duanyy 20180129] <br>
+ * - 增加按相对路径调用的接口 <br>
  */
 public interface Call extends AutoCloseable,XMLConfigurable,Reportable,Configurable{
 	
@@ -41,11 +44,11 @@ public interface Call extends AutoCloseable,XMLConfigurable,Reportable,Configura
 	
 	/**
 	 * 执行运程调用
-	 * @param path 调用路径
+	 * @param fullpath 全路径
 	 * @param paras 调用参数
 	 * @return 调用结果
 	 */
-	public Result execute(String path,Parameters paras) ;
+	public Result execute(String fullpath,Parameters paras) ;
 	
 	/**
 	 * 执行运程调用
@@ -58,10 +61,31 @@ public interface Call extends AutoCloseable,XMLConfigurable,Reportable,Configura
 	
 	/**
 	 * 执行运程调用
-	 * @param paras 调用路径
+	 * @param fullpath 全路径
+	 * @param paras 调用参数
 	 * @param sn 全局序列号
 	 * @param order 调用序号
 	 * @return 调用结果
 	 */
-	public Result execute(String path,Parameters paras,String sn,String order) ;
+	public Result execute(String fullpath,Parameters paras,String sn,String order) ;
+	
+	/**
+	 * 执行运程调用
+	 * @param isFullPath 是否全路径
+	 * @param path 路径
+	 * @param paras 调用参数
+	 * @return 调用结果
+	 */
+	public Result execute(boolean isFullPath,String path, Parameters paras);
+	
+	/**
+	 * 执行运程调用
+	 * @param isFullPath 是否全路径
+	 * @param path 路径
+	 * @param paras 调用参数
+	 * @param sn 全局序列号
+	 * @param order 调用序号
+	 * @return 调用结果
+	 */
+	public Result execute(boolean isFullPath,String path, Parameters paras,String sn,String order);
 }

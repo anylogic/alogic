@@ -47,6 +47,8 @@ import com.anysoft.util.Properties;
  * @version 1.6.10.9 [20171124 duanyy] <br>
  * - 增加{@link #getPathInfo()}和{@link #getQueryInfo()}方法 <br>
  * 
+ * @version 1.6.11.14 [duanyy 20180129] <br>
+ * - 修正QueryInfo和服务器取法不一致的问题 <br>
  */
 public class HttpClientRequest implements Request{
 	protected static final Logger LOG = LoggerFactory.getLogger(HttpClientRequest.class);
@@ -80,7 +82,7 @@ public class HttpClientRequest implements Request{
 	
 	public String getQueryInfo(){
 		URI uri = this.httpRequest != null ? this.httpRequest.getURI() : null;
-		return uri != null ? uri.getQuery() : "";
+		return uri != null ? uri.getRawQuery() : "";
 	}
 	
 	/**

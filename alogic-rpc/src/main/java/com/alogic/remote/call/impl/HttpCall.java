@@ -1,17 +1,14 @@
 package com.alogic.remote.call.impl;
 
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import com.alogic.remote.Client;
 import com.alogic.remote.Request;
 import com.alogic.remote.Response;
@@ -43,6 +40,9 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * 
  * @version 1.6.8.15 [20170511 duanyy] <br>
  * - 增加绝对路径调用功能 <br>
+ * 
+ * @version 1.6.11.14 [duanyy 20180129] <br>
+ * - 增加按相对路径调用的接口 <br>
  */
 public class HttpCall implements Call {
 	/**
@@ -189,8 +189,14 @@ public class HttpCall implements Call {
 	public Result execute(String fullPath, Parameters paras, String sn, String order) {
 		return execute(true,fullPath,paras,sn,order);
 	}	
-
-	protected Result execute(boolean isFullPath,String path, Parameters paras, String sn, String order) {
+	
+	@Override
+	public Result execute(boolean isFullPath,String path, Parameters paras){
+		return execute(false,path,paras,null,null);
+	}
+	
+	@Override
+	public Result execute(boolean isFullPath,String path, Parameters paras, String sn, String order) {
 		HttpQuery query = new HttpQuery(path);
 		
 		if (paras != null && queryParameters != null){
@@ -249,18 +255,10 @@ public class HttpCall implements Call {
 								+ response.getReasonPhrase());
 			}
 			
-			InputStream in = response.asStream();			
-			try{
-				if (in != null){
-					@SuppressWarnings("unchecked")
-					Map<String,Object> doc = (Map<String, Object>) jsonProvider.parse(in);
-					return new HttpResult(doc,idPaths);
-				}else{
-					throw new CallException("core.invoke_error","the inputstream from server is null");				
-				}
-			}finally{
-				IOTools.close(in);
-			}			
+			String content = response.asString();	
+			@SuppressWarnings("unchecked")
+			Map<String,Object> doc = (Map<String, Object>) jsonProvider.parse(content);
+			return new HttpResult(doc,idPaths);			
 		}catch (Exception ex){
 			throw new CallException("core.io_error","Can not read result from server.", ex);
 		}finally{
