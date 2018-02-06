@@ -1,7 +1,6 @@
 package com.alogic.auth.filter;
 
 import java.io.IOException;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -10,9 +9,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
-
 import com.alogic.auth.Principal;
 import com.alogic.auth.PrincipalManager;
 import com.alogic.auth.Session;
@@ -31,6 +28,10 @@ import com.anysoft.webloader.FilterConfigProperties;
  * 
  * @version 1.6.11.14 [duanyy 20180129] <br>
  * - 增加redirectURL的容错； <br>
+ * 
+ * @version 1.6.11.15 [duanyy 20180206] <br>
+ * - 对重定向的URL进行容错处理 <br>
+ * 
  */
 public class AuthLogin implements Filter{
 	/**
@@ -76,11 +77,8 @@ public class AuthLogin implements Filter{
 				//客户端提供了参数returnURL
 				Principal principal = sm.getCurrent(httpReq,httpResp,sess);
 				if (principal != null){
-					if (redirectURL.indexOf("?") < 0){
-						httpResp.sendRedirect(String.format("%s?redirect&%s=%s",redirectURL,token,principal.getId()));
-					}else{
-						httpResp.sendRedirect(String.format("%s&redirect&%s=%s",redirectURL,token,principal.getId()));
-					}
+					String url = getRedirectURL(redirectURL,this.token,principal.getId());
+					httpResp.sendRedirect(url);
 				}else{
 					chain.doFilter(request, response);
 				}
@@ -92,6 +90,31 @@ public class AuthLogin implements Filter{
 		}
 	}
 
+	protected static String getRedirectURL(String redirectURL,String key,String tokenId)  {
+		int fragment = redirectURL.indexOf("#");
+		String token = String.format("?redirect&%s=%s&",key,tokenId);
+		if (fragment < 0){
+			//如果没有fragment
+			int query = redirectURL.indexOf("?");
+			if (query < 0){
+				//也没有query
+				return redirectURL + token;
+			}else{
+				return redirectURL.substring(0, query) + token + redirectURL.substring(query + 1);
+			}
+		}else{
+			//如果有fragment
+			int query = redirectURL.indexOf("?");
+			if (query >= 0 && query < fragment){
+				//query在fragment之前，是真正的query
+				return redirectURL.substring(0, query) + token + redirectURL.substring(query + 1);
+			}else{
+				//query在fragment之后，是fragment的query
+				return redirectURL.substring(0, fragment) + token + redirectURL.substring(fragment);
+			}
+		}
+	}
+	
 	@Override
 	public void destroy() {
 		

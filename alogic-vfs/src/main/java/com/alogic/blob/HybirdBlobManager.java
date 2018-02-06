@@ -56,7 +56,7 @@ public class HybirdBlobManager extends BlobManager.Abstract{
 			try {
 				BlobManager bm = f.newInstance(elem, props, "module");	
 				
-				if (XmlTools.getBoolean(elem, "default", true)){
+				if (XmlTools.getBoolean(elem, "default", false)){
 					//标记为default的bm专门用来做写操作
 					master = bm;
 				}else{

@@ -15,6 +15,9 @@ import com.anysoft.util.Properties;
  * SQL预处理器
  * @author duanyy
  * @since 1.6.3.30
+ * 
+ * @version 1.6.11.15 [20180206 duanyy] <br>
+ * - 修正Preprocessor的并发性问题 <br>
  */
 final public class Preprocessor implements BindedListener{
 	
@@ -23,10 +26,7 @@ final public class Preprocessor implements BindedListener{
 	 */
 	protected List<Object> segments = new ArrayList<Object>();
 	
-	/**
-	 * 绑定的对象
-	 */
-	protected List<Object> bindedData = null;
+	private static ThreadLocal<List<Object>> bindedData = new ThreadLocal<List<Object>>();
 	
 	protected FunctionHelper fh = null;
 	
@@ -40,8 +40,9 @@ final public class Preprocessor implements BindedListener{
 	}
 	
 	public void bind(Object value) {
-		if (bindedData != null){
-			bindedData.add(value);
+		List<Object> binded = bindedData.get();
+		if (binded != null){
+			binded.add(value);
 		}
 	}
 	
@@ -53,26 +54,28 @@ final public class Preprocessor implements BindedListener{
 	 */
 	public String process(Properties p,List<Object> binded){
 		StringBuffer sb = new StringBuffer();
-		
-		bindedData = binded;
-		if (bindedData != null){
-			bindedData.clear();
-		}
-		
-		for (Object o:segments){
-			if (o instanceof String){
-				sb.append((String)o);
-			}else{
-				if (o instanceof Expression){
-					Expression expr = (Expression)o;
-					ExprValue value = expr.getValue(p);
-					if (value != null){
-						sb.append(value.toString());
+		try {
+			if (binded != null && !binded.isEmpty()){
+				binded.clear();			
+			}
+			bindedData.set(binded);			
+			for (Object o:segments){
+				if (o instanceof String){
+					sb.append((String)o);
+				}else{
+					if (o instanceof Expression){
+						Expression expr = (Expression)o;
+						ExprValue value = expr.getValue(p);
+						if (value != null){
+							sb.append(value.toString());
+						}
 					}
 				}
 			}
+			return sb.toString();
+		}finally{
+			bindedData.remove();
 		}
-		return sb.toString();
 	}
 	
 	/**

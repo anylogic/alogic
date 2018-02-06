@@ -26,6 +26,7 @@ import com.alogic.remote.Response;
 import com.alogic.remote.httpclient.HttpClient;
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
+import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
@@ -48,7 +49,7 @@ import com.logicbus.models.catalog.Path;
  * @author yyduan
  * @since 1.6.11.4
  */
-public class GatewayHandler implements ServletHandler,XMLConfigurable{
+public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurable{
 	/**
 	 * a logger of slf4j
 	 */
@@ -152,9 +153,7 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable{
 	}
 	
 	@Override
-	public void configure(Element e, Properties p) {
-		Properties props = new XmlElementProperties(e,p);
-				
+	public void configure(Properties props) {
 		encoding = PropertiesConstants.getString(props, "http.encoding", encoding);	
 		defaultAllowOrigin = PropertiesConstants.getString(props,"http.alloworigin",defaultAllowOrigin);
 		corsSupport = PropertiesConstants.getBoolean(props, "http.cors", corsSupport);
@@ -170,7 +169,12 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable{
 		
 		//采用统一的访问控制器
 		ac = (AccessController) Settings.get().get("accessController");
-		
+	}
+	
+	@Override
+	public void configure(Element e, Properties p) {
+		Properties props = new XmlElementProperties(e,p);
+
 		//从子节点中找client配置
 		Element clientElem = XmlTools.getFirstElementByPath(e, "client");
 		if (clientElem != null){
@@ -201,6 +205,8 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable{
 				LOG.error(ExceptionUtils.getStackTrace(ex));
 			}
 		}
+		
+		configure(props);
 	}
 
 	/**
@@ -370,4 +376,6 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable{
 	public void destroy() {
 		// nothing to do
 	}
+
+
 }

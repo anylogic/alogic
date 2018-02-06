@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
@@ -35,6 +36,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.7.9 [20170201 duanyy] <br>
  * - 采用SLF4j日志框架输出日志 <br>
+ * 
+ * @version 1.6.11.15 [20180206 duanyy] <br>
+ * - 加载对象时增加scope支持 <br>
  */
 public class XmlObjectList<O extends Reportable> implements XMLConfigurable, AutoCloseable,Reportable {
 	
@@ -82,6 +86,8 @@ public class XmlObjectList<O extends Reportable> implements XMLConfigurable, Aut
 	public void configure(Element root, Properties props){
 		XmlElementProperties p = new XmlElementProperties(root,props);
 		
+		String scope = PropertiesConstants.getString(p, "ketty.scope", "runtime");
+		
 		NodeList rcps = XmlTools.getNodeListByPath(root, objName);
 		
 		TheFactory<O> factory = new TheFactory<O>(); // NOSONAR
@@ -94,6 +100,11 @@ public class XmlObjectList<O extends Reportable> implements XMLConfigurable, Aut
 			}
 			
 			Element e = (Element)n;
+			
+			String itemScope = XmlTools.getString(e, "scope", "");
+			if (StringUtils.isNotEmpty(itemScope) && !itemScope.equals(scope)){
+				continue;
+			}
 			
 			String id = e.getAttribute("id");
 			if (StringUtils.isEmpty(id)){

@@ -50,6 +50,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.11.4 [20171222 duanyy] <br>
  * - 增加Hot实现 <br>
+ * 
+ * @version 1.6.11.15 [20180206 duanyy] <br>
+ * - 加载sink时增加scope支持 <br>
  */
 public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable,Reportable{
 	
@@ -165,6 +168,7 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 			
 			NodeList nodeList = XmlTools.getNodeListByPath(e, getSinkTag());
 			Factory<Loader<O>> factory = new Factory<Loader<O>>();
+			String scope = PropertiesConstants.getString(p, "ketty.scope", "runtime");
 			
 			for (int i = 0 ;i < nodeList.getLength() ; i ++){
 				Node n = nodeList.item(i);
@@ -174,6 +178,11 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 				}
 				
 				Element elem = (Element)n;
+				
+				String itemScope = XmlTools.getString(elem, "scope", "");
+				if (StringUtils.isNotEmpty(itemScope) && !itemScope.equals(scope)){
+					continue;
+				}
 				
 				try {
 					Loader<O> loader = factory.newInstance(elem, props, "module");

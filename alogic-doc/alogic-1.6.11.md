@@ -88,4 +88,9 @@ alogic-1.6.11
 
 - alogic-auth:优化接口;
 - alogic-auth:增加基于cookies的Session管理方式;
-- 
+
+
+### 1.6.11.15 [20180206 duanyy]
+
+- alogic-common:配置类的框架增加scope支持;
+- alogic-dbcp:修正Preprocessor的并发性问题;
