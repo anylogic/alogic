@@ -140,6 +140,10 @@ public interface Event extends Comparable<Event>,Flowable,JsonSerializer{
 			this.id = id;
 		}
 		
+		public void setAsync(final boolean async){
+			this.async = async;
+		}
+		
 		@Override
 		public String getEventType() {
 			return eventType;
@@ -238,6 +242,7 @@ public interface Event extends Comparable<Event>,Flowable,JsonSerializer{
 				JsonTools.setString(json, "id", id());
 				JsonTools.setString(json, "type", getEventType());
 				JsonTools.setLong(json, "t", getCreateTime());
+				JsonTools.setBoolean(json,"async",isAsync());
 				
 				Map<String,String> map = getMapObject(false);
 				
@@ -262,7 +267,7 @@ public interface Event extends Comparable<Event>,Flowable,JsonSerializer{
 				setId(JsonTools.getString(json, "id", EventBus.newId()));
 				setEventType(JsonTools.getString(json, "type", ""));
 				setCreateTime(JsonTools.getLong(json, "t", System.currentTimeMillis()));
-				
+				setAsync(JsonTools.getBoolean(json,"async",isAsync()));
 				Object found = json.get("property");
 				if (found != null && found instanceof Map){
 					Map<String,String> map = (Map<String,String>)found;

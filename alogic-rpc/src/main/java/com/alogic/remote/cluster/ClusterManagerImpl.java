@@ -26,6 +26,9 @@ import com.anysoft.util.XmlTools;
  * 集群管理器实现
  * @author yyduan
  * @since 1.6.8.12
+ * 
+ * @version 1.6.11.16 [20180207 duanyy] <br>
+ * - 增加scope支持; <br>
  */
 public class ClusterManagerImpl implements ClusterManager {
 	/**
@@ -103,14 +106,17 @@ public class ClusterManagerImpl implements ClusterManager {
 		
 		NodeList nodeList = XmlTools.getNodeListByPath(root, "cluster");
 		Factory<Cluster> factory = new Factory<Cluster>();
-		
+		String scope = PropertiesConstants.getString(p, "ketty.scope", "runtime");
 		for (int i = 0 ;i < nodeList.getLength() ;i ++){
 			Node n = nodeList.item(i);
 			if (Node.ELEMENT_NODE != n.getNodeType()){
 				continue;
 			}
 			Element e = (Element)n;
-			
+			String itemScope = XmlTools.getString(e, "scope", "");
+			if (StringUtils.isNotEmpty(itemScope) && !itemScope.equals(scope)){
+				continue;
+			}
 			try {
 				Cluster instance = factory.newInstance(e, props, "module", dftClusterClazz);
 				

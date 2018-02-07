@@ -16,6 +16,7 @@ import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.SystemProperties;
+import com.anysoft.util.resource.ResourceFactory;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
 
@@ -30,6 +31,8 @@ import com.jayway.jsonpath.spi.JsonProviderFactory;
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
+ * @version 1.6.11.16 [20180207 duanyy] <br>
+ * - 加载ketty.local变量指向的配置文件 <br>
  */
 public class Main implements Process {
 	/**
@@ -46,6 +49,11 @@ public class Main implements Process {
 	 * a logger of log4j
 	 */
 	protected static Logger logger = LoggerFactory.getLogger(Main.class);
+	
+	/**
+	 * 是否打印中间Json文档
+	 */
+	protected boolean jsonPrint = false;
 	
 	/**
 	 * 入口
@@ -70,7 +78,29 @@ public class Main implements Process {
 	}
 
 	public int init(DefaultProperties p) {
+		// 设置ResourceFactory
+		ResourceFactory resourceFactory = null;
+		String rf = PropertiesConstants.getString(p, "resource.factory", "com.anysoft.util.resource.ResourceFactory");
+		try {
+			logger.info("Use resource factory:" + rf);
+			resourceFactory = (ResourceFactory) Class.forName(rf).newInstance();
+		} catch (Exception ex) {
+			logger.error("Can not create instance of :" + rf,ex);
+		}
+		if (resourceFactory == null) {
+			resourceFactory = new ResourceFactory();
+			logger.info("Use default:" + ResourceFactory.class.getName());
+		}		
+		//装入ketty.local文件，主要是装入zk的地址配置
+		String kettyLocal = PropertiesConstants.getString(p, "ketty.local", "");
+		if (StringUtils.isNotEmpty(kettyLocal)){
+			logger.info("load ketty local xml file");
+			p.addSettings(kettyLocal, null, resourceFactory);
+		}
+		
 		props = p;
+		
+		jsonPrint = PropertiesConstants.getBoolean(props,"jsonPrint",jsonPrint);
 		
 		/**
 		 * 读取script参数
@@ -96,8 +126,11 @@ public class Main implements Process {
 			XsObject doc = new JsonObject("root",root);
 			LogicletContext ctx = new LogicletContext(props);
 			script.execute(doc, doc, ctx, new ExecuteWatcher.Quiet());
-			JsonProvider provider = JsonProviderFactory.createProvider();
-			logger.info(provider.toJson(root));
+			
+			if (jsonPrint){
+				JsonProvider provider = JsonProviderFactory.createProvider();
+				logger.info(provider.toJson(root));
+			}
 		}
 		return 0;
 	}

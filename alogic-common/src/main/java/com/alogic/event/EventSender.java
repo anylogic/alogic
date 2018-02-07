@@ -1,6 +1,8 @@
 package com.alogic.event;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.alogic.event.xscript.CopyProperties;
 import com.alogic.event.xscript.SetProperties;
 import com.alogic.event.xscript.SetProperty;
 import com.alogic.xscript.ExecuteWatcher;
@@ -46,6 +48,7 @@ public class EventSender extends Segment {
 		
 		registerModule("evt-property",SetProperty.class);
 		registerModule("evt-properties",SetProperties.class);
+		registerModule("evt-copy",CopyProperties.class);
 	}
 
 	@Override

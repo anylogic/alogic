@@ -94,3 +94,11 @@ alogic-1.6.11
 
 - alogic-common:配置类的框架增加scope支持;
 - alogic-dbcp:修正Preprocessor的并发性问题;
+
+### 1.6.11.16 [20180207 duanyy]
+
+- alogic-common:增加事件脚本的CopyProperties插件;
+- alogic-common:优化事件框架的Script插件;
+- alogic-common:优化incr,decr插件;
+- alogic-rpc:优化ip的forwarded传递;
+- alogic-rpc:ClusterManager框架增加scope支持;

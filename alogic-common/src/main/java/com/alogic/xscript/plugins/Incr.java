@@ -13,10 +13,13 @@ import com.anysoft.util.PropertiesConstants;
  * @author yyduan
  * 
  * @since 1.6.10.1
+ * 
+ * @version 1.6.11.16 [20180207 duanyy] <br>
+ * - value缺省值由0改为1; <br>
  */
 public class Incr extends AbstractLogiclet {
 	protected String id;
-	protected String value = "0";
+	protected String value = "1";
 	public Incr(String tag, Logiclet p) {
 		super(tag, p);
 	}

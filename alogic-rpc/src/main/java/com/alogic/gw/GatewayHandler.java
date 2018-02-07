@@ -48,6 +48,9 @@ import com.logicbus.models.catalog.Path;
  * 
  * @author yyduan
  * @since 1.6.11.4
+ * 
+ * @version 1.6.11.16 [20180207 duanyy] <br>
+ * - 优化ip的forworded处理 <br>
  */
 public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurable{
 	/**
@@ -73,12 +76,17 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 	/**
 	 * 是否传递真实地址信息
 	 */
-	protected boolean forwarded = false;
+	protected boolean forwarded = true;
 	
 	/**
 	 * 传递真实地址信息时的Http头
 	 */
 	protected String forwardedHeader = "X-Forwarded-For";
+	
+	/**
+	 * 传递真实ip的http头
+	 */
+	protected String readIpHeader = "X-Real-IP";
 	
 	/**
 	 * 是否开启tlog
@@ -162,6 +170,7 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 		
 		forwarded = PropertiesConstants.getBoolean(props, "http.forwarded", forwarded);
 		forwardedHeader = PropertiesConstants.getString(props, "http.forwarded.header", forwardedHeader);
+		readIpHeader = PropertiesConstants.getString(props, "http.realip.header", readIpHeader);
 		
 		tracerEnable = PropertiesConstants.getBoolean(props, "gw.tlog", tracerEnable);
 		proxyPath = PropertiesConstants.getString(props, "gw.path", proxyPath);
@@ -354,7 +363,14 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 			req.setHeader(HttpConstants.CONTENT_TYPE, reqContextType);
 		}					
 		if (forwarded){
-			req.setHeader(forwardedHeader, ctx.getClientIp());
+			String forwarded = request.getHeader(forwardedHeader);
+			if (StringUtils.isNotEmpty(forwarded)){
+				forwarded += "," + request.getRemoteHost();
+			}else{
+				forwarded = request.getRemoteHost();
+			}
+			req.setHeader(forwardedHeader, forwarded);
+			req.setHeader(readIpHeader, request.getRemoteHost());
 		}
 		req.setBody(request.getInputStream());
 	}

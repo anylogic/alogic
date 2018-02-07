@@ -126,7 +126,6 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 					boolean isLoggedIn = JsonTools.getBoolean(data,
 							"isLoggedIn", false);
 					if (isLoggedIn) {
-						LOG.info("4 Token is " + token);
 						principal = new SessionPrincipal(token,sess);
 						principal.fromJson(data);
 						sess.setLoggedIn(isLoggedIn);			
