@@ -1,6 +1,7 @@
 package com.logicbus.dbcp.xscript;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,16 +15,21 @@ import com.alogic.xscript.plugins.Segment;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.logicbus.dbcp.processor.Preprocessor;
 import com.logicbus.dbcp.sql.DBTools;
 
 /**
  * 根据SQL语句扫描数据
  * @since 1.6.10.5
+ * 
+ * @version 1.6.11.17 [20180209 duanyy] <br>
+ * - 支持SQL预处理; <br>
  */
 public class Scan extends Segment{
 	protected String dbconn = "dbconn";
 	protected String sql;
 	protected String id;
+	protected Preprocessor processor = null;
 	public Scan(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -34,6 +40,7 @@ public class Scan extends Segment{
 		dbconn = PropertiesConstants.getString(p,"dbconn", dbconn);
 		sql = PropertiesConstants.getRaw(p,"sql",sql);
 		id = PropertiesConstants.getString(p, "id", "$" + this.getXmlTag());
+		processor = new Preprocessor(sql);
 	}
 
 	@Override
@@ -44,9 +51,9 @@ public class Scan extends Segment{
 			throw new BaseException("core.e1001","It must be in a db context,check your together script.");
 		}
 		
-		String listSql = ctx.transform(sql);
-		
-		List<Map<String,String>> result = DBTools.list(conn, listSql);
+		List<Object> data = new ArrayList<Object>();
+		String sql = processor.process(ctx, data);
+		List<Map<String,String>> result = DBTools.list(conn, sql,data.toArray());
 		
 		if (result != null && result.size() > 0){
 			ctx.SetValue(id, String.valueOf(result.size()));

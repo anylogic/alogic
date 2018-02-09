@@ -102,3 +102,7 @@ alogic-1.6.11
 - alogic-common:优化incr,decr插件;
 - alogic-rpc:优化ip的forwarded传递;
 - alogic-rpc:ClusterManager框架增加scope支持;
+
+### 1.6.11.17 [20180209 duanyy]
+
+- alogic-dbcp:支持SQL预处理;
