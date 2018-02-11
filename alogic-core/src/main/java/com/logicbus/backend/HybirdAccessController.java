@@ -74,6 +74,7 @@ public class HybirdAccessController implements AccessController {
 		
 		NodeList nodeList = XmlTools.getNodeListByPath(e, "ac");
 		
+		String scope = PropertiesConstants.getString(p, "ketty.scope", "runtime");
 		Factory<AccessController> f = new Factory<AccessController>();
 		
 		for (int i = 0 ;i < nodeList.getLength() ; i ++){
@@ -83,6 +84,11 @@ public class HybirdAccessController implements AccessController {
 			}
 			
 			Element elem = (Element)n;
+			
+			String itemScope = XmlTools.getString(e, "scope", "");
+			if (StringUtils.isNotEmpty(itemScope) && !itemScope.equals(scope)){
+				continue;
+			}
 			
 			String id = elem.getAttribute("id");
 			if (StringUtils.isNotEmpty(id)){

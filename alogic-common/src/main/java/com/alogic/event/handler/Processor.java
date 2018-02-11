@@ -3,6 +3,7 @@ package com.alogic.event.handler;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.w3c.dom.Element;
 
@@ -33,8 +34,8 @@ public class Processor extends SlideHandler<Event>{
 	protected Loader<Process> loader = null;
 	
 	@Override
-	protected void onHandle(Event e, long timestamp) {
-		Process p = getProcess(e.getEventType());
+	protected void onHandle(Event evt, long timestamp) {
+		Process p = getProcess(evt.getEventType());
 		if (p != null){
 			//根据事件类型找到了相应的处理
 			Script script = p.getScript();
@@ -45,10 +46,12 @@ public class Processor extends SlideHandler<Event>{
 				String reason = "ok";
 				try {
 					Map<String,Object> root = new HashMap<String,Object>();
+					evt.toJson(root);
 					XsObject doc = new JsonObject("root",root);
-					LogicletContext ctx = new LogicletContext(new EventProperties(e,Settings.get()));
-					ctx.SetValue("$task", e.id());
-					ctx.SetValue("$event", e.getEventType());
+					LogicletContext ctx = new LogicletContext(new EventProperties(evt,Settings.get()));
+					ctx.SetValue("$task", evt.id());
+					ctx.SetValue("$event", evt.getEventType());
+					ctx.SetValue("$async", BooleanUtils.toStringTrueFalse(evt.isAsync()));
 					script.execute(doc, doc, ctx, null);
 					result = PropertiesConstants.getString(ctx, "$code", result);
 					reason = PropertiesConstants.getString(ctx, "$reason", reason);
@@ -57,17 +60,22 @@ public class Processor extends SlideHandler<Event>{
 					reason = ex.getMessage();
 					LOG.error("Failed to execute process:" + p.getId());
 					LOG.error(ExceptionUtils.getStackTrace(ex));
-				}
-				Handler<Event> dftHandler = this.getSlidingHandler();			
-				if (dftHandler != null){
-					e.setProperty("$code", result, true);
-					e.setProperty("$reason", reason, true);
-					dftHandler.handle(e, timestamp);
+				}finally{
+					Handler<Event> dftHandler = this.getSlidingHandler();			
+					if (dftHandler != null){
+						evt.setProperty("$code", result, true);
+						evt.setProperty("$reason", reason, true);
+						dftHandler.handle(evt, timestamp);
+					}
 				}
 			}
 		}else{
-			LOG.warn("Can not find process for " + e.getEventType());
-			LOG.warn(e.toString());
+			Handler<Event> dftHandler = this.getSlidingHandler();			
+			if (dftHandler != null){
+				evt.setProperty("$code", "core.e1003", true);
+				evt.setProperty("$reason", String.format("Can not find process %s",evt.getEventType()), true);
+				dftHandler.handle(evt, timestamp);
+			}
 		}
 	}
 

@@ -2,15 +2,19 @@ package com.alogic.event.handler;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.alogic.event.Event;
+import com.alogic.event.EventProperties;
+import com.anysoft.formula.DataProvider;
 import com.anysoft.selector.Selector;
 import com.anysoft.stream.Handler;
 import com.anysoft.stream.SlideHandler;
 import com.anysoft.util.Properties;
+import com.anysoft.util.Settings;
 import com.anysoft.util.XmlTools;
 
 /**
@@ -30,9 +34,10 @@ public class AddProperties extends SlideHandler<Event>{
 	
 	@Override
 	protected void onHandle(Event e, long timestamp) {
+		DataProvider df = new EventProperties(e,Settings.get());
 		for (Selector p:properties){
 			String k = p.getId();
-			String v = p.select(e);
+			String v = p.select(df);
 			e.setProperty(k, v, !p.isFinal());
 		}
 		

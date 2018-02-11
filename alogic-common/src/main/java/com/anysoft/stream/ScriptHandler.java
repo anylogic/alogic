@@ -34,13 +34,14 @@ import com.anysoft.util.resource.ResourceFactory;
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
  */
-public class ScriptHandler <data extends Flowable> extends AbstractHandler<data> {
+public class ScriptHandler <data extends Flowable> extends SlideHandler<data> {
 	/**
 	 * 脚本
 	 */
 	protected Logiclet stmt = null;
 	@Override
 	protected void onConfigure(Element e, Properties p) {
+		super.onConfigure(e, p);
 		Element script = XmlTools.getFirstElementByPath(e, "script");
 		if (script != null){
 			stmt = new Script("script",null);

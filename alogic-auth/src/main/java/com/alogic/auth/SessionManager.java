@@ -86,7 +86,7 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 		/**
 		 * 会话的生存期
 		 */
-		protected long ttl = 30 * 60 * 1000L;
+		protected int ttl = 30 * 60;
 		
 		/**
 		 * 是否使用cookie来保存会话id
@@ -100,7 +100,7 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 		
 		@Override
 		public void configure(Properties p) {
-			ttl = PropertiesConstants.getLong(p,"ttl", ttl);
+			ttl = PropertiesConstants.getInt(p,"ttl", ttl);
 			cookieEnable = PropertiesConstants.getBoolean(p,"cookieEnable", cookieEnable);
 			cookieName = PropertiesConstants.getString(p,"cookieName",cookieName);
 		}
@@ -154,10 +154,10 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 		}
 
 		protected boolean isExpired(Session sess){
-			return System.currentTimeMillis() - sess.getTimestamp() > ttl;
+			return System.currentTimeMillis() - sess.getTimestamp() > ttl * 1000L;
 		}		
 		
-		protected static String getCookie(HttpServletRequest req,String name,String dft){
+		protected String getCookie(HttpServletRequest req,String name,String dft){
 			Cookie [] cookies = req.getCookies();
 			for (Cookie cookie:cookies){
 				if (cookie.getName().equals(name)){
@@ -167,9 +167,10 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 			return dft;
 		}
 		
-		protected static void setCookie(HttpServletResponse response,String name,String value){
+		protected void setCookie(HttpServletResponse response,String name,String value){
 			Cookie cookie = new Cookie(name,value);
 			cookie.setPath("/");
+			cookie.setMaxAge(ttl);
 			response.addCookie(cookie);
 		}
 

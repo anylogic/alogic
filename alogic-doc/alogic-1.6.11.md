@@ -106,3 +106,9 @@ alogic-1.6.11
 ### 1.6.11.17 [20180209 duanyy]
 
 - alogic-dbcp:支持SQL预处理;
+
+### 1.0.11.18 [20180211 duanyy]
+
+- alogic-auth:SessionManager增加设定cookie的有效期;
+- alogic-common:优化事件处理;
+- alogic-core:HybirdAccessController增加scope的支持;
