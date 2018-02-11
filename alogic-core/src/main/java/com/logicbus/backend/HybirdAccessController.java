@@ -85,7 +85,7 @@ public class HybirdAccessController implements AccessController {
 			
 			Element elem = (Element)n;
 			
-			String itemScope = XmlTools.getString(e, "scope", "");
+			String itemScope = XmlTools.getString(elem, "scope", "");
 			if (StringUtils.isNotEmpty(itemScope) && !itemScope.equals(scope)){
 				continue;
 			}
