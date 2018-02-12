@@ -31,8 +31,10 @@ import com.alogic.xscript.plugins.FromEnv;
 import com.alogic.xscript.plugins.FromSettings;
 import com.alogic.xscript.plugins.Get;
 import com.alogic.xscript.plugins.GetAsJson;
+import com.alogic.xscript.plugins.IfEqual;
 import com.alogic.xscript.plugins.IfExist;
 import com.alogic.xscript.plugins.IfFalse;
+import com.alogic.xscript.plugins.IfNotEqual;
 import com.alogic.xscript.plugins.IfNotExist;
 import com.alogic.xscript.plugins.IfTrue;
 import com.alogic.xscript.plugins.Include;
@@ -197,6 +199,8 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_IF_FALSE = "if-false";
 	public static final String STMT_IF_EXIST = "if-exist";
 	public static final String STMT_IF_NOT_EXIST = "if-n-exist";
+	public static final String STMT_IF_EQUAL = "if-equal";
+	public static final String STMT_IF_NOT_EQUAL = "if-n-equal";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -251,6 +255,8 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_IF_FALSE, IfFalse.class);
 		staticModules.put(STMT_IF_EXIST, IfExist.class);
 		staticModules.put(STMT_IF_NOT_EXIST, IfNotExist.class);
+		staticModules.put(STMT_IF_EQUAL, IfEqual.class);
+		staticModules.put(STMT_IF_NOT_EQUAL, IfNotEqual.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	

@@ -87,6 +87,11 @@ public class FromClasspath extends Loader.Abstract<Process>{
 	protected void scanResource(String home, Class<?> clazz) {
 		URL url = clazz.getResource(home);
 		
+		if (url == null){
+			LOG.warn(String.format("Can not find resource path:%" + home));
+			return ;
+		}
+		
 		if(url.toString().startsWith("file:")){
             File file;
 			try {

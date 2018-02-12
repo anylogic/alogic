@@ -1,6 +1,8 @@
 package com.alogic.xscript.plugins;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
@@ -47,7 +49,7 @@ public class Formula extends AbstractLogiclet {
 				String value = expr.getValue(ctx).toString();
 				ctx.SetValue(id, value);
 			}catch (Exception ex){
-				
+				logger.error(ExceptionUtils.getStackTrace(ex));
 			}
 		}
 	}

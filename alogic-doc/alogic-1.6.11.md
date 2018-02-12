@@ -112,3 +112,7 @@ alogic-1.6.11
 - alogic-auth:SessionManager增加设定cookie的有效期;
 - alogic-common:优化事件处理;
 - alogic-core:HybirdAccessController增加scope的支持;
+
+### 1.6.11.19 [20180212 duanyy]
+
+- alogic-common:增加if-equal和if-n-equal指令;
