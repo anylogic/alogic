@@ -27,12 +27,16 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.11.7 [20180107 duanyy] <br>
  * - 优化Session管理 <br>
+ * 
+ * @version 1.6.11.20 [20180223 duanyy] <br>
+ * - app参数id改为$provider <br>
  */
 public class GetTokenInfo extends AbstractServant{
 	protected String dftApp = "${server.app}";
 	protected String arguToken = "token";
 	protected String arguFromIp = "fromIp";
 	protected String arguCallback = "callback";
+	protected String arguApp = "$provider";
 	
 	@Override
 	protected void onDestroy() {
@@ -46,6 +50,7 @@ public class GetTokenInfo extends AbstractServant{
 		arguToken = PropertiesConstants.getString(p, "auth.para.token", arguToken);
 		arguFromIp = PropertiesConstants.getString(p, "auth.para.fromIp", arguFromIp);
 		arguCallback = PropertiesConstants.getString(p, "auth.para.callback", arguCallback);
+		arguApp = PropertiesConstants.getString(p, "auth.para.app", arguApp);
 	}
 
 	@Override
@@ -56,7 +61,7 @@ public class GetTokenInfo extends AbstractServant{
 		String fromIp = getArgument(arguFromIp,ctx);
 		String callback = getArgument(arguCallback,"",ctx);
 		
-		String app = getArgument("$app",dftApp,ctx);
+		String app = getArgument(arguApp,dftApp,ctx);
 		
 		Map<String,Object> data = new HashMap<String,Object>();
 		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();

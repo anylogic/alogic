@@ -26,6 +26,7 @@ import com.logicbus.kvalue.core.Table;
  * 
  * @version 1.6.11.20 [20180223 duanyy] <br>
  * - 修正缓存对象id的问题 <br>
+ * - 缓存的idtable功能可选,默认管理<br>
  */
 public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements Store<CacheObject>{
 
@@ -50,6 +51,11 @@ public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements St
 	protected String id;
 	
 	/**
+	 * 是否在idTable中保存id列表
+	 */
+	protected boolean enableIdTable = false;
+	
+	/**
 	 * 获取id
 	 * @return id
 	 */
@@ -62,7 +68,7 @@ public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements St
 		super.configure(p);
 		
 		id = PropertiesConstants.getString(p, "id", "",true);
-		
+		enableIdTable = PropertiesConstants.getBoolean(p, "table.id.enable", enableIdTable);
 		String schema = PropertiesConstants.getString(p,"schema","redis");
 		String hashTableName = PropertiesConstants.getString(p,"table.hash","m");
 		String setTableName = PropertiesConstants.getString(p,"table.set","s");
@@ -138,8 +144,10 @@ public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements St
 			CacheObject kvObject = getCacheObject(id);
 			o.copyTo(kvObject);
 			
-			SortedSetRow idRow = (SortedSetRow)idTable.select(getId(),true);
-			idRow.add(id, System.currentTimeMillis());
+			if (enableIdTable){
+				SortedSetRow idRow = (SortedSetRow)idTable.select(getId(),true);
+				idRow.add(id, System.currentTimeMillis());
+			}
 		}
 	}
 
@@ -181,8 +189,10 @@ public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements St
 	protected CacheObject loadFromSelf(String id, boolean cacheAllowed) {
 		CacheObject kvObject = getCacheObject(id);
 		if (kvObject.isValid()){
-			SortedSetRow idRow = (SortedSetRow)idTable.select(getId(),true);
-			idRow.add(id, System.currentTimeMillis());
+			if (enableIdTable){
+				SortedSetRow idRow = (SortedSetRow)idTable.select(getId(),true);
+				idRow.add(id, System.currentTimeMillis());
+			}
 			return kvObject;
 		}else{
 			return null;

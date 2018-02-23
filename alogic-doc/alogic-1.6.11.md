@@ -122,4 +122,6 @@ alogic-1.6.11
 - alogic-common:修正事件加载器FromClasspath的异常;
 - alogic-kvalue:缓存实现的间隔符由$更改为#;
 - alogic-kvalue:修正缓存对象id的问题;
+- alogic-auth:修改GetTokenInfo服务实现的app值的缺省id;
+- alogic-kvalue:缓存的idtable功能可选,默认管理;
 
