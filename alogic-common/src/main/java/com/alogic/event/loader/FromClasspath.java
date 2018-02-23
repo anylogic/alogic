@@ -35,6 +35,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.11.4 [20171222 duanyy] <br>
  * - 修正资源无法找到的错误 <br>
+ * 
+ * @version 1.6.11.20 [20180223 duanyy] <br>
+ * - 修正错误字符串的异常 <br>
  */
 public class FromClasspath extends Loader.Abstract<Process>{
 	/**
@@ -88,7 +91,7 @@ public class FromClasspath extends Loader.Abstract<Process>{
 		URL url = clazz.getResource(home);
 		
 		if (url == null){
-			LOG.warn(String.format("Can not find resource path:%" + home));
+			LOG.warn(String.format("Can not find resource path:%s",home));
 			return ;
 		}
 		

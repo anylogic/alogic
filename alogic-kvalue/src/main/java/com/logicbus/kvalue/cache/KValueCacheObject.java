@@ -24,6 +24,10 @@ import com.logicbus.kvalue.core.SetRow;
  * 
  * @author yyduan
  * @since 1.6.11.13
+ * 
+ * @version 1.6.11.20 [20180223 duanyy] <br>
+ * - 缓存实现的间隔符由$更改为# <br>
+ * 
  */
 public class KValueCacheObject implements CacheObject{
 	/**
@@ -44,7 +48,7 @@ public class KValueCacheObject implements CacheObject{
 	/**
 	 * 分隔符
 	 */
-	protected static final char SEPERATOR = '$';
+	protected static final char SEPERATOR = '#';
 	
 	/**
 	 * 生命周期

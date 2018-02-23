@@ -23,6 +23,9 @@ import com.logicbus.kvalue.core.Table;
  * 
  * @author yyduan
  * @since 1.6.11.13
+ * 
+ * @version 1.6.11.20 [20180223 duanyy] <br>
+ * - 修正缓存对象id的问题 <br>
  */
 public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements Store<CacheObject>{
 
@@ -108,7 +111,7 @@ public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements St
 		if (ttl <= 0){
 			ttl = 30 * 60 * 1000L;
 		}
-		return new KValueCacheObject(rowId,hash,set,ttl);
+		return new KValueCacheObject(id,hash,set,ttl);
 	}
 	
 	@Override

@@ -116,3 +116,10 @@ alogic-1.6.11
 ### 1.6.11.19 [20180212 duanyy]
 
 - alogic-common:增加if-equal和if-n-equal指令;
+
+### 1.6.11.20 [20180223 duanyy]
+
+- alogic-common:修正事件加载器FromClasspath的异常;
+- alogic-kvalue:缓存实现的间隔符由$更改为#;
+- alogic-kvalue:修正缓存对象id的问题;
+
