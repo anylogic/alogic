@@ -50,6 +50,7 @@
 		<module>alogic-rpc</module>
 		<module>alogic-zk</module>
 		<module>alogic-auth</module>
+		<module>alogic-bundle</module>
 	</modules>
 	<distributionManagement>
 		<repository>

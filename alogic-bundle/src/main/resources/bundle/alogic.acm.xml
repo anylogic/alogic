@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ac module="com.logicbus.backend.HybirdAccessController">
+	<ac 
+		id="app"
+		default = "true"
+		module="com.alogic.ac.impl.IPAccessController"
+	>
+		<acm loader="com.alogic.ac.loader.acm.ACMCached">
+			<sink module="com.alogic.ac.loader.acm.ACMXmlResource">
+				<model id="anonymous" pwd="Default" maxThread="100000" maxTimesPerMin="10000000" priority="0">
+					<acls>
+						<acl ip="*" service="*" />
+					</acls>
+				</model>			
+			</sink>
+		</acm>
+	</ac>
+	<ac 
+		id="console" 
+		module="com.alogic.ac.SessionAccessController" 
+		maxThread="100000" 
+		maxTimesPerMin="10000000" 
+		priority="0"
+	>
+	</ac>	
+</ac>

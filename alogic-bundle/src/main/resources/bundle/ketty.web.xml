@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<!-- 配置文件所在主目录 -->
+	<parameter id="master.home" value="java:///bundle" />
+	<!-- 配置文件所在备用目录 -->
+	<parameter id="secondary.home" value="java:///bundle" />
+	<parameter id="ketty.ip.ni" value="eth0" final="true"/>
+	
+	<!-- 资源管理器 -->
+	<parameter id="resource.factory" value="com.anysoft.util.resource.ResourceFactory" final="true"/>
+
+	<!-- ketty所部属环境的本地配置文件 -->
+	<parameter id="settings.global.master" value="java:///bundle/local.xml#com.alogic.bundle.Bootstrap" final="true"/>
+	<parameter id="settings.global.secondary" value="java:///bundle/local.xml#com.alogic.bundle.Bootstrap" final="true"/>
+
+	<!-- 应用的配置文件 -->
+	<parameter id="settings.ext.master" value="java:///conf/settings.xml#App" final="true"/>
+	<parameter id="settings.ext.secondary" value="${master.home}/profile.ext.xml#com.alogic.bundle.Bootstrap" final="true"/>
+</settings>

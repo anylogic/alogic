@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<logger module="com.alogic.tlog.handler.Hub"
+	report.enable="true" report.cycle="3600000" async="true">
+	
+	<logger module="com.alogic.tlog.handler.Log4j"
+		delimeter="|" billing="false"
+		report.enable="false" async="false"
+		async.interval="1000" async.maxQueueLength="4096" 
+	/>
+</logger>

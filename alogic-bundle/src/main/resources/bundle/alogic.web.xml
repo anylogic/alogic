@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webapp-addons>
+	<servlet 
+		display-name="BlobDownloader" 
+		servlet-name="BlobDownloader"
+		servlet-class="com.anysoft.webloader.ServletAgent"
+	>
+		<init-param param-name="handler"
+			param-value="com.logicbus.backend.server.http.MessageRouterServletHandler" />
+		<init-param param-name="normalizer"
+			param-value="com.alogic.blob.service.Download$TheNormalizer" />
+		<init-param param-name="cacheAllowed" param-value="true" />
+		<servlet-mapping url-pattern="/blob/*" />
+	</servlet>
+	
+	<servlet display-name="MessageRouter" servlet-name="MessageRouter"
+		servlet-class="com.anysoft.webloader.ServletAgent">
+		<init-param param-name="handler"
+			param-value="com.logicbus.backend.server.http.MessageRouterServletHandler" />
+		<init-param param-name="normalizer"
+			param-value="com.logicbus.backend.ProxyNormalizer" />
+		<servlet-mapping url-pattern="/services/*" />
+	</servlet>
+</webapp-addons>

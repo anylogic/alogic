@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scheduler module="com.alogic.timer.core.Scheduler$XMLed">
+    <committer module="com.alogic.timer.core.ThreadPoolTaskCommitter"/>
+    <timer id ="glance" >
+        <matcher module="Interval" interval="5000"/>
+        <doer 
+        	module="com.alogic.timer.core.ScriptDoer">
+        	<script>
+				<using xmlTag="jvmGlance" module="com.ketty.core.xscript.JVMGlance" />
+				<jvmGlance/>     	
+        	</script>
+        </doer>
+    </timer>
+</scheduler>

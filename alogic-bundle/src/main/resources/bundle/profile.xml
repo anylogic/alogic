@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+	<!-- 服务目录配置，可覆盖 -->
+	<parameter 
+		id="servant.config.master" 
+		value="${master.home}/alogic.servant.config.xml#com.alogic.bundle.Bootstrap"
+		final="true" 
+	/>
+	<parameter 
+		id="servant.config.secondary" 
+		value="${secondary.home}/alogic.servant.config.xml#com.alogic.bundle.Bootstrap"
+		final="true" 
+	/>
+	
+	<!-- 服务的缺省配置，可覆盖 -->
+	<parameter id="servant.maxActive" value="2000" final="true" />
+	<parameter id="servant.maxIdle" value="20" final="true" />
+	<parameter id="servant.threadMode" value="false" final="true" />
+	<parameter id="servant.monitor" value="none" final="true" />
+	<parameter id="host.status.output" value="false" final="true"/>
+	<parameter id="metrics.service.output" value="false" final="false"/>	
+	<parameter id="proxy.enable" value="false" final="true" />	
+
+	<!-- 访问控制模型配置，可覆盖 -->
+	<parameter 
+		id="acm.master" 
+		value="${master.home}/alogic.acm.xml#com.alogic.bundle.Bootstrap"
+		final="true" 
+	/>
+	<parameter 
+		id="acm.secondary" 
+		value="${secondary.home}/acm.xml#com.alogic.bundle.Bootstrap"
+		final="true" 
+	/>
+
+	<!-- http相关参数，可覆盖 -->
+	<parameter id="http.contenttype" value="text/xml;charset=utf-8" final="true" />
+	<parameter id="http.encoding" value="utf-8" final="true" />
+
+	<!-- bizlog的配置，可覆盖 -->
+	<parameter 
+		id="bizlog.master" 
+		value="${master.home}/alogic.bizlog.xml#com.alogic.bundle.Bootstrap" 
+		final="true"
+	/>
+	<parameter 
+		id="bizlog.secondary" 
+		value="${secondary.home}/alogic.bizlog.xml#com.alogic.bundle.Bootstrap" 
+		final="true"
+	/>
+	<parameter 
+		id="bizlog.home" 
+		value="${ketty.logs.home}/bizlog" 
+		final="true" 
+		system="true"
+	/>
+	
+	<!-- tracelog的配置，可覆盖 -->
+	<parameter 
+		id="trace.master" 
+		value="${master.home}/alogic.tlog.xml#com.alogic.bundle.Bootstrap"
+		final="true"
+	/>
+	<parameter id="tracelog.home" value="${ketty.logs.home}/tlog" final="true" system="true"/>
+	
+	<!-- 指标采集的配置，可覆盖 -->
+	<parameter id="metrics.handler.client.master"
+		value="${master.home}/alogic.metrics.xml#com.alogic.bundle.Bootstrap" 
+		final="true"
+	/>
+	<parameter 
+		id="metrics.handler.client.secondary"
+		value="${secondary.home}/alogic.metrics.xml#com.alogic.bundle.Bootstrap" 
+		final="true"
+	/>
+
+	<!-- rrm配置，不可覆盖 -->
+	<parameter id="rrm.rows" value="60" />
+	<parameter id="rrm.minute.step" value="60000" />
+	<parameter id="rrm.halfhour.step" value="1800000" />
+	<parameter id="rrm.hour.step" value="3600000" />
+	
+	<!-- blob配置，可覆盖 -->
+	<parameter 
+		id="blob.master"	
+		value="${master.home}/component.blob.xml#com.alogic.bundle.Bootstrap" 
+		final="true" 
+	/>
+	<parameter 
+		id="blob.secondary"	
+		value="${secondary.home}/component.blob.xml#com.alogic.bundle.Bootstrap" 
+		final="true" 
+	/>
+	
+
+	<!-- vfs配置，可覆盖 -->
+	<parameter 
+		id="vfs.master" 
+		value="${master.home}/component.vfs.xml#com.alogic.bundle.Bootstrap" 
+		final="true"
+	/>
+	<parameter 
+		id="vfs.secondary" 
+		value="${secondary.home}/component.vfs.xml#com.alogic.bundle.Bootstrap" 
+		final="true"
+	/>
+
+	<!-- timer配置，不可覆盖 -->
+	<parameter 
+		id="timer.master" 
+		value="${master.home}/component.timer.xml#com.alogic.bundle.Bootstrap"
+		final="true"
+	/>
+	<parameter 
+		id="timer.secondary" 
+		value="${secondary.home}/component.timer.xml#com.alogic.bundle.Bootstrap" 
+		final="true"
+	/>
+	
+	<!-- sda配置，不可覆盖 -->
+	<parameter 
+		id="sda.master" 
+		value="${master.home}/component.sda.xml#com.alogic.bundle.Bootstrap" 
+		final="true"
+	/>
+	<parameter 
+		id="sda.secondary" 
+		value="${secondary.home}/component.sda.xml#com.alogic.bundle.Bootstrap" 
+		final="true"
+	/>	
+	
+	<!-- blob配置，可覆盖 -->
+	<parameter 
+		id="blob.master"
+		value="${master.home}/component.blob.xml#com.alogic.bundle.Bootstrap" 
+		final="true" 
+	/>
+	<parameter 
+		id="blob.secondary"	
+		value="${secondary.home}/component.blob.xml#com.alogic.bundle.Bootstrap" 
+		final="true" 
+	/>
+
+	<!-- web context扩展配置，可覆盖 -->
+	<parameter 
+		id="webcontext.addons" 
+		value="${master.home}/alogic.web.xml#com.alogic.bundle.Bootstrap"
+		final="true" 
+	/>
+
+</settings>

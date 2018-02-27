@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
+	<description>alogic web</description>
+	<display-name>alogic web</display-name>
+	
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<listener>
+		<listener-class>com.anysoft.webloader.WebAppMain</listener-class>
+	</listener>
+	
+	<context-param>
+		<param-name>app.class</param-name>
+		<param-value>com.alogic.bundle.Bootstrap</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>ketty.web</param-name>
+		<param-value>java:///bundle/ketty.web.xml#com.alogic.bundle.Bootstrap</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>updater.auto</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>settings.master</param-name>
+		<param-value>${master.home}/profile.xml#com.alogic.bundle.Bootstrap</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>settings.secondary</param-name>
+		<param-value>${secondary.home}/profile.xml#com.alogic.bundle.Bootstrap</param-value>
+	</context-param>		
+</web-app>

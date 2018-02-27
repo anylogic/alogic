@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logger 
+	module="com.logicbus.backend.bizlog.BizLogger$Dispatch"
+    async="false"
+	threadCnt = "10"      
+    report.enable="true" 
+    report.cycle="3600000"	
+>
+	<logger
+		module="com.logicbus.backend.bizlog.BizLogger$Hub"
+		report.enable="false" 
+		async="true"
+		async.abandonWhenFull = "false"
+		async.maxQueueLength = "1000000"
+	>
+		<logger 
+			module="com.logicbus.backend.bizlog.Log4jBizLogger"
+			delimeter="%%"
+			billing="true"
+		/>
+		<logger 
+			module="com.ketty.util.ServiceBizLogger" 
+		>
+		</logger>	
+	</logger>
+</logger>

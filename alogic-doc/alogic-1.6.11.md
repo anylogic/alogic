@@ -125,3 +125,8 @@ alogic-1.6.11
 - alogic-auth:修改GetTokenInfo服务实现的app值的缺省id;
 - alogic-kvalue:缓存的idtable功能可选,默认管理;
 
+### 1.6.11.21 [20180227 duanyy]
+
+- alogic-bundle:增加alogic-bundle工程，用于快速使用alogic;
+
+
