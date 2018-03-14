@@ -5,12 +5,14 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.anysoft.util.IOTools;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Settings;
+import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
 import com.logicbus.backend.Context;
@@ -47,6 +49,9 @@ import com.logicbus.backend.message.Message;
  * 
  * @version 1.6.7.15 [20170221 duanyy] <br>
  * - 输出时设置Content-Length以便支持keepalive <br>
+ * 
+ * @version 1.6.11.22 [duanyy 20180314] <br>
+ * - 支持按指定jsonpath路径来输出文档 <br>
  */
 public class JsonMessage implements Message {
 	protected static final Logger logger = LoggerFactory.getLogger(JsonMessage.class);
@@ -69,6 +74,12 @@ public class JsonMessage implements Message {
 	protected Map<String,Object> root = null;	
 	
 	private long contentLength = 0;
+	
+	private String outputPath = "";
+	
+	public void setOutputPath(String path){
+		this.outputPath = path;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public void init(Context ctx) {
@@ -127,7 +138,19 @@ public class JsonMessage implements Message {
 		OutputStream out = null;
 		try {
 
-			String data = provider.toJson(_root);
+			Object outputObject = _root;
+			
+			if (StringUtils.isNotEmpty(outputPath)){
+				try {
+					outputObject = JsonPath.read(outputObject, outputPath);
+				}catch (Exception ex){
+					logger.error("Can not location jsonpath " + outputPath);
+				}
+			}
+			
+			outputObject = outputObject == null ? _root : outputObject;
+			
+			String data = provider.toJson(outputObject);
 			
 			String jsonp = ctx.GetValue("jsonp", "");
 			if (jsonp != null && jsonp.length() > 0){

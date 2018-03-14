@@ -30,6 +30,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.11.20 [20180223 duanyy] <br>
  * - app参数id改为$provider <br>
+ * 
+ * @version 1.6.11.22 [duanyy 20180314] <br>
+ * - ip绑定功能可配置 <br>
  */
 public class GetTokenInfo extends AbstractServant{
 	protected String dftApp = "${server.app}";
@@ -37,6 +40,7 @@ public class GetTokenInfo extends AbstractServant{
 	protected String arguFromIp = "fromIp";
 	protected String arguCallback = "callback";
 	protected String arguApp = "$provider";
+	protected boolean ipBinded = false;
 	
 	@Override
 	protected void onDestroy() {
@@ -51,6 +55,7 @@ public class GetTokenInfo extends AbstractServant{
 		arguFromIp = PropertiesConstants.getString(p, "auth.para.fromIp", arguFromIp);
 		arguCallback = PropertiesConstants.getString(p, "auth.para.callback", arguCallback);
 		arguApp = PropertiesConstants.getString(p, "auth.para.app", arguApp);
+		ipBinded = PropertiesConstants.getBoolean(p, "auth.ip.binded", ipBinded);
 	}
 
 	@Override
@@ -70,7 +75,7 @@ public class GetTokenInfo extends AbstractServant{
 		if (principal == null){
 			JsonTools.setString(data,"isLoggedIn","false");
 		}else{
-			if (fromIp.equals(principal.getLoginIp())){
+			if (!ipBinded || fromIp.equals(principal.getLoginIp())){
 				//token必须绑定ip
 				JsonTools.setString(data,"isLoggedIn","true");
 				principal.report(data);

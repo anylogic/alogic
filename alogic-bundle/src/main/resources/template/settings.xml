@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<!-- 定义当前应用id -->
+	<parameter id="server.app" value="alogic-war-demo"/>
+	
+	<!-- 定义当前的应用端口 -->
+	<parameter id="server.port" value="8080"/>
+	
+	<!-- 建议设置一个ketty.home环境变量:当前目录下的alogic-ketty -->
+	<parameter id="ketty.home" value="${user.home}/alogic-ketty" system="true"/>
+	<parameter id="ketty.logs.home" value="${ketty.home}/logs" system="true"/>
+	<parameter id="ketty.temp.home" value="${ketty.home}/temp" system="true"/>
+
+	<!-- 开启bizlog -->
+	<parameter id="bizlog.enable" value="true" />
+	<!-- 开启tlog -->
+	<parameter id="tracer.enable" value="true" />
+	<!-- 开启服务的tlog -->
+	<parameter id="tracer.servant.enable" value="${tracer.enable}" />
+	<!-- 开启xscript的tlog -->
+	<parameter id="tracer.xscript.enable" value="false" />
+	<!-- 开启dbcp的tlog -->
+	<parameter id="tracer.dbcp.enable" value="true" />
+
+	<!-- 开启访问控制器 -->
+	<parameter id="acm.enable" value="true" />
+
+	<!-- 服务参数 -->
+	<parameter id="servant.maxActive" value="2000" />
+	<parameter id="servant.maxIdle" value="20" />
+
+	<parameter 
+		id="webcontext.addons" 
+		value="java:///conf/web.addons.xml#App"
+		final="true" 
+	/>
+
+	<parameter id="auth.sm.module" value="com.alogic.auth.LocalSessionManager" final="true" />
+	<parameter id="auth.handler" value="com.alogic.auth.sso.client.ClientSideHandler" final="true" />
+	<parameter id="auth.cluster" value="com.alogic.remote.cluster.StaticCluster" final="true" />
+	<parameter id="auth.sso.server.ip0" value="192.168.1.166" />
+	<parameter id="auth.sso.server.port0" value="9080" />
+	<parameter id="auth.sso.server.ip1" value="${auth.sso.server.ip0}" />
+	<parameter id="auth.sso.server.port1" value="${auth.sso.server.port0}" />
+	<parameter id="auth.page.login" value="http://132.246.27.60:9080/login?true" final="true" />
+	<parameter id="auth.page.main" value="http://132.246.27.60:9080/profile?true" final="true" />
+	<parameter id="auth.page.logout" value="http://132.246.27.60:9080/logout?true" />
+
+</settings>

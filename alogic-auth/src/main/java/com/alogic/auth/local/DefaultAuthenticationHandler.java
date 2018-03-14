@@ -1,6 +1,9 @@
 package com.alogic.auth.local;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,10 +23,13 @@ import com.alogic.load.Loader;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.code.Coder;
 import com.anysoft.util.code.CoderFactory;
+import com.logicbus.backend.Context;
+import com.logicbus.backend.message.JsonMessage;
 
 /**
  * AuthenticationHandler的缺省实现
@@ -43,6 +49,10 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.11.14 [duanyy 20180129] <br>
  * - 优化AuthenticationHandler接口 <br>
+ * 
+ * @version 1.6.11.22 [duanyy 20180314] <br>
+ * - 增加isLocalLoginMode(是否本地登录模式)的判断 <br>
+ * - 增加common(扩展指令接口) <br>
  */
 public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract{
 	
@@ -68,6 +78,11 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 	
 	protected Session getSession(SessionManager sm,HttpServletRequest request,HttpServletResponse response,boolean create){
 		return sm.getSession(request,response,create);
+	}
+	
+	@Override
+	public boolean isLocalLoginMode(){
+		return true;
 	}
 	
 	@Override
@@ -231,6 +246,24 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 			Principal principal = new SessionPrincipal(session.getId(),session);
 			LOG.info(String.format("User %s has logged out.",principal.getLoginId()));						
 			principal.expire();
+		}
+	}
+	
+	@Override
+	public void command(Context ctx){
+		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
+		
+		String cmdId = PropertiesConstants.getString(ctx, "cmd", "help");
+		
+		if (cmdId.equals("GetUser")){
+			String userId = PropertiesConstants.getString(ctx, "userId", "");
+			if (StringUtils.isNotEmpty(userId)){
+				UserModel user = loadUserModel(userId);
+				Map<String,Object> map = new HashMap<String,Object>();
+				user.report(map);
+				msg.getRoot().put("data", map);
+			}
+			return ;
 		}
 	}
 

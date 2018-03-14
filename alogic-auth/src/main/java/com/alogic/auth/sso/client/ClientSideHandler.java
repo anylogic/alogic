@@ -37,6 +37,10 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.11.14 [duanyy 20180129] <br>
  * - 优化AuthenticationHandler接口 <br>
+ * 
+ * @version 1.6.11.22 [duanyy 20180314] <br>
+ * - 增加isLocalLoginMode(是否本地登录模式)的判断 <br>
+ * - 增加common(扩展指令接口) <br>
  */
 public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	/**
@@ -53,7 +57,14 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	 * 参数token的参数id
 	 */
 	protected String arguToken = "token";
+	
+	protected String callbackPath = "/logout";
 		
+	@Override
+	public boolean isLocalLoginMode(){
+		return false;
+	}
+	
 	@Override
 	public void configure(Element e, Properties p) {
 		Properties props = new XmlElementProperties(e,p);
@@ -77,6 +88,7 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	public void configure(Properties p){
 		super.configure(p);
 		arguToken = PropertiesConstants.getString(p,"auth.para.token",arguToken);
+		callbackPath = PropertiesConstants.getString(p,"auth.logout.callback",callbackPath);
 	}
 	
 	@Override
@@ -117,9 +129,15 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 		if (StringUtils.isNotEmpty(token)) {
 			try {
 				Parameters paras = theCall.createParameter();
-
+				
 				paras.param("token", token);
 				paras.param("fromIp", getClientIp(request));
+				
+				String callback = getCallbackURL(request,sess.getId());
+				if (StringUtils.isNotEmpty(callback)){
+					paras.param("callback", callback);
+				}
+				
 				Result result = theCall.execute(paras);
 				if (result.getCode().equals("core.ok")) {
 					Map<String, Object> data = result.getData("data");
@@ -131,18 +149,26 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 						sess.setLoggedIn(isLoggedIn);			
 						sess.hSet(Session.DEFAULT_GROUP, Session.TOKEN, token,true);
 					}else{
+						sess.setLoggedIn(isLoggedIn);
 						LOG.error(String.format("Token %s has not logged in.",token));
 					}
 				}else{
-					LOG.error(String.format("Remote call failed,Token %s has not logged in.",token));
+					throw new BaseException("core.e1606","Rpc call failed,can not get token from the server.");
 				}
 
 			} catch (Exception ex) {
-				LOG.error("Remote call failed.");
-				LOG.error(ExceptionUtils.getStackTrace(ex));
+				throw new BaseException("core.e1606","Rpc call failed,can not get token from the server.");
 			}
 		}
 		return principal;
+	}
+	
+	protected String getCallbackURL(HttpServletRequest request,String callbackId){
+		StringBuffer callbackURL = new StringBuffer();
+		callbackURL.append(request.getScheme()).append("://")
+		.append(request.getServerName()).append(":").append(request.getServerPort()).append(request.getContextPath())
+		.append(callbackPath).append("?callback=" + callbackId);
+		return callbackURL.toString();
 	}
 
 	@Override
@@ -174,6 +200,10 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 		Session session = sessionManager.getSession(request,response, false);
 
 		if (session != null && session.isLoggedIn()){
+			//新的token，删除前一个token的用户信息和权限信息
+			session.hDel(Session.USER_GROUP);
+			session.sDel(Session.PRIVILEGE_GROUP);
+			session.setLoggedIn(false);
 			Principal principal = new SessionPrincipal(session.getId(),session);
 			LOG.info(String.format("User %s has logged out.",principal.getLoginId()));						
 			principal.expire();

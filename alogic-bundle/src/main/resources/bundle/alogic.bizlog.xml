@@ -18,9 +18,5 @@
 			delimeter="%%"
 			billing="true"
 		/>
-		<logger 
-			module="com.ketty.util.ServiceBizLogger" 
-		>
-		</logger>	
 	</logger>
 </logger>

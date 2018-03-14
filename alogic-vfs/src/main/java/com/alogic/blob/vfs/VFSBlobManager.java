@@ -24,7 +24,9 @@ import com.anysoft.util.XmlTools;
 /**
  * 基于vfs的blob管理器
  * @author yyduan
- *
+ * 
+ * @version 1.6.11.22 [duanyy 20180314] <br>
+ * - getFile增加文件是否存在的判断<br>
  */
 public class VFSBlobManager extends BlobManager.Abstract{
 	/**
@@ -143,13 +145,13 @@ public class VFSBlobManager extends BlobManager.Abstract{
 	
 	@Override
 	public BlobReader getFile(String id) {
-		String path = getRealPath(id);		
-		return new VFSBlobReader(new VFSBlobInfo(
+		String path = getFullPath(getRealPath(id),id);	
+		return vfs.exist(path) ? new VFSBlobReader(new VFSBlobInfo(
 				id,
-				getFullPath(path,id),
+				path,
 				getContentType()
 				),
-				vfs);
+				vfs):null;
 	}
 
 	@Override

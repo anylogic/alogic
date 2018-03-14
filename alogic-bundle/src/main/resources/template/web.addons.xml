@@ -44,5 +44,5 @@
 	>
 		<!-- 本地注销跳转 -->
 		<filter-mapping url-pattern="/logout"/>
-	</filter>		
+	</filter>	
 </webapp-addons>

@@ -120,7 +120,6 @@ public class SimpleUser implements UserModel,Configurable,XMLConfigurable{
 	public void report(Element xml) {
 		if (xml != null){
 			XmlTools.setString(xml,"userId",userId);
-			XmlTools.setString(xml,"pwd",password);
 			XmlTools.setString(xml,"name",name);
 			XmlTools.setString(xml, "avatar", avatar);
 			
@@ -141,7 +140,6 @@ public class SimpleUser implements UserModel,Configurable,XMLConfigurable{
 	public void report(Map<String, Object> json) {
 		if (json != null){
 			JsonTools.setString(json,"userId", userId);
-			JsonTools.setString(json,"pwd",password);
 			JsonTools.setString(json,"name",name);
 			JsonTools.setString(json,"avatar",avatar);
 			

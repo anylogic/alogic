@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.anysoft.util.BaseException;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.Settings;
@@ -335,9 +336,16 @@ public class HttpContext extends Context {
 					msg.finish(this,!cometMode());
 				}
 			}
-		}catch (Exception ex){
+		}catch (BaseException ex){
 			try {
-				response.sendError(404, ex.getMessage());
+				response.sendError(404, getReturnCode() + ":" + getReason());
+			}catch (Exception e){
+				logger.error("Error when writing result",e);
+			}			
+		}
+		catch (Exception ex){
+			try {
+				response.sendError(404, getReturnCode() + ":" + getReason());
 			}catch (Exception e){
 				logger.error("Error when writing result",e);
 			}

@@ -22,6 +22,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author yyduan
  * 
  * @since 1.6.11.3
+ * 
+ * @version 1.6.11.22 [duanyy 20180314] <br>
+ * - 支持按指定jsonpath路径来输出文档 <br>
  */
 public class TogetherServant extends AbstractServant {
 	protected Script script = null;
@@ -71,7 +74,12 @@ public class TogetherServant extends AbstractServant {
 				String keyword = logicletContext.GetValue("$keyword", "");
 				if (StringUtils.isNotEmpty(keyword)){
 					ctx.setKeyword(keyword);
-				}				
+				}			
+				
+				String outputPath = logicletContext.GetValue("$outpart", "");
+				if (StringUtils.isNotEmpty(outputPath)){
+					msg.setOutputPath(outputPath);
+				}
 			}
 		}else{
 			ctx.asMessage(JsonMessage.class);

@@ -67,7 +67,9 @@ public class Download extends Servant {
 		ctx.setResponseContentType(info.getContentType());
 		
 		InputStream in = reader.getInputStream(0);
-
+		if (in == null){
+			throw new ServantException("clnt.e2007","Can not find a blob file named " + fileId);
+		}
 		try {
 			OutputStream out = ctx.getOutputStream();
 	        int size=0;  

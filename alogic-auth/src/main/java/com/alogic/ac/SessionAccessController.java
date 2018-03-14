@@ -22,6 +22,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.11.4 [20171222 duanyy] <br>
  * - 将用户id写入到上下文，便于服务中引用 <br>
+ * 
+ * @version 1.6.11.22 [20180313 duanyy] <br>
+ * - 匿名用户可以访问public服务 <br>
  *
  */
 public class SessionAccessController extends AbstractACMAccessController{
@@ -78,7 +81,8 @@ public class SessionAccessController extends AbstractACMAccessController{
 			}
 		}else{
 			//已经登录
-			if (principal.hasPrivilege(servant.getPrivilege())){
+			if (servant.getVisible().equals(ServiceDescription.PUBLIC) || 
+					principal.hasPrivilege(servant.getPrivilege())){
 				ctx.SetValue(operator, principal.getLoginId());
 				return String.format("%s@%s", principal.getLoginId(),getClientIp(ctx));
 			}else{

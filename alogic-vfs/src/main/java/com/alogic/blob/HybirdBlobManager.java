@@ -19,6 +19,8 @@ import com.anysoft.util.XmlTools;
  * 
  * @author yyduan
  *
+ * @version 1.6.11.22 [duanyy 20180314] <br>
+ * - 修正HybirdBlobManager的主备规则<br>
  */
 public class HybirdBlobManager extends BlobManager.Abstract{
 	/**
@@ -34,7 +36,7 @@ public class HybirdBlobManager extends BlobManager.Abstract{
 	/**
 	 * 是否从master优先读取
 	 */
-	protected boolean masterFirst = false;
+	protected boolean masterFirst = true;
 	
 	@Override
 	public void configure(Element e, Properties p) {
@@ -86,11 +88,11 @@ public class HybirdBlobManager extends BlobManager.Abstract{
 	@Override
 	public BlobReader getFile(String id) {
 		if (masterFirst){
-			BlobReader reader = getFileFromSecondary(id);
-			return reader != null ? reader : master.getFile(id);
-		}else{
 			BlobReader reader = master == null ? null : master.getFile(id);
 			return reader != null ? reader : getFileFromSecondary(id);
+		}else{
+			BlobReader reader = getFileFromSecondary(id);
+			return reader != null ? reader : master.getFile(id);
 		}
 	}
 

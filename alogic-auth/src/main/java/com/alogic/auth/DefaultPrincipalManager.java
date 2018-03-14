@@ -32,6 +32,10 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.11.14 [duanyy 20180129] <br>
  * - 优化AuthenticationHandler接口 <br>
+ * 
+ * @version 1.6.11.22 [duanyy 20180314] <br>
+ * - 增加isLocalLoginMode(是否本地登录模式)的判断 <br>
+ * - 增加common(扩展指令接口) <br>
  */
 public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	
@@ -132,6 +136,11 @@ public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	public Principal login(Context ctx) {
 		return authHandler.login(ctx);
 	}
+	
+	@Override
+	public boolean isLocalLoginMode(){
+		return authHandler.isLocalLoginMode();
+	}
 
 	@Override
 	public boolean hasPrivilege(Principal principal, String privilege) {
@@ -156,6 +165,11 @@ public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	@Override
 	public void logout(Context ctx) {
 		authHandler.logout(ctx);
+	}
+	
+	@Override
+	public void command(Context ctx) {
+		authHandler.command(ctx);
 	}
 
 	@Override

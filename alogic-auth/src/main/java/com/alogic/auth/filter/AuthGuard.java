@@ -20,6 +20,8 @@ import com.alogic.auth.Principal;
 import com.alogic.auth.PrincipalManager;
 import com.alogic.auth.Session;
 import com.alogic.auth.SessionManagerFactory;
+import com.alogic.remote.HttpConstants;
+import com.anysoft.util.BaseException;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.webloader.FilterConfigProperties;
 
@@ -35,6 +37,8 @@ import com.anysoft.webloader.FilterConfigProperties;
  * @version 1.6.11.14 [duanyy 20180129] <br>
  * - 增加auth.force配置参数,允许页面半保护状态； <br>
  * 
+ * @version 1.6.11.22 [duanyy 20180314] <br>
+ * - 优化URL处理 <br>
  */
 public class AuthGuard implements Filter{
 	/**
@@ -56,11 +60,6 @@ public class AuthGuard implements Filter{
 	 * 重定向的参数名
 	 */
 	protected String returnURL = "returnURL";
-		
-	/**
-	 * 验证错误的路径
-	 */
-	protected String error = "/error";
 	
 	/**
 	 * 当没有登录时，是否强制重定向到登录页面
@@ -73,7 +72,6 @@ public class AuthGuard implements Filter{
 		loginPage = normalize(PropertiesConstants.getString(props,"auth.page.login",loginPage));
 		returnURL = PropertiesConstants.getString(props,"auth.para.url",returnURL);
 		encoding = PropertiesConstants.getString(props,"http.encoding",encoding);
-		error = PropertiesConstants.getString(props,"auth.page.error",error);
 		forceLogin = PropertiesConstants.getBoolean(props,"auth.force",forceLogin);	
 	}
 
@@ -88,22 +86,20 @@ public class AuthGuard implements Filter{
 		HttpServletResponse httpResp = (HttpServletResponse)response;
 		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
 		Session session = sm.getSession(httpReq,httpResp,true);
+		
 		if (session.isLoggedIn()){
 			//已经登录
 			chain.doFilter(request, response);
 		}else{
-			Principal principal = sm.getCurrent(httpReq,httpResp,session);
-			if (principal == null && forceLogin){
-				//没有登录且需要强制登录
-				String redirected = request.getParameter("redirect");
-				if (StringUtils.isEmpty(redirected)){					
+			try {
+				Principal principal = sm.getCurrent(httpReq,httpResp,session);
+				if (principal == null && forceLogin){
 					httpResp.sendRedirect(getLoginPage(getRequestURL(httpReq)));
 				}else{
-					//定位到错误页面
-					httpResp.sendRedirect(error);
+					chain.doFilter(request, response);
 				}
-			}else{
-				chain.doFilter(request, response);
+			}catch (BaseException ex){
+				httpResp.sendError(HttpConstants.E404, String.format("%s:%s", ex.getCode(),ex.getMessage()));
 			}
 		}
 	}
@@ -121,10 +117,54 @@ public class AuthGuard implements Filter{
 		StringBuffer url = request.getRequestURL();
 		String query = request.getQueryString();
 		if (StringUtils.isNotEmpty(query)){
-			url.append("?").append(query);
+			url.append("?").append(getRequestURLQuery(query));
 		}else{
 			url.append("?true");
 		}
 		return url.toString();
 	}	
+	
+	protected static String getRequestURLQuery(String data){		
+		String fragment = "";
+		String query = data;
+		
+		int index = data.indexOf("#");
+		if (index >= 0){
+			fragment = data.substring(index + 1);
+			query = data.substring(0,index);
+		}
+		
+		if (StringUtils.isNotEmpty(query)){
+			String [] paras = query.split("[&]");
+			StringBuffer buf = new StringBuffer();
+			for (String para:paras){
+				int idx = para.indexOf("=");
+				
+				if (idx >= 0){
+					String k = para.substring(0, idx);
+					String v = para.substring(idx + 1);
+					
+					if (k.equals("redirect") || k.equals("token")){
+						continue;
+					}
+					
+					buf.append(k);
+					if (StringUtils.isNotEmpty(v)){
+						buf.append("=").append(v);
+					}
+					buf.append("&");
+				}else{
+					if (StringUtils.isNotEmpty(para) && !para.equals("redirect") && !para.equals("token")){
+						buf.append(para).append("&");
+					}					
+				}
+			}
+			query = buf.toString();
+			if (StringUtils.isNotEmpty(query)){
+				query = query.substring(0, query.length() - 1);
+			}
+		}
+		
+		return StringUtils.isEmpty(fragment) ? query : String.format("%s#%s", query,fragment);
+	}
 }

@@ -21,6 +21,12 @@
 		maxThread="100000" 
 		maxTimesPerMin="10000000" 
 		priority="0"
-	>
-	</ac>	
+	/>
+	<ac 
+		id="session" 
+		module="com.alogic.ac.SessionAccessController" 
+		maxThread="100000" 
+		maxTimesPerMin="10000000" 
+		priority="0"
+	/>
 </ac>

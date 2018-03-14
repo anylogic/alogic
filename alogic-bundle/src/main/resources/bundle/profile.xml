@@ -147,5 +147,17 @@
 		value="${master.home}/alogic.web.xml#com.alogic.bundle.Bootstrap"
 		final="true" 
 	/>
+	
+	<parameter
+		id="auth.master"
+		value="${master.home}/alogic.auth.xml#com.alogic.bundle.Bootstrap" 
+		final="true"
+	/>
+	
+	<parameter
+		id="auth.secondary"
+		value="${secondary.home}/alogic.auth.xml#com.alogic.bundle.Bootstrap" 
+		final="true"
+	/>
 
 </settings>

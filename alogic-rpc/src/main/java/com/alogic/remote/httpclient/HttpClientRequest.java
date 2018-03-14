@@ -219,7 +219,7 @@ public class HttpClientRequest implements Request{
 
 	protected Response execute(String path,Backend backend) {
 		String url = client.getInvokeURL(backend, path);
-		try {			
+		try {		
 			httpRequest.setURI(URI.create(url));
 			//request事件
 			client.onRequest(this);

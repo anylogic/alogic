@@ -129,4 +129,13 @@ alogic-1.6.11
 
 - alogic-bundle:增加alogic-bundle工程，用于快速使用alogic;
 
+### 1.6.11.22 [20180313 duanyy]
+
+- alogic-auth:优化SessionAccessController,匿名用户可以访问public服务;
+- alogic-auth:扩展AuthenticationHandler接口;
+- alogic-auth:优化Filter对URL的支持;
+- alogic-auth:Token验证服务的IP绑定功能可配置;
+- alogic-bundle:优化配置参数;
+- alogic-core:JsonMessage可以按指定的jsonpath路径输出文档;
+- alogic-vfs:修正HybirdBlobManager的主备规则;
 

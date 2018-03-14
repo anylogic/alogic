@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<handler module="com.anysoft.metrics.handler.Hub"
+<handler module="com.alogic.metrics.stream.handler.Hub"
         async="true"
         async.interval="1000"
         async.maxQueueLength="4096"
         report.enable="true" 
         report.cycle="3600000"        
 >
-	<handler module="com.anysoft.metrics.handler.Default" 
+	<handler module="com.alogic.metrics.stream.handler.Default" 
 		report.enable="false">
 	</handler>	
 </handler>

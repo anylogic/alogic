@@ -1,6 +1,7 @@
 package com.alogic.auth.filter;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -10,7 +11,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alogic.auth.PrincipalManager;
 import com.alogic.auth.Session;
 import com.alogic.auth.SessionManagerFactory;
@@ -26,8 +31,14 @@ import com.anysoft.webloader.FilterConfigProperties;
  * @author yyduan
  * @since 1.6.11.14
  * 
+ * @version 1.6.11.22 [duanyy 20180314] <br>
+ * - 优化URL处理 <br>
  */
 public class AuthLogout implements Filter{
+	/**
+	 * a logger of slf4j
+	 */
+	protected final static Logger LOG = LoggerFactory.getLogger(AuthLogout.class);
 	/**
 	 * 重定向的参数名
 	 */
@@ -43,11 +54,14 @@ public class AuthLogout implements Filter{
 	 */
 	protected String mainPage = "";
 	
+	protected String logoutPage = "";
+	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		FilterConfigProperties props = new FilterConfigProperties(filterConfig);
 		returnURL = PropertiesConstants.getString(props,"auth.para.url",returnURL);
 		mainPage = PropertiesConstants.getString(props,"auth.page.login",mainPage);
+		logoutPage = normalize(PropertiesConstants.getString(props,"auth.page.logout",logoutPage));
 		encoding = PropertiesConstants.getString(props,"http.encoding",encoding);
 	}
 
@@ -56,22 +70,51 @@ public class AuthLogout implements Filter{
 			throws IOException, ServletException {
 		HttpServletRequest httpReq = (HttpServletRequest)request;
 		HttpServletResponse httpResp = (HttpServletResponse)response;
-		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
-		Session sess = sm.getSession(httpReq,httpResp, false);
-		if (sess != null && sess.isLoggedIn()){
+		
+		String callbackId = httpReq.getParameter("callback");
+		
+		if (StringUtils.isNotEmpty(callbackId)){
+			//是由登录服务器从后台调用的,callbackId为其SessionId
+			LOG.info("Callback from sso server,sessionId=" + callbackId);
+			PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
 			try {
-				sm.logout(httpReq, httpResp);
+				sm.delSession(callbackId);
 			}catch (Exception ex){
 				// nothing to do
 			}
+		}else{
+			PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
+			Session sess = sm.getSession(httpReq,httpResp, false);
+			if (sess != null && sess.isLoggedIn()){
+				try {
+					sm.logout(httpReq, httpResp);
+				}catch (Exception ex){
+					// nothing to do
+				}
+			}
+			
+			String redirectURL = getParameter(httpReq,returnURL,mainPage);
+			if (sm.isLocalLoginMode()){
+				//本地模式下，直接重定向
+				httpResp.sendRedirect(redirectURL);	
+			}else{
+				//客户端模式，重定向到服务端
+				httpResp.sendRedirect(getLogoutPage(redirectURL));	
+			}
 		}
-		String redirectURL = getParameter(httpReq,returnURL,mainPage);
-		httpResp.sendRedirect(StringUtils.isEmpty(redirectURL)?mainPage:redirectURL);
 	}
 
 	@Override
 	public void destroy() {
 		
+	}
+	
+	protected String normalize(String url) {
+		return url.indexOf("?") < 0 ? (url + "?true"):url;
+	}
+	
+	protected String getLogoutPage(String requestURL)throws IOException{	
+		return String.format("%s&%s=%s",logoutPage,returnURL,URLEncoder.encode(requestURL, encoding));
 	}
 	
 	/**

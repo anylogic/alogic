@@ -19,6 +19,7 @@ import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
 import com.logicbus.backend.Context;
+import com.logicbus.backend.message.JsonMessage;
 import com.logicbus.backend.server.http.HttpContext;
 
 
@@ -37,8 +38,19 @@ import com.logicbus.backend.server.http.HttpContext;
  * 
  * @version 1.6.11.14 [duanyy 20180129] <br>
  * - 优化AuthenticationHandler接口 <br>
+ * 
+ * @version 1.6.11.22 [duanyy 20180314] <br>
+ * - 增加isLocalLoginMode(是否本地登录模式)的判断 <br>
+ * - 增加common(扩展指令接口) <br>
  */
 public interface AuthenticationHandler extends Configurable,XMLConfigurable{
+	
+	/**
+	 * 是否本地登录模式
+	 * @return 如果是本地登录模式，返回为true
+	 */
+	public boolean isLocalLoginMode();
+	
 	/**
 	 * 通过Servlet请求获取Principal 
 	 * 
@@ -107,6 +119,12 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	 * 退出登录
 	 */
 	public void logout(Context ctx);	
+	
+	/**
+	 * 执行扩展指令
+	 * @param ctx 上下文
+	 */
+	public void command(Context ctx);
 	
 	/**
 	 * 判断当前用户是否对指定的业务对象具备操作权限
@@ -198,6 +216,11 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 		}
 		
 		@Override
+		public boolean isLocalLoginMode(){
+			return true;
+		}
+		
+		@Override
 		public Principal getCurrent(Context ctx) {
 			if (!(ctx instanceof HttpContext)){
 				throw new BaseException("core.e1002","The Context is not a HttpContext instance.");
@@ -219,6 +242,11 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 			HttpServletRequest request = httpContext.getRequest();
 			HttpServletResponse response = httpContext.getResponse();
 			return login(request,response);
+		}
+		
+		@Override
+		public void command(Context ctx){
+			ctx.asMessage(JsonMessage.class);
 		}
 		
 		@Override

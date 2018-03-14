@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<session-manager module="com.alogic.auth.DefaultPrincipalManager">
+	<handler module="${auth.handler}">
+		<user-model loader="com.alogic.auth.util.SimpleUser$LoadFromHotFile" path="${ketty.home}/sda/data.user.xml"/>
+		<call module="com.alogic.remote.call.impl.HttpCall"
+			rpc.ketty.root="/services/auth/GetToken"
+			rpc.ketty.autoRetryTimes="0"
+		>
+			<cluster module="${auth.cluster}" connectString="${zookeeper.connectString}">
+				<route id="default" />
+				<route id="label" module="Label" />
+				<route id="version" module="Version" />
+				<backend ip="${auth.sso.server.ip0}" port="${auth.sso.server.port0}" />
+				<backend ip="${auth.sso.server.ip1}" port="${auth.sso.server.port1}" />				
+			</cluster>
+			<request>
+				<query>
+					<json selector="Constants" selector-id="json" selector-value="true" />
+					<timestamp selector="Now" selector-id="t" />
+					<token selector="SingleField" selector-id="token" selector-field="token"/>
+					<callback selector="SingleField" selector-id="callback" selector-field="callback"/>
+					<fromip selector="SingleField" selector-id="fromIp" selector-field="fromIp"/>
+				</query>
+			</request>
+			<response>
+				<data>
+					<field id="data" path="$.data" />
+				</data>			
+			</response>
+			<filter 
+				module="com.alogic.remote.httpclient.filter.Signature" 
+				key="${app.keyid}" 
+				keyContent="${app.skey}"
+			/>
+		</call>		
+	</handler>
+	<session module="${auth.sm.module}" cacheId="session" />
+</session-manager>
