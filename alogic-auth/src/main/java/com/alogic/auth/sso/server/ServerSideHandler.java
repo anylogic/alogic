@@ -27,7 +27,6 @@ public class ServerSideHandler extends DefaultAuthenticationHandler{
 	@Override
 	public Principal getPrincipal(String app,String token,String callback) {
 		Session session = this.sessionManager.getSession(token,false);
-		LOG.info(callback);
 		return (session != null && session.isLoggedIn()) ? new SessionPrincipal(token,session):null;
 	}
 	

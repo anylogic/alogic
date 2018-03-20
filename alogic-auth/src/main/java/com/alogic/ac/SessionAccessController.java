@@ -58,6 +58,7 @@ public class SessionAccessController extends AbstractACMAccessController{
 		super.configure(p);
 		
 		operator = PropertiesConstants.getString(p, "operator", operator);
+		dftUser = PropertiesConstants.getString(p, "anonymous", dftUser);
 	}
 	
 	@Override

@@ -39,6 +39,10 @@ import com.anysoft.webloader.FilterConfigProperties;
  * 
  * @version 1.6.11.22 [duanyy 20180314] <br>
  * - 优化URL处理 <br>
+ * 
+ * @version 1.6.11.23 [duanyy 20180320] <br>
+ * - 修正某些不可配置的参数名 <br>
+ * 
  */
 public class AuthGuard implements Filter{
 	/**
@@ -62,6 +66,11 @@ public class AuthGuard implements Filter{
 	protected String returnURL = "returnURL";
 	
 	/**
+	 * token的参数名
+	 */
+	protected String token = "token";
+	
+	/**
 	 * 当没有登录时，是否强制重定向到登录页面
 	 */
 	protected boolean forceLogin = true;
@@ -71,6 +80,7 @@ public class AuthGuard implements Filter{
 		FilterConfigProperties props = new FilterConfigProperties(filterConfig);
 		loginPage = normalize(PropertiesConstants.getString(props,"auth.page.login",loginPage));
 		returnURL = PropertiesConstants.getString(props,"auth.para.url",returnURL);
+		token = PropertiesConstants.getString(props, "auth.para.token", token);
 		encoding = PropertiesConstants.getString(props,"http.encoding",encoding);
 		forceLogin = PropertiesConstants.getBoolean(props,"auth.force",forceLogin);	
 	}
@@ -124,7 +134,7 @@ public class AuthGuard implements Filter{
 		return url.toString();
 	}	
 	
-	protected static String getRequestURLQuery(String data){		
+	protected  String getRequestURLQuery(String data){		
 		String fragment = "";
 		String query = data;
 		
@@ -144,7 +154,7 @@ public class AuthGuard implements Filter{
 					String k = para.substring(0, idx);
 					String v = para.substring(idx + 1);
 					
-					if (k.equals("redirect") || k.equals("token")){
+					if (k.equals("redirect") || k.equals(token)){
 						continue;
 					}
 					
@@ -154,7 +164,7 @@ public class AuthGuard implements Filter{
 					}
 					buf.append("&");
 				}else{
-					if (StringUtils.isNotEmpty(para) && !para.equals("redirect") && !para.equals("token")){
+					if (StringUtils.isNotEmpty(para) && !para.equals("redirect") && !para.equals(token)){
 						buf.append(para).append("&");
 					}					
 				}

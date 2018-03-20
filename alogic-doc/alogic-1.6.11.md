@@ -139,3 +139,9 @@ alogic-1.6.11
 - alogic-core:JsonMessage可以按指定的jsonpath路径输出文档;
 - alogic-vfs:修正HybirdBlobManager的主备规则;
 
+### 1.6.11.23 [20180320 duanyy]
+
+- alogic-auth:修正某些不可配置的参数名;
+- alogic-rpc:Gateway增加本地服务的转调功能;
+
+

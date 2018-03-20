@@ -33,6 +33,9 @@ import com.anysoft.webloader.FilterConfigProperties;
  * 
  * @version 1.6.11.22 [duanyy 20180314] <br>
  * - 优化URL处理 <br>
+ * 
+ * @version 1.6.11.23 [duanyy 20180320] <br>
+ * - 修正某些不可配置的参数名 <br>
  */
 public class AuthLogout implements Filter{
 	/**
@@ -99,7 +102,11 @@ public class AuthLogout implements Filter{
 				httpResp.sendRedirect(redirectURL);	
 			}else{
 				//客户端模式，重定向到服务端
-				httpResp.sendRedirect(getLogoutPage(redirectURL));	
+				if (StringUtils.isNotEmpty(logoutPage)){
+					httpResp.sendRedirect(getLogoutPage(redirectURL));	
+				}else{
+					chain.doFilter(request, response);
+				}
 			}
 		}
 	}

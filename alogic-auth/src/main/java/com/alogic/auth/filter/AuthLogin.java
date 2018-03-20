@@ -38,6 +38,9 @@ import com.anysoft.webloader.FilterConfigProperties;
  * 
  * @version 1.6.11.22 [duanyy 20180314] <br>
  * - 优化URL处理 <br>
+ * 
+ * @version 1.6.11.23 [duanyy 20180320] <br>
+ * - 修正某些不可配置的参数名 <br>
  */
 public class AuthLogin implements Filter{
 	/**
@@ -128,7 +131,7 @@ public class AuthLogin implements Filter{
 
 	protected static String getRedirectURL(String redirectURL,String key,String tokenId)  {
 		int fragment = redirectURL.indexOf("#");
-		String token = String.format("?redirect&%s=%s&",key,tokenId);
+		String token = String.format("?%s=%s&",key,tokenId);
 		if (fragment < 0){
 			//如果没有fragment
 			int query = redirectURL.indexOf("?");
@@ -171,7 +174,7 @@ public class AuthLogin implements Filter{
 		return url.toString();
 	}	
 	
-	protected static String getRequestURLQuery(String data){		
+	protected String getRequestURLQuery(String data){		
 		String fragment = "";
 		String query = data;
 		
@@ -191,7 +194,7 @@ public class AuthLogin implements Filter{
 					String k = para.substring(0, idx);
 					String v = para.substring(idx + 1);
 					
-					if (k.equals("redirect") || k.equals("token")){
+					if (k.equals("redirect") || k.equals(token)){
 						continue;
 					}
 					
@@ -201,7 +204,7 @@ public class AuthLogin implements Filter{
 					}
 					buf.append("&");
 				}else{
-					if (StringUtils.isNotEmpty(para) && !para.equals("redirect") && !para.equals("token")){
+					if (StringUtils.isNotEmpty(para) && !para.equals("redirect") && !para.equals(token)){
 						buf.append(para).append("&");
 					}					
 				}

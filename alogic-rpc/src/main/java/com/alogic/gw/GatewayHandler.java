@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +52,9 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.6.11.16 [20180207 duanyy] <br>
  * - 优化ip的forworded处理 <br>
+ * 
+ * @version 1.6.11.23 [20180320 duanyy] <br>
+ * - 增加本地服务的转调功能 <br>
  */
 public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurable{
 	/**
@@ -138,6 +142,16 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 	 */
 	protected OpenServiceDescription dft = null;
 	
+	/**
+	 * 本地服务转调
+	 */
+	protected RequestDispatcher dispatcher = null;
+	
+	/**
+	 * 自身的应用id
+	 */
+	protected String selfApp = "${server.app}";
+	
 	@Override
 	public void init(ServletConfig servletConfig) throws ServletException {
 		ServletConfigProperties props = new ServletConfigProperties(servletConfig);
@@ -158,6 +172,11 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 		}finally{
 			IOTools.close(in);
 		}
+		
+		selfApp = PropertiesConstants.getString(props, "gateway.self.app", selfApp);
+		dispatcher = servletConfig.getServletContext().getNamedDispatcher(
+				PropertiesConstants.getString(props, "gateway.self.servlet", "MessageRouter")
+			);
 	}
 	
 	@Override
@@ -232,21 +251,6 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 	public void doService(HttpServletRequest request,
 			HttpServletResponse response, String method)
 			throws ServletException, IOException {
-		if (cacheAllowed){
-			response.setHeader("Cache-Control", "public");
-		}else{
-			response.setHeader("Expires", "Mon, 26 Jul 1970 05:00:00 GMT");
-			response.setHeader("Last-Modified", "Mon, 26 Jul 1970 05:00:00 GMT");
-			response.setHeader("Cache-Control", "no-cache, must-revalidate");
-			response.setHeader("Pragma", "no-cache");
-		}
-		
-		if (corsSupport){
-			String origin = request.getHeader("Origin");
-			response.setHeader("Access-Control-Allow-Origin", StringUtils.isEmpty(origin) ? defaultAllowOrigin : origin);
-			response.setHeader("Access-Control-Allow-Credentials", "true");
-		}
-		
 		if (method.equals("options")){
 			response.setHeader("Allow", methodAllow);
 		}else{	
@@ -264,12 +268,39 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 
 			OpenServiceDescription sd = loadServiceDescription(openId);
 			if (sd == null){
+				if (dispatcher != null){
+					//当找不到服务定义的时候，如果dispatcher不为空，转调dispatcher
+					dispatcher.forward(request, response);
+					return ;
+				}
 				response.sendError(HttpConstants.E404, String.format("Service %s does not exist", openId));
 				return ;
 			}
 			
+			String backendApp = sd.getBackendApp();
+			if (backendApp.equals(selfApp) && dispatcher != null){
+				//当后端应用和本应用一致时，转调
+				dispatcher.forward(request, response);	
+				return ;
+			}
+			
+			if (cacheAllowed){
+				response.setHeader("Cache-Control", "public");
+			}else{
+				response.setHeader("Expires", "Mon, 26 Jul 1970 05:00:00 GMT");
+				response.setHeader("Last-Modified", "Mon, 26 Jul 1970 05:00:00 GMT");
+				response.setHeader("Cache-Control", "no-cache, must-revalidate");
+				response.setHeader("Pragma", "no-cache");
+			}
+			
+			if (corsSupport){
+				String origin = request.getHeader("Origin");
+				response.setHeader("Access-Control-Allow-Origin", StringUtils.isEmpty(origin) ? defaultAllowOrigin : origin);
+				response.setHeader("Access-Control-Allow-Credentials", "true");
+			}			
+			
 			Context ctx = new HttpContext(request, response, encoding);
-			ctx.SetValue("$app", sd.getBackendApp());
+			ctx.SetValue("$app", backendApp);
 			
 			TraceContext tc = null;
 			if (tracerEnable) {

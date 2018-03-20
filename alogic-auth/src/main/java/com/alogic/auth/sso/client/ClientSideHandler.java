@@ -41,6 +41,9 @@ import com.anysoft.util.XmlTools;
  * @version 1.6.11.22 [duanyy 20180314] <br>
  * - 增加isLocalLoginMode(是否本地登录模式)的判断 <br>
  * - 增加common(扩展指令接口) <br>
+ * 
+ * @version 1.6.11.23 [duanyy 20180320] <br>
+ * - 修正某些不可配置的参数名 <br>
  */
 public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	/**
@@ -59,6 +62,8 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	protected String arguToken = "token";
 	
 	protected String callbackPath = "/logout";
+	
+	protected String arguCallback = "callback";
 		
 	@Override
 	public boolean isLocalLoginMode(){
@@ -89,6 +94,7 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 		super.configure(p);
 		arguToken = PropertiesConstants.getString(p,"auth.para.token",arguToken);
 		callbackPath = PropertiesConstants.getString(p,"auth.logout.callback",callbackPath);
+		arguCallback = PropertiesConstants.getString(p, "auth.para.callback", arguCallback);
 	}
 	
 	@Override
@@ -130,12 +136,12 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 			try {
 				Parameters paras = theCall.createParameter();
 				
-				paras.param("token", token);
+				paras.param(arguToken, token);
 				paras.param("fromIp", getClientIp(request));
 				
 				String callback = getCallbackURL(request,sess.getId());
 				if (StringUtils.isNotEmpty(callback)){
-					paras.param("callback", callback);
+					paras.param(arguCallback, callback);
 				}
 				
 				Result result = theCall.execute(paras);
@@ -200,7 +206,6 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 		Session session = sessionManager.getSession(request,response, false);
 
 		if (session != null && session.isLoggedIn()){
-			//新的token，删除前一个token的用户信息和权限信息
 			session.hDel(Session.USER_GROUP);
 			session.sDel(Session.PRIVILEGE_GROUP);
 			session.setLoggedIn(false);

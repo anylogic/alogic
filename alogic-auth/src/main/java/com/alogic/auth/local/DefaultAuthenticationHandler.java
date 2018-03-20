@@ -53,6 +53,9 @@ import com.logicbus.backend.message.JsonMessage;
  * @version 1.6.11.22 [duanyy 20180314] <br>
  * - 增加isLocalLoginMode(是否本地登录模式)的判断 <br>
  * - 增加common(扩展指令接口) <br>
+ * 
+ * @version 1.6.11.23 [duanyy 20180320] <br>
+ * - logout时增加Session中数据的删除 <br>
  */
 public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract{
 	
@@ -243,6 +246,9 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 		Session session = getSession(sessionManager,request,response, false);
 
 		if (session != null && session.isLoggedIn()){
+			session.hDel(Session.USER_GROUP);
+			session.sDel(Session.PRIVILEGE_GROUP);
+			session.setLoggedIn(false);
 			Principal principal = new SessionPrincipal(session.getId(),session);
 			LOG.info(String.format("User %s has logged out.",principal.getLoginId()));						
 			principal.expire();
