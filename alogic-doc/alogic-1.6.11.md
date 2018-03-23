@@ -148,4 +148,6 @@ alogic-1.6.11
 
 - alogic-dbcp:增加db-select插件，用于选择一行记录，并插入到变量集;
 
+### 1.6.11.25 [20180323 duanyy]
 
+- alogic-common:增加EventServer接口;
