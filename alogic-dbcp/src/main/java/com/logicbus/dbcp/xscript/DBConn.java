@@ -16,6 +16,9 @@ import com.logicbus.dbcp.core.ConnectionPool;
 /**
  * 开启一个数据库连接
  * @since 1.6.10.5
+ * 
+ * @version 1.6.11.24 [20180323 duanyy]
+ * - 增加db-select插件，用于选择一行记录，并插入到变量集 <br>
  */
 public class DBConn extends Segment {
 	
@@ -34,6 +37,7 @@ public class DBConn extends Segment {
 		registerModule("db-rollback",Rollback.class);
 		registerModule("db-scan",Scan.class);
 		registerModule("db-new",New.class);
+		registerModule("db-select",Select.class);
 		registerModule("db-query",Query.class);
 	}
 

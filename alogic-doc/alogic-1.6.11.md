@@ -144,4 +144,8 @@ alogic-1.6.11
 - alogic-auth:修正某些不可配置的参数名;
 - alogic-rpc:Gateway增加本地服务的转调功能;
 
+### 1.6.11.24 [20180323 duanyy]
+
+- alogic-dbcp:增加db-select插件，用于选择一行记录，并插入到变量集;
+
 

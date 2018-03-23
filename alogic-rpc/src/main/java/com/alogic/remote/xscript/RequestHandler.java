@@ -15,10 +15,13 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @author yyduan
  * @since 1.6.10.3
+ * 
+ * @version 1.6.11.24 [20180323 duanyy]
+ * - 修正父对象id的取值问题 <br>
  */
 public abstract class RequestHandler extends AbstractLogiclet{
 
-	protected String pid = "remote-request";
+	protected String pid = "remote-req";
 	
 	public RequestHandler(String tag, Logiclet p) {
 		super(tag, p);

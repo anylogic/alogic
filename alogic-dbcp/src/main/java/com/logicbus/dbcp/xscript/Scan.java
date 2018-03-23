@@ -24,6 +24,9 @@ import com.logicbus.dbcp.sql.DBTools;
  * 
  * @version 1.6.11.17 [20180209 duanyy] <br>
  * - 支持SQL预处理; <br>
+ * 
+ * @version 1.6.11.24 [20180323 duanyy]
+ * - 修正id取值问题 <br>
  */
 public class Scan extends Segment{
 	protected String dbconn = "dbconn";
@@ -39,7 +42,7 @@ public class Scan extends Segment{
 		super.configure(p);
 		dbconn = PropertiesConstants.getString(p,"dbconn", dbconn);
 		sql = PropertiesConstants.getRaw(p,"sql",sql);
-		id = PropertiesConstants.getString(p, "id", "$" + this.getXmlTag());
+		id = PropertiesConstants.getString(p, "id", "$" + this.getXmlTag(),true);
 		processor = new Preprocessor(sql);
 	}
 
