@@ -27,11 +27,32 @@ import com.alogic.xscript.doc.json.JsonObject;
 /**
  * 事件处理器
  * @author yyduan
- *
+ * @version 1.6.11.26 [20180328 duanyy] <br>
+ * -  支持dispatcher，用于触发进一步事件处理 <br>
  */
 public class Processor extends SlideHandler<Event>{
 	
 	protected Loader<Process> loader = null;
+	protected Handler<Event> dispatcher = null;
+	@Override
+	protected void onConfigure(Element e, Properties p) {
+		super.onConfigure(e, p);
+		Element dispatcherElem = XmlTools.getFirstElementByPath(e, "dispatcher");
+		if (dispatcherElem != null){
+			Factory<Handler<Event>> factory = new Factory<Handler<Event>>();
+			dispatcher = factory.newInstance(dispatcherElem, p);
+		}
+		Element elem = XmlTools.getFirstElementByPath(e, "loader");
+		if (elem != null){
+			Factory<Loader<Process>> f = new Factory<Loader<Process>>();			
+			try {
+				loader = f.newInstance(elem, p, "module");
+			}catch (Exception ex){
+				LOG.error("Can not create loader with " + XmlTools.node2String(elem));
+				LOG.error(ExceptionUtils.getStackTrace(ex));
+			}
+		}		
+	}	
 	
 	@Override
 	protected void onHandle(Event evt, long timestamp) {
@@ -52,6 +73,11 @@ public class Processor extends SlideHandler<Event>{
 					ctx.SetValue("$task", evt.id());
 					ctx.SetValue("$event", evt.getEventType());
 					ctx.SetValue("$async", BooleanUtils.toStringTrueFalse(evt.isAsync()));
+					
+					if (dispatcher != null){
+						ctx.setObject("$dispatcher", dispatcher);
+					}
+					
 					script.execute(doc, doc, ctx, null);
 					result = PropertiesConstants.getString(ctx, "$code", result);
 					reason = PropertiesConstants.getString(ctx, "$reason", reason);
@@ -82,21 +108,4 @@ public class Processor extends SlideHandler<Event>{
 	protected Process getProcess(String id){
 		return loader == null ? null : loader.load(id, true);
 	}
-
-	@Override
-	protected void onConfigure(Element e, Properties p) {
-		super.onConfigure(e, p);
-		
-		Element elem = XmlTools.getFirstElementByPath(e, "loader");
-		if (elem != null){
-			Factory<Loader<Process>> f = new Factory<Loader<Process>>();			
-			try {
-				loader = f.newInstance(elem, p, "module");
-			}catch (Exception ex){
-				LOG.error("Can not create loader with " + XmlTools.node2String(elem));
-				LOG.error(ExceptionUtils.getStackTrace(ex));
-			}
-		}
-	}
-
 }

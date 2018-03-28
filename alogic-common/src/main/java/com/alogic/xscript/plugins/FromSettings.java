@@ -58,6 +58,9 @@ public class FromSettings extends AbstractLogiclet {
 				}
 			}else{
 				v = settings.transform(value);
+				if (StringUtils.isEmpty(v)){
+					v = settings.transform(dft);
+				}
 			}
 			
 			if (StringUtils.isNotEmpty(v)){

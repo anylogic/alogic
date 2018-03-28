@@ -15,7 +15,7 @@ import com.anysoft.util.PropertiesConstants;
  *
  * @since 1.6.10.1
  * 
- * @verion 1.6.11.16 [20180207 duanyy] <br>
+ * @version 1.6.11.16 [20180207 duanyy] <br>
  * - value缺省值由0更改为1; <br>
  */
 public class Decr extends AbstractLogiclet {

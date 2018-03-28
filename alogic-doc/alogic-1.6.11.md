@@ -151,3 +151,11 @@ alogic-1.6.11
 ### 1.6.11.25 [20180323 duanyy]
 
 - alogic-common:增加EventServer接口;
+
+### 1.6.11.26 [20180328 duanyy]
+
+- alogic-common:增加redirect框架;
+- alogic-common:增加 Event序列化接口EventSerializer;
+- alogic-common:EventSender可以向指定的上下文EventHandler发送事件;
+- alogic-common:增加事件处理插件Bridge，用于向指定的事件服务器发送事件;
+

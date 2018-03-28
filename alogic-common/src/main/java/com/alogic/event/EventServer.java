@@ -1,6 +1,9 @@
 package com.alogic.event;
 
 import java.util.Map;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -9,6 +12,7 @@ import org.w3c.dom.Element;
 
 import com.anysoft.stream.Handler;
 import com.anysoft.util.Configurable;
+import com.anysoft.util.IOTools;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -57,7 +61,7 @@ public interface EventServer extends Handler<Event>,Configurable{
 		 * sink
 		 */
 		protected Handler<Event> sink = null;
-
+		
 		@Override
 		public void flush(long timestamp) {
 			// nothing to do
@@ -99,7 +103,7 @@ public interface EventServer extends Handler<Event>,Configurable{
 			
 			configure(props);
 		}
-		
+				
 		/**
 		 * 分发事件
 		 * @param event
@@ -120,7 +124,7 @@ public interface EventServer extends Handler<Event>,Configurable{
 
 		@Override
 		public void close() throws Exception {
-			// nothing to do
+			IOTools.close(sink);
 		}
 
 		@Override
@@ -136,5 +140,53 @@ public interface EventServer extends Handler<Event>,Configurable{
 				JsonTools.setString(json,"module",getClass().getName());
 			}
 		}
+	}
+
+	/**
+	 * Demo
+	 * @author yyduan
+	 *
+	 */
+	public static class Demo extends Abstract implements Runnable{
+		
+		/**
+		 * 执行线程池
+		 */
+		protected static ScheduledThreadPoolExecutor exec = new  ScheduledThreadPoolExecutor(1);
+		
+		/**
+		 * 定时线程的句柄
+		 */
+		protected ScheduledFuture<?> future = null;
+		
+		protected long interval = 5000L;
+		
+		@Override
+		public void start() {
+			future = exec.scheduleWithFixedDelay(this, 1000, interval, TimeUnit.MILLISECONDS);
+		}
+
+		@Override
+		public void stop() {
+			if (future != null){
+				future.cancel(false);
+			}
+		}
+
+		@Override
+		public void join(long timeout) {
+			stop();
+		}
+
+		@Override
+		public void handle(Event _data, long timestamp) {
+			this.dispatch(_data);
+		}
+
+		@Override
+		public void run() {
+			Event evt = EventBus.newEvent("evt.demo", true);
+			this.dispatch(evt);
+		}		
 	}
 }

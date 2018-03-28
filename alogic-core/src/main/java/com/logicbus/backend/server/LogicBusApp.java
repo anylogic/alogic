@@ -31,6 +31,7 @@ import com.logicbus.backend.AccessController;
 import com.logicbus.backend.IpAndServiceAccessController;
 import com.logicbus.backend.ServantFactory;
 import com.logicbus.backend.bizlog.BizLogger;
+import com.logicbus.backend.daemon.DaemonServer;
 
 
 /**
@@ -96,6 +97,23 @@ public class LogicBusApp implements WebApp {
 		
 	protected void onInit(Settings settings){	
 		XmlTools.setDefaultEncoding(settings.GetValue("http.encoding","utf-8"));
+		
+		//加载daemon事件服务器
+		String daemonConfig = settings.GetValue("daemon.master", "");
+		String daemonConfigSecondary = settings.GetValue("daemon.secondary","");
+		if (StringUtils.isNotEmpty(daemonConfig)){
+			logger.info("Load and start daemon event servers..");
+			logger.info("Url = " + daemonConfig);
+			try {
+				DaemonServer daemonServer = DaemonServer.loadFrom(daemonConfig, daemonConfigSecondary, settings);
+				if (daemonServer != null){
+					daemonServer.start();
+					settings.registerObject("daemon", daemonServer);
+				}
+			}catch (Exception ex){
+				logger.error("Can not load and start daemon event servets");
+			}
+		}		
 		
 		//初始化事件处理器
 		try {
@@ -296,6 +314,11 @@ public class LogicBusApp implements WebApp {
 		}
 		
 		settings.unregisterObject("accessController");
+		
+		DaemonServer daemonServer = (DaemonServer)settings.get("daemon");
+		if (daemonServer != null){
+			daemonServer.stop();
+		}
 		
 		// since 1.2.8
 		@SuppressWarnings("unchecked")

@@ -55,6 +55,9 @@ public class FromEnv extends AbstractLogiclet {
 				}
 			}else{
 				v = env.transform(value);
+				if (StringUtils.isEmpty(v)){
+					v = env.transform(dft);
+				}
 			}
 			
 			if (StringUtils.isNotEmpty(v)){
