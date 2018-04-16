@@ -1,6 +1,7 @@
 package com.alogic.xscript.plugins;
 
 import java.io.InputStream;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -82,5 +83,19 @@ public class Include extends Segment{
 			IOTools.close(in);
 		}
 		return doc;
+	}	
+	
+	@Override
+	public void registerFunction(String id,Logiclet function){
+		Logiclet parent = parent();
+		if (parent != null){
+			parent.registerFunction(id, function);
+		}
+	}
+	
+	@Override
+	public Logiclet getFunction(String id){
+		Logiclet parent = parent();
+		return parent != null ? parent.getFunction(id):null;
 	}	
 }
