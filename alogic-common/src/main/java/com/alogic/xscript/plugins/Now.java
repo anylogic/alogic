@@ -1,5 +1,7 @@
 package com.alogic.xscript.plugins;
 
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
@@ -43,7 +45,7 @@ public class Now extends AbstractLogiclet {
 			if (StringUtils.isEmpty(pattern)){
 				ctx.SetValue(id, String.valueOf(now));
 			}else{
-				String value = DateFormatUtils.format(now, pattern);
+				String value = DateFormatUtils.format(now, pattern,Locale.US);
 				ctx.SetValue(id, value);
 			}
 		}

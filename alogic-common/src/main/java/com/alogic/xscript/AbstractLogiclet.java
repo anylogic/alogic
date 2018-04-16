@@ -29,6 +29,9 @@ import com.alogic.xscript.plugins.ForEach;
 import com.alogic.xscript.plugins.Formula;
 import com.alogic.xscript.plugins.FromEnv;
 import com.alogic.xscript.plugins.FromSettings;
+import com.alogic.xscript.plugins.FunctionCall;
+import com.alogic.xscript.plugins.FunctionCallback;
+import com.alogic.xscript.plugins.FunctionDeclare;
 import com.alogic.xscript.plugins.Get;
 import com.alogic.xscript.plugins.GetAsJson;
 import com.alogic.xscript.plugins.IfEqual;
@@ -44,6 +47,7 @@ import com.alogic.xscript.plugins.Log;
 import com.alogic.xscript.plugins.Lowercase;
 import com.alogic.xscript.plugins.Match;
 import com.alogic.xscript.plugins.Message;
+import com.alogic.xscript.plugins.NewLine;
 import com.alogic.xscript.plugins.Obj;
 import com.alogic.xscript.plugins.Now;
 import com.alogic.xscript.plugins.Rand;
@@ -109,6 +113,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.10.1 [20170911 duanyy] <br>
  * - 增加incr,decr指令 <br>
+ * 
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 增加xscript的函数相关的插件func-declare,func-call,func-callback <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -201,6 +208,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_IF_NOT_EXIST = "if-n-exist";
 	public static final String STMT_IF_EQUAL = "if-equal";
 	public static final String STMT_IF_NOT_EQUAL = "if-n-equal";
+	public static final String STMT_NEW_LINE = "newline";
+	public static final String STMT_FUNC_DECLARE = "func-declare";
+	public static final String STMT_FUNC_CALL = "func-call";
+	public static final String STMT_FUNC_CALLBACK = "func-callback";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -257,6 +268,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_IF_NOT_EXIST, IfNotExist.class);
 		staticModules.put(STMT_IF_EQUAL, IfEqual.class);
 		staticModules.put(STMT_IF_NOT_EQUAL, IfNotEqual.class);
+		staticModules.put(STMT_NEW_LINE, NewLine.class);
+		staticModules.put(STMT_FUNC_DECLARE,FunctionDeclare.class);
+		staticModules.put(STMT_FUNC_CALL,FunctionCall.class);
+		staticModules.put(STMT_FUNC_CALLBACK, FunctionCallback.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	
@@ -470,6 +485,18 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public void registerLogger(Handler<LogInfo> logHandler) {
 		logger.warn("Log handler is not supported,Ignored.");
 	}	
+	
+	@Override
+	public void registerFunction(String id,Logiclet function){
+		if (parent != null){
+			parent.registerFunction(id, function);
+		}
+	}
+	
+	@Override
+	public Logiclet getFunction(String id){
+		return parent != null ? parent.getFunction(id):null;
+	}
 	
 	@Override
 	public void metricsIncr(Fragment fragment){

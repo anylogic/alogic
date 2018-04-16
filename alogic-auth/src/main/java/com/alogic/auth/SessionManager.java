@@ -30,6 +30,10 @@ import com.logicbus.backend.server.http.HttpContext;
  * 
  * @version 1.6.11.7 [20180107 duanyy] <br>
  * - 优化Session管理 <br>
+ * 
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 修正SessionManager获取cookies的空指针问题 <br>
+ * 
  */
 public interface SessionManager extends Configurable,XMLConfigurable{
 	
@@ -159,9 +163,11 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 		
 		protected String getCookie(HttpServletRequest req,String name,String dft){
 			Cookie [] cookies = req.getCookies();
-			for (Cookie cookie:cookies){
-				if (cookie.getName().equals(name)){
-					return cookie.getValue();
+			if (cookies != null){
+				for (Cookie cookie:cookies){
+					if (cookie.getName().equals(name)){
+						return cookie.getValue();
+					}
 				}
 			}
 			return dft;

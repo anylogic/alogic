@@ -80,7 +80,8 @@ public class Main {
 		
 		//runAsJson("java:///xscript/foreach.xml#com.alogic.xscript.demo.Main",settings);
 		//runAsJson("java:///xscript/repeat.xml#com.alogic.xscript.demo.Main",settings);
-		runAsJson("java:///xscript/rand.xml#com.alogic.xscript.demo.Main",settings);
+		//runAsJson("java:///xscript/rand.xml#com.alogic.xscript.demo.Main",settings);
+		runAsJson("java:///xscript/function.xml#com.alogic.xscript.demo.Main",settings);
 	}
 
 }

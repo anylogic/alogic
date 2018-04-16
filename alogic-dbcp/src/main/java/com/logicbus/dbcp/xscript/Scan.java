@@ -27,12 +27,16 @@ import com.logicbus.dbcp.sql.DBTools;
  * 
  * @version 1.6.11.24 [20180323 duanyy]
  * - 修正id取值问题 <br>
+ * 
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 增加debug参数 <br>
  */
 public class Scan extends Segment{
 	protected String dbconn = "dbconn";
 	protected String sql;
 	protected String id;
 	protected Preprocessor processor = null;
+	protected boolean debug = false;
 	public Scan(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -43,6 +47,7 @@ public class Scan extends Segment{
 		dbconn = PropertiesConstants.getString(p,"dbconn", dbconn);
 		sql = PropertiesConstants.getRaw(p,"sql",sql);
 		id = PropertiesConstants.getString(p, "id", "$" + this.getXmlTag(),true);
+		debug = PropertiesConstants.getBoolean(p,"debug", debug,true);
 		processor = new Preprocessor(sql);
 	}
 
@@ -56,6 +61,12 @@ public class Scan extends Segment{
 		
 		List<Object> data = new ArrayList<Object>();
 		String sql = processor.process(ctx, data);
+		
+		if (debug){
+			log("sql=" + sql,"debug");
+			log("binded=" + data.toString(),"debug");
+		}
+		
 		List<Map<String,String>> result = DBTools.list(conn, sql,data.toArray());
 		
 		if (result != null && result.size() > 0){

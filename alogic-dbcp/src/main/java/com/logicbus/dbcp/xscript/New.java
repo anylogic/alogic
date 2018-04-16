@@ -19,6 +19,8 @@ import com.logicbus.dbcp.sql.DBTools;
  * 
  * @since 1.6.10.5
  * 
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 增加debug参数 <br>
  */
 public class New extends DBOperation{
 	protected String sqlInsert = "";	
@@ -40,6 +42,13 @@ public class New extends DBOperation{
 			ExecuteWatcher watcher) {
 		List<Object> data = new ArrayList<Object>();
 		String sql = processor.process(ctx, data);
+		
+		if (debug){
+			log("sql=" + sql,"debug");
+			log("binded=" + data.toString(),"debug");
+		}
+		
+		
 		DBTools.insert(conn, sql, data.toArray());
 	}
 

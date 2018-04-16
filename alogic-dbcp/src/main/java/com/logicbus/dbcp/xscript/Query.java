@@ -27,6 +27,8 @@ import com.logicbus.dbcp.sql.RowRenderer;
  * 
  * @since 1.6.10.5
  * 
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 增加debug参数 <br>
  */
 public class Query extends DBOperation{
 	protected String tag = "data";
@@ -54,6 +56,12 @@ public class Query extends DBOperation{
 			if (extend){
 				List<Object> data = new ArrayList<Object>();
 				String sql = processor.process(ctx, data);
+				
+				if (debug){
+					log("sql=" + sql,"debug");
+					log("binded=" + data.toString(),"debug");
+				}
+				
 				DBTools.selectAsObjects(conn, sql, new RowRenderer.Default<Object>(){
 					@SuppressWarnings("unchecked")
 					@Override
@@ -66,6 +74,12 @@ public class Query extends DBOperation{
 				if (StringUtils.isNotEmpty(tagValue)){
 					List<Object> data = new ArrayList<Object>();
 					String sql = processor.process(ctx, data);
+					
+					if (debug){
+						log("sql=" + sql,"debug");
+						log("binded=" + data.toString(),"debug");
+					}
+					
 					Map<String,Object> result = DBTools.selectAsObjects(conn, sql,data.toArray());
 					if (result != null){
 						@SuppressWarnings("unchecked")
@@ -78,6 +92,12 @@ public class Query extends DBOperation{
 			if (extend){
 				List<Object> data = new ArrayList<Object>();
 				String sql = processor.process(ctx, data);
+				
+				if (debug){
+					log("sql=" + sql,"debug");
+					log("binded=" + data.toString(),"debug");
+				}
+				
 				Map<String,Object> result = DBTools.selectAsObjects(conn, sql,data.toArray());
 				if (result != null){
 					Iterator<Entry<String,Object>> iter = result.entrySet().iterator();

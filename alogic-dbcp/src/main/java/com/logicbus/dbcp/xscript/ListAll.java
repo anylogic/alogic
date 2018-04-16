@@ -26,6 +26,9 @@ import com.logicbus.dbcp.sql.DBTools;
  * @author duanyy
  * 
  * @since 1.6.10.5
+ * 
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 增加debug参数 <br>
  */
 public class ListAll extends DBOperation{
 	protected String tag = "data";
@@ -52,6 +55,12 @@ public class ListAll extends DBOperation{
 		if (StringUtils.isNotEmpty(tagValue)){
 			List<Object> data = new ArrayList<Object>();
 			String sql = processor.process(ctx, data);
+			
+			if (debug){
+				log("sql=" + sql,"debug");
+				log("binded=" + data.toString(),"debug");
+			}
+			
 			List<Map<String,Object>> result = DBTools.listAsObject(conn, sql,data.toArray());
 			
 			if (current instanceof JsonObject){

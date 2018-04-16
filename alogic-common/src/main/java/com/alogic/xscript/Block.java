@@ -1,11 +1,14 @@
 package com.alogic.xscript;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import com.alogic.tracer.Tool;
 import com.alogic.tracer.TraceContext;
 import com.anysoft.stream.Handler;
@@ -25,6 +28,9 @@ import com.alogic.xscript.log.LogInfo;
  * 
  * @version 1.6.9.3 [20170602 duanyy] <br>
  * - 在异常处理的时候，输出异常的id和原因信息; <br>
+ * 
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 增加对函数的支持 <br>
  */
 public abstract class Block extends AbstractLogiclet{
 
@@ -36,7 +42,12 @@ public abstract class Block extends AbstractLogiclet{
 	/**
 	 * 异常处理器
 	 */
-	protected Hashtable<String,Logiclet> exceptionAndFinallyHandlers = new Hashtable<String,Logiclet>(); // NOSONAR
+	protected Map<String,Logiclet> exceptionAndFinallyHandlers = new HashMap<String,Logiclet>(); // NOSONAR
+	
+	/**
+	 * 函数列表
+	 */
+	protected Map<String,Logiclet> functions = null;
 	
 	/**
 	 * 日志处理器
@@ -123,4 +134,26 @@ public abstract class Block extends AbstractLogiclet{
 	public void registerLogger(Handler<LogInfo> logger) {
 		logHandler = logger;
 	}		
+	
+	@Override
+	public void registerFunction(String id,Logiclet function){
+		if (functions == null){
+			synchronized (this){
+				if (functions == null){
+					functions = new HashMap<String,Logiclet>();
+				}
+			}
+		}
+		
+		functions.put(id, function);
+	}
+	
+	@Override
+	public Logiclet getFunction(String id){
+		Logiclet func = null;
+		if (functions != null){
+			func = functions.get(id);
+		}
+		return func != null ? func : super.getFunction(id);
+	}
 }

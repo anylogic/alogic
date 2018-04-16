@@ -17,7 +17,8 @@ import com.logicbus.dbcp.sql.DBTools;
  * @author yyduan
  *
  * @since 1.6.10.5
- *
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 增加debug参数 <br>
  */
 public class Delete extends DBOperation{
 	protected String sqlDelete = "";	
@@ -39,6 +40,12 @@ public class Delete extends DBOperation{
 			ExecuteWatcher watcher) {
 		List<Object> data = new ArrayList<Object>();
 		String sql = processor.process(ctx, data);
+		
+		if (debug){
+			log("sql=" + sql,"debug");
+			log("binded=" + data.toString(),"debug");
+		}
+		
 		DBTools.delete(conn, sql, data.toArray());
 	}
 

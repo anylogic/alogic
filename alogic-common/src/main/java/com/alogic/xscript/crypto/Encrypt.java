@@ -16,6 +16,9 @@ import com.anysoft.util.code.CoderFactory;
  * @author yyduan
  *
  * @since 1.6.10.9
+ * 
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 允许key为空 <br>
  */
 public class Encrypt extends NS {
 	protected String in = "in";
@@ -44,7 +47,7 @@ public class Encrypt extends NS {
 		String inData = ctx.transform(in);
 		String keyData = ctx.transform(key);
 		
-		if (StringUtils.isNotEmpty(inData)&&StringUtils.isNotEmpty(keyData)){
+		if (StringUtils.isNotEmpty(inData)){
 			Coder c = CoderFactory.newCoder(PropertiesConstants.transform(ctx,coder,"DES3"));
 			String outData = c.encode(inData, keyData);
 			String outId = ctx.transform(id);

@@ -18,9 +18,13 @@ import com.logicbus.backend.ServantException;
  * 数据库操作组件
  * 
  * @since 1.6.10.5
+ * 
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 增加debug参数 <br>
  */
 public abstract class DBOperation extends AbstractLogiclet{
 	protected String dbconn = "dbconn";
+	protected boolean debug = false;
 	public DBOperation(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -28,6 +32,7 @@ public abstract class DBOperation extends AbstractLogiclet{
 	public void configure(Properties p){
 		super.configure(p);
 		dbconn = PropertiesConstants.getString(p,"dbconn", dbconn);
+		debug = PropertiesConstants.getBoolean(p,"debug", debug,true);
 	}
 
 	@Override

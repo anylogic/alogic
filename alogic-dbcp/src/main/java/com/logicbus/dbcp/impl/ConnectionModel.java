@@ -53,6 +53,9 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.11.4 [20171222 duanyy] <br>
  * - 优化异常输出信息<br>
+ * 
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 错误的情况下不再输出密码信息 <br>
  */
 public class ConnectionModel{
 	/**
@@ -369,7 +372,7 @@ public class ConnectionModel{
 			logger.error("Can not create db connection.");
 			logger.error(String.format("Driver=%s",_driver));
 			logger.error(String.format("URL=%s",_url));
-			logger.error(String.format("USER=%s/%s",_username,_password));
+			logger.error(String.format("USER=%s/********",_username,_password));
 			logger.error(ExceptionUtils.getStackTrace(ex));
 		}		
 		return conn;

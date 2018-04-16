@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<script>
+	<func-declare id="func1">
+		<log msg="This is func1"/>
+	</func-declare>
+	<func-declare id="func2">
+		<log msg="This is func2"/>
+		<func-callback/>
+	</func-declare>
+	
+	<func-call id="func2"/>
+	<func-call id="func1">
+		<log msg="func1 callback"/>
+	</func-call>
+	<func-call id="func2">
+		<log msg="func2 callback"/>
+	</func-call>	
+</script>

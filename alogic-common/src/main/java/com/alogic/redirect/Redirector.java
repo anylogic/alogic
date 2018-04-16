@@ -18,7 +18,6 @@ import org.w3c.dom.Element;
 
 import com.alogic.load.Loader;
 import com.alogic.redirect.loader.FromInner;
-import com.alogic.remote.HttpConstants;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
@@ -129,7 +128,7 @@ public class Redirector implements ServletHandler,XMLConfigurable,Configurable{
 		}
 		RedirectPath redirectPath = loadRedirectPath(redirectId);
 		if (redirectPath == null){
-			response.sendError(HttpConstants.E404,String.format("core.e1003:Can not find redirect path %s",redirectId));
+			response.sendError(404,String.format("core.e1003:Can not find redirect path %s",redirectId));
 			return ;
 		}
 		

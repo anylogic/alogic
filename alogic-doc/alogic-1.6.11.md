@@ -159,3 +159,12 @@ alogic-1.6.11
 - alogic-common:EventSender可以向指定的上下文EventHandler发送事件;
 - alogic-common:增加事件处理插件Bridge，用于向指定的事件服务器发送事件;
 
+### 1.6.11.27 [20180417 duanyy]
+
+- alogic-auth:修正SessionManager获取cookies的空指针问题;
+- alogic-common:修正事件处理器Bridge的初始化问题;
+- alogic-common:增加xscript的函数相关的插件func-declare,func-call,func-callback;
+- alogic-common:xscript的crypt-en插件允许Key为空;
+- alogic-common:增加HmacSHA1的Coder;
+- alogic-dbcp:数据库插件增加debug开关,以便输出SQL调试信息;
+- alogic-dbcp:增加db-keyvalues插件;

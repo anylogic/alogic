@@ -16,6 +16,9 @@ import com.logicbus.dbcp.sql.DBTools;
  * Update
  * 
  * @since 1.6.10.5
+ * 
+ * @version 1.6.11.27 [20180417 duanyy] <br>
+ * - 增加debug参数 <br>
  */
 public class Update extends DBOperation{
 	protected String sqlUpdate = "";	
@@ -37,6 +40,12 @@ public class Update extends DBOperation{
 			ExecuteWatcher watcher) {
 		List<Object> data = new ArrayList<Object>();
 		String sql = processor.process(ctx, data);
+		
+		if (debug){
+			log("sql=" + sql,"debug");
+			log("binded=" + data.toString(),"debug");
+		}
+		
 		DBTools.update(conn, sql, data.toArray());
 	}
 }
