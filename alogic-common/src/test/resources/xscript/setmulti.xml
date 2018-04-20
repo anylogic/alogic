@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<script>
+	<set-multi pattern="a=bb;b=ddderer;c=dddd"/>
+	
+	<log msg="${a},${b},${c}"/>	
+</script>

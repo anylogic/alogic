@@ -168,3 +168,8 @@ alogic-1.6.11
 - alogic-common:增加HmacSHA1的Coder;
 - alogic-dbcp:数据库插件增加debug开关,以便输出SQL调试信息;
 - alogic-dbcp:增加db-keyvalues插件;
+
+### 1.6.11.28 [20180420 duanyy]
+
+- alogic-common:增加array-string和set-multi插件;
+

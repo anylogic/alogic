@@ -16,6 +16,7 @@ import com.alogic.xscript.doc.xml.XmlObject;
 import com.alogic.xscript.log.LogInfo;
 import com.alogic.xscript.plugins.Array;
 import com.alogic.xscript.plugins.ArrayItem;
+import com.alogic.xscript.plugins.ArrayString;
 import com.alogic.xscript.plugins.Asynchronized;
 import com.alogic.xscript.plugins.Check;
 import com.alogic.xscript.plugins.CheckAndSetDefault;
@@ -58,6 +59,7 @@ import com.alogic.xscript.plugins.Segment;
 import com.alogic.xscript.plugins.Select;
 import com.alogic.xscript.plugins.Set;
 import com.alogic.xscript.plugins.SetAsJson;
+import com.alogic.xscript.plugins.SetMulti;
 import com.alogic.xscript.plugins.Sleep;
 import com.alogic.xscript.plugins.Substr;
 import com.alogic.xscript.plugins.Switch;
@@ -116,6 +118,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.11.27 [20180417 duanyy] <br>
  * - 增加xscript的函数相关的插件func-declare,func-call,func-callback <br>
+ * 
+ * @version 1.6.11.28 [20180420 duanyy] <br>
+ * - 增加array-string和set-multi插件; <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -167,6 +172,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_SCOPE = "scope";
 	public static final String STMT_GET = "get";
 	public static final String STMT_SET = "set";
+	public static final String STMT_SET_MULTI = "set-multi";
 	public static final String STMT_SELECT = "select";
 	public static final String STMT_ENCRYPT = "encrypt";
 	public static final String STMT_DECRYPT = "decrypt";
@@ -187,6 +193,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_OBJ = "obj";
 	public static final String STMT_ARRAY = "array";
 	public static final String STMT_ARRAYITEM = "array-item";
+	public static final String STMT_ARRAYSTRING = "array-string";
 	public static final String STMT_TRIM = "trim";
 	public static final String STMT_UPPERCASE = "uppercase";
 	public static final String STMT_LOWERCASE = "lowercase";
@@ -229,6 +236,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_SCOPE, Scope.class);
 		staticModules.put(STMT_GET, Get.class);
 		staticModules.put(STMT_SET, Set.class);
+		staticModules.put(STMT_SET_MULTI, SetMulti.class);
 		staticModules.put(STMT_SELECT, Select.class);
 		staticModules.put(STMT_ENCRYPT,Encrypt.class);
 		staticModules.put(STMT_DECRYPT,Decrypt.class);
@@ -247,6 +255,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_OBJ, Obj.class);
 		staticModules.put(STMT_ARRAY, Array.class);
 		staticModules.put(STMT_ARRAYITEM, ArrayItem.class);
+		staticModules.put(STMT_ARRAYSTRING, ArrayString.class);
 		staticModules.put(STMT_TRIM, Trim.class);
 		staticModules.put(STMT_UPPERCASE,Uppercase.class);
 		staticModules.put(STMT_LOWERCASE,Lowercase.class);
