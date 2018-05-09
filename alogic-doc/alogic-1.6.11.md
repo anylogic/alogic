@@ -173,3 +173,8 @@ alogic-1.6.11
 
 - alogic-common:增加array-string和set-multi插件;
 
+### 1.6.11.29 [20180510 duanyy]
+
+- alogic-common:增加cache相关的操作插件;
+- alogic-common:cache框架增加on-load事件的脚本处理功能;
+- 

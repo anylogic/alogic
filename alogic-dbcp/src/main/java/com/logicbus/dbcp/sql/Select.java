@@ -40,6 +40,9 @@ import com.anysoft.util.BaseException;
  * 
  * @version 1.6.9.8 [20170821 duanyy] <br>
  * - 将SQL语句的绑定参数输出到tlog <br>
+ * 
+ * @version 1.6.11.29 [20180510 duanyy] <br>
+ * - 优化错误处理 <br>
  */
 public class Select extends DBOperation {
 
@@ -82,10 +85,11 @@ public class Select extends DBOperation {
 		catch (SQLException ex){
 			error = true;
 			msg = ExceptionUtils.getStackTrace(ex);
+			LOG.error(String.format("[%s]%s",data.toString(),sql));
 			throw new BaseException("core.e1300",msg);
 		}finally{
 			if (traceEnable() && tc != null){
-				Tool.end(tc, "DB", "Query", error ? "FAILED":"OK", msg,String.format("[%s]%s",data,sql),0);
+				Tool.end(tc, "DB", "Query", error ? "FAILED":"OK", msg,String.format("[%s]%s",data.toString(),sql),0);
 			}
 		}
 	}

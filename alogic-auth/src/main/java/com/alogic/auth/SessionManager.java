@@ -156,10 +156,6 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 			String sessionId = getSessionId(request,response,create);
 			return StringUtils.isNotEmpty(sessionId)?getSession(sessionId,create):null;
 		}
-
-		protected boolean isExpired(Session sess){
-			return System.currentTimeMillis() - sess.getTimestamp() > ttl * 1000L;
-		}		
 		
 		protected String getCookie(HttpServletRequest req,String name,String dft){
 			Cookie [] cookies = req.getCookies();

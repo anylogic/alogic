@@ -24,6 +24,18 @@ import com.anysoft.util.code.Coder;
  */
 public class HmacSHA256 implements Coder {
 	protected static final Logger LOG = LoggerFactory.getLogger(MD5.class);
+	
+	protected ThreadLocal<Mac> macLocal = new ThreadLocal<Mac>(){
+        protected Mac initialValue() {
+        	try {
+        		return Mac.getInstance(getAlgorithm()); 
+        	}catch (Exception ex){
+    			LOG.error(ExceptionUtils.getStackTrace(ex));      
+    			return null;
+        	}
+        };
+    };
+	
 	public String getAlgorithm() {
 		return "HmacSHA256";
 	}
@@ -33,7 +45,7 @@ public class HmacSHA256 implements Coder {
 		try {
         	byte [] byteKey = Base64.decodeBase64(key);
         	SecretKey secretKey = new SecretKeySpec(byteKey, getAlgorithm());  
-            Mac mac = Mac.getInstance(secretKey.getAlgorithm());  
+            Mac mac = macLocal.get();
             mac.init(secretKey);  
             byte[] bytes = mac.doFinal(data.getBytes());  
             return Base64.encodeBase64URLSafeString(bytes);

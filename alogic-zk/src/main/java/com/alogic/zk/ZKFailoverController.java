@@ -17,6 +17,13 @@ import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.UPath;
 
+/**
+ * 基于ZK的Failverover控制器
+ * @author yyduan
+ *
+ * @version 1.6.11.29 [20180510 duanyy] <br>
+ * - 优化处理 <br>
+ */
 public class ZKFailoverController extends FailoverController.Abstract implements Runnable,Watcher{
 	/**
 	 * the connector to ZooKeeper
@@ -134,6 +141,7 @@ public class ZKFailoverController extends FailoverController.Abstract implements
 		}
 		conn.delete(haPath.append(myNode), true);
 		conn.disconnect();
+		active(false);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.alogic.together2.service;
 
 import org.apache.commons.lang3.StringUtils;
+
 import com.alogic.together.service.SevantLogicletContext;
 import com.alogic.together2.TogetherServiceDescription;
 import com.alogic.xscript.LogicletContext;
@@ -20,6 +21,10 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author yyduan
  * @since 1.6.11.12
+ * 
+ * @version 1.6.11.29 [20180510 duanyy] <br>
+ * - 增加缓存控制;<br>
+ * - 增加下载文件名控制;<br>
  */
 public class DownloadTogetherServant extends AbstractServant {
 	protected Script script = null;
@@ -71,6 +76,13 @@ public class DownloadTogetherServant extends AbstractServant {
 				if (StringUtils.isNotEmpty(keyword)){
 					ctx.setKeyword(keyword);
 				}				
+				if (PropertiesConstants.getBoolean(logicletContext, "$cacheEnable", true)){
+					ctx.enableClientCache(true);
+				}
+				String filename = PropertiesConstants.getString(logicletContext, "$filename", "");
+				if (StringUtils.isNotEmpty(filename)){
+					ctx.setResponseHeader("Content-Disposition", String.format("attachment; filename=%s",filename));
+				}
 			}
 		}else{
 			ctx.asMessage(JsonMessage.class);

@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.alogic.blob.BlobManager;
 import com.alogic.blob.BlobReader;
@@ -22,6 +23,9 @@ import com.logicbus.backend.Context;
  * 从blob中下载
  * @author yyduan
  * @since 1.6.11.12
+ * 
+ * @version 1.6.11.29 [20180510 duanyy] <br>
+ * - 优化错误处理 <br>
  */
 public class DownloadFromBlob extends AbstractLogiclet{
 	protected String pid = "$context";
@@ -81,8 +85,8 @@ public class DownloadFromBlob extends AbstractLogiclet{
 			out.flush();
 			ctx.SetValue(id, "true");
 		} catch (Exception ex) {
+			logger.error(ExceptionUtils.getStackTrace(ex));
 			ctx.SetValue(id, "false");
-			throw new BaseException("core.e1004", ex.getMessage());
 		} finally {
 			reader.finishRead(in);
 		}

@@ -24,6 +24,9 @@ import com.anysoft.util.Pager;
  * 
  * @version 1.6.11.13 [20180125 duanyy] <br>
  * - 增加newObject方法 <br>
+ * 
+ * @version 1.6.11.29 [20180510 duanyy]
+ * - 增加on-load事件处理;
  */
 public interface Store<O extends Loadable> extends Loader<O> {
 	
@@ -79,11 +82,21 @@ public interface Store<O extends Loadable> extends Loader<O> {
 			if (found == null){
 				found = loadFromSink(id,cacheAllowed);
 				if (found != null){
+					onLoad(id,found);
 					save(id,found,true);
 				}
 			}
 			
 			return found;
+		}
+
+		/**
+		 * 触发装载事件
+		 * @param id 对象id
+		 * @param o 对象
+		 */
+		protected void onLoad(String id, O o) {
+			// nothing to do
 		}
 
 		@Override

@@ -25,6 +25,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.11.8 [20180109] duanyy <br>
  * - 优化缓存相关的xscript插件 <br>
+ * 
+ * @version 1.6.11.29 [20180510 duanyy]
+ * - 增加cache相关的插件 <br>
  */
 public class Cache extends Segment {
 	protected String cacheId;
@@ -38,8 +41,15 @@ public class Cache extends Segment {
 		registerModule("cache-load",CacheQuery.class);
 		registerModule("cache-locate",CacheLocate.class);
 		registerModule("cache-hget",CacheHashGet.class);
+		registerModule("cache-hset",CacheHashSet.class);
+		registerModule("cache-hdel",CacheHashDel.class);
+		registerModule("cache-hexist",CacheHashExist.class);
+		registerModule("cache-hsize",CacheHashSize.class);
 		registerModule("cache-smembers",CacheSetMembers.class);
 		registerModule("cache-sexist",CacheSetExist.class);
+		registerModule("cache-sadd",CacheSetAdd.class);
+		registerModule("cache-sdel",CacheSetDel.class);
+		registerModule("cache-ssize",CacheSetSize.class);
 	}
 
 	@Override

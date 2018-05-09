@@ -73,6 +73,7 @@ public interface FailoverController extends Configurable,XMLConfigurable,Reporta
 	 *
 	 */
 	public static class Null extends Abstract{
+		protected FailoverListener listener = null;
 
 		@Override
 		public boolean isActive() {
@@ -81,10 +82,16 @@ public interface FailoverController extends Configurable,XMLConfigurable,Reporta
 
 		@Override
 		public void start(FailoverListener listener) {
+			if (listener != null){
+				listener.becomeActive();
+			}
 		}
 
 		@Override
 		public void stop() {
+			if (listener != null){
+				listener.becomeStandby();
+			}
 		}
 
 		@Override

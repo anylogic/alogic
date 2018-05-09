@@ -2,6 +2,9 @@ package com.logicbus.dbcp.sql;
 
 import java.sql.Connection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
@@ -14,7 +17,7 @@ import com.anysoft.util.Settings;
  * 
  */
 abstract public class DBOperation implements AutoCloseable{
-	
+	protected static final Logger LOG = LoggerFactory.getLogger(DBOperation.class);
 	protected Connection conn = null;
 	protected static boolean traceEnable = false;
 	protected DBOperation(Connection _conn){

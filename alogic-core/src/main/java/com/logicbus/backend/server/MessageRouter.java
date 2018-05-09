@@ -103,6 +103,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.10.9 [20171124 duanyy] <br>
  * - 规范化URL和URI的取值 <br>
+ * 
+ * @version 1.6.11.29 [20180510 duanyy] <br>
+ * - 优化错误处理 <br>
  */
 public class MessageRouter {
 	
@@ -172,15 +175,19 @@ public class MessageRouter {
 			}
 		}catch (ServantException ex){
 			ctx.setReturn(ex.getCode(), ex.getMessage());
+			logger.error("Service=" + id.getPath());
 			logger.error(ExceptionUtils.getStackTrace(ex));
 		}catch (BaseException ex){
 			ctx.setReturn(ex.getCode(), ex.getMessage());
+			logger.error("Service=" + id.getPath());
 			logger.error(ExceptionUtils.getStackTrace(ex));
 		}catch (Exception ex){
 			ctx.setReturn("core.e1012",ex.getMessage());
+			logger.error("Service=" + id.getPath());
 			logger.error(ExceptionUtils.getStackTrace(ex));
 		}catch (Throwable t){
 			ctx.setReturn("core.e1012",t.getMessage());
+			logger.error("Service=" + id.getPath());
 			logger.error(ExceptionUtils.getStackTrace(t));		
 		}
 		finally {

@@ -1,16 +1,30 @@
 package com.logicbus.kvalue.cache;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.alogic.cache.CacheObject;
 import com.alogic.load.Loader;
 import com.alogic.load.Store;
+import com.alogic.xscript.Logiclet;
+import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.Script;
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
 import com.anysoft.util.BaseException;
+import com.anysoft.util.Factory;
 import com.anysoft.util.Pager;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Settings;
+import com.anysoft.util.XmlElementProperties;
+import com.anysoft.util.XmlTools;
 import com.logicbus.kvalue.context.KValueSource;
 import com.logicbus.kvalue.core.HashRow;
 import com.logicbus.kvalue.core.Schema;
@@ -27,6 +41,9 @@ import com.logicbus.kvalue.core.Table;
  * @version 1.6.11.20 [20180223 duanyy] <br>
  * - 修正缓存对象id的问题 <br>
  * - 缓存的idtable功能可选,默认管理<br>
+ * 
+ * @version 1.6.11.29 [20180510 duanyy]
+ * - 增加on-load事件处理;
  */
 public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements Store<CacheObject>{
 
@@ -56,6 +73,13 @@ public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements St
 	protected boolean enableIdTable = false;
 	
 	/**
+	 * 加载事件脚本
+	 */
+	protected Logiclet onLoad = null;
+	
+	protected String cacheObjectId = "$cache-object";
+	
+	/**
 	 * 获取id
 	 * @return id
 	 */
@@ -66,6 +90,8 @@ public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements St
 	@Override
 	public void configure(Properties p){
 		super.configure(p);
+		
+		cacheObjectId = PropertiesConstants.getString(p,"cacheObjectId",cacheObjectId,true);
 		
 		id = PropertiesConstants.getString(p, "id", "",true);
 		enableIdTable = PropertiesConstants.getBoolean(p, "table.id.enable", enableIdTable);
@@ -93,6 +119,46 @@ public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements St
 			throw new BaseException("core.e1003","Can not find a kavalue table named " + idtableName);
 		}
 	}
+	
+	@Override
+	public void configure(Element e, Properties p) {
+		Properties props = new XmlElementProperties(e,p);
+		configure(props);
+		
+		NodeList nodeList = XmlTools.getNodeListByPath(e, getSinkTag());
+		Factory<Loader<CacheObject>> factory = new Factory<Loader<CacheObject>>();
+		String scope = PropertiesConstants.getString(p, "ketty.scope", "runtime");
+		
+		for (int i = 0 ;i < nodeList.getLength() ; i ++){
+			Node n = nodeList.item(i);
+			
+			if (Node.ELEMENT_NODE != n.getNodeType()){
+				continue;
+			}
+			
+			Element elem = (Element)n;
+			
+			String itemScope = XmlTools.getString(elem, "scope", "");
+			if (StringUtils.isNotEmpty(itemScope) && !itemScope.equals(scope)){
+				continue;
+			}
+			
+			try {
+				Loader<CacheObject> loader = factory.newInstance(elem, props, "module");
+				if (loader != null){
+					loaders.add(loader);
+				}
+			}catch (Exception ex){
+				LOG.error("Can not create loader from element:" + XmlTools.node2String(elem));
+				LOG.error(ExceptionUtils.getStackTrace(ex));
+			}
+		}
+		
+		Element onLoadElem = XmlTools.getFirstElementByPath(e, "on-load");
+		if (onLoadElem != null){
+			onLoad = Script.create(onLoadElem, props);
+		}
+	}	
 	
 	/**
 	 * 根据对象id生成在缓存中的id
@@ -126,12 +192,29 @@ public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements St
 		if (found == null){
 			found = loadFromSink(id,cacheAllowed);
 			if (found != null){
+				onLoad(id,found);
 				save(id,found,true);
 			}
 		}		
 		return found;
 	}
 	
+
+	protected void onLoad(String id, CacheObject cache) {
+		if (onLoad != null){
+			LogicletContext logicletContext = new LogicletContext(Settings.get());
+	
+			try {
+				logicletContext.setObject(cacheObjectId, cache);
+				XsObject doc = new JsonObject("root",new HashMap<String,Object>());
+				onLoad.execute(doc,doc, logicletContext, null);
+			}catch (Exception ex){
+				LOG.info("Failed to execute onload script" + ExceptionUtils.getStackTrace(ex));
+			}finally{
+				logicletContext.removeObject("$cache");
+			}
+		}
+	}
 
 	@Override
 	public CacheObject newObject(String id) {
