@@ -1,7 +1,6 @@
 package com.alogic.auth;
 
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,6 +35,9 @@ import com.logicbus.backend.Context;
  * @version 1.6.11.22 [duanyy 20180314] <br>
  * - 增加isLocalLoginMode(是否本地登录模式)的判断 <br>
  * - 增加common(扩展指令接口) <br>
+ * 
+ * @version 1.6.11.30 [20180514 duanyy] <br>
+ * - 增加cookies操作接口 <br>
  */
 public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	
@@ -186,5 +188,15 @@ public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	public void delSession(String sessionId) {
 		sessionManager.delSession(sessionId);
 	}
+	
+	@Override
+	public String getCookie(HttpServletRequest req,String name,String dft){
+		return sessionManager.getCookie(req, name, dft);
+	}
+	
+	@Override
+	public void setCookie(HttpServletResponse response,String name,String value,String path,int ttl){
+		sessionManager.setCookie(response, name, value, path, ttl);
+	}	
 
 }

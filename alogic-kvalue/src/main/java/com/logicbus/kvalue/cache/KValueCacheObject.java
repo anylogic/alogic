@@ -455,7 +455,7 @@ public class KValueCacheObject implements CacheObject{
 		/**
 		 * 从一个组合key中获取field
 		 * @param key 组合key
-		 * @return
+		 * @return Field值
 		 */
 		public static String getField(String key){
 			int idx = key.indexOf(SEPERATOR);

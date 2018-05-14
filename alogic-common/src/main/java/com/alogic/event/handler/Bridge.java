@@ -15,7 +15,7 @@ import com.anysoft.util.XmlElementProperties;
 /**
  * 桥接器
  * @author yyduan
- * @1.6.11.26
+ * @since 1.6.11.26
  * 
  * @version 1.6.11.27 [20180417 duanyy] <br>
  * - 修正事件处理器Bridge的初始化问题 <br>

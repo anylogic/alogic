@@ -177,4 +177,9 @@ alogic-1.6.11
 
 - alogic-common:增加cache相关的操作插件;
 - alogic-common:cache框架增加on-load事件的脚本处理功能;
-- 
+
+### 1.6.11.30 [20180514 duanyy]
+
+- alogic-auth:SessionManager增加cookies的操作接口;
+- alogic-common:增加全局xscript脚本函数库;
+

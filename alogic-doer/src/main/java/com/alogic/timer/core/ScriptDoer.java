@@ -32,6 +32,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.9.2 [20170601 duanyy] <br>
  * - 改造TaskCenter模型，以便提供分布式任务处理支持; <br>
+ * 
+ * @version 1.6.11.30 [20180514 duanyy] <br>
+ * - 增加全局xscript脚本函数库 <br>
  */
 public class ScriptDoer extends Doer.Abstract{
 	protected Logiclet stmt = null;
@@ -69,8 +72,7 @@ public class ScriptDoer extends Doer.Abstract{
 		
 		Element script = XmlTools.getFirstElementByPath(_e, "script");
 		if (script != null){
-			stmt = new Script("script",null);
-			stmt.configure(script, p);
+			stmt = Script.create(script, p);
 		}
 	}
 }

@@ -33,6 +33,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
+ * @version 1.6.11.30 [20180514 duanyy] <br>
+ * - 增加全局xscript脚本函数库 <br>
+ * 
  */
 public class ScriptHandler <data extends Flowable> extends SlideHandler<data> {
 	/**
@@ -44,15 +47,13 @@ public class ScriptHandler <data extends Flowable> extends SlideHandler<data> {
 		super.onConfigure(e, p);
 		Element script = XmlTools.getFirstElementByPath(e, "script");
 		if (script != null){
-			stmt = new Script("script",null);
-			stmt.configure(script, p);
+			stmt = Script.create(script, p);
 		}else{
 			String src = PropertiesConstants.getString(p,"xrc","");
 			if (StringUtils.isNotEmpty(src)){
 				Document doc = loadDocument(src);
 				if (doc != null){
-					stmt = new Script("script",null);
-					stmt.configure(doc.getDocumentElement(), p);
+					stmt = Script.create(doc.getDocumentElement(), p);
 				}
 			}else{
 				LOG.error("Can not find script to run.");

@@ -21,7 +21,8 @@ import com.anysoft.util.XmlTools;
 /**
  * 事件处理过程
  * @author yyduan
- *
+ * @version 1.6.11.30 [20180514 duanyy] <br>
+ * - 增加全局xscript脚本函数库 <br>
  */
 public interface Process extends XMLConfigurable,Configurable,Reportable,Loadable{
 	/**
@@ -89,8 +90,7 @@ public interface Process extends XMLConfigurable,Configurable,Reportable,Loadabl
 			Properties props = new XmlElementProperties(e,p);
 			Element scriptElem = XmlTools.getFirstElementByPath(e, "script");
 			if (scriptElem != null){
-				script = new Script("script",null);
-				script.configure(scriptElem, props);
+				script = Script.create(scriptElem,props);
 			}		
 			configure(props);	
 		}
@@ -114,8 +114,7 @@ public interface Process extends XMLConfigurable,Configurable,Reportable,Loadabl
 					Document doc = null;
 					try {
 						doc = XmlTools.loadFromContent(scriptContent);
-						script = new Script("script",null);
-						script.configure(doc.getDocumentElement(),p);
+						script = Script.create(doc.getDocumentElement(), p);
 					} catch (Exception ex) {
 						LOG.error("Can not load script from " + scriptContent);
 						LOG.error(ExceptionUtils.getStackTrace(ex));

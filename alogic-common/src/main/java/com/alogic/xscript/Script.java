@@ -12,6 +12,7 @@ import com.alogic.xscript.log.LogInfo;
 import com.alogic.xscript.plugins.Segment;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
+import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
@@ -23,8 +24,16 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.11.4 [20171222 duanyy] <br>
  * - 增加Container辅助插件<br>
+ * 
+ * @version 1.6.11.30 [20180514 duanyy] <br>
+ * - 增加cookies操作接口 <br>
  */
 public class Script extends Segment {
+	
+	public Script(String tag){
+		super(tag, Library.get());
+	}
+	
 	public Script(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -56,7 +65,7 @@ public class Script extends Segment {
 		Script script = null;
 		
 		if (root != null){
-			script = new Script("script",null);
+			script = new Script("script",Library.get());
 			script.configure(root, p);
 		}
 		
@@ -80,7 +89,7 @@ public class Script extends Segment {
 				Document doc = XmlTools.loadFromInputStream(in);
 				
 				if (doc != null){
-					script = new Script("script",null);
+					script = new Script("script",Library.get());
 					script.configure(doc.getDocumentElement(), p);
 				}
 			}catch (Exception ex){
@@ -103,7 +112,7 @@ public class Script extends Segment {
 				in = clazz.getResourceAsStream(path);
 				Document doc = XmlTools.loadFromInputStream(in);
 				if (doc != null){
-					script = new Script("script",null);
+					script = new Script("script",Library.get());
 					script.configure(doc.getDocumentElement(), p);
 				}
 			}catch (Exception ex){
@@ -117,12 +126,64 @@ public class Script extends Segment {
 	}
 	
 	/**
+	 * XScript库，用于加载全局的Function
+	 * 
+	 * @author yyduan
+	 *
+	 */
+	public static class Library extends Script{
+		/**
+		 * 全局唯一实例
+		 */
+		protected static Script script = null;
+		
+		protected Library(String tag, Logiclet p) {
+			super(tag, p);
+		}
+		
+		public static Script get(){
+			if (script == null){
+				synchronized (Library.class){
+					if (script == null){
+						script = new Library("libary",null);
+						configure(script,Settings.get());
+					}
+				}
+			}
+			
+			return script;
+		}
+
+		protected static void configure(Script self, Properties p) {
+			ResourceFactory resourceFactory = Settings.getResourceFactory();
+			InputStream in = null;
+			String src = PropertiesConstants.getString(p, "script.library", null);
+			try {
+				in = resourceFactory.load(src,null);
+				Document doc = XmlTools.loadFromInputStream(in);
+				
+				if (doc != null){
+					self.configure(doc.getDocumentElement(), p);
+				}
+			}catch (Exception ex){
+				logger.error("The config file is not a valid file,url = " + src,ex);
+			}finally{
+				IOTools.close(in);
+			}	
+		}
+	}
+	
+	/**
 	 * 脚本容器
 	 * @author yyduan
 	 *
 	 */
 	public static class Container extends AbstractLogiclet{
 		protected Script script = null;
+		
+		public Container(String tag){
+			super(tag,Script.Library.get());
+		}
 		
 		public Container(String tag, Logiclet p) {
 			super(tag, p);

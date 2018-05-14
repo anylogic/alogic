@@ -34,6 +34,9 @@ import com.logicbus.backend.server.http.HttpContext;
  * @version 1.6.11.27 [20180417 duanyy] <br>
  * - 修正SessionManager获取cookies的空指针问题 <br>
  * 
+ * @version 1.6.11.30 [20180514 duanyy] <br>
+ * - 增加全局xscript脚本函数库 <br>
+ * 
  */
 public interface SessionManager extends Configurable,XMLConfigurable{
 	
@@ -75,6 +78,23 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 	 * @param sessionId id
 	 */
 	public void delSession(String sessionId);
+	
+	/**
+	 * 获取指定的Cookies值
+	 * @param req HttpRequest
+	 * @param name Cookies名称
+	 * @param dft 缺省值
+	 * @return Cookies值
+	 */
+	public String getCookie(HttpServletRequest req,String name,String dft);	
+	
+	/**
+	 * 设置Cookies
+	 * @param response httpResponse
+	 * @param name Cookies名称
+	 * @param value 取值
+	 */
+	public void setCookie(HttpServletResponse response,String name,String value,String path,int ttl);
 	
 	/**
 	 * 虚基类
@@ -130,7 +150,7 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 				sessionId = getCookie(request,cookieName,sessionId);
 				if (StringUtils.isEmpty(sessionId) && create){
 					sessionId = KeyGen.uuid();
-					setCookie(response,cookieName,sessionId);
+					setCookie(response,cookieName,sessionId,"/",ttl);
 				}
 			}else{
 				HttpSession httpSession = request.getSession(create);
@@ -157,7 +177,8 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 			return StringUtils.isNotEmpty(sessionId)?getSession(sessionId,create):null;
 		}
 		
-		protected String getCookie(HttpServletRequest req,String name,String dft){
+		@Override
+		public String getCookie(HttpServletRequest req,String name,String dft){
 			Cookie [] cookies = req.getCookies();
 			if (cookies != null){
 				for (Cookie cookie:cookies){
@@ -169,9 +190,10 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 			return dft;
 		}
 		
-		protected void setCookie(HttpServletResponse response,String name,String value){
+		@Override
+		public void setCookie(HttpServletResponse response,String name,String value,String path,int ttl){
 			Cookie cookie = new Cookie(name,value);
-			cookie.setPath("/");
+			cookie.setPath(path);
 			cookie.setMaxAge(ttl);
 			response.addCookie(cookie);
 		}
