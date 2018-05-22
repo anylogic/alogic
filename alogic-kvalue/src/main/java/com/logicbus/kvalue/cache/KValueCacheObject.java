@@ -28,6 +28,8 @@ import com.logicbus.kvalue.core.SetRow;
  * @version 1.6.11.20 [20180223 duanyy] <br>
  * - 缓存实现的间隔符由$更改为# <br>
  * 
+ * @version 1.6.11.31 [20170522 duanyy] <br>
+ * - 优化缓存中set的ttl机制; <br>
  */
 public class KValueCacheObject implements CacheObject{
 	/**
@@ -76,7 +78,10 @@ public class KValueCacheObject implements CacheObject{
 			//上次写入大于一分钟，才写缓存，避免多次调用
 			lastVisitedTime = now;
 			hash.set("t", lastVisitedTime);
-			hash.ttl(ttl,TimeUnit.MILLISECONDS);				
+			hash.ttl(ttl,TimeUnit.MILLISECONDS);		
+			if (!set.exists()){
+				set.add(String.valueOf(SEPERATOR));
+			}
 			set.ttl(ttl, TimeUnit.MILLISECONDS);
 		}		
 	}

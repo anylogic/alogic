@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
-import com.alogic.lucene.context.IndexerSource;
 import com.alogic.lucene.core.Indexer;
+import com.alogic.lucene.naming.IndexerFactory;
 
 
 /**
@@ -22,8 +22,7 @@ public class IndexerTool {
 	 * @return Indexer
 	 */
 	public static Indexer getIndexer(String id){
-		IndexerSource src = IndexerSource.get();
-		return src.get(id);
+		return IndexerFactory.get(id);
 	}
 	
 	/**
@@ -40,7 +39,7 @@ public class IndexerTool {
 	 * @return Indexer列表
 	 */
 	public static Indexer[] list(){
-		IndexerSource src = IndexerSource.get();
+		IndexerFactory src = IndexerFactory.get();
 		return src.current().toArray(new Indexer[0]);
 	}
 	
@@ -50,7 +49,7 @@ public class IndexerTool {
 	 * @param json 输出
 	 */
 	public static void report(Map<String,Object> json){
-		IndexerSource src = IndexerSource.get();
+		IndexerFactory src = IndexerFactory.get();
 		src.report(json);
 	}
 	
@@ -60,7 +59,7 @@ public class IndexerTool {
 	 * @param element 输出
 	 */
 	public static void report(Element element){
-		IndexerSource src = IndexerSource.get();
+		IndexerFactory src = IndexerFactory.get();
 		src.report(element);
 	}
 }

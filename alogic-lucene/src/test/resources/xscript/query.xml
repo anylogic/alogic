@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<script>
+	<using xmlTag="ns" module="com.alogic.lucene.xscript.NS"/>
+	<ns>
+		<lucene indexerId="default">
+			<lucene-reader field="id" value="duanyy">
+				<lucene-doc-get id="id"/>
+				<lucene-doc-get id="name"/>
+				<log msg="${id}=${name}"/>
+			</lucene-reader>
+			<log msg="result:${$all}"/>
+						
+			<lucene-reader>
+				<query module="Wildcard" field="id" value="duan*"/>
+				<lucene-doc-get id="id"/>
+				<lucene-doc-get id="name"/>
+				<log msg="${id}=${name}"/>
+			</lucene-reader>
+			<log msg="result:${$all}"/>		
+			
+			<lucene-reader>
+				<query module="Prefix" field="id" value="duan"/>
+				<lucene-doc-get id="id"/>
+				<lucene-doc-get id="name"/>
+				<log msg="${id}=${name}"/>
+			</lucene-reader>
+			<log msg="result:${$all}"/>		
+			
+			<lucene-reader>
+				<query module="Fuzzy" field="id" value="duanyyyy"/>
+				<lucene-doc-get id="id"/>
+				<lucene-doc-get id="name"/>
+				<log msg="${id}=${name}"/>
+			</lucene-reader>
+			<log msg="result:${$all}"/>		
+			
+			<lucene-reader>
+				<query module="Boolean">
+					<query field="id" value="duanyy" occur="SHOULD"/>
+					<query field="name" value="ddd" occur="SHOULD"/>
+				</query>
+				<lucene-doc-get id="id"/>
+				<lucene-doc-get id="name"/>
+				<log msg="${id}=${name}"/>
+			</lucene-reader>								
+			<log msg="result:${$all}"/>			
+			
+			<lucene-reader >
+				<query module="Phrase" field="name" value="这是" slop="8"/>
+				<lucene-doc-get id="id"/>
+				<lucene-doc-get id="name"/>
+				<log msg="${id}=${name}"/>
+			</lucene-reader>								
+			<log msg="result:${$all}"/>											
+		</lucene>
+	</ns>
+</script>

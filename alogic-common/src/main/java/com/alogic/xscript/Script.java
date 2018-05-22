@@ -158,18 +158,21 @@ public class Script extends Segment {
 			ResourceFactory resourceFactory = Settings.getResourceFactory();
 			InputStream in = null;
 			String src = PropertiesConstants.getString(p, "script.library", null);
-			try {
-				in = resourceFactory.load(src,null);
-				Document doc = XmlTools.loadFromInputStream(in);
-				
-				if (doc != null){
-					self.configure(doc.getDocumentElement(), p);
+			
+			if (StringUtils.isNotEmpty(src)){
+				try {
+					in = resourceFactory.load(src,null);
+					Document doc = XmlTools.loadFromInputStream(in);
+					
+					if (doc != null){
+						self.configure(doc.getDocumentElement(), p);
+					}
+				}catch (Exception ex){
+					logger.error("The config file is not a valid file,url = " + src,ex);
+				}finally{
+					IOTools.close(in);
 				}
-			}catch (Exception ex){
-				logger.error("The config file is not a valid file,url = " + src,ex);
-			}finally{
-				IOTools.close(in);
-			}	
+			}
 		}
 	}
 	

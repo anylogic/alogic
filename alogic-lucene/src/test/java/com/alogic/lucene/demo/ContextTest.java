@@ -18,15 +18,17 @@ public class ContextTest {
 	public static void main(String[] args) {
 		Settings settings = Settings.get();
 		
-		settings.SetValue("indexer.master", "java:///indexer.xml");
+		settings.SetValue("lucene.master", "java:///indexer.xml");
 		
 		Indexer indexer = IndexerTool.getIndexer();
 		
 		if (indexer != null){
+			indexer.build(true);
+			
 			IndexReader reader = indexer.newReader();
 			try {
 				IndexSearcher searcher = new IndexSearcher(reader);
-				Query query = indexer.newQuery("title", "lu Dummies");
+				Query query = indexer.newQuery("name", "哈哈");
 				
 				TopScoreDocCollector collector = TopScoreDocCollector.create(10);
 				searcher.search(query, collector);
@@ -35,7 +37,7 @@ public class ContextTest {
 				for (ScoreDoc doc:hits){
 					 int docId = doc.doc;
 				     Document d = searcher.doc(docId);
-				     System.out.println(d.get("title") + d.get("isbn"));
+				     System.out.println(d.get("id") + d.get("name"));
 				}
 			}catch (Exception ex){
 				ex.printStackTrace();

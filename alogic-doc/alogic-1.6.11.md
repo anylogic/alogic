@@ -183,3 +183,9 @@ alogic-1.6.11
 - alogic-auth:SessionManager增加cookies的操作接口;
 - alogic-common:增加全局xscript脚本函数库;
 
+### 1.6.11.31 [20180522 duanyy]
+
+- alogic-common:obj插件
+- alogic-kvalue:优化缓存中set的ttl机制;
+- alogic-lucene:完善lucene组件;
+

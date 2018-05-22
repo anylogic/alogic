@@ -37,5 +37,11 @@
   		<artifactId>alogic-core</artifactId>
   		<version>${project.version}</version>
   	</dependency>  	
+	<dependency>
+	    <groupId>io.github.zacker330.es</groupId>
+	    <artifactId>ik-analysis-core</artifactId>
+	    <version>1.0.0</version>
+	</dependency>
+  	
   </dependencies>
 </project>

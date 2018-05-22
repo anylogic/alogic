@@ -2,10 +2,7 @@ package com.alogic.lucene.indexer;
 
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-
 import com.alogic.lucene.core.Indexer;
-import com.anysoft.util.Properties;
-
 
 /**
  * 基于RAMDirectory的Indexer
@@ -23,8 +20,4 @@ public class RAM extends Indexer.Abstract{
 		return index;
 	}
 	
-	public void configure(Properties p) {
-		super.configure(p);
-		build(true);
-	}
 }

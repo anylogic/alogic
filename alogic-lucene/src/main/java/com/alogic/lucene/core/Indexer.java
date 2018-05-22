@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -23,6 +22,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import com.alogic.lucene.analyzer.ik.IKAnalyzer;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
 import com.anysoft.util.IOTools;
@@ -79,9 +79,9 @@ public interface Indexer extends Configurable,XMLConfigurable,Reportable{
 	
 	/**
 	 * 建索引
-	 * @param create 是否重建
+	 * @param rebuild 是否重建
 	 */
-	public void build(boolean create);
+	public void build(boolean rebuild);
 	
 	/**
 	 * 加入IndexBuilder
@@ -113,12 +113,27 @@ public interface Indexer extends Configurable,XMLConfigurable,Reportable{
 		private List<IndexBuilder> builders = new ArrayList<IndexBuilder>();
 		
 		/**
-		 * analyzer class name
+		 * analyzer
 		 */
-		private String analyzer = SmartChineseAnalyzer.class.getName();
+		private  Analyzer analyzer = null;
+		
+		private boolean autoBuild = true;
 		
 		public void configure(Properties p) {
-			analyzer = PropertiesConstants.getString(p,"analyzer", analyzer);
+			autoBuild = PropertiesConstants.getBoolean(p, "autoBuild", autoBuild);
+			if (analyzer == null){
+				Factory<Analyzer> f = new Factory<Analyzer>();
+				String analyzerClass = PropertiesConstants.getString(p,"analyzer",IKAnalyzer.class.getName());
+				try {
+					analyzer = f.newInstance(analyzerClass, p);
+				}catch (Exception ex){
+					logger.error("can not create dic loader:" + analyzerClass);
+				}				
+			}
+			
+			if (autoBuild){
+				build(false);
+			}
 		}
 		
 		public void configure(Element _e, Properties _properties) {
@@ -147,28 +162,53 @@ public interface Indexer extends Configurable,XMLConfigurable,Reportable{
 				}
 			}
 			
+			Element elem = XmlTools.getFirstElementByPath(_e, "analyzer");
+			if (elem != null){
+				try {
+					 Factory<Analyzer> f = new Factory<Analyzer>();
+					 analyzer = f.newInstance(elem, p, "module", IKAnalyzer.class.getName());
+				}catch (Exception ex){
+					logger.info("can not create analyzer: " + XmlTools.node2String(elem) );
+				}
+			}
+			
 			configure(p);
 		}
 		
-		public void build(boolean create) {
-			IndexWriter writer = newWriter(create);
-			if (writer != null){
-				try {
-					logger.info("Start to build index..");
-					logger.info("Create = " + create);
-					logger.info("Builders = " + builders.size());
-					
-					for (IndexBuilder builder:builders){
-						if (builder != null){
-							builder.build(writer);
+		/**
+		 * 索引是否已经存在
+		 * @return true or false
+		 */
+		protected boolean indexExists(){
+			try {
+				return DirectoryReader.indexExists(getDirectory());
+			} catch (IOException e) {
+				return false;
+			}
+		}
+		public void build(boolean rebuild) {
+			boolean exist = indexExists();
+			
+			if (!exist || rebuild){
+				//当不存在或需要重建时
+				IndexWriter writer = newWriter(true);
+				if (writer != null){
+					try {
+						logger.info("Start to build index..");
+						logger.info("Builders = " + builders.size());
+						
+						for (IndexBuilder builder:builders){
+							if (builder != null){
+								builder.build(writer);
+							}
 						}
+						writer.commit();
+					}catch (Exception ex){
+						logger.error("Failed to commit indexes",ex);
+					}finally{
+						logger.info("End.");
+						IOTools.close(writer);
 					}
-					writer.commit();
-				}catch (Exception ex){
-					logger.error("Failed to commit indexes",ex);
-				}finally{
-					logger.info("End.");
-					IOTools.close(writer);
 				}
 			}
 		}
@@ -213,15 +253,8 @@ public interface Indexer extends Configurable,XMLConfigurable,Reportable{
 		
 		@Override
 		public Analyzer getAnalyzer() {
-			try {
-				return analyzerFactory.newInstance(analyzer);
-			}catch (Exception ex){
-				logger.error("Can not create analyzer,use default");
-				return new SmartChineseAnalyzer();
-			}
+			return analyzer;
 		}
-		
-		protected static Factory<Analyzer> analyzerFactory = new Factory<Analyzer>();
 		
 		public Query newQuery(String field, String querystr) {
 			try {
