@@ -21,6 +21,7 @@ public class NS extends Segment{
 		registerModule("lucene-build",XsBuild.class);
 		registerModule("lucene-writer",XsWriter.class);
 		registerModule("lucene-reader",XsReader.class);
+		registerModule("lucene-segment",XsSegment.class);
 		
 		registerModule("lucene-doc",XsDoc.class);
 		registerModule("lucene-doc-commit",DocCommit.class);

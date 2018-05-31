@@ -21,10 +21,12 @@ import com.alogic.xscript.plugins.Asynchronized;
 import com.alogic.xscript.plugins.Check;
 import com.alogic.xscript.plugins.CheckAndSetDefault;
 import com.alogic.xscript.plugins.Constants;
+import com.alogic.xscript.plugins.Count;
 import com.alogic.xscript.plugins.Decr;
 import com.alogic.xscript.plugins.Decrypt;
 import com.alogic.xscript.plugins.Duration;
 import com.alogic.xscript.plugins.Encrypt;
+import com.alogic.xscript.plugins.Eval;
 import com.alogic.xscript.plugins.Except;
 import com.alogic.xscript.plugins.ForEach;
 import com.alogic.xscript.plugins.Formula;
@@ -43,6 +45,7 @@ import com.alogic.xscript.plugins.IfNotExist;
 import com.alogic.xscript.plugins.IfTrue;
 import com.alogic.xscript.plugins.Include;
 import com.alogic.xscript.plugins.Incr;
+import com.alogic.xscript.plugins.Load;
 import com.alogic.xscript.plugins.Location;
 import com.alogic.xscript.plugins.Log;
 import com.alogic.xscript.plugins.Lowercase;
@@ -219,6 +222,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_FUNC_DECLARE = "func-declare";
 	public static final String STMT_FUNC_CALL = "func-call";
 	public static final String STMT_FUNC_CALLBACK = "func-callback";
+	public static final String STMT_EVAL = "eval";
+	public static final String STMT_LOAD = "load";
+	public static final String STMT_LOCK = "lock";
+	public static final String STMT_COUNTER = "counter";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -281,6 +288,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_FUNC_DECLARE,FunctionDeclare.class);
 		staticModules.put(STMT_FUNC_CALL,FunctionCall.class);
 		staticModules.put(STMT_FUNC_CALLBACK, FunctionCallback.class);
+		staticModules.put(STMT_EVAL, Eval.class);
+		staticModules.put(STMT_LOAD, Load.class);
+		staticModules.put(STMT_LOCK, Locker.class);
+		staticModules.put(STMT_COUNTER, Count.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<script>
+	<load id="content" src="java:///xscript/foreach.xml"/>
+	<log msg="content=${content}"/>
+	<eval id="content"/>
+</script>

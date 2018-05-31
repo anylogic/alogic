@@ -27,15 +27,14 @@
 package com.alogic.lucene.analyzer.ik;
 
 import java.io.IOException;
-import java.io.Reader;
 
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-import org.wltea.analyzer.configuration.DictionaryConfiguration;
-import org.wltea.analyzer.core.IKSegmenter;
-import org.wltea.analyzer.core.Lexeme;
+import com.alogic.ik.core.IKSegmenter;
+import com.alogic.ik.core.Lexeme;
+import com.alogic.ik.dic.Dictionary;
 
 /**
  * 基于lucene5.3版本
@@ -50,11 +49,11 @@ public final class IKTokenizer extends Tokenizer {
 	private final TypeAttribute typeAtt;
 	private int endPosition;
 	
-	public IKTokenizer(Reader in,DictionaryConfiguration conf){
+	public IKTokenizer(Dictionary dic,boolean smartMode){
 	    offsetAtt = addAttribute(OffsetAttribute.class);
 	    termAtt = addAttribute(CharTermAttribute.class);
 	    typeAtt = addAttribute(TypeAttribute.class);
-		_IKImplement = new IKSegmenter(input,conf);
+		_IKImplement = new IKSegmenter(input,dic,smartMode);
 	}
 
 	public boolean incrementToken() throws IOException {

@@ -1,13 +1,16 @@
 package com.alogic.lucene.analyzer.ik;
-import java.io.BufferedReader;
-import java.io.Reader;
-import java.io.StringReader;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Tokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-import org.wltea.analyzer.configuration.DictionaryConfiguration;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import com.alogic.ha.FailoverController.Null;
+import com.alogic.ik.configuration.DictionaryConfiguration;
+import com.alogic.ik.dic.Dictionary;
 import com.alogic.lucene.analyzer.ik.dic.FromFile;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
@@ -31,39 +34,62 @@ public class IKAnalyzer extends Analyzer implements Configurable,XMLConfigurable
 	
 	private DictionaryConfiguration dicConf = null;
 	
+	private Dictionary dic = new Dictionary();
+	
+	private boolean smartMode = true;
+	
 	public IKAnalyzer(){
 
 	}
 	
-	public IKAnalyzer(DictionaryConfiguration conf){
-		this.dicConf = conf;
-	}
-	
-	public void setDictionaryConfiguration(DictionaryConfiguration conf){
-		this.dicConf = conf;
+	public void addDictionaryConfiguration(DictionaryConfiguration conf){
+		if (conf != null){
+			dic.addConfiguration(conf);
+		}
 	}
 	
 	@Override
-	protected TokenStreamComponents createComponents(String text) {
-		Reader reader = new BufferedReader(new StringReader(text));  
-        Tokenizer _IKTokenizer = new IKTokenizer(reader,dicConf);  
+	protected TokenStreamComponents createComponents(String field) {
+        Tokenizer _IKTokenizer = new IKTokenizer(dic,smartMode);  
         return new TokenStreamComponents(_IKTokenizer);  
 	}
 
 	@Override
 	public void configure(Element e, Properties p) {
 		Properties props = new XmlElementProperties(e,p);
-		try {
-			Factory<DictionaryConfiguration> f = new Factory<DictionaryConfiguration>();
+		Factory<DictionaryConfiguration> f = new Factory<DictionaryConfiguration>();
+		try {			
 			dicConf = f.newInstance(e, p, "dic", FromFile.class.getName());
 		}catch (Exception ex){
 			LOG.error("can not create dic loader:" + XmlTools.node2String(e));
 		}		
+		
 		configure(props);
+		
+		NodeList nodeList = XmlTools.getNodeListByPath(e, "dic-loader");
+		for (int i = 0 ;i < nodeList.getLength() ; i ++){
+			Node node = nodeList.item(i);
+			
+			if (Node.ELEMENT_NODE != node.getNodeType()){
+				continue;
+			}
+			
+			Element elem = (Element)node;			
+			try {			
+				DictionaryConfiguration conf = f.newInstance(elem, p, "dic", Null.class.getName());
+				if (conf != null){
+					dic.addConfiguration(conf);
+				}
+			}catch (Exception ex){
+				LOG.error("can not create dic loader:" + XmlTools.node2String(e));
+			}
+		}
 	}
 
 	@Override
 	public void configure(Properties p) {
+		
+		smartMode = PropertiesConstants.getBoolean(p, "smartMode", true);
 		if (dicConf == null){
 			String dicLoader = PropertiesConstants.getString(p,"dic",FromFile.class.getName());
 			try {
@@ -72,6 +98,10 @@ public class IKAnalyzer extends Analyzer implements Configurable,XMLConfigurable
 			}catch (Exception ex){
 				LOG.error("can not create dic loader:" + dicLoader);
 			}				
+		}
+		
+		if (dicConf != null){
+			dic.addConfiguration(dicConf);
 		}
 	}
 

@@ -5,12 +5,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
+
 import com.alogic.lucene.analyzer.ik.DictionaryLoader;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;
+import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.resource.ResourceFactory;
 
 /**
@@ -77,19 +81,25 @@ public class FromFile extends DictionaryLoader.Abstract{
 		
 		encoding = PropertiesConstants.getString(p, "encoding", encoding);
 		
-		String mainDicPath = PropertiesConstants.getString(p, "dic.main", DEFAULT_MAIN);
+		String mainDicPath = PropertiesConstants.getString(p, "dic.main", DEFAULT_MAIN,true);
 		if (StringUtils.isNotEmpty(mainDicPath)){
 			loadDic(mainDic,mainDicPath);
 		}
-		String stopwordDicPath = PropertiesConstants.getString(p, "dic.stopword", DEFAULT_STOPWORD);
+		String stopwordDicPath = PropertiesConstants.getString(p, "dic.stopword", DEFAULT_STOPWORD,true);
 		if (StringUtils.isNotEmpty(mainDicPath)){
 			loadDic(stopwordDic,stopwordDicPath);
 		}		
-		String quantifierDicPath = PropertiesConstants.getString(p, "dic.quantifier", DEFAULT_QUANTIFIER);
+		String quantifierDicPath = PropertiesConstants.getString(p, "dic.quantifier", DEFAULT_QUANTIFIER,true);
 		if (StringUtils.isNotEmpty(quantifierDicPath)){
 			loadDic(quantifierDic,quantifierDicPath);
 		}			
 	}
+	
+	@Override
+	public void configure(Element e, Properties p) {
+		Properties props = new XmlElementProperties(e,p);
+		configure(props);
+	}	
 	
 	/**
 	 * 从指定路径加载字典
