@@ -2,10 +2,7 @@ package com.alogic.xscript;
 
 import java.lang.reflect.Constructor;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.apache.commons.lang3.StringUtils;
-
 import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.plugins.Segment;
 import com.anysoft.util.Properties;

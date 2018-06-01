@@ -197,3 +197,7 @@ alogic-1.6.11
 - alogic-common:增加lock和counter脚本插件;
 - alogic-together:增加redirect服务;
 
+### 1.6.11.33 [20180601 duanyy]
+
+- alogic-common:修正counter处理大的整数时的bug;
+

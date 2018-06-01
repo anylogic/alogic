@@ -86,6 +86,7 @@ public class Main {
 		//runAsJson("java:///xscript/arraystring.xml#com.alogic.xscript.demo.Main",settings);
 		//runAsJson("java:///xscript/eval.xml#com.alogic.xscript.demo.Main",settings);
 		runAsJson("java:///xscript/counter.xml#com.alogic.xscript.demo.Main",settings);
+		runAsJson("java:///xscript/counter.xml#com.alogic.xscript.demo.Main",settings);
 	}
 
 }

@@ -18,7 +18,8 @@ import com.anysoft.util.PropertiesConstants;
 /**
  * 计数器
  * @author yyduan
- *
+ * @version 1.6.11.33 [20180601 duanyy] <br>
+ * - 修正counter处理大的整数时的bug; <br>
  */
 public class Count extends Segment {
 	/**
@@ -128,7 +129,7 @@ public class Count extends Segment {
 			String id = PropertiesConstants.transform(ctx,$id, "");
 			if (StringUtils.isNotEmpty(id)){
 				CounterField gf = counter.getField(PropertiesConstants.transform(ctx,$field,id), true);
-				ctx.SetValue(id, String.valueOf(gf.getAndSet(PropertiesConstants.transform(ctx, $value, 0))));
+				ctx.SetValue(id, String.valueOf(gf.getAndSet(PropertiesConstants.transform(ctx, $value, 0L))));
 			}
 		}
 	}

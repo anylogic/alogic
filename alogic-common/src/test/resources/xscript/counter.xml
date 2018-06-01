@@ -1,31 +1,9 @@
 <?xml version="1.0"?>
 <script>
-	<foreach in="a;a;d;d;d;d;d;d;d" async="true">
-		<lock wait="true">
-			<counter id="harry">
-				<counter-add id="age" value="12"/>
-				<counter-get id="age"/>
-				<log msg="age=${age}"/>
-				<counter-add id="age" value="10"/>
-				<counter-get id="age"/>
-				<log msg="age=${age}"/>
-				<counter-list>
-					<log msg="id=${$id},field=${$field},value=${$value}"/>
-				</counter-list>		
-			</counter>
-		</lock>
-		<counter id="eason">
-			<counter-add id="age" value="1" />
-			<counter-get id="age" />
-			<log msg="age=${age}" />
-			<counter-add id="age" value="2" />
-			<counter-get id="age" />
-			<log msg="age=${age}" />
-			<counter-list>
-				<log msg="id=${$id},field=${$field},value=${$value}" />
-			</counter-list>
-		</counter>
-	</foreach>
+	<counter id="eason">
+		<now id="now"/>
+		<counter-set id="now" value="${now}"/>
+	</counter>
 
 	<counter list="true">
 		<counter-list>
