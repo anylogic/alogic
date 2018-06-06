@@ -1,21 +1,27 @@
 package com.alogic.lucene.analyzer.ik;
 
+import java.util.HashMap;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Tokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import com.alogic.ha.FailoverController.Null;
 import com.alogic.ik.configuration.DictionaryConfiguration;
 import com.alogic.ik.dic.Dictionary;
 import com.alogic.lucene.analyzer.ik.dic.FromFile;
+import com.alogic.xscript.LogicletContext;
+import com.alogic.xscript.Script;
+import com.alogic.xscript.doc.XsObject;
+import com.alogic.xscript.doc.json.JsonObject;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Settings;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
@@ -25,8 +31,10 @@ import com.anysoft.util.XmlTools;
  * 
  * @author yyduan
  * @since 1.6.11.31
+ * @version 1.6.11.34 [20180606 duanyy] <br>
+ * - 增加脚本插件支持扩展字典 <br>
  */
-public class IKAnalyzer extends Analyzer implements Configurable,XMLConfigurable{
+public class IKAnalyzer extends Analyzer implements Configurable,XMLConfigurable,Runnable{
 	/**
 	 * a logger of slf4j
 	 */
@@ -37,6 +45,21 @@ public class IKAnalyzer extends Analyzer implements Configurable,XMLConfigurable
 	private Dictionary dic = new Dictionary();
 	
 	private boolean smartMode = true;
+	
+	/**
+	 * 扩展字典加载器只加载一次
+	 */
+	private boolean extDicLoadOnce = false;
+	
+	/**
+	 * 扩展的字典加载器
+	 */
+	private Script extDicLoader = null;
+	
+	/**
+	 * 执行线程池
+	 */
+	protected static ScheduledThreadPoolExecutor exec = new  ScheduledThreadPoolExecutor(1);	
 	
 	public IKAnalyzer(){
 
@@ -64,32 +87,19 @@ public class IKAnalyzer extends Analyzer implements Configurable,XMLConfigurable
 			LOG.error("can not create dic loader:" + XmlTools.node2String(e));
 		}		
 		
-		configure(props);
-		
-		NodeList nodeList = XmlTools.getNodeListByPath(e, "dic-loader");
-		for (int i = 0 ;i < nodeList.getLength() ; i ++){
-			Node node = nodeList.item(i);
-			
-			if (Node.ELEMENT_NODE != node.getNodeType()){
-				continue;
-			}
-			
-			Element elem = (Element)node;			
-			try {			
-				DictionaryConfiguration conf = f.newInstance(elem, p, "dic", Null.class.getName());
-				if (conf != null){
-					dic.addConfiguration(conf);
-				}
-			}catch (Exception ex){
-				LOG.error("can not create dic loader:" + XmlTools.node2String(e));
-			}
+		Element extDic = XmlTools.getFirstElementByPath(e, "ext-dic-loader");
+		if (extDic != null){
+			extDicLoader = Script.create(extDic, props);
 		}
+		
+		configure(props);
 	}
 
 	@Override
 	public void configure(Properties p) {
 		
 		smartMode = PropertiesConstants.getBoolean(p, "smartMode", true);
+		extDicLoadOnce = PropertiesConstants.getBoolean(p, "dic.load.once", false);
 		if (dicConf == null){
 			String dicLoader = PropertiesConstants.getString(p,"dic",FromFile.class.getName());
 			try {
@@ -103,6 +113,29 @@ public class IKAnalyzer extends Analyzer implements Configurable,XMLConfigurable
 		if (dicConf != null){
 			dic.addConfiguration(dicConf);
 		}
+		
+		if (extDicLoader != null){
+			run();
+			if (!extDicLoadOnce){
+				//增量加载
+				long interval = PropertiesConstants.getLong(p,"dic.load.interval",60*1000L);
+				exec.scheduleWithFixedDelay(this, 0, interval, TimeUnit.MILLISECONDS);
+			}
+		}
+	}
+
+	@Override
+	public void run() {
+		if (extDicLoader != null){
+			LogicletContext logicletContext = new LogicletContext(Settings.get());
+			logicletContext.setObject("$indexer-dic",dic);
+			try {
+				XsObject doc = new JsonObject("root",new HashMap<String,Object>());
+				extDicLoader.execute(doc,doc, logicletContext, null);
+			}finally{
+				logicletContext.removeObject("$indexer-dic");
+			}			
+		}		
 	}
 
 }

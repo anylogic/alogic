@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<script>
+	<sp id="data" value="这是一个常常的句子">
+		<sp-replace start="1" end="10" value="***"/>
+	</sp>
+	
+	<log msg="Data:${data}"/>
+</script>

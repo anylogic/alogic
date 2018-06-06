@@ -3,10 +3,8 @@ package com.alogic.lucene.xscript.doc;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.SortedSetDocValuesField;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.util.BytesRef;
-
+import org.apache.lucene.document.LongField;
+import org.apache.lucene.document.SortedNumericDocValuesField;
 import com.alogic.lucene.xscript.XsDocOperation;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
@@ -16,19 +14,17 @@ import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 
 /**
- * 设置String类型的字段
- * 
+ * 设置Long型字段(按范围检索专用)
  * @author yyduan
- * @since 1.6.11.31
+ * @since 1.6.11.34
  */
-public class DocSetString extends XsDocOperation{
+public class DocSetLong extends XsDocOperation{
 	
 	protected String $field;
 	protected String $value;
-	protected boolean sorted = false;
 	protected boolean store = true;
 	
-	public DocSetString(String tag, Logiclet p) {
+	public DocSetLong(String tag, Logiclet p) {
 		super(tag, p);
 	}
 	
@@ -39,23 +35,18 @@ public class DocSetString extends XsDocOperation{
 		$field = PropertiesConstants.getRaw(p,"field",$field);
 		$value = PropertiesConstants.getRaw(p,"value", $value);
 		store = PropertiesConstants.getBoolean(p, "store", store);
-		sorted = PropertiesConstants.getBoolean(p, "sorted", sorted);
 	}
 
 	@Override
 	protected void onExecute(Document doc, XsObject root, XsObject current,
 			LogicletContext ctx, ExecuteWatcher watcher) {
 		String field = PropertiesConstants.transform(ctx, $field, "");
-		String value = PropertiesConstants.transform(ctx, $value, "");
+		long value = PropertiesConstants.transform(ctx, $value, 0L);
 		
-		if (StringUtils.isNotEmpty(field) && StringUtils.isNotEmpty(value)){
-			if (sorted){
-				doc.add(new SortedSetDocValuesField(field,new BytesRef(value)));
-				if (store){
-					doc.add(new StringField(field,value,Field.Store.YES));
-				}
-			}else{
-				doc.add(new StringField(field,value,store?Field.Store.YES:Field.Store.NO));
+		if (StringUtils.isNotEmpty(field)){
+			doc.add(new SortedNumericDocValuesField(field,value));
+			if (store){
+				doc.add(new LongField(field,value,Field.Store.YES));
 			}
 		}
 	}

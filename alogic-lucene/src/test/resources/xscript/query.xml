@@ -2,15 +2,27 @@
 <script>
 	<using xmlTag="ns" module="com.alogic.lucene.xscript.NS"/>
 	<ns>		
-		<lucene indexerId="default">		
-			<lucene-segment text="提供网络、主机、应用、数据等安全软件或服务。">
+		<lucene indexerId="default">	
+		
+			<sleep timeout="2000"/>	
+			<lucene-segment text="提供网络、主机、应用、数据等安全软件或服务。开发者段歪歪">
 				<log msg="${$lucene-value}"/>
 			</lucene-segment>
-		
+
+			<lucene-reader>
+				<query module="LongRange" field="price" max=""/>
+				<lucene-doc-get id="id"/>
+				<lucene-doc-get id="name"/>
+				<lucene-doc-get id="price"/>
+				<log msg="${id}=${name},price=${price}"/>
+			</lucene-reader>
+			<log msg="result:${$all}"/>
+			
 			<lucene-reader field="id" value="duanyy">
 				<lucene-doc-get id="id"/>
 				<lucene-doc-get id="name"/>
-				<log msg="${id}=${name}"/>
+				<lucene-doc-get id="price"/>
+				<log msg="${id}=${name},price=${price}"/>
 			</lucene-reader>
 			<log msg="result:${$all}"/>
 						

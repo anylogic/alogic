@@ -201,3 +201,9 @@ alogic-1.6.11
 
 - alogic-common:修正counter处理大的整数时的bug;
 
+### 1.6.11.34 [20180606 duanyy]
+
+- alogic-common:增加字符串处理插件sp;
+- alogic-common:增加集合处理插件array-set;
+- alogic-lucene:优化字典的管理，支持扩展字典的加载;
+- alogic-lucene:支持范围查询;

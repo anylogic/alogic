@@ -28,12 +28,17 @@ package com.alogic.ik.dic;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alogic.ik.configuration.DictionaryConfiguration;
 
 /**
  * 词典管理类
  * 
  * @since 1.6.11.32
+ * 
+ * @version 1.6.11.34 [20180606 duanyy] <br>
+ * - 增加单个关键在加入的接口 <br>
  */
 public class Dictionary {
 
@@ -58,6 +63,18 @@ public class Dictionary {
 		this.loadMainDict(cfg);
 		this.loadStopWordDict(cfg);
 		this.loadQuantifierDict(cfg);		
+	}
+	
+	public void addWord(String word){
+		if (StringUtils.isNotEmpty(word)){
+			_MainDict.fillSegment(word.trim().toLowerCase().toCharArray());
+		}
+	}
+	
+	public void disableWord(String word){
+		if (StringUtils.isNotEmpty(word)){
+			_MainDict.disableSegment(word.trim().toLowerCase().toCharArray());
+		}		
 	}
 	
 	public void addWords(Collection<String> words){
@@ -98,7 +115,6 @@ public class Dictionary {
 		DictSegment ds = matchedHit.getMatchedDictSegment();
 		return ds.match(charArray, currentIndex, 1 , matchedHit);
 	}
-	
 	
 	public boolean isStopWord(char[] charArray , int begin, int length){
 		return _StopWordDict.match(charArray, begin, length).isMatch();

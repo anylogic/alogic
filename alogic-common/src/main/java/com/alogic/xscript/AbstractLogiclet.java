@@ -16,6 +16,7 @@ import com.alogic.xscript.doc.xml.XmlObject;
 import com.alogic.xscript.log.LogInfo;
 import com.alogic.xscript.plugins.Array;
 import com.alogic.xscript.plugins.ArrayItem;
+import com.alogic.xscript.plugins.ArraySet;
 import com.alogic.xscript.plugins.ArrayString;
 import com.alogic.xscript.plugins.Asynchronized;
 import com.alogic.xscript.plugins.Check;
@@ -64,6 +65,7 @@ import com.alogic.xscript.plugins.Set;
 import com.alogic.xscript.plugins.SetAsJson;
 import com.alogic.xscript.plugins.SetMulti;
 import com.alogic.xscript.plugins.Sleep;
+import com.alogic.xscript.plugins.StringProcess;
 import com.alogic.xscript.plugins.Substr;
 import com.alogic.xscript.plugins.Switch;
 import com.alogic.xscript.plugins.Template;
@@ -124,6 +126,10 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.11.28 [20180420 duanyy] <br>
  * - 增加array-string和set-multi插件; <br>
+ * 
+ * @version 1.6.11.34 [20180606 duanyy] <br>
+ * - alogic-common:增加字符串处理插件sp; <br>
+ * - alogic-common:增加集合处理插件array-set; <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -226,6 +232,8 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_LOAD = "load";
 	public static final String STMT_LOCK = "lock";
 	public static final String STMT_COUNTER = "counter";
+	public static final String STMT_ARRAY_SET = "array-set";
+	public static final String STMT_STRING_PROCESS = "sp";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -263,6 +271,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_ARRAY, Array.class);
 		staticModules.put(STMT_ARRAYITEM, ArrayItem.class);
 		staticModules.put(STMT_ARRAYSTRING, ArrayString.class);
+		staticModules.put(STMT_ARRAY_SET,ArraySet.class);
 		staticModules.put(STMT_TRIM, Trim.class);
 		staticModules.put(STMT_UPPERCASE,Uppercase.class);
 		staticModules.put(STMT_LOWERCASE,Lowercase.class);
@@ -292,6 +301,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_LOAD, Load.class);
 		staticModules.put(STMT_LOCK, Locker.class);
 		staticModules.put(STMT_COUNTER, Count.class);
+		staticModules.put(STMT_STRING_PROCESS, StringProcess.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	

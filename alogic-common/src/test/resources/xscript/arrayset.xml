@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<script>
+	<array-set tag="data">
+		<array-set-add member="duanyy"/>
+		<array-set-add member="alogic"/>
+		<array-set-add member="duanyy"/>
+	</array-set>
+</script>

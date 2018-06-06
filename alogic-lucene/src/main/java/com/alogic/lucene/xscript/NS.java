@@ -2,6 +2,7 @@ package com.alogic.lucene.xscript;
 
 import com.alogic.lucene.xscript.doc.DocCommit;
 import com.alogic.lucene.xscript.doc.DocGet;
+import com.alogic.lucene.xscript.doc.DocSetLong;
 import com.alogic.lucene.xscript.doc.DocSetString;
 import com.alogic.lucene.xscript.doc.DocSetText;
 import com.alogic.xscript.Logiclet;
@@ -27,6 +28,7 @@ public class NS extends Segment{
 		registerModule("lucene-doc-commit",DocCommit.class);
 		registerModule("lucene-doc-string",DocSetString.class);
 		registerModule("lucene-doc-text",DocSetText.class);
+		registerModule("lucene-doc-long",DocSetLong.class);
 		registerModule("lucene-doc-get",DocGet.class);
 	}
 }

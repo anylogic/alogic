@@ -23,7 +23,6 @@ import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.doc.XsObject;
-import com.alogic.xscript.plugins.Segment;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
@@ -38,7 +37,7 @@ import com.anysoft.util.XmlTools;
  * @since 1.6.11.31
  */
 
-public class XsReader extends Segment{
+public class XsReader extends NS{
 	/**
 	 * 父节点的上下文id
 	 */

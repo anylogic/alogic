@@ -2,7 +2,14 @@
 <source>
 	<context>
 		<indexer id="default">
-			<analyzer smartMode="true"/>
+			<analyzer smartMode="true" dic.load.once="false">
+				<ext-dic-loader>
+					<using xmlTag="dic-add" module="com.alogic.lucene.analyzer.ik.script.DicAddWord"/>
+					<dic-add word="段歪歪"/>
+					<dic-add word="alogic"/>
+					<log msg="加载扩展字典.."/>
+				</ext-dic-loader>
+			</analyzer>
 			<builder module="com.alogic.lucene.core.ScriptBuilder">
 				<script>
 					<using xmlTag="ns" module="com.alogic.lucene.xscript.NS"/>
@@ -10,6 +17,7 @@
 						<lucene-doc>
 							<lucene-doc-string field="all" value="all"/>
 							<lucene-doc-string field="id" value="duanyy"/>
+							<lucene-doc-long field="price" value="2"/>
 							<lucene-doc-text field="name" value="段歪歪"/>
 							<lucene-doc-commit/>							
 						</lucene-doc>
@@ -17,18 +25,21 @@
 							<lucene-doc-string field="all" value="all"/>
 							<lucene-doc-string field="id" value="alogic"/>
 							<lucene-doc-text field="name" value="哈哈大魔神"/>
+							<lucene-doc-long field="price" value="24"/>
 							<lucene-doc-commit/>	
 						</lucene-doc>	
 						<lucene-doc>
 							<lucene-doc-string field="all" value="all"/>
 							<lucene-doc-string field="id" value="ketty"/>
 							<lucene-doc-text field="name" value="Ketty"/>
+							<lucene-doc-long field="price" value="10"/>
 							<lucene-doc-commit idField="id"/>	
 						</lucene-doc>		
 						<lucene-doc>
 							<lucene-doc-string field="all" value="all"/>
 							<lucene-doc-string field="id" value="duanyc"/>
 							<lucene-doc-text field="name" value="这是一个长句子"/>
+							<lucene-doc-long field="price" value="3"/>
 							<lucene-doc-commit idField="id"/>	
 						</lucene-doc>																	
 					</ns>
