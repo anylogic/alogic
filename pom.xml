@@ -51,6 +51,7 @@
 		<module>alogic-zk</module>
 		<module>alogic-auth</module>
 		<module>alogic-bundle</module>
+		<module>alogic-report</module>
 	</modules>
 	<distributionManagement>
 		<repository>

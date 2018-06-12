@@ -207,3 +207,8 @@ alogic-1.6.11
 - alogic-common:增加集合处理插件array-set;
 - alogic-lucene:优化字典的管理，支持扩展字典的加载;
 - alogic-lucene:支持范围查询;
+
+### 1.6.11.35 [20180612 duanyy]
+
+- alogic-report:增加report工程，用于制作excel报表;
+
