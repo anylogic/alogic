@@ -18,6 +18,12 @@ import com.anysoft.util.Properties;
  * 
  * @version 1.6.11.15 [20180206 duanyy] <br>
  * - 修正Preprocessor的并发性问题 <br>
+ * 
+ * @version 1.6.11.15 [20180206 duanyy] <br>
+ * - 修正Preprocessor的并发性问题 <br>
+ * 
+ * @version 1.6.11.36 [20180613 duanyy] <br>
+ * - 支持对sql语句进行transform<br>
  */
 final public class Preprocessor implements BindedListener{
 	
@@ -30,14 +36,26 @@ final public class Preprocessor implements BindedListener{
 	
 	protected FunctionHelper fh = null;
 	
+	protected boolean transform = false;
+	
 	public Preprocessor(){
-		fh = new DefaultFunctionHelper(new PluginManager(this));
+		this(false);
 	}
 	
 	public Preprocessor(String sql){
+		this(false,sql);
+	}
+	
+	public Preprocessor(boolean transform){
+		this.transform = transform;
+		fh = new DefaultFunctionHelper(new PluginManager(this));
+	}
+	
+	public Preprocessor(boolean transform,String sql){
+		this.transform = transform;
 		fh = new DefaultFunctionHelper(new PluginManager(this));
 		compile(sql);
-	}
+	}	
 	
 	public void bind(Object value) {
 		List<Object> binded = bindedData.get();
@@ -61,7 +79,7 @@ final public class Preprocessor implements BindedListener{
 			bindedData.set(binded);			
 			for (Object o:segments){
 				if (o instanceof String){
-					sb.append((String)o);
+					sb.append(transform?p.transform((String)o):(String)o);
 				}else{
 					if (o instanceof Expression){
 						Expression expr = (Expression)o;

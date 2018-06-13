@@ -21,11 +21,14 @@ import com.logicbus.dbcp.sql.DBTools;
  * 
  * @version 1.6.11.27 [20180417 duanyy] <br>
  * - 增加debug参数 <br>
+ * 
+ * @version 1.6.11.36 [20180613 duanyy] <br>
+ * - 支持对sql语句进行transform<br>
  */
 public class New extends DBOperation{
 	protected String sqlInsert = "";	
 	protected Preprocessor processor = null;
-	
+	protected boolean transform = false;
 	public New(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -33,8 +36,9 @@ public class New extends DBOperation{
 	@Override
 	public void configure(Properties p){
 		super.configure(p);
-		sqlInsert = PropertiesConstants.getString(p, "sql", sqlInsert);
-		processor = new Preprocessor(sqlInsert);
+		sqlInsert = PropertiesConstants.getRaw(p, "sql", sqlInsert);
+		transform = PropertiesConstants.getBoolean(p,"transform",transform,true);
+		processor = new Preprocessor(transform,sqlInsert);
 	}
 
 	@Override

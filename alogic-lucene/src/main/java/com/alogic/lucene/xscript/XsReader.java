@@ -9,6 +9,8 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.w3c.dom.Element;
@@ -35,6 +37,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @author yyduan
  * @since 1.6.11.31
+ * 
+ * @version 1.6.11.36 [20180613 duanyy] <br>
+ * - 支持字段排序<br>
  */
 
 public class XsReader extends NS{
@@ -63,6 +68,10 @@ public class XsReader extends NS{
 	
 	protected QueryBuilder queryBuilder = null;
 	
+	protected String $sortField = "";
+	
+	protected String $reverse = "false";
+	
 	/**
 	 * 查询所有
 	 */
@@ -84,6 +93,8 @@ public class XsReader extends NS{
 		dftField = PropertiesConstants.getString(p,"dftField",dftField,true);
 		dftValue = PropertiesConstants.getString(p,"dftValue",dftValue,true);
 		$limit = PropertiesConstants.getRaw(p,"limit",$limit);
+		$sortField = PropertiesConstants.getRaw(p,"sortBy",$sortField);
+		$reverse = PropertiesConstants.getRaw(p,"reverse",$reverse);
 		
 		queryAll = new TermQuery(new Term(dftField,dftValue));
 		if (queryBuilder == null){
@@ -156,7 +167,13 @@ public class XsReader extends NS{
 			Query query = getQuery(ctx);	
 			IndexSearcher searcher = new IndexSearcher(reader);			
 
-			TopDocs topDocs = searcher.search(query, offset + limit);
+			Sort sort = Sort.RELEVANCE;
+			String sortBy = PropertiesConstants.transform(ctx, $sortField, "");
+			if (StringUtils.isNotEmpty(sortBy)){
+				sort = new Sort(new SortField(sortBy, SortField.Type.DOUBLE,PropertiesConstants.transform(ctx, $reverse, false)));
+			}
+			
+			TopDocs topDocs = searcher.search(query, offset + limit,sort);
 
 			ScoreDoc [] hits = topDocs.scoreDocs;
 

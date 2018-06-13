@@ -212,3 +212,10 @@ alogic-1.6.11
 
 - alogic-report:增加report工程，用于制作excel报表;
 
+### 1.6.11.36 [20180613 duanyy]
+
+- alogic-common:增加plus,mul,div等xscript插件;
+- alogic-dbcp:sql预处理器支持transform机制;
+- alogic-lucene:增加sort功能;
+- alogic-common:公式解析器的变量id支持$字符;
+

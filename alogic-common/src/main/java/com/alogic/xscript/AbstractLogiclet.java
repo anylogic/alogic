@@ -14,6 +14,8 @@ import com.alogic.xscript.doc.XsObject;
 import com.alogic.xscript.doc.json.JsonObject;
 import com.alogic.xscript.doc.xml.XmlObject;
 import com.alogic.xscript.log.LogInfo;
+import com.alogic.xscript.plugins.Divide;
+import com.alogic.xscript.plugins.Plus;
 import com.alogic.xscript.plugins.Array;
 import com.alogic.xscript.plugins.ArrayItem;
 import com.alogic.xscript.plugins.ArraySet;
@@ -52,6 +54,7 @@ import com.alogic.xscript.plugins.Log;
 import com.alogic.xscript.plugins.Lowercase;
 import com.alogic.xscript.plugins.Match;
 import com.alogic.xscript.plugins.Message;
+import com.alogic.xscript.plugins.Multiply;
 import com.alogic.xscript.plugins.NewLine;
 import com.alogic.xscript.plugins.Obj;
 import com.alogic.xscript.plugins.Now;
@@ -130,6 +133,9 @@ import com.anysoft.util.XmlElementProperties;
  * @version 1.6.11.34 [20180606 duanyy] <br>
  * - alogic-common:增加字符串处理插件sp; <br>
  * - alogic-common:增加集合处理插件array-set; <br>
+ * 
+ * @version 1.6.11.36 [20180613 duanyy] <br>
+ * - 增加plus,mul,div插件 <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -234,6 +240,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_COUNTER = "counter";
 	public static final String STMT_ARRAY_SET = "array-set";
 	public static final String STMT_STRING_PROCESS = "sp";
+	public static final String STMT_PLUS = "plus";
+	public static final String STMT_MUL = "mul";
+	public static final String STMT_DIVIDE = "div";
+	
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -302,6 +312,9 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_LOCK, Locker.class);
 		staticModules.put(STMT_COUNTER, Count.class);
 		staticModules.put(STMT_STRING_PROCESS, StringProcess.class);
+		staticModules.put(STMT_PLUS, Plus.class);
+		staticModules.put(STMT_MUL, Multiply.class);
+		staticModules.put(STMT_DIVIDE, Divide.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	

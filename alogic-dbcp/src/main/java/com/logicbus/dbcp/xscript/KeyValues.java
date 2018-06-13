@@ -20,12 +20,16 @@ import com.logicbus.dbcp.sql.oma.KeyValue;
  * 
  * @author yyduan
  * @since 1.6.11.27
+ * 
+ * @version 1.6.11.36 [20180613 duanyy] <br>
+ * - 支持对sql语句进行transform<br>
  */
 public class KeyValues extends DBOperation{
 	protected String sqlQuery = "";
 	protected Preprocessor processor = null;
 	protected String id;
 	protected ObjectMappingAdapter<Pair<String,String>> adapter = new KeyValue();
+	protected boolean transform = false;
 	
 	public KeyValues(String tag, Logiclet p) {
 		super(tag, p);
@@ -33,9 +37,10 @@ public class KeyValues extends DBOperation{
 	
 	@Override
 	public void configure(Properties p){
-		sqlQuery = PropertiesConstants.getString(p, "sql", sqlQuery);
+		sqlQuery = PropertiesConstants.getRaw(p, "sql", sqlQuery);
 		id = PropertiesConstants.getString(p, "id", "$" + this.getXmlTag(),true);
-		processor = new Preprocessor(sqlQuery);
+		transform = PropertiesConstants.getBoolean(p,"transform",transform,true);
+		processor = new Preprocessor(transform,sqlQuery);
 	}
 
 	@Override

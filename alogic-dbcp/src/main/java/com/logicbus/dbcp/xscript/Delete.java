@@ -19,10 +19,14 @@ import com.logicbus.dbcp.sql.DBTools;
  * @since 1.6.10.5
  * @version 1.6.11.27 [20180417 duanyy] <br>
  * - 增加debug参数 <br>
+ * 
+ * @version 1.6.11.36 [20180613 duanyy] <br>
+ * - 支持对sql语句进行transform<br>
  */
 public class Delete extends DBOperation{
 	protected String sqlDelete = "";	
 	protected Preprocessor processor = null;
+	protected boolean transform = false;
 	
 	public Delete(String tag, Logiclet p) {
 		super(tag, p);
@@ -31,8 +35,9 @@ public class Delete extends DBOperation{
 	@Override
 	public void configure(Properties p){
 		super.configure(p);
-		sqlDelete = PropertiesConstants.getString(p, "sql", sqlDelete);
-		processor = new Preprocessor(sqlDelete);
+		sqlDelete = PropertiesConstants.getRaw(p, "sql", sqlDelete);
+		transform = PropertiesConstants.getBoolean(p,"transform",transform,true);
+		processor = new Preprocessor(transform,sqlDelete);
 	}
 
 	@Override

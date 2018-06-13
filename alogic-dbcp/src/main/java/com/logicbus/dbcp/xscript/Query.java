@@ -29,12 +29,16 @@ import com.logicbus.dbcp.sql.RowRenderer;
  * 
  * @version 1.6.11.27 [20180417 duanyy] <br>
  * - 增加debug参数 <br>
+ * 
+ * @version 1.6.11.36 [20180613 duanyy] <br>
+ * - 支持对sql语句进行transform<br>
  */
 public class Query extends DBOperation{
 	protected String tag = "data";
 	protected String sqlQuery = "";
 	protected boolean extend = false;
 	protected Preprocessor processor = null;
+	protected boolean transform = false;
 	
 	public Query(String tag, Logiclet p) {
 		super(tag, p);
@@ -44,8 +48,9 @@ public class Query extends DBOperation{
 	public void configure(Properties p){
 		super.configure(p);
 		tag = PropertiesConstants.getRaw(p, "tag", tag);
-		sqlQuery = PropertiesConstants.getString(p, "sql", sqlQuery);
-		processor = new Preprocessor(sqlQuery);
+		sqlQuery = PropertiesConstants.getRaw(p, "sql", sqlQuery);
+		transform = PropertiesConstants.getBoolean(p,"transform",transform,true);
+		processor = new Preprocessor(transform,sqlQuery);
 		extend = PropertiesConstants.getBoolean(p, "extend", extend);
 	}
 

@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.LongField;
-import org.apache.lucene.document.SortedNumericDocValuesField;
+import org.apache.lucene.document.NumericDocValuesField;
 import com.alogic.lucene.xscript.XsDocOperation;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
@@ -17,6 +17,9 @@ import com.anysoft.util.PropertiesConstants;
  * 设置Long型字段(按范围检索专用)
  * @author yyduan
  * @since 1.6.11.34
+ * 
+ * @version 1.6.11.36 [20180613 duanyy] <br>
+ * - 支持字段排序<br>
  */
 public class DocSetLong extends XsDocOperation{
 	
@@ -44,7 +47,7 @@ public class DocSetLong extends XsDocOperation{
 		long value = PropertiesConstants.transform(ctx, $value, 0L);
 		
 		if (StringUtils.isNotEmpty(field)){
-			doc.add(new SortedNumericDocValuesField(field,value));
+			doc.add(new NumericDocValuesField(field,value));
 			if (store){
 				doc.add(new LongField(field,value,Field.Store.YES));
 			}

@@ -31,6 +31,9 @@ package com.anysoft.formula;
  * 
  * @version 1.6.7.1 <br>
  * - 修改方法为protected，增加可定制性 <br>
+ * 
+ * @version 1.6.11.36 [20180613 duanyy] <br>
+ * - 变量id支持$字符 <br>
  */
 public class Parser {
 	/**
@@ -107,11 +110,11 @@ public class Parser {
 	}
 	
 	static public boolean isIdentifierChar(char ch){
-		return isAlpha(ch) || isDigital(ch) || ch == '_' || ch == '.';
+		return isAlpha(ch) || isDigital(ch) || ch == '_' || ch == '.' || ch == '$';
 	}
 	
 	static public boolean isIdentifierFirstChar(char ch){
-		return isAlpha(ch) || ch == '_' || ch == '.';
+		return isAlpha(ch) || ch == '_' || ch == '.' || ch == '$';
 	}
 	
 	static public boolean isDecimalChar(char ch){

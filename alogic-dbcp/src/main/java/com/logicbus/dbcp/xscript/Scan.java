@@ -30,12 +30,16 @@ import com.logicbus.dbcp.sql.DBTools;
  * 
  * @version 1.6.11.27 [20180417 duanyy] <br>
  * - 增加debug参数 <br>
+ * 
+ * @version 1.6.11.36 [20180613 duanyy] <br>
+ * - 支持对sql语句进行transform<br>
  */
 public class Scan extends Segment{
 	protected String dbconn = "dbconn";
 	protected String sql;
 	protected String id;
 	protected Preprocessor processor = null;
+	protected boolean transform = false;
 	protected boolean debug = false;
 	public Scan(String tag, Logiclet p) {
 		super(tag, p);
@@ -48,7 +52,8 @@ public class Scan extends Segment{
 		sql = PropertiesConstants.getRaw(p,"sql",sql);
 		id = PropertiesConstants.getString(p, "id", "$" + this.getXmlTag(),true);
 		debug = PropertiesConstants.getBoolean(p,"debug", debug,true);
-		processor = new Preprocessor(sql);
+		transform = PropertiesConstants.getBoolean(p,"transform",transform,true);
+		processor = new Preprocessor(transform,sql);
 	}
 
 	@Override

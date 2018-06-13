@@ -24,20 +24,25 @@ import com.logicbus.dbcp.sql.DBTools;
  * 
  * @version 1.6.11.27 [20180417 duanyy] <br>
  * - 增加debug参数 <br>
+ * 
+ * @version 1.6.11.36 [20180613 duanyy] <br>
+ * - 支持对sql语句进行transform<br>
  */
 public class Select extends DBOperation{
 	protected String sqlQuery = "";
 	protected Preprocessor processor = null;
 	protected String id;
+	protected boolean transform = false;
 	public Select(String tag, Logiclet p) {
 		super(tag, p);
 	}
 	
 	@Override
 	public void configure(Properties p){
-		sqlQuery = PropertiesConstants.getString(p, "sql", sqlQuery);
+		sqlQuery = PropertiesConstants.getRaw(p, "sql", sqlQuery);
 		id = PropertiesConstants.getString(p, "id", "$" + this.getXmlTag(),true);
-		processor = new Preprocessor(sqlQuery);
+		transform = PropertiesConstants.getBoolean(p,"transform",transform,true);
+		processor = new Preprocessor(transform,sqlQuery);
 	}
 
 	@Override

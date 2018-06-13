@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<script>
+	<plus id="ab" a="1" b="2"/>
+	<log msg="a + b=${ab}"/>
+	
+	<plus id="ab" a="1" b="2.4" asDouble="true" formatter="#.##"/>
+	<log msg="a + b=${ab}"/>	
+	
+	<mul id="ab" a="23" b="2.4" asDouble="true" formatter="#.##"/>
+	<log msg="a * b=${ab}"/>		
+	
+	<div id="ab" a="23" b="2.4" asDouble="true" formatter="#.##"/>
+	<log msg="a * b=${ab}"/>		
+</script>
