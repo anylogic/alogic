@@ -23,15 +23,18 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  * @version 1.6.8.6
  * - 客户端可指定下载文件名，如果没有指定，则取路径之中的文件名 <br>
+ * 
+ * @version 1.6.4.37 [duanyy 20151218] <br>
+ * - 输出文件可缓存 <br>
  */
 public class Download extends Servant {
 	protected byte [] buffer = null;
-	
+	protected boolean cacheEnable = true;	
 	@Override
 	public void create(ServiceDescription sd){
 		super.create(sd);
 		Properties p = sd.getProperties();
-		
+		cacheEnable = PropertiesConstants.getBoolean(p, "cacheEnable", true);
 		int bufferSize = PropertiesConstants.getInt(p, "bufferSize", 10240,true);
 		
 		buffer = new byte [bufferSize];
@@ -40,6 +43,7 @@ public class Download extends Servant {
 	@Override
 	public int actionProcess(Context ctx) {
 		ctx.asMessage(FileMessage.class);
+		ctx.enableClientCache(cacheEnable);
 		
 		String path = getArgument("path","/",ctx);
 		String fsId = getArgument("domain","default",ctx);
@@ -51,8 +55,7 @@ public class Download extends Servant {
 		}
 
 		InputStream in = null;
-		
-		
+
 		try {
 			OutputStream out = ctx.getOutputStream();
 			in = fs.readFile(path);

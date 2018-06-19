@@ -39,8 +39,8 @@ public class CoderFactory extends Factory<Coder> {
 	}
 	
 	public static void main(String [] args){		
-		String value = "root";
-		String key = "helloworldsdsddddddddddddddddddd";
+		String value = "/service/component/blob/Download?domain=default&fileId=1442218377666tM0CkU";
+		String key = "alogic";
 		{
 			Coder coder = CoderFactory.newCoder("DES");		
 			

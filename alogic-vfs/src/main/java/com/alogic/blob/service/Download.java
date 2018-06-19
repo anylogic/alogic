@@ -31,15 +31,19 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.4.18 [duanyy 20151218] <br>
  * - 增加自动图标集 <br>
+ * 
+ * @version 1.6.4.37 [duanyy 20151218] <br>
+ * - 输出文件可缓存 <br>
  */
 public class Download extends Servant {
 	protected byte [] buffer = null;
+	protected boolean cacheEnable = true;
 	
 	@Override
 	public void create(ServiceDescription sd){
 		super.create(sd);
 		Properties p = sd.getProperties();
-		
+		cacheEnable = PropertiesConstants.getBoolean(p, "cacheEnable", true);
 		int bufferSize = PropertiesConstants.getInt(p, "bufferSize", 10240,true);
 		
 		buffer = new byte [bufferSize];
@@ -65,6 +69,7 @@ public class Download extends Servant {
 		BlobInfo info = reader.getBlobInfo();
 		
 		ctx.setResponseContentType(info.getContentType());
+		ctx.enableClientCache(cacheEnable);
 		
 		InputStream in = reader.getInputStream(0);
 		if (in == null){

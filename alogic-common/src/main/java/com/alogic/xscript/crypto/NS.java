@@ -1,7 +1,7 @@
 package com.alogic.xscript.crypto;
 
-import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.Logiclet;
+import com.alogic.xscript.plugins.Segment;
 
 /**
  * 加解密相关的插件
@@ -10,7 +10,7 @@ import com.alogic.xscript.Logiclet;
  * 
  * @since 1.6.10.9
  */
-public class NS extends AbstractLogiclet{
+public class NS extends Segment{
 
 	public NS(String tag, Logiclet p) {
 		super(tag, p);

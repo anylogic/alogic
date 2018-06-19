@@ -2,6 +2,7 @@ package com.alogic.xscript.crypto;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
@@ -20,7 +21,7 @@ import com.anysoft.util.code.CoderFactory;
  * @version 1.6.11.27 [20180417 duanyy] <br>
  * - 允许key为空 <br>
  */
-public class Encrypt extends NS {
+public class Encrypt extends AbstractLogiclet {
 	protected String in = "in";
 	protected String id;
 	protected String coder = "DES3";

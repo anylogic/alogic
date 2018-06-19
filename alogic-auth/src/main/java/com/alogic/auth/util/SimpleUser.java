@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.alogic.auth.Principal;
 import com.alogic.auth.UserModel;
 import com.alogic.load.Loader;
@@ -15,9 +17,11 @@ import com.anysoft.util.Configurable;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Settings;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
+import com.anysoft.webloader.ShareTool;
 
 /**
  * 简单的用户模型
@@ -26,6 +30,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @author duanyy
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.37 [20180619 duanyy] <br>
+ * - 输出avatarPath信息; <br>
  */
 public class SimpleUser implements UserModel,Configurable,XMLConfigurable{
 
@@ -49,6 +56,8 @@ public class SimpleUser implements UserModel,Configurable,XMLConfigurable{
 	 */
 	protected String avatar = "1442218377666tM0CkU";
 	
+	protected String avatarBlobId = "avatar";
+	
 	/**
 	 * 权限项集合
 	 */
@@ -63,6 +72,8 @@ public class SimpleUser implements UserModel,Configurable,XMLConfigurable{
 	 * 数据的生存时间
 	 */
 	protected final long ttl = 5 * 60 * 1000L;
+	
+	protected static ShareTool tool = Settings.get().getToolkit(ShareTool.class);
 	
 	public String getUserId() {
 		return userId;
@@ -122,7 +133,9 @@ public class SimpleUser implements UserModel,Configurable,XMLConfigurable{
 			XmlTools.setString(xml,"userId",userId);
 			XmlTools.setString(xml,"name",name);
 			XmlTools.setString(xml, "avatar", avatar);
-			
+			XmlTools.setString(xml, "avatarPath",
+					tool.encodePath("share.blob",avatarBlobId,avatar)
+					);			
 			List<String> privileges = this.getPrivileges();
 			if (privileges != null && !privileges.isEmpty()){
 				Document doc = xml.getOwnerDocument();
@@ -142,6 +155,9 @@ public class SimpleUser implements UserModel,Configurable,XMLConfigurable{
 			JsonTools.setString(json,"userId", userId);
 			JsonTools.setString(json,"name",name);
 			JsonTools.setString(json,"avatar",avatar);
+			JsonTools.setString(json, "avatarPath",
+					tool.encodePath("share.blob",avatarBlobId,avatar)
+					);
 			
 			List<String> privileges = this.getPrivileges();
 			if (privileges != null && !privileges.isEmpty()){
@@ -155,6 +171,9 @@ public class SimpleUser implements UserModel,Configurable,XMLConfigurable{
 		another.setProperty("userId", userId,true);
 		another.setProperty("name",name,true);
 		another.setProperty("avatar",avatar,true);
+		another.setProperty("avatarPath",
+				tool.encodePath("share.blob",avatarBlobId,avatar),true
+				);
 		
 		List<String> privileges = this.getPrivileges();
 		if (privileges != null && !privileges.isEmpty()){

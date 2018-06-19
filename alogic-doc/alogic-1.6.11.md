@@ -219,3 +219,7 @@ alogic-1.6.11
 - alogic-lucene:增加sort功能;
 - alogic-common:公式解析器的变量id支持$字符;
 
+### 1.6.11.37 [20180619 duanyy]
+
+- alogic-common:Settings增加特定工具集的框架；
+- alogic-common:增加资源分享框架;

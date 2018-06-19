@@ -2,6 +2,7 @@ package com.alogic.xscript.crypto;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
@@ -18,7 +19,7 @@ import com.anysoft.util.code.CoderFactory;
  *
  * @since 1.6.10.9
  */
-public class GenKey extends NS{
+public class GenKey extends AbstractLogiclet{
 
 	protected String id = "$crypt-key";
 	protected String initKey;

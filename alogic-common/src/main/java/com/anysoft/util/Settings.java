@@ -41,6 +41,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.8.7 [20170412 duanyy] <br>
  * - DefaultProperties容器由Hashtable更改为HashMap <br>
+ * 
+ * @version 1.6.11.37 [20180619 duanyy] <br>
+ * - 增加getToolkit方法,可以基于Settings来创建工具集 <br>
  */
 public class Settings extends DefaultProperties implements XmlSerializer,Reportable{
 
@@ -245,6 +248,29 @@ public class Settings extends DefaultProperties implements XmlSerializer,Reporta
 	 */
 	public Object get(String id){
 		return objects.get(id);
+	}
+	
+	/**
+	 * 根据当前环境变量生成指定的工具集
+	 * @param clazz 工具的类
+	 * @return 工具的实例
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getToolkit(Class<T> clazz){
+		String id = clazz.getName();
+		T found = (T) get(id);
+		if (found == null){
+			synchronized (clazz){
+				found = (T)get(id);
+				if (found == null){
+					Factory<T> f = new Factory<T>();
+					found = f.newInstance(id,this);
+					registerObject(id, found);
+				}
+			}
+		}
+		
+		return found;
 	}
 	
 	/**

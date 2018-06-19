@@ -13,14 +13,18 @@ import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
+import com.anysoft.util.Settings;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
 import com.anysoft.util.XmlTools;
+import com.anysoft.webloader.ShareTool;
 
 /**
  * Blob管理器
  * @author yyduan
- *
+ * 
+ * @version 1.6.4.37 [duanyy 20151218] <br>
+ * - 为指定的文件生成共享路径 <br>
  */
 public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 	
@@ -61,6 +65,13 @@ public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 	public boolean deleteFile(String id);
 	
 	/**
+	 * 为指定的文件生成分享的URL
+	 * @param id 文件id
+	 * @return 分享的url
+	 */
+	public String getSharePath(String id);
+	
+	/**
 	 * 扫描文件注册表（可能有的实现不支持）
 	 * 
 	 * @param ids 用来存储文件id的容器
@@ -86,6 +97,8 @@ public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 		 */
 		protected String id;
 		
+		protected ShareTool tool = null;
+		
 		@Override
 		public void configure(Element e, Properties p) {
 			Properties props = new XmlElementProperties(e,p);
@@ -95,6 +108,7 @@ public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 		@Override
 		public void configure(Properties p){
 			id = PropertiesConstants.getString(p,"id","",true);
+			tool = Settings.get().getToolkit(ShareTool.class);
 		}
 		
 		@Override
@@ -123,5 +137,9 @@ public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 			throw new BaseException("core.e1000","This function is not suppurted yet.");	
 		}
 		
+		@Override
+		public String getSharePath(String fileId){
+			return tool.encodePath("share.blob",getId(),fileId);
+		}
 	}
 }

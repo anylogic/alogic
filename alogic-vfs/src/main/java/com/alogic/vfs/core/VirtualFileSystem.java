@@ -14,8 +14,10 @@ import com.anysoft.util.Configurable;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Reportable;
+import com.anysoft.util.Settings;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
+import com.anysoft.webloader.ShareTool;
 
 /**
  * 远程文件系统
@@ -30,6 +32,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.9.3 [20170615 duanyy] <br>
  * - 增加move的方法 <br>
+ * 
+ * @version 1.6.4.37 [duanyy 20151218] <br>
+ * - 为指定的文件生成共享路径 <br>
  */
 public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigurable,Reportable{
 	
@@ -166,6 +171,13 @@ public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigu
 	public void finishWrite(String path,OutputStream out);
 	
 	/**
+	 * 为指定的文件生成分享的URL
+	 * @param id 文件id
+	 * @return 分享的url
+	 */
+	public String getSharePath(String path);	
+	
+	/**
 	 * 虚拟实现
 	 * @author duanyy
 	 *
@@ -188,6 +200,8 @@ public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigu
 
 		protected String id = "";
 		
+		protected ShareTool tool = null;
+		
 		public String id(){
 			return id;
 		}
@@ -200,7 +214,8 @@ public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigu
 		public void configure(Properties p) {
 			id = PropertiesConstants.getString(p,"id","default",true);
 			dftPattern = PropertiesConstants.getString(p,"dftPattern", dftPattern);
-			root = PropertiesConstants.getString(p,"root", root);			
+			root = PropertiesConstants.getString(p,"root", root);		
+			tool = Settings.get().getToolkit(ShareTool.class);			
 		}		
 		
 		@Override
@@ -224,6 +239,11 @@ public interface VirtualFileSystem extends AutoCloseable,Configurable,XMLConfigu
 		@Override
 		public OutputStream writeFile(String path, int permissions) {
 			return writeFile(path);
+		}
+		
+		@Override
+		public String getSharePath(String path){
+			return tool.encodePath("share.vfs",id(),path);
 		}
 		
 		@Override

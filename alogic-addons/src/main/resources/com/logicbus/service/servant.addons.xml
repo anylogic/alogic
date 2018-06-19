@@ -714,7 +714,7 @@
 				id = "Download" 
 				name="Download" 
 				note="下载Blob文件" 
-				visible="protected"
+				visible="public"
 				privilege="console.user"
 				acGroupId="console"
 				log = "brief" 
@@ -744,7 +744,7 @@
 					</properties>						
 				</service>	
 				<service id="Download" name="Download" note="下载文件" 
-					visible="protected"
+					visible="public"
 					privilege="console.user"
 					acGroupId="console"
 					log="brief" module="com.alogic.vfs.service.Download">

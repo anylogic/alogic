@@ -15,6 +15,9 @@ import com.alogic.xscript.plugins.Segment;
  * 
  * @version 1.6.9.6 [20170706 duanyy] <br>
  * - 增加文件移动和文件拷贝脚本 <br>
+ * 
+ * @version 1.6.4.37 [duanyy 20151218] <br>
+ * - 增加vfs-share和blob-share指令 <br>
  */
 public class VFS extends Segment{
 
@@ -35,6 +38,7 @@ public class VFS extends Segment{
 		registerModule("vfs-load",FileLoad.class);
 		registerModule("vfs-del",FileDelete.class);
 		registerModule("vfs-mkdir",MakePath.class);
+		registerModule("vfs-share",ShareVFS.class);
 		registerModule("upload",Upload.class);
 		registerModule("upload-blob",UploadToBlob.class);
 		registerModule("upload-vfs",UploadToVFS.class);

@@ -2,6 +2,7 @@ package com.alogic.xscript.crypto;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alogic.xscript.AbstractLogiclet;
 import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
@@ -17,7 +18,7 @@ import com.anysoft.util.code.CoderFactory;
  *
  * @since 1.6.10.9
  */
-public class Decrypt extends NS{
+public class Decrypt extends AbstractLogiclet{
 	protected String in = "in";
 	protected String id;
 	protected String coder = "DES3";
