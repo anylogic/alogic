@@ -12,7 +12,6 @@ import com.alogic.xscript.doc.json.JsonObject;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
-import com.logicbus.backend.ServantException;
 
 /**
  * 数据库操作组件
@@ -40,7 +39,7 @@ public abstract class DBOperation extends AbstractLogiclet{
 			ExecuteWatcher watcher) {
 		Connection conn = ctx.getObject(dbconn);
 		if (conn == null){
-			throw new ServantException("core.e1001","It must be in a db context,check your together script.");
+			throw new BaseException("core.e1001","It must be in a db context,check your together script.");
 		}
 		
 		onExecute(conn,root,current,ctx,watcher);

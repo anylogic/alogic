@@ -223,3 +223,7 @@ alogic-1.6.11
 
 - alogic-common:Settings增加特定工具集的框架；
 - alogic-common:增加资源分享框架;
+
+### 1.6.11.38 [20180615 duanyy]
+
+- alogic-common:增加xml文档操作相关插件;

@@ -15,6 +15,7 @@ import com.alogic.xscript.doc.json.JsonObject;
 import com.alogic.xscript.doc.xml.XmlObject;
 import com.alogic.xscript.log.LogInfo;
 import com.alogic.xscript.plugins.Divide;
+import com.alogic.xscript.plugins.Locker;
 import com.alogic.xscript.plugins.Plus;
 import com.alogic.xscript.plugins.Array;
 import com.alogic.xscript.plugins.ArrayItem;

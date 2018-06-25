@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<script>
+	<using xmlTag="xml" module="com.alogic.xscript.xml.NS"/>
+	
+	<xml>
+		<xml-new>
+			<xml-append tag="user">
+				<xml-attr-set id="id" value="duanyy"/>
+				<xml-attr-set id="name" value="harry"/>
+				<xml-attr-set id="avatar" value="avatar"/>
+			</xml-append>
+			<xml-append tag="user">
+				<xml-attr-set id="id" value="duan"/>
+				<xml-attr-set id="name" value="eason"/>
+				<xml-text-set tag="id" value="duanyy"/>
+			</xml-append>	
+			<xml-save id="xml"/>
+			<log msg="xml = ${xml}"/>		
+		</xml-new>
+		<xml-load content = "${xml}">
+			<xml-children path="user">
+				<xml-attr-get id="id"/>
+				<log msg="id=${id}"/>
+				<xml-text-get id="child" tag="id" dft="unknown"/>
+				<log msg="child=${child}"/>
+			</xml-children>
+		</xml-load>
+	</xml>
+</script>

@@ -26,6 +26,7 @@ Result Code
  - core.e1015 上传文件错误
  - core.e1016 文件已经存在
  - core.e1017 文件不能写入
+ - core.e1018 错误的文件格式
  
  - core.e1100 队列已满(alogic-doer)
  - core.e1101 对象状态错误(alogic-doer)

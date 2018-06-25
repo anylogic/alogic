@@ -1,10 +1,14 @@
-package com.alogic.xscript;
+package com.alogic.xscript.plugins;
 
 import java.lang.reflect.Constructor;
 import java.util.concurrent.locks.Lock;
+
 import org.apache.commons.lang3.StringUtils;
+
+import com.alogic.xscript.ExecuteWatcher;
+import com.alogic.xscript.Logiclet;
+import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.doc.XsObject;
-import com.alogic.xscript.plugins.Segment;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.Settings;

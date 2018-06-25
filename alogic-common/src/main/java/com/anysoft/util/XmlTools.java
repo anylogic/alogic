@@ -14,6 +14,9 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -28,6 +31,11 @@ import org.xml.sax.*;
  * 
  */
 public class XmlTools {
+	/**
+	 * logger
+	 */
+	protected static final Logger LOG = LoggerFactory.getLogger(XmlTools.class);
+	
 	private XmlTools(){
 		
 	}
@@ -377,9 +385,28 @@ public class XmlTools {
 			__transformer.transform(__source,__result);		
 			return writer.toString();
 		}catch (Exception ex){
+			LOG.error(ExceptionUtils.getStackTrace(ex));
 			return "error";
 		}
 	}
+	
+	public static String node2String(Node _node,String coding){
+		try {
+			TransformerFactory __factory = TransformerFactory.newInstance();
+			Transformer __transformer = __factory.newTransformer();
+			__transformer.setOutputProperty("omit-xml-declaration","yes");
+			__transformer.setOutputProperty("encoding",coding);
+			Source __source = new DOMSource(_node);
+			StringWriter writer = new StringWriter(1024);
+			Result __result = new StreamResult(writer);
+			__transformer.transform(__source,__result);		
+			return writer.toString();
+		}catch (Exception ex){
+			LOG.error(ExceptionUtils.getStackTrace(ex));
+			return "error";
+		}
+	}	
+	
 	/**
 	 * 通过XSL格式化XML
 	 * @param data XML文档
@@ -447,7 +474,7 @@ public class XmlTools {
 			XPathExpression expr = xpath.compile(path);
 			return (Node) expr.evaluate(root, XPathConstants.NODE);
 		} catch (XPathExpressionException e) {
-			e.printStackTrace();
+			LOG.error(ExceptionUtils.getStackTrace(e));
 		}
 		return null;
 	}
@@ -464,7 +491,7 @@ public class XmlTools {
 			XPathExpression expr = xpath.compile(path);
 			return (NodeList) expr.evaluate(root, XPathConstants.NODESET);
 		} catch (XPathExpressionException e) {
-			e.printStackTrace();
+			LOG.error(ExceptionUtils.getStackTrace(e));
 		}
 		return null;		
 	}

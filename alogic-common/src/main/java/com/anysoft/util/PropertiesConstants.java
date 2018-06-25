@@ -48,6 +48,29 @@ public class PropertiesConstants {
 	}
 	
 	/**
+	 * 对Properties中的变量进行incr操作
+	 * @param p 变量集
+	 * @param id 变量id
+	 * @param value 累加值
+	 */
+	public static void incr(Properties p,String id,long value){
+		if (StringUtils.isNotEmpty(id)){
+			String oldValue = getString(p,id,"",true);
+			if (StringUtils.isEmpty(oldValue)){
+				//变量不存在
+				p.SetValue(id, String.valueOf(value));
+			}else{
+				try {
+					long longValue = Long.parseLong(oldValue);
+					p.SetValue(id, String.valueOf(longValue + value));
+				}catch (NumberFormatException ex){
+					// ignored
+				}
+			}
+		}
+	}
+	
+	/**
 	 * 转换模板
 	 * 
 	 * @param p 属性集
