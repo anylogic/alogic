@@ -21,6 +21,9 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.10.8 [20171122 duanyy] <br>
  * - 支持实时从SDA获取信息 <br>
+ * 
+ * @version 1.6.11.39 [duanyy 20180628] <br>
+ * - 增加x-alogic-ac参数，以便服务端识别acGroup <br>
  */
 public class Password extends HttpCientFilter.Abstract{
 	/**
@@ -38,6 +41,8 @@ public class Password extends HttpCientFilter.Abstract{
 	protected String timestampId = "x-alogic-now";
 	protected String pwdId = "x-alogic-pwd";
 	protected String keyId = "x-alogic-app";
+	protected String acGroupKeyId = "x-alogic-ac";
+	protected String acGroup = "app";
 	
 	protected Coder des3Coder = null;
 	
@@ -68,7 +73,8 @@ public class Password extends HttpCientFilter.Abstract{
 		String encryptPwd = des3Coder.encode(thePasswd, theKey + "$" + timestamp);
 		request.setHeader(timestampId, timestamp);
 		request.setHeader(keyId, theKey);		
-		request.setHeader(pwdId, encryptPwd);		
+		request.setHeader(pwdId, encryptPwd);	
+		request.setHeader(acGroupKeyId, acGroup);
 	}
 
 	@Override
@@ -87,7 +93,8 @@ public class Password extends HttpCientFilter.Abstract{
 		pwdId = PropertiesConstants.getString(p,"pwdId",pwdId);
 		keyId = PropertiesConstants.getString(p,"keyId",keyId);
 		sdaId = PropertiesConstants.getString(p,"sda",sdaId);
-		
+		acGroupKeyId = PropertiesConstants.getString(p,"acGroupKeyId", acGroupKeyId);
+		acGroup = PropertiesConstants.getString(p,"acGroupId", acGroup);		
 		des3Coder = CoderFactory.newCoder("DES3");
 	}
 

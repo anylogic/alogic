@@ -227,3 +227,8 @@ alogic-1.6.11
 ### 1.6.11.38 [20180615 duanyy]
 
 - alogic-common:增加xml文档操作相关插件;
+
+### 1.6.11.39 [20180628 duanyy]
+
+- alogic-auth:SSO客户端处理器的远程调用部分增加同步锁;
+- alogic-rpc:客户端增加x-alogic-ac参数，以便服务端识别acGroup;

@@ -24,6 +24,8 @@ import com.anysoft.util.code.util.RSAUtil;
  * @version 1.6.10.9 [20171124 duanyy] <br>
  * - Signature和RSA验证的签名文本中的URL更改为URI; <br>
  * 
+ * @version 1.6.11.39 [duanyy 20180628] <br>
+ * - 增加x-alogic-ac参数，以便服务端识别acGroup <br>
  */
 public class RSA extends HttpCientFilter.Abstract{
 	/**
@@ -42,7 +44,9 @@ public class RSA extends HttpCientFilter.Abstract{
 	protected String payloadId = "x-alogic-payload";
 	protected String signatureId = "x-alogic-signature";
 	protected String keyId = "x-alogic-app";
-
+	protected String acGroupKeyId = "x-alogic-ac";
+	protected String acGroup = "app";
+	
 	@Override
 	public void onRequest(HttpClientRequest request) {
 		SecretDataArea sda = null;
@@ -89,6 +93,7 @@ public class RSA extends HttpCientFilter.Abstract{
 		request.setHeader(signatureId, signature);
 		request.setHeader(timestampId, now);
 		request.setHeader(keyId, theKeyId);
+		request.setHeader(acGroupKeyId, acGroup);
 	}
 	
 	@Override
@@ -108,5 +113,7 @@ public class RSA extends HttpCientFilter.Abstract{
 		payloadId = PropertiesConstants.getString(p,"payloadId", payloadId);
 		signatureId = PropertiesConstants.getString(p,"signatureId", signatureId);
 		sdaId = PropertiesConstants.getString(p,"sda",sdaId);
+		acGroupKeyId = PropertiesConstants.getString(p,"acGroupKeyId", acGroupKeyId);
+		acGroup = PropertiesConstants.getString(p,"acGroupId", acGroup);		
 	}
 }

@@ -44,6 +44,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.11.23 [duanyy 20180320] <br>
  * - 修正某些不可配置的参数名 <br>
+ * 
+ * @version 1.6.11.39 [duanyy 20180628] <br>
+ * - getCurrent增加同步锁 <br>
  */
 public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	/**
@@ -104,11 +107,17 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	}
 
 	@Override
-	public Principal getCurrent(HttpServletRequest request,HttpServletResponse response,Session session) {
+	public synchronized Principal getCurrent(HttpServletRequest request,HttpServletResponse response,Session session) {
 		Session sess = session;
 		if (sess == null){
 			//保证session不为空
 			sess = sessionManager.getSession(request,response, true);
+		}
+		
+		if (sess.isLoggedIn()){
+			//已经登录
+			String token = sess.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
+			return new SessionPrincipal(token,sess);
 		}
 		
 		Principal principal = null;

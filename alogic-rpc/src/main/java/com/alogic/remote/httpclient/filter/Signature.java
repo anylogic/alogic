@@ -24,6 +24,9 @@ import com.anysoft.util.code.CoderFactory;
  * 
  * @version 1.6.10.9 [20171124 duanyy] <br>
  * - Signature和RSA验证的签名文本中的URL更改为URI; <br>
+ * 
+ * @version 1.6.11.39 [duanyy 20180628] <br>
+ * - 增加x-alogic-ac参数，以便服务端识别acGroup <br>
  */
 public class Signature extends HttpCientFilter.Abstract{
 	/**
@@ -41,6 +44,8 @@ public class Signature extends HttpCientFilter.Abstract{
 	protected String payloadId = "x-alogic-payload";
 	protected String signatureId = "x-alogic-signature";
 	protected String keyId = "x-alogic-app";
+	protected String acGroupKeyId = "x-alogic-ac";
+	protected String acGroup = "app";
 	
 	protected Coder coder = null;
 
@@ -89,6 +94,7 @@ public class Signature extends HttpCientFilter.Abstract{
 		request.setHeader(signatureId, signature);
 		request.setHeader(timestampId, now);
 		request.setHeader(keyId, theKeyId);
+		request.setHeader(acGroupKeyId, acGroup);
 	}
 	
 	@Override
@@ -109,5 +115,7 @@ public class Signature extends HttpCientFilter.Abstract{
 		signatureId = PropertiesConstants.getString(p,"signatureId", signatureId);
 		sdaId = PropertiesConstants.getString(p,"sda",sdaId);
 		coder = CoderFactory.newCoder(PropertiesConstants.getString(p,"coder", "HmacSHA256"));
+		acGroupKeyId = PropertiesConstants.getString(p,"acGroupKeyId", acGroupKeyId);
+		acGroup = PropertiesConstants.getString(p,"acGroupId", acGroup);		
 	}
 }

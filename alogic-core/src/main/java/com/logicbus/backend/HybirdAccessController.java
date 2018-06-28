@@ -25,7 +25,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 混合模式的访问控制器
  * 
  * @author duanyy
- *
+ * 
+ * @version 1.6.11.39 [duanyy 20180628] <br>
+ * - 统一获取acGroupId的方法，以便子类重写 <br>
  */
 public class HybirdAccessController implements AccessController {
 	
@@ -123,25 +125,29 @@ public class HybirdAccessController implements AccessController {
 			dftGroup.reload(id);
 		}
 	}
+	
+	protected String getGroupId(Path serviceId, ServiceDescription servant,Context ctx){
+		return servant.getAcGroup();
+	}
 
 	@Override
 	public String createSessionId(Path serviceId, ServiceDescription servant,
 			Context ctx) {
-		AccessController ac = getGroup(servant.getAcGroup());
+		AccessController ac = getGroup(getGroupId(serviceId,servant,ctx));
 		return ((ac == null)?dftGroup:ac).createSessionId(serviceId, servant, ctx);
 	}
 
 	@Override
 	public int accessStart(String sessionId, Path serviceId,
 			ServiceDescription servant, Context ctx) {
-		AccessController ac = getGroup(servant.getAcGroup());
+		AccessController ac = getGroup(getGroupId(serviceId,servant,ctx));
 		return ((ac == null)?dftGroup:ac).accessStart(sessionId, serviceId, servant, ctx);
 	}
 
 	@Override
 	public int accessEnd(String sessionId, Path serviceId,
 			ServiceDescription servant, Context ctx) {
-		AccessController ac = getGroup(servant.getAcGroup());
+		AccessController ac = getGroup(getGroupId(serviceId,servant,ctx));
 		return ((ac == null)?dftGroup:ac).accessEnd(sessionId, serviceId, servant, ctx);
 	}
 

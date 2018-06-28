@@ -17,7 +17,8 @@ import com.anysoft.util.code.CoderFactory;
  * <p>
  * 在Signature基础上按照可授权签名的模式扩展
  * @author yyduan
- *
+ * @version 1.6.11.39 [duanyy 20180628] <br>
+ * - 增加x-alogic-ac参数，以便服务端识别acGroup <br>
  */
 public class AuthorizedSignature extends HttpCientFilter.Abstract{
 	/**
@@ -36,6 +37,8 @@ public class AuthorizedSignature extends HttpCientFilter.Abstract{
 	protected String signatureId = "x-alogic-signature";
 	protected String keyId = "x-alogic-app";
 	protected long cycle = 24 * 60 * 60 * 1000L;
+	protected String acGroupKeyId = "x-alogic-ac";
+	protected String acGroup = "app";
 	
 	protected Coder coder = null;
 
@@ -84,6 +87,7 @@ public class AuthorizedSignature extends HttpCientFilter.Abstract{
 		request.setHeader(signatureId, signature);
 		request.setHeader(timestampId, String.valueOf(now));
 		request.setHeader(keyId, theKeyId);
+		request.setHeader(acGroupKeyId, acGroup);
 	}
 	
 	protected String getAuthorizedKey(String keyId,String key,long now){
@@ -110,5 +114,7 @@ public class AuthorizedSignature extends HttpCientFilter.Abstract{
 		cycle = PropertiesConstants.getLong(p, "cycle", cycle);
 		sdaId = PropertiesConstants.getString(p,"sda",sdaId);
 		coder = CoderFactory.newCoder(PropertiesConstants.getString(p,"coder", "HmacSHA256"));
+		acGroupKeyId = PropertiesConstants.getString(p,"acGroupKeyId", acGroupKeyId);
+		acGroup = PropertiesConstants.getString(p,"acGroupId", acGroup);
 	}
 }
