@@ -122,11 +122,14 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 		 */
 		protected String cookieName = "tgc";
 		
+		protected String cookieDomain = "";
+		
 		@Override
 		public void configure(Properties p) {
 			ttl = PropertiesConstants.getInt(p,"ttl", ttl);
 			cookieEnable = PropertiesConstants.getBoolean(p,"cookieEnable", cookieEnable);
 			cookieName = PropertiesConstants.getString(p,"cookieName",cookieName);
+			cookieDomain = PropertiesConstants.getString(p,"cookieDomain",cookieDomain);
 		}
 
 		@Override
@@ -195,6 +198,9 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 			Cookie cookie = new Cookie(name,value);
 			cookie.setPath(path);
 			cookie.setMaxAge(ttl);
+			if (StringUtils.isNotEmpty(cookieDomain)){
+				cookie.setDomain(cookieDomain);
+			}
 			response.addCookie(cookie);
 		}
 

@@ -33,7 +33,6 @@ public class DownloadFromBlob extends AbstractLogiclet{
 	protected String id;
 	protected int bufferSize = 10 * 1024;
 	protected String $fileId = "";
-	protected String $contentType = "text/plain";
 	
 	public DownloadFromBlob(String tag, Logiclet p) {
 		super(tag, p);
@@ -48,7 +47,6 @@ public class DownloadFromBlob extends AbstractLogiclet{
 		bufferSize = PropertiesConstants.getInt(p, "bufferSize", bufferSize);
 		blobId = PropertiesConstants.getString(p,"blobId",blobId,true);
 		$fileId = PropertiesConstants.getRaw(p, "fileId", $fileId);
-		$contentType = PropertiesConstants.getRaw(p, "contentType", $contentType);
 	}
 
 	@Override
@@ -70,11 +68,6 @@ public class DownloadFromBlob extends AbstractLogiclet{
 		}
 		InputStream in = null;
 		try {
-			String contentType = PropertiesConstants.transform(ctx, $contentType, "text/plain");
-			if (StringUtils.isEmpty(contentType)){
-				contentType = reader.getBlobInfo().getContentType();
-			}
-			serviceContext.setResponseContentType(contentType);
 			OutputStream out = serviceContext.getOutputStream();
 			in = reader.getInputStream(0);
 			int size = 0;

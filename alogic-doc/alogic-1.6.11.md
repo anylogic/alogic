@@ -232,3 +232,9 @@ alogic-1.6.11
 
 - alogic-auth:SSO客户端处理器的远程调用部分增加同步锁;
 - alogic-rpc:客户端增加x-alogic-ac参数，以便服务端识别acGroup;
+
+### 1.6.11.40 [20180704 duanyy]
+
+- alogic:logback版本改为1.2.3;
+- alogic-auth:SessionManager可以设置cookie到指定的domain;
+- alogic-together:DownloadTogetherServant支持指定的content-type;

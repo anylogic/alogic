@@ -28,7 +28,6 @@ public class DownloadFromVFS extends AbstractLogiclet{
 	protected String $path;
 	protected String id;
 	protected int bufferSize = 10 * 1024;
-	protected String $contentType = "text/plain";
 	
 	public DownloadFromVFS(String tag, Logiclet p) {
 		super(tag, p);
@@ -43,7 +42,6 @@ public class DownloadFromVFS extends AbstractLogiclet{
 		id = PropertiesConstants.getString(p,"id","$" + getXmlTag(),true);
 		pVfsId = PropertiesConstants.getString(p,"pVfsId",pVfsId,true);
 		bufferSize = PropertiesConstants.getInt(p, "bufferSize", bufferSize);
-		$contentType = PropertiesConstants.getRaw(p, "contentType", $contentType);
 	}
 
 	@Override
@@ -66,7 +64,6 @@ public class DownloadFromVFS extends AbstractLogiclet{
 				if (in == null){
 					throw new BaseException("core.e1001",String.format("Can not find file:%s", path));
 				}
-				serviceContext.setResponseContentType(PropertiesConstants.transform(ctx, $contentType, "text/plain"));
 				OutputStream out = serviceContext.getOutputStream();
 				int size = 0;
 				byte [] buffer = new byte[bufferSize];

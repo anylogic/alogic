@@ -75,10 +75,17 @@ public class DownloadTogetherServant extends AbstractServant {
 				String keyword = logicletContext.GetValue("$keyword", "");
 				if (StringUtils.isNotEmpty(keyword)){
 					ctx.setKeyword(keyword);
-				}				
+				}
+				
 				if (PropertiesConstants.getBoolean(logicletContext, "$cacheEnable", true)){
 					ctx.enableClientCache(true);
 				}
+				
+				String contentType = PropertiesConstants.getString(logicletContext, "$contentType", "text/plain");
+				if (StringUtils.isNotEmpty(contentType)){
+					ctx.setResponseContentType(contentType);
+				}
+				
 				String filename = PropertiesConstants.getString(logicletContext, "$filename", "");
 				if (StringUtils.isNotEmpty(filename)){
 					ctx.setResponseHeader("Content-Disposition", String.format("attachment; filename=%s",filename));
