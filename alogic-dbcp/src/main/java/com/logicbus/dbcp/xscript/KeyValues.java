@@ -37,6 +37,7 @@ public class KeyValues extends DBOperation{
 	
 	@Override
 	public void configure(Properties p){
+		super.configure(p);
 		sqlQuery = PropertiesConstants.getRaw(p, "sql", sqlQuery);
 		id = PropertiesConstants.getString(p, "id", "$" + this.getXmlTag(),true);
 		transform = PropertiesConstants.getBoolean(p,"transform",transform,true);
@@ -55,7 +56,7 @@ public class KeyValues extends DBOperation{
 		}
 		
 		List<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
-		DBTools.list(conn, result, adapter, sql, data);
+		DBTools.list(conn, result, adapter, sql, data.toArray());
 		if (!result.isEmpty()){
 			for (Pair<String,String> p:result){
 				ctx.SetValue(p.key(), p.value());

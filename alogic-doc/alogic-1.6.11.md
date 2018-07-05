@@ -238,3 +238,7 @@ alogic-1.6.11
 - alogic:logback版本改为1.2.3;
 - alogic-auth:SessionManager可以设置cookie到指定的domain;
 - alogic-together:DownloadTogetherServant支持指定的content-type;
+
+### 1.6.11.41 [20180705 duanyy] 
+
+- alogic-dbcp:修正keyvalues插件的bug;
