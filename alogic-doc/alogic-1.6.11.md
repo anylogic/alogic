@@ -242,3 +242,7 @@ alogic-1.6.11
 ### 1.6.11.41 [20180705 duanyy] 
 
 - alogic-dbcp:修正keyvalues插件的bug;
+
+### 1.6.11.42 [20180706 duanyy]
+
+- alogic-common:xscript的set语句支持动态id;

@@ -18,11 +18,13 @@ import com.anysoft.util.PropertiesConstants;
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
  * 
+ * @version 1.6.11.42 [20170509 duanyy] <br>
+ * - 支持动态id输出<br>
  */
 public class Set extends AbstractLogiclet {
-	protected String id;
-	protected String value;
-	protected String dftValue = "";
+	protected String $id;
+	protected String $value;
+	protected String $dftValue = "";
 	protected boolean ref = false;
 	
 	public Set(String tag, Logiclet p) {
@@ -32,18 +34,19 @@ public class Set extends AbstractLogiclet {
 	public void configure(Properties p){
 		super.configure(p);
 		
-		id = PropertiesConstants.getString(p,"id","",true);
-		value = p.GetValue("value", "", false, true);
+		$id = PropertiesConstants.getRaw(p,"id","");
+		$value = PropertiesConstants.getRaw(p,"value","");
 		ref = PropertiesConstants.getBoolean(p,"ref",ref,true);
-		dftValue = PropertiesConstants.getRaw(p,"dft",dftValue);
+		$dftValue = PropertiesConstants.getRaw(p,"dft",$dftValue);
 	}
 
 	@Override
 	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
+		String id = PropertiesConstants.transform(ctx, $id, "");
 		if (StringUtils.isNotEmpty(id)){
 			XsObjectProperties p = new XsObjectProperties(current,ctx);
-			String v = p.transform(value);
-			String dft = p.transform(dftValue);
+			String v = PropertiesConstants.transform(p,$value,"");
+			String dft = PropertiesConstants.transform(p,$dftValue,"");
 			if (StringUtils.isEmpty(v)){
 				v = dft;
 			}
