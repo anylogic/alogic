@@ -86,10 +86,10 @@ public class Main {
 		//runAsJson("java:///xscript/arraystring.xml#com.alogic.xscript.demo.Main",settings);
 		//runAsJson("java:///xscript/eval.xml#com.alogic.xscript.demo.Main",settings);
 		//runAsJson("java:///xscript/counter.xml#com.alogic.xscript.demo.Main",settings);
-		//runAsJson("java:///xscript/arrayset.xml#com.alogic.xscript.demo.Main",settings);
+		runAsJson("java:///xscript/arrayset.xml#com.alogic.xscript.demo.Main",settings);
 		//runAsJson("java:///xscript/sp.xml#com.alogic.xscript.demo.Main",settings);
 		//runAsJson("java:///xscript/plus.xml#com.alogic.xscript.demo.Main",settings);
-		runAsJson("java:///xscript/xml.xml#com.alogic.xscript.demo.Main",settings);
+		//runAsJson("java:///xscript/xml.xml#com.alogic.xscript.demo.Main",settings);
 	}
 
 }

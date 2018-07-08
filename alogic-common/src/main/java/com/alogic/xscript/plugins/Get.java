@@ -25,12 +25,16 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.8.14 [20170509 duanyy] <br>
  * - 增加xscript的中间文档模型,以便支持多种报文协议 <br>
+ * 
+ * @version 1.6.11.43 [20180708 duanyy]  <br>
+ * - 支持raw模式 <br>
  */
 public class Get extends AbstractLogiclet {
 	protected String id;
 	protected String value;
 	protected String type;
 	protected boolean ignoreIfNull = false;
+	protected boolean raw = false;
 	public Get(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -42,13 +46,14 @@ public class Get extends AbstractLogiclet {
 		value = PropertiesConstants.getRaw(p,"value","");
 		type = PropertiesConstants.getString(p,"type","string",true);
 		ignoreIfNull = PropertiesConstants.getBoolean(p,"ignoreIfNull",ignoreIfNull,true);
+		raw = PropertiesConstants.getBoolean(p, "raw", raw);
 	}
 
 	@Override
 	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 		String idValue = ctx.transform(id);
 		if (StringUtils.isNotEmpty(idValue)){
-			String v = ctx.transform(value);
+			String v = raw?PropertiesConstants.getRaw(ctx,value,""):ctx.transform(value);
 			if (StringUtils.isNotEmpty(v)){
 				if (type.equals("string")){
 					current.addProperty(idValue, v);

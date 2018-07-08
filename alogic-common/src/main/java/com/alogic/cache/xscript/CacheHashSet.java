@@ -15,6 +15,9 @@ import com.anysoft.util.PropertiesConstants;
  * 设置Hash值
  * @author yyduan
  * @since 1.6.11.29
+ * 
+ * @version 1.6.11.43 [20180708 duanyy]  <br>
+ * - 支持raw模式 <br>
  */
 public class CacheHashSet extends CacheObjectOperation{
 	
@@ -35,6 +38,11 @@ public class CacheHashSet extends CacheObjectOperation{
 	
 	protected boolean overwrite = true;
 	
+	/**
+	 * 是否以原始值写入
+	 */
+	protected boolean raw = false;
+	
 	public CacheHashSet(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -47,6 +55,7 @@ public class CacheHashSet extends CacheObjectOperation{
 		$key =  PropertiesConstants.getRaw(p, "key", "");
 		$value =  PropertiesConstants.getRaw(p, "value", $value);
 		overwrite = PropertiesConstants.getBoolean(p,"overwrite",overwrite);
+		raw = PropertiesConstants.getBoolean(p,"raw",raw);
 	}
 
 	@Override
@@ -60,7 +69,7 @@ public class CacheHashSet extends CacheObjectOperation{
 			cache.hSet(
 				PropertiesConstants.transform(ctx, $group, CacheObject.DEFAULT_GROUP), 
 				key, 
-				PropertiesConstants.transform(ctx, $value, ""), 
+				raw?PropertiesConstants.getRaw(ctx,$value,""):PropertiesConstants.transform(ctx, $value, ""), 
 				overwrite);
 		}
 	}

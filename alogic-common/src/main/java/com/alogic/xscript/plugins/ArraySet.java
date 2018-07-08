@@ -20,6 +20,9 @@ import java.util.Set;
  * 
  * @author yyduan
  * @since 1.6.11.34
+ * 
+ * @version 1.6.11.43 [20180708 duanyy]  <br>
+ * - 增加array-set-list插件 <br>
  */
 public class ArraySet extends Segment {
 	protected String tag = "data";
@@ -32,6 +35,7 @@ public class ArraySet extends Segment {
 		registerModule("array-set-add",ArraySetAdd.class);
 		registerModule("array-set-del",ArraySetDel.class);
 		registerModule("array-set-exist",ArraySetExist.class);
+		registerModule("array-set-list",ArraySetList.class);
 	}
 
 	@Override

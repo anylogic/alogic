@@ -246,3 +246,10 @@ alogic-1.6.11
 ### 1.6.11.42 [20180706 duanyy]
 
 - alogic-common:xscript的set语句支持动态id;
+
+### 1.6.11.43 [20180708 duanyy]
+
+- alogic-common:cache模型中增加cache-hgetall指令;
+- alogic-common:cache模型中cache-hset,cache-sadd等支持raw模式;
+- alogic-common:xscript的get支持raw模式; 
+- alogic-common:xscript增加array-set-list指令;

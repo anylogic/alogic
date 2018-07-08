@@ -4,5 +4,9 @@
 		<array-set-add member="duanyy"/>
 		<array-set-add member="alogic"/>
 		<array-set-add member="duanyy"/>
+		
+		<array-set-list>
+			<log msg="${$value}"/>
+		</array-set-list>
 	</array-set>
 </script>

@@ -2,7 +2,6 @@ package com.alogic.cache;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.11.8 [20180109] duanyy <br>
  * - 优化缓存相关的xscript插件 <br>
+ * 
+ * @version 1.6.11.43 [20180708 duanyy]  <br>
+ * - 优化Simple实现 <br>
  */
 public interface CacheObject extends HashObject,SetObject,JsonSerializer{
 	/**
@@ -330,8 +332,8 @@ public interface CacheObject extends HashObject,SetObject,JsonSerializer{
 	 *
 	 */
 	public static class Simple extends Abstract{
-		protected Map<String,String> keyvalues = null;
-		protected Set<String> sets = null;
+		protected Map<String,Map<String,String>> mapGroup = null;
+		protected Map<String,Set<String>> setGroup = null;
 		
 		public Simple() {
 		}
@@ -343,49 +345,102 @@ public interface CacheObject extends HashObject,SetObject,JsonSerializer{
 		@Override
 		public void copyTo(CacheObject another) {
 			if (another != null){
-				Map<String, String> map = getMapObject(DEFAULT_GROUP,false);
-				if (map != null){
-					Iterator<Entry<String,String>> iter = map.entrySet().iterator();
+				Map<String,Map<String, String>> maps = this.getMapGroup(false);
+				if (maps != null){
+					Iterator<Entry<String,Map<String,String>>> iter = maps.entrySet().iterator();
 					
 					while (iter.hasNext()){
-						Entry<String,String> e = iter.next();
-						another.hSet(DEFAULT_GROUP, e.getKey(), e.getValue(), true);
-					}
+						Entry<String,Map<String,String>> entry = iter.next();
+						
+						String g = entry.getKey();
+						
+						Iterator<Entry<String,String>> i = entry.getValue().entrySet().iterator();
+						
+						while (i.hasNext()){
+							Entry<String,String> p = i.next();
+							another.hSet(g,p.getKey(),p.getValue(),true);
+						}
+					}					
 				}
-				Set<String> set = getSetObject(DEFAULT_GROUP,false);
-				if (set != null){
-					Iterator<String> iter = set.iterator();
+				
+				Map<String,Set<String>> group = getSetGroup(false);
+				if (group != null){
+					Iterator<Entry<String,Set<String>>> iter = group.entrySet().iterator();
 					
-					while(iter.hasNext()){
-						another.sAdd(DEFAULT_GROUP, iter.next());
+					while (iter.hasNext()){
+						Entry<String,Set<String>> entry = iter.next();
+						
+						String g = entry.getKey();
+						
+						Iterator<String> i = entry.getValue().iterator();
+						
+						while (i.hasNext()){
+							another.sAdd(g, i.next());
+						}
 					}
 				}
 			}
 		}
+		
+		protected Map<String,Map<String,String>> getMapGroup(boolean create){
+			if (mapGroup == null && create){
+				synchronized (this){
+					if (mapGroup == null){
+						mapGroup = new ConcurrentHashMap<String,Map<String,String>>();
+					}
+				}
+			}
+			
+			return mapGroup;
+		}		
 
 		@Override
 		protected Map<String, String> getMapObject(String group, boolean create) {
-			if (keyvalues == null && create){
-				synchronized(this){
-					if (keyvalues == null){
-						keyvalues = new HashMap<String,String>();
+			Map<String,Map<String,String>> groupMap = getMapGroup(create);
+			Map<String,String> maps = null;
+			if (groupMap != null){
+				maps = groupMap.get(group);
+				if (maps == null && create){
+					synchronized(this){
+						maps = groupMap.get(group);
+						if (maps == null){
+							maps = new ConcurrentHashMap<String,String>();
+							groupMap.put(group, maps);
+						}
 					}
 				}
 			}
-			
-			return keyvalues;
+			return maps;			
 		}
 
-		@Override
-		protected Set<String> getSetObject(String group, boolean create) {
-			if (sets == null && create){
-				synchronized(this){
-					if (sets == null){
-						sets = Collections.newSetFromMap(new ConcurrentHashMap<String,Boolean>());
+		protected Map<String,Set<String>> getSetGroup(boolean create){
+			if (setGroup == null && create){
+				synchronized (this){
+					if (setGroup == null){
+						setGroup = new ConcurrentHashMap<String,Set<String>>();
 					}
 				}
 			}
 			
+			return setGroup;
+		}
+		
+		@Override
+		protected Set<String> getSetObject(String group, boolean create) {
+			Map<String,Set<String>> groupMap = getSetGroup(create);
+			Set<String> sets = null;
+			if (groupMap != null){
+				sets = groupMap.get(group);
+				if (sets == null && create){
+					synchronized(this){
+						sets = groupMap.get(group);
+						if (sets == null){
+							sets = Collections.newSetFromMap(new ConcurrentHashMap<String,Boolean>());
+							groupMap.put(group, sets);
+						}
+					}
+				}
+			}
 			return sets;
 		}
 

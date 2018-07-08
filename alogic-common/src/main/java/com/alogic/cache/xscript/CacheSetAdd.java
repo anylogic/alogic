@@ -13,6 +13,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @author yyduan
  * @since 1.6.11.29
+ * 
+ * @version 1.6.11.43 [20180708 duanyy]  <br>
+ * - 支持raw模式 <br>
  */
 public class CacheSetAdd extends CacheObjectOperation{
 	
@@ -26,6 +29,11 @@ public class CacheSetAdd extends CacheObjectOperation{
 	 */
 	protected String $member;
 	
+	/**
+	 * 是否以原始值写入
+	 */
+	protected boolean raw = false;
+	
 	public CacheSetAdd(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -35,6 +43,7 @@ public class CacheSetAdd extends CacheObjectOperation{
 		super.configure(p);
 		$group = PropertiesConstants.getRaw(p, "group", $group);
 		$member = PropertiesConstants.getRaw(p, "member", $member);
+		raw = PropertiesConstants.getBoolean(p,"raw",raw);
 	}
 
 	@Override
@@ -42,7 +51,7 @@ public class CacheSetAdd extends CacheObjectOperation{
 			Map<String, Object> current, LogicletContext ctx,
 			ExecuteWatcher watcher) {
 		cache.sAdd(PropertiesConstants.transform(ctx, $group, CacheObject.DEFAULT_GROUP), 
-				PropertiesConstants.transform(ctx, $member, ""));
+				raw?PropertiesConstants.getRaw(ctx,$member,""):PropertiesConstants.transform(ctx, $member, ""));
 	}
 
 }

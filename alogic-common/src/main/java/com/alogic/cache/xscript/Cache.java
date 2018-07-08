@@ -28,6 +28,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.11.29 [20180510 duanyy]
  * - 增加cache相关的插件 <br>
+ * 
+ * @version 1.6.11.43 [20180708 duanyy]  <br>
+ * - 增加cache-hgetall插件 <br>
  */
 public class Cache extends Segment {
 	protected String cacheId;
@@ -41,6 +44,7 @@ public class Cache extends Segment {
 		registerModule("cache-load",CacheQuery.class);
 		registerModule("cache-locate",CacheLocate.class);
 		registerModule("cache-hget",CacheHashGet.class);
+		registerModule("cache-hgetall",CacheHashGetAll.class);
 		registerModule("cache-hset",CacheHashSet.class);
 		registerModule("cache-hdel",CacheHashDel.class);
 		registerModule("cache-hexist",CacheHashExist.class);
