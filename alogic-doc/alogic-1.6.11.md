@@ -253,3 +253,9 @@ alogic-1.6.11
 - alogic-common:cache模型中cache-hset,cache-sadd等支持raw模式;
 - alogic-common:xscript的get支持raw模式; 
 - alogic-common:xscript增加array-set-list指令;
+
+### 1.6.11.44 [20180713 duanyy]
+
+- alogic-common:xscript的eval插件在脚本编译时采用Settings作为变量集;
+- alogic-common:增加LocalLock工具类;
+- alogic-common:webloader增加webcontext.vroot变量;

@@ -11,6 +11,9 @@ import com.anysoft.util.code.CoderFactory;
  * 共享URL工具
  * 
  * @since 1.6.11.37 
+ * 
+ * @version 1.6.11.44 [20180713 duanyy] <br>
+ * - 缺省的urlBase修改为${webcontext.vroot}/share/ <br>
  */
 public class ShareTool {
 	/**
@@ -21,7 +24,7 @@ public class ShareTool {
 	/**
 	 * URL的基础路径
 	 */
-	protected String urlBase = "/share/";
+	protected String urlBase = "${webcontext.vroot}/share/";
 	
 	/**
 	 * 加解密工具
