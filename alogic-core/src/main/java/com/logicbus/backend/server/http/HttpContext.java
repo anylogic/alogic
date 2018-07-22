@@ -67,6 +67,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.11.12 [20170123 duanyy] <br>
  * - http响应的缓存属性改成由服务来个性化控制 <br>
+ * 
+ * @version 1.6.11.45 [duanyy 20180722] <br>
+ * - 增加getHostDomain方法 <br>
  */
 
 public class HttpContext extends Context {
@@ -188,7 +191,12 @@ public class HttpContext extends Context {
 
 	@Override
 	public String getHost() {
-		return request.getLocalAddr() + ":" + request.getLocalPort();
+		return String.format("%s:%d",request.getLocalAddr(),request.getLocalPort());
+	}
+	
+	@Override
+	public String getHostDomain(){
+		return String.format("%s:%d",request.getServerName(),request.getServerPort());
 	}
 
 	@Override

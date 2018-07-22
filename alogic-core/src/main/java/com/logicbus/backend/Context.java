@@ -58,6 +58,9 @@ import com.logicbus.backend.message.Message;
  * 
  * @version 1.6.10.9 [20171124 duanyy] <br>
  * - 规范化URL和URI的取值 <br>
+ * 
+ * @version 1.6.11.45 [duanyy 20180722] <br>
+ * - 增加getHostDomain方法 <br>
  */
 public abstract class Context extends DefaultProperties implements DataProvider{
 	/**
@@ -248,6 +251,12 @@ public abstract class Context extends DefaultProperties implements DataProvider{
 	 * @return 主机信息
 	 */
 	abstract public String getHost();
+	
+	/**
+	 * 获取主机域名
+	 * @return 主机域名
+	 */
+	abstract public String getHostDomain();
 	
 	/**
 	 * 获取请求路径

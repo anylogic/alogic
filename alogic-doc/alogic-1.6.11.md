@@ -259,3 +259,12 @@ alogic-1.6.11
 - alogic-common:xscript的eval插件在脚本编译时采用Settings作为变量集;
 - alogic-common:增加LocalLock工具类;
 - alogic-common:webloader增加webcontext.vroot变量;
+
+### 1.6.11.45 [20180722 duanyy]
+- alogic-auth:sso的ClientSideHandler增加从cookies获取token的模式;
+- alogic-common:缓存框架增加nocache模式;
+- alogic-common:Redirector只是contextPath;
+- alogic-dbcp:增加HotSQLLoader实现;
+- alogic-core:Context增加getHostDomain方法;
+- alogic-together:服务内置变量增加$url,$hostdomain;
+

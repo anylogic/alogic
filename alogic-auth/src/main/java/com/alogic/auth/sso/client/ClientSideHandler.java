@@ -47,6 +47,10 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.11.39 [duanyy 20180628] <br>
  * - getCurrent增加同步锁 <br>
+ * 
+ * @version 1.6.11.45 [duanyy 20180722] <br>
+ * - 增加从cookies获取token的模式 <br>
+ * 
  */
 public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	/**
@@ -67,6 +71,8 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 	protected String callbackPath = "/logout";
 	
 	protected String arguCallback = "callback";
+	
+	protected String tokenCookie = "";
 		
 	@Override
 	public boolean isLocalLoginMode(){
@@ -98,6 +104,7 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 		arguToken = PropertiesConstants.getString(p,"auth.para.token",arguToken);
 		callbackPath = PropertiesConstants.getString(p,"auth.logout.callback",callbackPath);
 		arguCallback = PropertiesConstants.getString(p, "auth.para.callback", arguCallback);
+		tokenCookie = PropertiesConstants.getString(p, "tokenFromCookie", tokenCookie);
 	}
 	
 	@Override
@@ -141,6 +148,11 @@ public class ClientSideHandler extends AuthenticationHandler.Abstract{
 		}else{
 			token = sess.hGet(Session.DEFAULT_GROUP, Session.TOKEN, "");
 		}
+		
+		if (StringUtils.isEmpty(token) && StringUtils.isNotEmpty(tokenCookie)){
+			token = sessionManager.getCookie(request, tokenCookie, "");
+		}
+		
 		if (StringUtils.isNotEmpty(token)) {
 			try {
 				Parameters paras = theCall.createParameter();

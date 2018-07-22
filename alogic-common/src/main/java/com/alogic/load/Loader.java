@@ -53,6 +53,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.11.15 [20180206 duanyy] <br>
  * - 加载sink时增加scope支持 <br>
+ * 
+ * @version 1.6.11.45 [duanyy 20180722] <br>
+ * - Sinkable实现增加nocache模式;
  */
 public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable,Reportable{
 	
@@ -161,6 +164,25 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 	public abstract static class Sinkable<O extends Loadable> extends Abstract<O> {
 		protected List<Loader<O>> loaders = new ArrayList<Loader<O>>();
 		
+		/**
+		 * 本身不缓存
+		 */
+		private boolean noCache = false;
+		
+		/**
+		 * 是否本身不缓存数据
+		 * @return 如果为true,则本身不缓存数据
+		 */
+		protected boolean noCache(){
+			return noCache;
+		}
+		
+		@Override
+		public void configure(Properties p){
+			super.configure(p);			
+			noCache = PropertiesConstants.getBoolean(p,"noCache", noCache);
+		}
+		
 		@Override
 		public void configure(Element e, Properties p) {
 			Properties props = new XmlElementProperties(e,p);
@@ -207,7 +229,7 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 		
 		@Override
 		public O load(String id, boolean cacheAllowed) {
-			O found = loadFromSelf(id,cacheAllowed);
+			O found = noCache()? null:loadFromSelf(id,cacheAllowed);
 			if (found == null){
 				found = loadFromSink(id,cacheAllowed);
 			}
@@ -303,20 +325,24 @@ public interface Loader<O extends Loadable> extends Configurable,XMLConfigurable
 		
 		@Override
 		public O load(String id, boolean cacheAllowed) {
-			O found = loadFromSelf(id,cacheAllowed);
-			if (found == null){
-				synchronized (this){
-					found = loadFromSelf(id,cacheAllowed);
-					if (found == null){
-						found = loadFromSink(id,cacheAllowed);
-						if (found != null){
-							cachedObjects.put(id, found);
+			if (noCache()){
+				return loadFromSink(id,cacheAllowed);
+			}else{
+				O found = loadFromSelf(id,cacheAllowed);
+				if (found == null){
+					synchronized (this){
+						found = loadFromSelf(id,cacheAllowed);
+						if (found == null){
+							found = loadFromSink(id,cacheAllowed);
+							if (found != null){
+								cachedObjects.put(id, found);
+							}
 						}
 					}
 				}
+				
+				return found;
 			}
-			
-			return found;
 		}
 		
 		@Override

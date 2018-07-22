@@ -35,6 +35,9 @@ import com.anysoft.webloader.ServletHandler;
  * Web跳转器
  * @author yyduan
  * @since 1.6.11.26
+ * 
+ * @version 1.6.11.45 [duanyy 20180722] <br>
+ * - 支持自动匹配contextPath<br>
  */
 public class Redirector implements ServletHandler,XMLConfigurable,Configurable{
 	/**
@@ -119,6 +122,10 @@ public class Redirector implements ServletHandler,XMLConfigurable,Configurable{
 		String path = null;
 		
 		String requestURI = request.getRequestURI();
+		String contextPath = request.getContextPath();
+		if (StringUtils.isNotEmpty(contextPath)){
+			requestURI = requestURI.substring(contextPath.length());
+		}
 		Matcher m = pathPattern.matcher(requestURI);
 		if (m.find()){
 			redirectId = m.group(1);

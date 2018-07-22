@@ -7,7 +7,8 @@ import com.logicbus.backend.Context;
  * 服务环境下的logiclet上下文
  * 
  * @author duanyy
- *
+ * @version 1.6.11.45 [duanyy 20180722] <br>
+ * - 增加$url内置变量 <br>
  */
 public class SevantLogicletContext extends LogicletContext {
 
@@ -32,6 +33,11 @@ public class SevantLogicletContext extends LogicletContext {
 	public static final String HOST = "$host";
 	
 	/**
+	 * 主机域名
+	 */
+	public static final String HOST_DOMAIN = "$hostdomain";
+	
+	/**
 	 * 请求方法
 	 */
 	public static final String METHOD = "$method";
@@ -45,6 +51,11 @@ public class SevantLogicletContext extends LogicletContext {
 	 * 请求完整的URI
 	 */
 	public static final String URI = "$uri";
+	
+	/**
+	 * 请求完整的URL
+	 */
+	public static final String URL = "$url";	
 	
 	/**
 	 * 请求的路径
@@ -79,6 +90,10 @@ public class SevantLogicletContext extends LogicletContext {
 					return context.getRequestURI();
 				case PATH:
 					return context.getPathInfo();
+				case URL:
+					return context.getRequestURL();		
+				case HOST_DOMAIN:
+					return context.getHostDomain();
 			}
 		}
 		

@@ -27,6 +27,9 @@ import com.anysoft.util.Pager;
  * 
  * @version 1.6.11.29 [20180510 duanyy]
  * - 增加on-load事件处理;
+ * 
+ * @version 1.6.11.45 [duanyy 20180722] <br>
+ * - Sinkable实现增加nocache模式;
  */
 public interface Store<O extends Loadable> extends Loader<O> {
 	
@@ -78,16 +81,20 @@ public interface Store<O extends Loadable> extends Loader<O> {
 		
 		@Override
 		public O load(String id, boolean cacheAllowed) {
-			O found = loadFromSelf(id,cacheAllowed);
-			if (found == null){
-				found = loadFromSink(id,cacheAllowed);
-				if (found != null){
-					onLoad(id,found);
-					save(id,found,true);
+			if (noCache()){
+				return loadFromSink(id,cacheAllowed);
+			}else{
+				O found = loadFromSelf(id,cacheAllowed);
+				if (found == null){
+					found = loadFromSink(id,cacheAllowed);
+					if (found != null){
+						onLoad(id,found);
+						save(id,found,true);
+					}
 				}
+				
+				return found;
 			}
-			
-			return found;
 		}
 
 		/**
