@@ -1,6 +1,7 @@
 package com.alogic.lucene.query;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
@@ -13,13 +14,16 @@ import com.anysoft.util.PropertiesConstants;
  * WildcardQuery
  * @author yyduan
  * @since 1.6.11.31
+ * 
+ * @version 1.6.11.46 [20180726 duanyy] <br>
+ * - build增加Analyzer上下文 <br>
  */
 public class ByWildcard extends QueryBuilder.Abstract {
 	protected String $field = "";
 	protected String $value = "";
 	
 	@Override
-	public Query build(Properties ctx) {
+	public Query build(Properties ctx,Analyzer analyzer) {
 		String field = PropertiesConstants.transform(ctx, $field, "");
 		String value = PropertiesConstants.transform(ctx, $value, "");
 		if (StringUtils.isNotEmpty(field) && StringUtils.isNotEmpty(value)){

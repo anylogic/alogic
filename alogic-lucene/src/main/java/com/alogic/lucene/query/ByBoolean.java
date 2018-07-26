@@ -3,6 +3,7 @@ package com.alogic.lucene.query;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.w3c.dom.Element;
@@ -19,6 +20,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @author yyduan
  * @since 1.6.11.31
+ * 
+ * @version 1.6.11.46 [20180726 duanyy] <br>
+ * - build增加Analyzer上下文 <br>
  */
 public class ByBoolean extends QueryBuilder.Abstract {
 	
@@ -28,12 +32,12 @@ public class ByBoolean extends QueryBuilder.Abstract {
 	protected List<QueryBuilder> builders = new ArrayList<QueryBuilder>();
 	
 	@Override
-	public Query build(Properties ctx) {
+	public Query build(Properties ctx,Analyzer analyzer) {
 		BooleanQuery.Builder builder = new BooleanQuery.Builder();
 		boolean allNull = true;
 		for (QueryBuilder b:builders){
 			if (b.isEnable(ctx)){
-				Query query = b.build(ctx);
+				Query query = b.build(ctx,analyzer);
 				if (query != null){
 					allNull = false;					
 					builder.add(query, b.getOccur(ctx));

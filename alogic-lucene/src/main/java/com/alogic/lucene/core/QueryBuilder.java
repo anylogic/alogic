@@ -1,5 +1,6 @@
 package com.alogic.lucene.core;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.Query;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public interface QueryBuilder extends XMLConfigurable,Configurable{
 	 * @param ctx 上下文
 	 * @return Query实例
 	 */
-	public Query build(Properties ctx);
+	public Query build(Properties ctx,Analyzer analyzer);
 	
 	/**
 	 * Occur

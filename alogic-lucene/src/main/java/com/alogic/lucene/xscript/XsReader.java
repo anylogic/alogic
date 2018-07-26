@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
@@ -40,6 +41,10 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.11.36 [20180613 duanyy] <br>
  * - 支持字段排序<br>
+ * 
+ * @version 1.6.11.46 [20180726 duanyy] <br>
+ * - QueryBuilder增加Analyzer上下文 <br>
+ * 
  */
 
 public class XsReader extends NS{
@@ -164,7 +169,7 @@ public class XsReader extends NS{
 		
 		IndexReader reader = indexer.newReader();
 		try {
-			Query query = getQuery(ctx);	
+			Query query = getQuery(ctx,indexer.getAnalyzer());	
 			IndexSearcher searcher = new IndexSearcher(reader);			
 
 			Sort sort = Sort.RELEVANCE;
@@ -200,8 +205,8 @@ public class XsReader extends NS{
 		}		
 	}	
 	
-	protected  Query getQuery(Properties ctx){
-		Query query =  queryBuilder.build(ctx);
+	protected  Query getQuery(Properties ctx,Analyzer analyzer){
+		Query query =  queryBuilder.build(ctx,analyzer);
 		return query == null ? queryAll : query;
 	}
 }

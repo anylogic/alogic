@@ -268,3 +268,7 @@ alogic-1.6.11
 - alogic-core:Context增加getHostDomain方法;
 - alogic-together:服务内置变量增加$url,$hostdomain;
 
+### 1.6.11.46 [20180726 duanyy]
+- alogic-common:修正XscriptCache的问题;
+- alogic-lucene:修改QueryBuilder,build时增加Analyzer上下文;
+- alogic-lucene:增加ByMatch,ByTerms等QueryBuilder实现;

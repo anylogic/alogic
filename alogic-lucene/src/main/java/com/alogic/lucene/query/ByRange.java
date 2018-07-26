@@ -1,9 +1,11 @@
 package com.alogic.lucene.query;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.DocValuesRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
+
 import com.alogic.lucene.core.QueryBuilder;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -12,6 +14,9 @@ import com.anysoft.util.PropertiesConstants;
  * RangeQuery
  * @author yyduan
  * @since 1.6.11.34
+ * 
+ * @version 1.6.11.46 [20180726 duanyy] <br>
+ * - build增加Analyzer上下文 <br>
  */
 public class ByRange extends QueryBuilder.Abstract {
 	protected String $field = "";
@@ -21,7 +26,7 @@ public class ByRange extends QueryBuilder.Abstract {
 	protected boolean includeMin = true;
 	
 	@Override
-	public Query build(Properties ctx) {
+	public Query build(Properties ctx,Analyzer analyzer) {
 		String field = PropertiesConstants.transform(ctx, $field, "");
 		String max = PropertiesConstants.transform(ctx, $max, "");
 		String min = PropertiesConstants.transform(ctx, $min, "");

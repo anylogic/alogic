@@ -31,6 +31,10 @@ import com.anysoft.util.resource.ResourceFactory;
  * 
  * @version 1.6.11.30 [20180514 duanyy] <br>
  * - 增加cookies操作接口 <br>
+ * 
+ * @version 1.6.11.46 [20180726 duanyy] <br>
+ * - 修正脚本缓存没有put的问题 <br>
+ * 
  */
 public class Script extends Segment {
 	/**
@@ -130,6 +134,9 @@ public class Script extends Segment {
 					script = scriptCache.get(md5);
 					if (script == null){
 						script = create(src,p,false);
+						if (script != null){
+							scriptCache.put(md5, script);
+						}
 					}
 				}
 			}else{
@@ -163,6 +170,9 @@ public class Script extends Segment {
 					script = scriptCache.get(md5);
 					if (script == null){
 						script = createFromContent(content,p,false);
+						if (script != null){
+							scriptCache.put(md5, script);
+						}						
 					}
 				}
 			}else{
@@ -229,6 +239,9 @@ public class Script extends Segment {
 					script = scriptCache.get(md5);
 					if (script == null){
 						script = create(bootstrap,path,p,false);
+						if (script != null){
+							scriptCache.put(md5, script);
+						}						
 					}					
 				}
 			}else{				

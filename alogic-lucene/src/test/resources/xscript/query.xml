@@ -17,7 +17,22 @@
 				<log msg="${id}=${name},price=${price}"/>
 			</lucene-reader>
 			<log msg="result:${$all}"/>
+			<log msg="--------------------------------------------------"/>
+			<lucene-reader>
+				<query module="Terms" field="name" value="应用,数据"/>
+				<lucene-doc-get id="id"/>
+				<lucene-doc-get id="name"/>
+				<log msg="${id}=${name}"/>
+			</lucene-reader>
+			<log msg="result:${$all}"/>				
 			
+			<lucene-reader>
+				<query module="Match" field="name" value="应用数据"/>
+				<lucene-doc-get id="id"/>
+				<lucene-doc-get id="name"/>
+				<log msg="${id}=${name}"/>
+			</lucene-reader>
+			<log msg="result:${$all}"/>				
 		
 			<lucene-reader field="id" value="duanyy">
 				<lucene-doc-get id="id"/>

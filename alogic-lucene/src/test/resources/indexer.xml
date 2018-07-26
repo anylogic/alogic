@@ -38,7 +38,7 @@
 						<lucene-doc>
 							<lucene-doc-string field="all" value="all"/>
 							<lucene-doc-string field="id" value="duanyc"/>
-							<lucene-doc-text field="name" value="这是一个长句子"/>
+							<lucene-doc-text field="name" value="提供网络、主机、应用、数据等安全软件或服务。开发者段歪歪"/>
 							<lucene-doc-long field="price" value="3"/>
 							<lucene-doc-commit idField="id"/>	
 						</lucene-doc>																	
