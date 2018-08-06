@@ -272,3 +272,8 @@ alogic-1.6.11
 - alogic-common:修正XscriptCache的问题;
 - alogic-lucene:修改QueryBuilder,build时增加Analyzer上下文;
 - alogic-lucene:增加ByMatch,ByTerms等QueryBuilder实现;
+
+### 1.6.11.47 [20180806 duanyy] 
+- alogic-core:修正MixedAccessController的配置参数问题;
+- alogic-dbcp:conn插件支持已有上层对象;
+

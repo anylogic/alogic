@@ -22,6 +22,9 @@ import com.logicbus.dbcp.core.ConnectionPool;
  * 
  * @version 1.6.11.27 [20180417 duanyy] <br>
  * - 增加db-keyvalues插件 <br>
+ * 
+ * @version 1.6.11.47 [20180806 duanyy] <br>
+ * - 当数据库连接已经存在的时候，直接使用 <br>
  */
 public class DBConn extends Segment {
 	
@@ -55,28 +58,34 @@ public class DBConn extends Segment {
 
 	@Override
 	protected void onExecute(XsObject root,XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
-		ConnectionPool pool = DbcpSource.getPool(dbcpId);
-		if (pool == null) {
-			logger.error("Can't get connection pool by dbcpId:" + dbcpId + ", The database connection pool is null!");
-			return ;
-		}
-		Connection conn = pool.getConnection();
-		if (conn == null) {
-			logger.error("The database connection is null!");
-			return ;
-		}
-		
-		boolean hasError = false;
-		try {
-			conn.setAutoCommit(autoCommit);
-			ctx.setObject(dbconn, conn);			
+		Connection conn = ctx.getObject(dbconn);
+		if (conn == null){
+			ConnectionPool pool = DbcpSource.getPool(dbcpId);
+			if (pool == null) {
+				logger.error("Can't get connection pool by dbcpId:" + dbcpId + ", The database connection pool is null!");
+				return ;
+			}
+			conn = pool.getConnection();
+			if (conn == null) {
+				logger.error("The database connection is null!");
+				return ;
+			}
+			
+			boolean hasError = false;
+			try {
+				conn.setAutoCommit(autoCommit);
+				ctx.setObject(dbconn, conn);			
+				super.onExecute(root, current, ctx, watcher);
+			} catch (SQLException ex) {
+				hasError = true;
+				throw new BaseException("core.e1300",ex.getMessage());
+			} finally {
+				ctx.removeObject(dbconn);
+				pool.recycle(conn, hasError);
+			}
+		}else{
+			//连接已经存在
 			super.onExecute(root, current, ctx, watcher);
-		} catch (SQLException ex) {
-			hasError = true;
-			throw new BaseException("core.e1300",ex.getMessage());
-		} finally {
-			ctx.removeObject(dbconn);
-			pool.recycle(conn, hasError);
 		}		
 	}
 }

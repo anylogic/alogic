@@ -11,6 +11,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 混合模式访问控制器
  * @author yyduan
  * @since 1.6.11.39
+ * 
+ * @version 1.6.11.47 [20180806 duanyy] <br>
+ * - 修正配置参数取值问题 <br>
  */
 public class MixedAccessController extends HybirdAccessController{
 	/**
@@ -39,6 +42,6 @@ public class MixedAccessController extends HybirdAccessController{
 	public void configure(Properties p) {
 		super.configure(p);
 		acGroupKeyId = PropertiesConstants.getString(p,"acGroupKeyId",acGroupKeyId);
-		acGroupAny = PropertiesConstants.getString(p,"acGroupKeyId",acGroupKeyId);
+		acGroupAny = PropertiesConstants.getString(p,"acGroupAny",acGroupAny);
 	}	
 }
