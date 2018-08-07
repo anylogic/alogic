@@ -277,3 +277,7 @@ alogic-1.6.11
 - alogic-core:修正MixedAccessController的配置参数问题;
 - alogic-dbcp:conn插件支持已有上层对象;
 
+### 1.6.11.48 [20180807 duanyy]
+- 优化服务和资源的缓存相关的http控制头;
+
+

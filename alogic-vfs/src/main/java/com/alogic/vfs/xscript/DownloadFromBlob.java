@@ -17,7 +17,9 @@ import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Settings;
 import com.logicbus.backend.Context;
+import com.logicbus.backend.server.http.HttpCacheTool;
 
 /**
  * 从blob中下载
@@ -26,6 +28,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.11.29 [20180510 duanyy] <br>
  * - 优化错误处理 <br>
+ * 
+ * @version 1.6.11.48 [20180807 duanyy] <br>
+ * - 优化缓存相关的http控制头的输出 <br>
  */
 public class DownloadFromBlob extends AbstractLogiclet{
 	protected String pid = "$context";
@@ -33,6 +38,10 @@ public class DownloadFromBlob extends AbstractLogiclet{
 	protected String id;
 	protected int bufferSize = 10 * 1024;
 	protected String $fileId = "";
+	protected String $cacheEnable = "true";
+	protected String $filename = "";
+	protected String $contentType = "";
+	protected HttpCacheTool cacheTool = null;
 	
 	public DownloadFromBlob(String tag, Logiclet p) {
 		super(tag, p);
@@ -47,6 +56,10 @@ public class DownloadFromBlob extends AbstractLogiclet{
 		bufferSize = PropertiesConstants.getInt(p, "bufferSize", bufferSize);
 		blobId = PropertiesConstants.getString(p,"blobId",blobId,true);
 		$fileId = PropertiesConstants.getRaw(p, "fileId", $fileId);
+		$cacheEnable = PropertiesConstants.getRaw(p, "cacheEnable", $cacheEnable);
+		$filename = PropertiesConstants.getRaw(p, "filename", $filename);
+		$contentType = PropertiesConstants.getRaw(p, "contentType", $contentType);
+		cacheTool = Settings.get().getToolkit(HttpCacheTool.class);
 	}
 
 	@Override
@@ -68,6 +81,23 @@ public class DownloadFromBlob extends AbstractLogiclet{
 		}
 		InputStream in = null;
 		try {
+			
+			if (PropertiesConstants.transform(ctx, $cacheEnable, true)){
+				cacheTool.cacheEnable(serviceContext);
+			}else{
+				cacheTool.cacheDisable(serviceContext);			
+			}
+			
+			String filename = PropertiesConstants.transform(ctx, $filename,"");
+			if (StringUtils.isNotEmpty(filename)){
+				serviceContext.setResponseHeader("Content-Disposition", String.format("attachment; filename=%s",filename));
+			}
+			
+			String contentType = PropertiesConstants.transform(ctx, $contentType,"");
+			if (StringUtils.isNotEmpty(contentType)){
+				serviceContext.setResponseContentType(contentType);
+			}
+			
 			OutputStream out = serviceContext.getOutputStream();
 			in = reader.getInputStream(0);
 			int size = 0;

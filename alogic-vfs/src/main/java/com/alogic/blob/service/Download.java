@@ -15,11 +15,13 @@ import com.alogic.blob.naming.BlobManagerFactory;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Settings;
 import com.logicbus.backend.Context;
 import com.logicbus.backend.Normalizer;
 import com.logicbus.backend.Servant;
 import com.logicbus.backend.ServantException;
 import com.logicbus.backend.message.Message;
+import com.logicbus.backend.server.http.HttpCacheTool;
 import com.logicbus.models.catalog.Path;
 import com.logicbus.models.servant.ServiceDescription;
 
@@ -34,11 +36,14 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.4.37 [duanyy 20151218] <br>
  * - 输出文件可缓存 <br>
+ * 
+ * @version 1.6.11.48 [20180807 duanyy] <br>
+ * - 优化缓存相关的http控制头的输出 <br>
  */
 public class Download extends Servant {
 	protected byte [] buffer = null;
 	protected boolean cacheEnable = true;
-	
+	protected HttpCacheTool cacheTool = null;
 	@Override
 	public void create(ServiceDescription sd){
 		super.create(sd);
@@ -47,6 +52,7 @@ public class Download extends Servant {
 		int bufferSize = PropertiesConstants.getInt(p, "bufferSize", 10240,true);
 		
 		buffer = new byte [bufferSize];
+		cacheTool = Settings.get().getToolkit(HttpCacheTool.class);
 	}
 	
 	@Override
@@ -76,6 +82,12 @@ public class Download extends Servant {
 			throw new ServantException("clnt.e2007","Can not find a blob file named " + fileId);
 		}
 		try {
+			if (cacheEnable){
+				cacheTool.cacheEnable(ctx);
+			}else{
+				cacheTool.cacheDisable(ctx);
+			}
+			
 			OutputStream out = ctx.getOutputStream();
 	        int size=0;  
 	        

@@ -14,13 +14,18 @@ import com.alogic.xscript.doc.XsObject;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Settings;
 import com.logicbus.backend.Context;
+import com.logicbus.backend.server.http.HttpCacheTool;
 
 /**
  * 从vfs下载
  * 
  * @author yyduan
  * @since 1.6.11.12
+ * 
+ * @version 1.6.11.48 [20180807 duanyy] <br>
+ * - 优化缓存相关的http控制头的输出 <br>
  */
 public class DownloadFromVFS extends AbstractLogiclet{
 	protected String pid = "$context";
@@ -28,6 +33,10 @@ public class DownloadFromVFS extends AbstractLogiclet{
 	protected String $path;
 	protected String id;
 	protected int bufferSize = 10 * 1024;
+	protected String $cacheEnable = "true";
+	protected String $filename = "";
+	protected String $contentType = "";	
+	protected HttpCacheTool cacheTool = null;
 	
 	public DownloadFromVFS(String tag, Logiclet p) {
 		super(tag, p);
@@ -42,6 +51,10 @@ public class DownloadFromVFS extends AbstractLogiclet{
 		id = PropertiesConstants.getString(p,"id","$" + getXmlTag(),true);
 		pVfsId = PropertiesConstants.getString(p,"pVfsId",pVfsId,true);
 		bufferSize = PropertiesConstants.getInt(p, "bufferSize", bufferSize);
+		$cacheEnable = PropertiesConstants.getRaw(p, "cacheEnable", $cacheEnable);
+		$filename = PropertiesConstants.getRaw(p, "filename", $filename);
+		$contentType = PropertiesConstants.getRaw(p, "contentType", $contentType);		
+		cacheTool = Settings.get().getToolkit(HttpCacheTool.class);
 	}
 
 	@Override
@@ -60,10 +73,27 @@ public class DownloadFromVFS extends AbstractLogiclet{
 		if (StringUtils.isNotEmpty(path)){
 			InputStream in = null;
 			try {				
+				if (PropertiesConstants.transform(ctx, $cacheEnable, true)){
+					cacheTool.cacheEnable(serviceContext);
+				}else{
+					cacheTool.cacheDisable(serviceContext);			
+				}
+				
+				String filename = PropertiesConstants.transform(ctx, $filename,"");
+				if (StringUtils.isNotEmpty(filename)){
+					serviceContext.setResponseHeader("Content-Disposition", String.format("attachment; filename=%s",filename));
+				}
+				
+				String contentType = PropertiesConstants.transform(ctx, $contentType,"");
+				if (StringUtils.isNotEmpty(contentType)){
+					serviceContext.setResponseContentType(contentType);
+				}
+				
 				in = vfs.readFile(path);
 				if (in == null){
 					throw new BaseException("core.e1001",String.format("Can not find file:%s", path));
 				}
+				
 				OutputStream out = serviceContext.getOutputStream();
 				int size = 0;
 				byte [] buffer = new byte[bufferSize];
