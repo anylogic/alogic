@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ import com.anysoft.webloader.ServletConfigProperties;
 import com.anysoft.webloader.ServletHandler;
 import com.logicbus.backend.AccessController;
 import com.logicbus.backend.Context;
+import com.logicbus.backend.server.http.HttpCacheTool;
 import com.logicbus.backend.server.http.HttpContext;
 import com.logicbus.models.catalog.Path;
 
@@ -55,6 +57,10 @@ import com.logicbus.models.catalog.Path;
  * 
  * @version 1.6.11.23 [20180320 duanyy] <br>
  * - 增加本地服务的转调功能 <br>
+ * 
+ * @version 1.6.11.50 [20180808 duanyy] <br>
+ * - 增加form数据的拦截模式 <br>
+ * - 优化Gateway的缓存处理 <br>
  */
 public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurable{
 	/**
@@ -111,11 +117,6 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 	 * 允许的方法
 	 */
 	protected String methodAllow = "GET,PUT,POST";
-
-	/**
-	 * 是否允许缓存
-	 */
-	protected boolean cacheAllowed = false; 
 	
 	/**
 	 * 是否支持cors
@@ -152,6 +153,13 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 	 */
 	protected String selfApp = "${server.app}";
 	
+	/**
+	 * form拦截模式
+	 */
+	protected boolean interceptMode = false;
+	
+	protected HttpCacheTool cacheTool = null;
+	
 	@Override
 	public void init(ServletConfig servletConfig) throws ServletException {
 		ServletConfigProperties props = new ServletConfigProperties(servletConfig);
@@ -173,7 +181,6 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 			IOTools.close(in);
 		}
 		
-		selfApp = PropertiesConstants.getString(props, "gateway.self.app", selfApp);
 		dispatcher = servletConfig.getServletContext().getNamedDispatcher(
 				PropertiesConstants.getString(props, "gateway.self.servlet", "MessageRouter")
 			);
@@ -185,16 +192,16 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 		defaultAllowOrigin = PropertiesConstants.getString(props,"http.alloworigin",defaultAllowOrigin);
 		corsSupport = PropertiesConstants.getBoolean(props, "http.cors", corsSupport);
 		methodAllow = PropertiesConstants.getString(props, "http.method.allow", methodAllow);
-		cacheAllowed = PropertiesConstants.getBoolean(props, "http.cacheAllowed", cacheAllowed);
-		
 		forwarded = PropertiesConstants.getBoolean(props, "http.forwarded", forwarded);
 		forwardedHeader = PropertiesConstants.getString(props, "http.forwarded.header", forwardedHeader);
 		readIpHeader = PropertiesConstants.getString(props, "http.realip.header", readIpHeader);
 		
-		tracerEnable = PropertiesConstants.getBoolean(props, "gw.tlog", tracerEnable);
-		proxyPath = PropertiesConstants.getString(props, "gw.path", proxyPath);
-		acmEnable = PropertiesConstants.getBoolean(props, "gw.acm", acmEnable);	
-		
+		tracerEnable = PropertiesConstants.getBoolean(props, "gateway.tlog", tracerEnable);
+		proxyPath = PropertiesConstants.getString(props, "gateway.path", proxyPath);
+		acmEnable = PropertiesConstants.getBoolean(props, "gateway.acm", acmEnable);	
+		selfApp = PropertiesConstants.getString(props, "gateway.self.app", selfApp);
+		interceptMode = PropertiesConstants.getBoolean(props, "gateway.intercept", interceptMode);		
+		cacheTool = Settings.get().getToolkit(HttpCacheTool.class);
 		//采用统一的访问控制器
 		ac = (AccessController) Settings.get().get("accessController");
 	}
@@ -211,8 +218,8 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 		
 		if (client == null){
 			//如果没有配置client节点，通过gw.client.master参数指定的配置文件中配置
-			String master = PropertiesConstants.getString(props, "gw.client.master", "${app.proxy.master}");
-			String secondary = PropertiesConstants.getString(props, "gw.client.secondary", "${app.proxy.secondary}");
+			String master = PropertiesConstants.getString(props, "gateway.client.master", "${app.proxy.master}");
+			String secondary = PropertiesConstants.getString(props, "gateway.client.secondary", "${app.proxy.secondary}");
 			client = ClientFactory.loadFrom(master, secondary, Settings.getResourceFactory());
 			
 			if (client == null){
@@ -227,7 +234,7 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 			try {
 				Factory<Loader<OpenServiceDescription>> f = new Factory<Loader<OpenServiceDescription>>();
 				descs = f.newInstance(descsElem, props, "loader",FromInner.class.getName());
-				dft = descs.load(PropertiesConstants.getString(props,"gw.service.dft","default"), cacheAllowed);
+				dft = descs.load(PropertiesConstants.getString(props,"gateway.service.dft","default"), true);
 			}catch (Exception ex){
 				LOG.error("Can not create loader with " + XmlTools.node2String(descsElem));
 				LOG.error(ExceptionUtils.getStackTrace(ex));
@@ -284,22 +291,13 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 				return ;
 			}
 			
-			if (cacheAllowed){
-				response.setHeader("Cache-Control", "public");
-			}else{
-				response.setHeader("Expires", "Mon, 26 Jul 1970 05:00:00 GMT");
-				response.setHeader("Last-Modified", "Mon, 26 Jul 1970 05:00:00 GMT");
-				response.setHeader("Cache-Control", "no-cache, must-revalidate");
-				response.setHeader("Pragma", "no-cache");
-			}
-			
 			if (corsSupport){
 				String origin = request.getHeader("Origin");
 				response.setHeader("Access-Control-Allow-Origin", StringUtils.isEmpty(origin) ? defaultAllowOrigin : origin);
 				response.setHeader("Access-Control-Allow-Credentials", "true");
 			}			
 			
-			Context ctx = new HttpContext(request, response, encoding);
+			Context ctx = new HttpContext(request, response, encoding,interceptMode);
 			ctx.SetValue("$app", backendApp);
 			
 			TraceContext tc = null;
@@ -377,6 +375,13 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 		if (StringUtils.isNotEmpty(contentType)){
 			response.setContentType(contentType);
 		}
+		
+		if (BooleanUtils.toBoolean(resp.getHeader("Cache-Enable", "false"))){
+			cacheTool.cacheEnable(response);
+		}else{
+			cacheTool.cacheDisable(response);
+		}
+		
 		response.setStatus(resp.getStatusCode());
 		response.getOutputStream().write(result);
 	}
@@ -403,7 +408,13 @@ public class GatewayHandler implements ServletHandler,XMLConfigurable,Configurab
 			req.setHeader(forwardedHeader, forwarded);
 			req.setHeader(readIpHeader, request.getRemoteHost());
 		}
-		req.setBody(request.getInputStream());
+		
+		byte[] data = ctx.getRequestRaw();
+		if (data != null){
+			req.setBody(data);
+		}else{
+			req.setBody(request.getInputStream());
+		}
 	}
 	
 	/**

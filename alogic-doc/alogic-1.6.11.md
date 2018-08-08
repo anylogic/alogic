@@ -283,3 +283,8 @@ alogic-1.6.11
 ### 1.6.11.49 [20180808 duanyy]
 - alogic-vfs:修正下载中文名的乱码问题;
 
+### 1.6.11.50 [20180808 duanyy]
+- alogic-rpc:Gateway增加form数据的拦截模式;
+- alogic-rpc:优化Gateway的缓存处理;
+
+

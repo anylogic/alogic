@@ -15,6 +15,9 @@ import com.logicbus.backend.Context;
  * 
  * @author yyduan
  * @since 1.6.11.48
+ * 
+ * @version 1.6.11.50 [20180808 duanyy] <br>
+ * - 增加Cache-Enable的头输出,以便前端获取服务的缓存模式 <br>
  */
 public class HttpCacheTool {
 	protected static SimpleDateFormat dateFormat=new SimpleDateFormat("E, dd MM yyyy HH:mm:ss z",Locale.US);
@@ -28,13 +31,14 @@ public class HttpCacheTool {
 		Date now = new Date();	
 		response.setHeader("Cache-Control", String.format("max-age=%d", cacheMaxAge));
 		response.setHeader("Date", dateFormat.format(now));		
-		
+		response.setHeader("Cache-Enable", "true");
 	}
 	
 	public void cacheEnable(Context ctx){
 		Date now = new Date();	
 		ctx.setResponseHeader("Cache-Control", String.format("max-age=%d", cacheMaxAge));	
-		ctx.setResponseHeader("Date", dateFormat.format(now));			
+		ctx.setResponseHeader("Date", dateFormat.format(now));		
+		ctx.setResponseHeader("Cache-Enable", "true");
 	}
 	
 	public void cacheDisable(HttpServletResponse response){
@@ -43,6 +47,7 @@ public class HttpCacheTool {
 		response.setHeader("Last-Modified", dateFormat.format(now));
 		response.setHeader("Cache-Control", "no-cache, must-revalidate");
 		response.setHeader("Pragma", "no-cache");	
+		response.setHeader("Cache-Enable", "false");
 	}
 	
 	public void cacheDisable(Context ctx){
@@ -50,6 +55,7 @@ public class HttpCacheTool {
 		ctx.setResponseHeader("Expires", dateFormat.format(now));
 		ctx.setResponseHeader("Last-Modified", dateFormat.format(now));
 		ctx.setResponseHeader("Cache-Control", "no-cache, must-revalidate");
-		ctx.setResponseHeader("Pragma", "no-cache");	
+		ctx.setResponseHeader("Pragma", "no-cache");
+		ctx.setResponseHeader("Cache-Enable", "false");
 	}	
 }

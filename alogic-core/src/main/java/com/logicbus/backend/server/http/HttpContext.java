@@ -73,6 +73,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.11.48 [20180807 duanyy] <br>
  * - 优化缓存相关的http控制头的输出 <br>
+ * 
+ * @version 1.6.11.50 [20180808 duanyy] <br>
+ * - 从Http头中获取Sample信息 <br>
  */
 
 public class HttpContext extends Context {
@@ -227,7 +230,7 @@ public class HttpContext extends Context {
 		if (StringUtils.isEmpty(globalSerial)){
 			globalSerial = request.getHeader("GlobalSerial");
 			if (StringUtils.isEmpty(globalSerial)){
-				String sample = request.getParameter("sample");
+				String sample = request.getHeader("sample");
 				globalSerial = createGlobalSerial(StringUtils.isNotEmpty(sample) && Boolean.parseBoolean(sample));
 			}
 		}
