@@ -2,6 +2,7 @@ package com.alogic.vfs.xscript;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -31,6 +32,9 @@ import com.logicbus.backend.server.http.HttpCacheTool;
  * 
  * @version 1.6.11.48 [20180807 duanyy] <br>
  * - 优化缓存相关的http控制头的输出 <br>
+ * 
+ * @version 1.6.11.49 [20180808 duanyy] <br>
+ * - 修正下载中文名的乱码问题 <br>
  */
 public class DownloadFromBlob extends AbstractLogiclet{
 	protected String pid = "$context";
@@ -42,6 +46,7 @@ public class DownloadFromBlob extends AbstractLogiclet{
 	protected String $filename = "";
 	protected String $contentType = "";
 	protected HttpCacheTool cacheTool = null;
+	protected String encoding = "utf-8";
 	
 	public DownloadFromBlob(String tag, Logiclet p) {
 		super(tag, p);
@@ -60,6 +65,7 @@ public class DownloadFromBlob extends AbstractLogiclet{
 		$filename = PropertiesConstants.getRaw(p, "filename", $filename);
 		$contentType = PropertiesConstants.getRaw(p, "contentType", $contentType);
 		cacheTool = Settings.get().getToolkit(HttpCacheTool.class);
+		encoding = PropertiesConstants.getString(p,"encoding",encoding);
 	}
 
 	@Override
@@ -91,6 +97,9 @@ public class DownloadFromBlob extends AbstractLogiclet{
 			String filename = PropertiesConstants.transform(ctx, $filename,"");
 			if (StringUtils.isNotEmpty(filename)){
 				serviceContext.setResponseHeader("Content-Disposition", String.format("attachment; filename=%s",filename));
+				filename = URLEncoder.encode(filename, encoding);
+				serviceContext.setResponseHeader("Content-Disposition", 
+					String.format("attachment; filename=%s;filename*=%s''%s",filename,encoding,filename));
 			}
 			
 			String contentType = PropertiesConstants.transform(ctx, $contentType,"");
