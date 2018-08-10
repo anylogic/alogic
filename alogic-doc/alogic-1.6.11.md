@@ -287,4 +287,8 @@ alogic-1.6.11
 - alogic-rpc:Gateway增加form数据的拦截模式;
 - alogic-rpc:优化Gateway的缓存处理;
 
+### 1.6.11.51 [20180810 duanyy]
+- alogic-common:xscript的set指令增加raw模式;
+
+
 

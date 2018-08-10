@@ -20,12 +20,16 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.11.42 [20170509 duanyy] <br>
  * - 支持动态id输出<br>
+ * 
+ * @version 1.6.11.51 [20180810 duanyy] <br>
+ * - 增加raw模式 <br>
  */
 public class Set extends AbstractLogiclet {
 	protected String $id;
 	protected String $value;
 	protected String $dftValue = "";
 	protected boolean ref = false;
+	protected boolean raw = false;
 	
 	public Set(String tag, Logiclet p) {
 		super(tag, p);
@@ -37,6 +41,7 @@ public class Set extends AbstractLogiclet {
 		$id = PropertiesConstants.getRaw(p,"id","");
 		$value = PropertiesConstants.getRaw(p,"value","");
 		ref = PropertiesConstants.getBoolean(p,"ref",ref,true);
+		raw = PropertiesConstants.getBoolean(p,"raw",raw,true);
 		$dftValue = PropertiesConstants.getRaw(p,"dft",$dftValue);
 	}
 
@@ -45,16 +50,29 @@ public class Set extends AbstractLogiclet {
 		String id = PropertiesConstants.transform(ctx, $id, "");
 		if (StringUtils.isNotEmpty(id)){
 			XsObjectProperties p = new XsObjectProperties(current,ctx);
-			String v = PropertiesConstants.transform(p,$value,"");
-			String dft = PropertiesConstants.transform(p,$dftValue,"");
-			if (StringUtils.isEmpty(v)){
-				v = dft;
+			if (raw){
+				if (ref){
+					String v = PropertiesConstants.getRaw(p, $value, "");
+					if (StringUtils.isEmpty(v)){
+						ctx.SetValue(id, $dftValue);
+					}else{
+						ctx.SetValue(id, v);
+					}
+				}else{
+					ctx.SetValue(id, $value);
+				}
+			}else{
+				String v = PropertiesConstants.transform(p,$value,"");
+				String dft = PropertiesConstants.transform(p,$dftValue,"");
+				if (StringUtils.isEmpty(v)){
+					v = dft;
+				}
+				if (ref){
+					v = PropertiesConstants.getString(p,v,dft,false);
+				}
+				
+				ctx.SetValue(id, v);
 			}
-			if (ref){
-				v = PropertiesConstants.getString(p,v,dft,false);
-			}
-			
-			ctx.SetValue(id, v);
 		}
 	}
 
