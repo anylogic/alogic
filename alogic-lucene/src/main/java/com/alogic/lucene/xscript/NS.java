@@ -12,6 +12,9 @@ import com.alogic.xscript.plugins.Segment;
  * Namespace
  * @author yyduan
  * @since 1.6.11.31
+ * 
+ * @version 1.6.11.52 [20180816 duanyy] <br>
+ * - 增加lucene-doc-del插件 <br>
  */
 public class NS extends Segment{
 
@@ -24,6 +27,7 @@ public class NS extends Segment{
 		registerModule("lucene-reader",XsReader.class);
 		registerModule("lucene-segment",XsSegment.class);
 		
+		registerModule("lucene-doc-del",XsDocDelete.class);
 		registerModule("lucene-doc",XsDoc.class);
 		registerModule("lucene-doc-commit",DocCommit.class);
 		registerModule("lucene-doc-string",DocSetString.class);
