@@ -15,6 +15,7 @@ import com.alogic.blob.BlobWriter;
 import com.alogic.vfs.context.FileSystemSource;
 import com.alogic.vfs.core.VirtualFileSystem;
 import com.anysoft.util.BaseException;
+import com.anysoft.util.IOTools;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.KeyGen;
 import com.anysoft.util.Properties;
@@ -27,6 +28,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.11.22 [duanyy 20180314] <br>
  * - getFile增加文件是否存在的判断<br>
+ * 
+ * @version 1.6.11.53 [20180817 duanyy] <br>
+ * - BlobManager模型变更 <br>
  */
 public class VFSBlobManager extends BlobManager.Abstract{
 	/**
@@ -196,25 +200,54 @@ public class VFSBlobManager extends BlobManager.Abstract{
 	public static class VFSBlobWriter implements BlobWriter{
 		protected VFSBlobInfo info = null;
 		protected VirtualFileSystem vfs = null;
+		protected int bufferSize = 10 * 1024;
 		
 		public VFSBlobWriter(VFSBlobInfo info,VirtualFileSystem vfs){
 			this.info = info;
 			this.vfs = vfs;
 		}
 		
-		@Override
-		public OutputStream getOutputStream() {
-			return vfs.writeFile(info.getPath());
-		}
-
-		@Override
-		public void finishWrite(OutputStream out) {
-			vfs.finishWrite(info.getPath(), out);
-		}
-
+		public VFSBlobWriter(VFSBlobInfo info,VirtualFileSystem vfs,int bufferSize){
+			this.info = info;
+			this.vfs = vfs;
+			this.bufferSize = bufferSize > 0 ? bufferSize : 10 * 1024;
+		}		
+		
 		@Override
 		public BlobInfo getBlobInfo() {
 			return info;
+		}
+
+		@Override
+		public void write(InputStream in, long contentLength,
+				boolean toCloseStreamWhenFinished) {
+			OutputStream out = vfs.writeFile(info.getPath());
+			byte[] buffer = new byte[bufferSize];			
+			int size = 0;
+			try {
+				while ((size = in.read(buffer)) != -1) {
+					out.write(buffer, 0, size);
+				}
+			}catch (Exception ex){
+				throw new BaseException("core.e1004", ex.getMessage());
+			}finally{
+				vfs.finishWrite(info.getPath(), out);
+				if (toCloseStreamWhenFinished){
+					IOTools.close(in);
+				}
+			}
+		}
+
+		@Override
+		public void write(byte[] content) {
+			OutputStream out = vfs.writeFile(info.getPath());
+			try {
+				out.write(content);
+			}catch (Exception ex){
+				throw new BaseException("core.e1004", ex.getMessage());
+			}finally{
+				vfs.finishWrite(info.getPath(), out);
+			}
 		}
 		
 	}

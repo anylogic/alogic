@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<script>
+	<using xmlTag="blob" module="com.alogic.vfs.xscript.Blob"/>
+	<blob globalId="s3">
+		<now id="fileId"/>
+		<blob-save fileId="${fileId}" content="Hello , this is a test file"/>
+		
+		<blob-load fileId="${fileId}" id="content"/>
+		
+		<log msg="Content = ${content}"/>
+		
+		<blob-share fileId="${fileId}" id="sharePath"/>
+		<log msg="sharePath = ${sharePath}"/>
+		<blob-share fileId="${fileId}" id="sharePath"/>
+		<log msg="sharePath = ${sharePath}"/>		
+	</blob>
+</script>

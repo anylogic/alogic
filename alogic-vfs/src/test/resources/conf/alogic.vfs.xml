@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vfs>
+	<context>
+		<fs 
+			id="blob"
+			name="blob存储系统"
+			module="com.alogic.vfs.local.LocalFileSystem" 
+			root="${ketty.home}/blob"
+			note="Debug环境采用本地文件系统"
+		/>					
+	</context>
+</vfs>

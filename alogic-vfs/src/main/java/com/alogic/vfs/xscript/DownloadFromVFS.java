@@ -30,6 +30,9 @@ import com.logicbus.backend.server.http.HttpCacheTool;
  * 
  * @version 1.6.11.49 [20180808 duanyy] <br>
  * - 修正下载中文名的乱码问题 <br>
+ * 
+ * @version 1.6.11.53 [20180817 duanyy] <br>
+ * - 删除无用代码 <br>
  */
 public class DownloadFromVFS extends AbstractLogiclet{
 	protected String pid = "$context";
@@ -87,7 +90,6 @@ public class DownloadFromVFS extends AbstractLogiclet{
 				
 				String filename = PropertiesConstants.transform(ctx, $filename,"");
 				if (StringUtils.isNotEmpty(filename)){
-					serviceContext.setResponseHeader("Content-Disposition", String.format("attachment; filename=%s",filename));
 					filename = URLEncoder.encode(filename, encoding);
 					serviceContext.setResponseHeader("Content-Disposition", 
 						String.format("attachment; filename=%s;filename*=%s''%s",filename,encoding,filename));
@@ -120,5 +122,10 @@ public class DownloadFromVFS extends AbstractLogiclet{
 		}else{
 			ctx.SetValue(id, "false");
 		}
+	}
+	
+	public static void main(String[] args){
+		System.out.println(String.format("%s/%s/%s","a","d","d"));
+		System.out.println(String.format("%s/%s/%s","a","d","1","2"));
 	}
 }

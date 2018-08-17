@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<context>
+		<blob
+			id="vfs" 
+	    	module="com.alogic.blob.vfs.VFSBlobManager" 
+	    	vfsId="blob" 
+	    	home="/blob"
+	    	contentType="text/plain"
+	      />
+		<blob
+			id="s3" 
+	    	module="com.alogic.blob.aws.S3BlobManager" 
+			endpoint="http://10.142.233.147:8770"
+			accessKey="LXN8T3XVSBIKL9ODZ7BW"
+			secretKey="djmOfOAqtb0DJX2aA3HnGEV9lg6JsJWMhEHCd9zL"
+			bucket="test3"
+			share.mode="public"
+	    	contentType="text/plain"
+	      />	      
+	</context>
+</source>

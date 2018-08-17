@@ -25,6 +25,9 @@ import com.anysoft.webloader.ShareTool;
  * 
  * @version 1.6.4.37 [duanyy 20151218] <br>
  * - 为指定的文件生成共享路径 <br>
+ * 
+ * @version 1.6.11.53 [20180817 duanyy] <br>
+ * - 共享路径可以定制filename和contentType <br>
  */
 public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 	
@@ -69,7 +72,7 @@ public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 	 * @param id 文件id
 	 * @return 分享的url
 	 */
-	public String getSharePath(String id);
+	public String getSharePath(String id,String filename,String contentType);
 	
 	/**
 	 * 扫描文件注册表（可能有的实现不支持）
@@ -138,8 +141,8 @@ public interface BlobManager extends XMLConfigurable,Configurable,Reportable{
 		}
 		
 		@Override
-		public String getSharePath(String fileId){
-			return tool.encodePath("share.blob",getId(),fileId);
+		public String getSharePath(String fileId,String filename,String contentType){
+			return tool.encodePath("share.blob",getId(),fileId,filename,contentType);
 		}
 	}
 }

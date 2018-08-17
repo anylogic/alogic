@@ -1,69 +1,153 @@
 package com.alogic.blob.aws;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
+
 import com.alogic.blob.BlobInfo;
 import com.alogic.blob.BlobManager;
 import com.alogic.blob.BlobReader;
 import com.alogic.blob.BlobWriter;
+import com.alogic.sda.SDAFactory;
+import com.alogic.sda.SecretDataArea;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.S3ClientOptions;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.CreateBucketRequest;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
 
 /**
  * 基于AWS s3的blob管理器
  * @author hyh
+ * 
+ * @since 1.6.11.53
  */
-public class S3BlobManager extends BlobManager.Abstract{
+public class S3BlobManager extends BlobManager.Abstract implements AWSCredentialsProvider{
 
 	/**
 	 * a logger of log4j
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(S3BlobManager.class);
 
-	private AmazonS3 s3;
+	private AmazonS3 s3 = null;
 	private String
-            accessKey = "Your Access Key",
-            secretKey = "Your Secret Key",
-            endpoint = "Your End Point";
+            accessKey = "",
+            secretKey = "",
+            endpoint = "",
+            region="";
+	/**
+	 * 访问控制
+	 */
+	private CannedAccessControlList acl = CannedAccessControlList.PublicRead;
+	
+	private String sdaId = "";
 
 	private String
-            bucketName = "ytcloud",
+            bucketName = "",
             contentType = "text/plain";
+	
+	private AWSCredentials credentials = null;	
+	
+	/**
+	 * 共享模式：blob(blob共享),public(public链接),s3share(s3的共享连接)
+	 */
+	private String shareMode = "blob";
 
+	private long shareTTL = 6 * 24 * 60 * 60 * 1000;
+	private String sharePath = "%s/%s/%s";
+	
+	@Override
+	public AWSCredentials getCredentials() {
+		if (StringUtils.isEmpty(sdaId)){
+			return credentials;
+		}
+		
+		SecretDataArea sda = null;
+		try {
+			sda = SDAFactory.getDefault().load(sdaId, true);
+		}catch (Exception ex){
+			LOG.error("Can not find sda : " + sdaId);
+			LOG.error(ExceptionUtils.getStackTrace(ex));
+		}		
+		if (sda == null){
+			return credentials;
+		}
+		
+		String newAccessKey = sda.getField("accessKey", accessKey);
+		String newSecrectKey = sda.getField("secretKey",secretKey);
+		
+		if (newAccessKey.equals(accessKey) && newSecrectKey.equals(secretKey)){
+			return credentials;
+		}
+		
+		// accessKey和secretKey已经变化，创建一个新的credentials
+		synchronized(this){
+			credentials = new BasicAWSCredentials(newAccessKey,newSecrectKey);
+			accessKey = newAccessKey;
+			secretKey = newSecrectKey;
+			return credentials;
+		}
+	}
+
+	@Override
+	public void refresh() {
+		// nothing to do
+	}
+	
     private void initS3()
     {
-        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+    	credentials = new BasicAWSCredentials(accessKey, secretKey);
+    	
         ClientConfiguration clientConfiguration = new ClientConfiguration();
         clientConfiguration.setProtocol(Protocol.HTTP);
-        s3 = new AmazonS3Client(credentials, clientConfiguration);
-        s3.setEndpoint(endpoint);
-        s3.setS3ClientOptions(S3ClientOptions.builder().setPathStyleAccess(true).build());
-/*
-        BasicAWSCredentials awsCreds = new BasicAWSCredentials("accessKey", "secretKey");
         s3 = AmazonS3ClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-                .build();
-        s3.setRegion(Region.getRegion(Regions.DEFAULT_REGION)); // 此处根据自己的 s3 地区位置改变*/
+    	.withPathStyleAccessEnabled(true)
+    	.withCredentials(this)      
+    	.withClientConfiguration(clientConfiguration)
+    	.withEndpointConfiguration(new EndpointConfiguration(endpoint, region))
+    	.build(); 	
     }
 
+	@Override
+	public String getSharePath(String fileId,String filename,String contentType){ 
+		if (shareMode.equalsIgnoreCase("public")){
+			return String.format(sharePath, endpoint,bucketName,fileId);
+		}else{
+			if (shareMode.equalsIgnoreCase("s3share")){
+		        GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(bucketName, fileId);  
+		        urlRequest.setExpiration(new Date(System.currentTimeMillis() + shareTTL));  
+		        URL url = s3.generatePresignedUrl(urlRequest);    
+		        return url==null?"":url.toString(); 				
+			}else{
+				return super.getSharePath(fileId,filename,contentType);
+			}
+		}
+	}
 
 	@Override
 	public BlobWriter newFile(String id) {
-		return new S3BlobWriter(s3,bucketName,id,contentType);
+		return new S3BlobWriter(s3,bucketName,id,contentType,acl);
 	}
 
 	@Override
@@ -88,30 +172,37 @@ public class S3BlobManager extends BlobManager.Abstract{
 		return true;
 	}
 
-
 	@Override
 	public void configure(Properties p){
 		super.configure(p);
 
-		bucketName = PropertiesConstants.getString(p,"bucketName", bucketName);
+		bucketName = PropertiesConstants.getString(p,"bucket", bucketName);
         contentType =  PropertiesConstants.getString(p,"contentType", contentType,true);
         accessKey =  PropertiesConstants.getString(p,"accessKey", accessKey,true);
         secretKey =  PropertiesConstants.getString(p,"secretKey", secretKey,true);
         endpoint =  PropertiesConstants.getString(p,"endpoint", endpoint,true);
+        region = PropertiesConstants.getString(p,"region", region,true);
+        sdaId = PropertiesConstants.getString(p,"sdaId", sdaId,true);
+        shareMode = PropertiesConstants.getString(p,"share.mode", shareMode,true);
+        shareTTL = PropertiesConstants.getLong(p,"share.ttl", shareTTL,true);
+        sharePath = PropertiesConstants.getString(p,"share.path", sharePath,true);
+        
+        acl = CannedAccessControlList.valueOf(PropertiesConstants.getString(p,"acl", acl.name(),true));
+        
         initS3();
-		createBucket(bucketName);
-
+        makeBucketExist(bucketName);
 	}
 
-    private void createBucket(String bucketName) {
-        if (s3.doesBucketExistV2(bucketName)) {
-            LOG.info("Bucket {} already exists.\n", bucketName);
-        } else {
+    private void makeBucketExist(String bucketName) {
+        if (!s3.doesBucketExistV2(bucketName)) {
+            LOG.info("Bucket {} does not already exists.Create it.\n", bucketName);
             try {
-                s3.createBucket(bucketName);
+            	CreateBucketRequest request = new CreateBucketRequest(bucketName);
+            	request.setCannedAcl(acl);
+                s3.createBucket(request);
             } catch (AmazonS3Exception e) {
                 LOG.error("Create bucket error.\n", e);
-            }
+            }          
         }
     }
 
@@ -131,33 +222,19 @@ public class S3BlobManager extends BlobManager.Abstract{
         return s3is;
     }
 
-    public static void close(Closeable... closeables) {
-        for (Closeable c:closeables){
-            if (null != c){
-                try{
-                    c.close();
-                }catch (Exception ex){
-                    LOG.error("Close stream exception ." , ex);
-                }
-            }
-        }
-    }
-
-
     public static class S3BlobReader implements BlobReader {
 
 		private InputStream inputStream;
 		private String id;
 		private String contentType;
 
-		S3BlobReader(InputStream inputStream , String id , String contentType)
+		public S3BlobReader(InputStream inputStream , String id , String contentType)
 		{
 			this.inputStream = inputStream;
 			this.id = id;
 			this.contentType = contentType;
 		}
-
-
+		
 		@Override
 		public InputStream getInputStream(long offset) {
 			return this.inputStream;
@@ -165,7 +242,7 @@ public class S3BlobManager extends BlobManager.Abstract{
 
 		@Override
 		public void finishRead(InputStream in) {
-			close(in);
+			IOTools.close(in);
 		}
 
 		@Override
@@ -174,73 +251,57 @@ public class S3BlobManager extends BlobManager.Abstract{
 		}
 	}
 
+    /**
+     * S3BlobWriter
+     * @author yyduan
+     *
+     */
 	public static class S3BlobWriter implements BlobWriter {
-
-	    //最大上传大小10M
-        private static final int MAX_UPLOAD_SIZE = 1024*1024*10;
-        private PipedInputStream pipedIS = new PipedInputStream(MAX_UPLOAD_SIZE);
-
         private AmazonS3 s3;
 		private String bucketName ;
 		private String id;
         private String contentType;
+        private CannedAccessControlList acl;
 
-		S3BlobWriter(AmazonS3 s3 ,String bucketName, String id , String contentType) {
+        public S3BlobWriter(AmazonS3 s3 ,String bucketName, String id , String contentType,CannedAccessControlList acl) {
 		    this.s3 = s3;
 			this.bucketName = bucketName;
 			this.id = id;
 			this.contentType = contentType;
-		}
-
-		@Override
-		public OutputStream getOutputStream() {
-			PipedOutputStream pipedOS = new PipedOutputStream();
-			try {
-				pipedIS.connect(pipedOS);
-			}
-			catch (IOException e) {
-				LOG.error("Connect stream exception.",e);
-			}
-
-			return pipedOS;
-		}
-
-		@Override
-		public void finishWrite(OutputStream out) {
-
-			close(out);
-            //将PipedInputStream读入buf 最大10M
-            byte[] buf = new byte[MAX_UPLOAD_SIZE];
-            int offset = 0;
-            int total = 0;
-            while(true) {
-                try {
-                    int len = pipedIS.read(buf , offset , 1024);
-                    if(len == -1)
-                    {
-                        break;
-                    }
-                    offset += len;
-                    total += len;
-                } catch (IOException e) {
-                    LOG.error("Read stream exception.",e);
-                    return;
-                }
-            }
-
-			close(pipedIS);
-
-            //上传到S3
-            ByteArrayInputStream byteIS = new ByteArrayInputStream(buf,0,total);
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(total);
-            s3.putObject(bucketName,id,byteIS,metadata);
-
+			this.acl = acl;
 		}
 
 		@Override
 		public BlobInfo getBlobInfo() {
 			return new BlobInfo.Abstract(id, contentType);
+		}
+
+		@Override
+		public void write(InputStream in, long contentLength,
+				boolean toCloseStreamWhenFinished) {
+			try {
+	            ObjectMetadata metadata = new ObjectMetadata();
+	            if (contentLength > 0){
+	            	metadata.setContentLength(contentLength);
+	            }
+	            PutObjectRequest request = new PutObjectRequest(bucketName,id,in,metadata);
+	            request.withCannedAcl(acl);
+	            s3.putObject(request);
+			}finally{
+				if (toCloseStreamWhenFinished){
+					IOTools.close(in);
+				}
+			}
+		}
+		
+		@Override
+		public void write(byte[] content) {
+            ByteArrayInputStream byteIS = new ByteArrayInputStream(content,0,content.length);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(content.length);
+            PutObjectRequest request = new PutObjectRequest(bucketName,id,byteIS,metadata);
+            request.withCannedAcl(acl);            
+            s3.putObject(request);
 		}
 	}
 }

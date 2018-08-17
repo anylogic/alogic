@@ -3,9 +3,12 @@ package com.alogic.blob.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.alogic.blob.BlobInfo;
@@ -39,17 +42,22 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.11.48 [20180807 duanyy] <br>
  * - 优化缓存相关的http控制头的输出 <br>
+ * 
+ * @version 1.6.11.53 [20180817 duanyy] <br>
+ * - 支持前端输入filename和contentType参数，并写出到Response中 <br>
  */
 public class Download extends Servant {
 	protected byte [] buffer = null;
 	protected boolean cacheEnable = true;
 	protected HttpCacheTool cacheTool = null;
+	protected String encoding = "utf-8";
 	@Override
 	public void create(ServiceDescription sd){
 		super.create(sd);
 		Properties p = sd.getProperties();
 		cacheEnable = PropertiesConstants.getBoolean(p, "cacheEnable", true);
 		int bufferSize = PropertiesConstants.getInt(p, "bufferSize", 10240,true);
+		encoding = PropertiesConstants.getString(p, "http.encoding", encoding);
 		
 		buffer = new byte [bufferSize];
 		cacheTool = Settings.get().getToolkit(HttpCacheTool.class);
@@ -61,6 +69,8 @@ public class Download extends Servant {
 		
 		String fileId = getArgument("fileId",ctx); // NOSONAR
 		String domain = getArgument("domain","default",ctx); // NOSONAR
+		String filename = getArgument("filename",ctx);
+		String contentType = getArgument("contentType",ctx);
 		
 		BlobManager manager = BlobManagerFactory.get(domain);
 		if (manager == null){
@@ -74,8 +84,22 @@ public class Download extends Servant {
 		
 		BlobInfo info = reader.getBlobInfo();
 		
-		ctx.setResponseContentType(info.getContentType());
 		ctx.enableClientCache(cacheEnable);
+		
+		if (StringUtils.isNotEmpty(filename)){
+			try {
+				filename = URLEncoder.encode(filename, encoding);
+			} catch (UnsupportedEncodingException e) {
+			}
+			ctx.setResponseHeader("Content-Disposition", 
+				String.format("attachment; filename=%s;filename*=%s''%s",filename,encoding,filename));
+		}
+		
+		if (StringUtils.isNotEmpty(contentType)){
+			ctx.setResponseContentType(contentType);
+		}else{
+			ctx.setResponseContentType(info.getContentType());
+		}
 		
 		InputStream in = reader.getInputStream(0);
 		if (in == null){
