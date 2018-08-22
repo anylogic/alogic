@@ -299,4 +299,7 @@ alogic-1.6.11
 ### 1.6.11.54 [20180822 duanyy]
 - alogic-common:增加所生成证书的keyUsage和extKeyUsage的设置;
 
+### 1.6.11.55 [20180822 duanyy]
+- alogic-common:增加获取证书序列号功能;
+
 

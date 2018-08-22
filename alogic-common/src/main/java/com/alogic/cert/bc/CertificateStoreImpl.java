@@ -15,15 +15,12 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-
 import com.alogic.cert.CertificateContent;
 import com.alogic.cert.CertificateStore;
 import com.anysoft.util.IOTools;
@@ -56,6 +53,8 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * @version 1.6.11.54 [20180822 duanyy] <br>
  * - 增加所生成证书的keyUsage和extKeyUsage的设置; <br>
  * 
+ * @version 1.6.11.55 [20180822 duanyy] <br>
+ * - 增加获取证书序列号功能; <br>
  */
 public class CertificateStoreImpl implements CertificateStore{
 	/**
@@ -126,7 +125,7 @@ public class CertificateStoreImpl implements CertificateStore{
 	/**
 	 * 根证书
 	 */
-	protected Certificate rootCert = null;
+	protected X509Certificate rootCert = null;
 	
 	/**
 	 * 根证书私钥
@@ -221,7 +220,7 @@ public class CertificateStoreImpl implements CertificateStore{
 				}finally{
 					IOTools.close(in);
 				}
-				rootCert = keyStore.getCertificate(jksRootAlias);
+				rootCert = (X509Certificate) keyStore.getCertificate(jksRootAlias);
 				rootKey = (PrivateKey)keyStore.getKey(jksRootAlias, jksPwd.toCharArray());
 			}else{
 				keyStore.load(null, jksPwd.toCharArray());
@@ -264,7 +263,7 @@ public class CertificateStoreImpl implements CertificateStore{
 					IOTools.close(out);
 				}
 				
-				rootCert = keyStore.getCertificate(jksRootAlias);
+				rootCert = (X509Certificate) keyStore.getCertificate(jksRootAlias);
 				rootKey = (PrivateKey)keyStore.getKey(jksRootAlias, jksPwd.toCharArray());
 			}
 		}catch (Exception ex){
@@ -275,7 +274,7 @@ public class CertificateStoreImpl implements CertificateStore{
 	@Override
 	public CertificateContent getRoot(CertificateContent content) {
 		try {
-			content.setContent(rootCert.getEncoded(), rootKey.getEncoded());			
+			content.setContent(rootCert.getSerialNumber().toString(),rootCert.getEncoded(), rootKey.getEncoded());			
 		}catch (Exception ex){
 			LOG.error(ExceptionUtils.getStackTrace(ex));
 		}
@@ -329,7 +328,7 @@ public class CertificateStoreImpl implements CertificateStore{
 			
             X509Certificate certifacate = new JcaX509CertificateConverter().getCertificate(holder);
             
-			content.setContent(certifacate.getEncoded(), prik.getEncoded());
+			content.setContent(certifacate.getSerialNumber().toString(),certifacate.getEncoded(), prik.getEncoded());
 		}catch (Exception ex){
 			LOG.error(ExceptionUtils.getStackTrace(ex));
 		}
