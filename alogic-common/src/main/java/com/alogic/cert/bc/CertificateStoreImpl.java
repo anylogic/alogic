@@ -31,8 +31,14 @@ import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;
 
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;  
 import org.bouncycastle.cert.X509v3CertificateBuilder;  
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;  
@@ -46,6 +52,10 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * @author yyduan
  *
  * @since 1.6.11.10
+ * 
+ * @version 1.6.11.54 [20180822 duanyy] <br>
+ * - 增加所生成证书的keyUsage和extKeyUsage的设置; <br>
+ * 
  */
 public class CertificateStoreImpl implements CertificateStore{
 	/**
@@ -235,6 +245,8 @@ public class CertificateStoreImpl implements CertificateStore{
 					SubjectPublicKeyInfo.getInstance(pubk.getEncoded())
 				);
 				
+				addExtension(builder);
+				
 	            X509CertificateHolder holder = builder.build(
 	            	new JcaContentSignerBuilder(algorithm).setSecureRandom(secureRandom).setProvider("BC").build(prik)
 	            );  
@@ -308,17 +320,48 @@ public class CertificateStoreImpl implements CertificateStore{
 				SubjectPublicKeyInfo.getInstance(pubk.getEncoded())
 			);
 			
+			addExtension(builder);
+			
 			//用根证书的Key进行签名
 			X509CertificateHolder holder = builder.build(
             		new JcaContentSignerBuilder(algorithm).setSecureRandom(secureRandom).setProvider("BC").build(rootKey)
             		);  
-  
+			
             X509Certificate certifacate = new JcaX509CertificateConverter().getCertificate(holder);
+            
 			content.setContent(certifacate.getEncoded(), prik.getEncoded());
 		}catch (Exception ex){
 			LOG.error(ExceptionUtils.getStackTrace(ex));
 		}
 		return content;
 	}
+	
+	public void addExtension(X509v3CertificateBuilder builder) throws CertIOException{		
+		
+		int usage = KeyUsage.digitalSignature;  
+        usage += KeyUsage.nonRepudiation;  
+        usage += KeyUsage.keyEncipherment;  
+        usage += KeyUsage.dataEncipherment;  
+        usage += KeyUsage.keyAgreement;  
+        usage += KeyUsage.keyCertSign;  
+        usage += KeyUsage.cRLSign;  
+        usage += KeyUsage.encipherOnly;  
+        usage += KeyUsage.decipherOnly;  
+  
+        builder.addExtension(Extension.keyUsage, true, new KeyUsage(usage));  		
+		
+		ASN1EncodableVector extKeyUsage = new ASN1EncodableVector();
+		extKeyUsage.add(KeyPurposeId.anyExtendedKeyUsage);
+		extKeyUsage.add(KeyPurposeId.id_kp_clientAuth);
+		extKeyUsage.add(KeyPurposeId.id_kp_serverAuth);
+		extKeyUsage.add(KeyPurposeId.id_kp_scvpClient);
+		extKeyUsage.add(KeyPurposeId.id_kp_scvpServer);
+		extKeyUsage.add(KeyPurposeId.id_kp_codeSigning);
+		extKeyUsage.add(KeyPurposeId.id_kp_emailProtection);
+		extKeyUsage.add(KeyPurposeId.id_kp_timeStamping);
+		
+		builder.addExtension(Extension.extendedKeyUsage, false, new DERSequence(extKeyUsage));
+	}
 }
+
 

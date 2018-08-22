@@ -296,5 +296,7 @@ alogic-1.6.11
 ### 1.6.11.53 [20180817 duanyy]
 - alogic-vfs:增加基于amazon s3的BlobManager实现;
 
+### 1.6.11.54 [20180822 duanyy]
+- alogic-common:增加所生成证书的keyUsage和extKeyUsage的设置;
 
 
