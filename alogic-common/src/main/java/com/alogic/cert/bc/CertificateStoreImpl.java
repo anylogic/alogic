@@ -17,13 +17,16 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+
 import com.alogic.cert.CertificateContent;
 import com.alogic.cert.CertificateStore;
 import com.anysoft.util.IOTools;
+import com.anysoft.util.KeyGen;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
 import com.anysoft.util.XmlElementProperties;
@@ -55,6 +58,9 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * 
  * @version 1.6.11.55 [20180822 duanyy] <br>
  * - 增加获取证书序列号功能; <br>
+ * 
+ * @version 1.6.11.56 [20180823 duanyy] <br>
+ * - 证书的序列号可定制; <br>
  */
 public class CertificateStoreImpl implements CertificateStore{
 	/**
@@ -237,7 +243,7 @@ public class CertificateStoreImpl implements CertificateStore{
 		        
 				X509v3CertificateBuilder builder = new X509v3CertificateBuilder(
 					new X500Name(getRootX500Name()),
-					BigInteger.valueOf(now), 
+					BigInteger.valueOf(now * 10000 + Integer.parseInt(KeyGen.uuid(5, 0, 9))),
 					new Date(now), 
 					new Date(now + rootTTL * 365 * 24L * 60L * 60L * 1000L), 
 					new X500Name(getRootX500Name()), 
@@ -282,13 +288,13 @@ public class CertificateStoreImpl implements CertificateStore{
 	}
 	
 	@Override
-	public CertificateContent newCertificate(CertificateContent content,String cn) {
-		return newCertificate(content,getX500Name(cn),null);
+	public CertificateContent newCertificate(BigInteger sn,CertificateContent content,String cn) {
+		return newCertificate(sn,content,getX500Name(cn),null);
 	}
 	
 	@Override
-	public CertificateContent newCertificate(CertificateContent content,Properties p) {
-		return newCertificate(content,getX500Name(p),p);
+	public CertificateContent newCertificate(BigInteger sn,CertificateContent content,Properties p) {
+		return newCertificate(sn,content,getX500Name(p),p);
 	}
 	
 	/**
@@ -298,7 +304,7 @@ public class CertificateStoreImpl implements CertificateStore{
 	 * @param subject x500name
 	 * @param p 参数
 	 */
-	protected CertificateContent newCertificate(CertificateContent content,String subject,Properties p){
+	protected CertificateContent newCertificate(BigInteger sn,CertificateContent content,String subject,Properties p){
 		try {
 			long ttl = p == null ? rootTTL : PropertiesConstants.getLong(p, "ttl", rootTTL);
 			long now = System.currentTimeMillis();
@@ -312,7 +318,7 @@ public class CertificateStoreImpl implements CertificateStore{
 	        //构造证书
 			X509v3CertificateBuilder builder = new X509v3CertificateBuilder(
 				new X500Name(getRootX500Name()),
-				BigInteger.valueOf(now), 
+				sn, 
 				new Date(now), 
 				new Date(now + ttl * 365 * 24L * 60L * 60L * 1000L), 
 				new X500Name(subject), 

@@ -16,12 +16,14 @@ import com.anysoft.util.PropertiesConstants;
  * @author yyduan
  * 
  * @since 1.6.11.9
- *
+ * @version 1.6.11.56 [20180823 duanyy] <br>
+ * - 证书的序列号可定制; <br>
  */
 public class GetKey extends CertificateOperation{
 
 	protected String $id = "$cert-key";
-
+	protected String $raw = "false";
+	
 	public GetKey(String tag, Logiclet p) {
 		super(tag, p);
 	}
@@ -31,6 +33,7 @@ public class GetKey extends CertificateOperation{
 		super.configure(p);
 		
 		$id = PropertiesConstants.getRaw(p,"id",$id);
+		$raw = PropertiesConstants.getRaw(p,"raw",$raw);
 	}
 	
 	@Override
@@ -38,7 +41,7 @@ public class GetKey extends CertificateOperation{
 			XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 		String id = PropertiesConstants.transform(ctx, $id, "$cert-key");
 		if (StringUtils.isNotEmpty(id)){
-			String key = new String(content.getKey());
+			String key = new String(content.getKey(PropertiesConstants.transform(ctx, $raw, false)));
 			ctx.SetValue(id, key);
 		}
 	}

@@ -16,6 +16,9 @@ import com.anysoft.util.IOTools;
  * 
  * @version 1.6.11.55 [20180822 duanyy] <br>
  * - 增加获取证书序列号功能; <br>
+ * 
+ * @version 1.6.11.56 [20180823 duanyy] <br>
+ * - 证书的序列号可定制; <br>
  */
 public interface CertificateContent {
 	
@@ -34,15 +37,19 @@ public interface CertificateContent {
 	
 	/**
 	 * 获取私钥内容
+	 * 
+	 * @param raw 是否已原始格式输出
 	 * @return 私钥内容
 	 */
-	public byte[] getKey();
+	public byte[] getKey(boolean raw);
 	
 	/**
 	 * 获取证书内容
+	 * 
+	 * @param raw 是否已原始格式输出
 	 * @return 证书内容
 	 */
-	public byte[] getCert();
+	public byte[] getCert(boolean raw);
 	
 	/**
 	 * 保存私钥内容到文件
@@ -81,12 +88,12 @@ public interface CertificateContent {
 		}
 		
 		@Override
-		public byte[] getKey() {
+		public byte[] getKey(boolean raw) {
 			return this.key;
 		}
 
 		@Override
-		public byte[] getCert() {
+		public byte[] getCert(boolean raw) {
 			return this.cert;
 		}
 
