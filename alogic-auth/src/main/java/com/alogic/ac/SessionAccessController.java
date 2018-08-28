@@ -25,6 +25,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.11.22 [20180313 duanyy] <br>
  * - 匿名用户可以访问public服务 <br>
+ * 
+ * @version 1.6.11.57 [20180828 duanyy] <br>
+ * - 增加regex-match插件 <br>
  *
  */
 public class SessionAccessController extends AbstractACMAccessController{
@@ -37,6 +40,11 @@ public class SessionAccessController extends AbstractACMAccessController{
 	 * 操作员
 	 */
 	protected String operator = "$operator";
+	
+	/**
+	 * 浏览器的会话id
+	 */
+	protected String browserSessionId = "$session";
 	
 	/**
 	 * 所有登录用户采用同一个ACM
@@ -59,6 +67,7 @@ public class SessionAccessController extends AbstractACMAccessController{
 		
 		operator = PropertiesConstants.getString(p, "operator", operator);
 		dftUser = PropertiesConstants.getString(p, "anonymous", dftUser);
+		browserSessionId = PropertiesConstants.getString(p, "session", browserSessionId);
 	}
 	
 	@Override
@@ -85,6 +94,7 @@ public class SessionAccessController extends AbstractACMAccessController{
 			if (servant.getVisible().equals(ServiceDescription.PUBLIC) || 
 					principal.hasPrivilege(servant.getPrivilege())){
 				ctx.SetValue(operator, principal.getLoginId());
+				ctx.SetValue(browserSessionId, principal.getId());
 				return String.format("%s@%s", principal.getLoginId(),getClientIp(ctx));
 			}else{
 				throw new BaseException("core.e1010",

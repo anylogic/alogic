@@ -60,6 +60,7 @@ import com.alogic.xscript.plugins.NewLine;
 import com.alogic.xscript.plugins.Obj;
 import com.alogic.xscript.plugins.Now;
 import com.alogic.xscript.plugins.Rand;
+import com.alogic.xscript.plugins.RegexMatcher;
 import com.alogic.xscript.plugins.Remove;
 import com.alogic.xscript.plugins.Repeat;
 import com.alogic.xscript.plugins.Scope;
@@ -137,6 +138,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.11.36 [20180613 duanyy] <br>
  * - 增加plus,mul,div插件 <br>
+ * 
+ * @version 1.6.11.57 [20180828 duanyy] <br>
+ * - 增加浏览器会话id的传递 <br>
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -244,6 +248,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_PLUS = "plus";
 	public static final String STMT_MUL = "mul";
 	public static final String STMT_DIVIDE = "div";
+	public static final String STMT_REGEX_MATCHER = "regex-match";
 	
 	
 	protected static Handler<Fragment> metricsHandler = null;
@@ -316,6 +321,7 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_PLUS, Plus.class);
 		staticModules.put(STMT_MUL, Multiply.class);
 		staticModules.put(STMT_DIVIDE, Divide.class);
+		staticModules.put(STMT_REGEX_MATCHER,RegexMatcher.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	

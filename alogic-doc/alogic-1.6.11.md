@@ -304,3 +304,8 @@ alogic-1.6.11
 
 ### 1.6.11.56 [20180823 duanyy]
 - alogic-common:证书的序列号可定制;
+
+### 1.6.11.57 [20180828 duanyy]
+- alogic-common:增加regex-match插件;
+- alogic-auth:SessionAccessController增加浏览器会话id的传递;
+
