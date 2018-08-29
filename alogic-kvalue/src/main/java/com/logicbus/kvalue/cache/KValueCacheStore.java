@@ -47,6 +47,9 @@ import com.logicbus.kvalue.core.Table;
  * 
  * @version 1.6.11.45 [duanyy 20180722] <br>
  * - Sinkable实现增加nocache模式;
+ * 
+ * @version 1.6.11.58 [20180829 duanyy] <br>
+ * - 修正on-load之后，所注销对象的变量id <br>
  */
 public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements Store<CacheObject>{
 
@@ -218,7 +221,7 @@ public class KValueCacheStore extends Loader.Sinkable<CacheObject> implements St
 			}catch (Exception ex){
 				LOG.info("Failed to execute onload script" + ExceptionUtils.getStackTrace(ex));
 			}finally{
-				logicletContext.removeObject("$cache");
+				logicletContext.removeObject(cacheObjectId);
 			}
 		}
 	}

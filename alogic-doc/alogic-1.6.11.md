@@ -309,3 +309,9 @@ alogic-1.6.11
 - alogic-common:增加regex-match插件;
 - alogic-auth:SessionAccessController增加浏览器会话id的传递;
 
+### 1.6.11.58 [20180829 duanyy]
+- alogic-common:增加树相关的操作，如数组转换为树，树遍历等;
+- alogic-dbcp:修正on-load事件处理问题;
+- alogic-common:修正on-load事件处理问题;
+- alogic-kvalue:修正on-load事件处理问题
+

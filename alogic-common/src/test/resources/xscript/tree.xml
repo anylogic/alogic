@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<script>
+	<tree>
+		<tree-node id="100" parent="0" data="duan"/>
+		<tree-node id="101" parent="0" data="duan"/>
+		<tree-node id="102" parent="0" data="duan"/>
+		<tree-node id="1000" parent="100" data="duan"/>
+		<tree-node id="1001" parent="100" data="duan"/>
+		<tree-node id="1002" parent="102" data="duan"/>
+		<tree-output parent="0" depth="3">
+			<get id="id" value="${$tree-id}"/>
+			<get id="data" value="${$tree-data}"/>
+		</tree-output>
+		<tree-traverse>
+			<get id="ext" value="ext"/>
+		</tree-traverse>
+	</tree>
+</script>

@@ -90,7 +90,8 @@ public class Main {
 		//runAsJson("java:///xscript/sp.xml#com.alogic.xscript.demo.Main",settings);
 		//runAsJson("java:///xscript/plus.xml#com.alogic.xscript.demo.Main",settings);
 		//runAsJson("java:///xscript/xml.xml#com.alogic.xscript.demo.Main",settings);
-		runAsJson("java:///xscript/regex.xml#com.alogic.xscript.demo.Main",settings);
+		//runAsJson("java:///xscript/regex.xml#com.alogic.xscript.demo.Main",settings);
+		runAsJson("java:///xscript/tree.xml#com.alogic.xscript.demo.Main",settings);
 	}
 
 }

@@ -32,6 +32,9 @@ import com.logicbus.dbcp.sql.DBTools;
  * 
  * @author yyduan
  * @since 1.6.11.45 
+ * 
+ * @version 1.6.11.58 [20180829 duanyy] <br>
+ * - 修正获取onLoad节点信息的执行次序问题 <br>
  */
 public class HotSQLLoader extends Loader.Hot<CacheObject>{
 	/**
@@ -67,12 +70,13 @@ public class HotSQLLoader extends Loader.Hot<CacheObject>{
 	@Override
 	public void configure(Element e, Properties p) {
 		Properties props = new XmlElementProperties(e,p);
-		configure(props);
-		
+
 		Element onLoadElem = XmlTools.getFirstElementByPath(e, "on-load");
 		if (onLoadElem != null){
 			onLoad = Script.create(onLoadElem, props);
 		}	
+		
+		configure(props);
 	}	
 	
 	@Override
@@ -105,7 +109,7 @@ public class HotSQLLoader extends Loader.Hot<CacheObject>{
 							}catch (Exception ex){
 								LOG.info("Failed to execute onload script" + ExceptionUtils.getStackTrace(ex));
 							}finally{
-								logicletContext.removeObject("$cache");
+								logicletContext.removeObject(cacheObjectId);
 							}
 						}						
 						

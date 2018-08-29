@@ -75,6 +75,7 @@ import com.alogic.xscript.plugins.Substr;
 import com.alogic.xscript.plugins.Switch;
 import com.alogic.xscript.plugins.Template;
 import com.alogic.xscript.plugins.Throw;
+import com.alogic.xscript.plugins.Tree;
 import com.alogic.xscript.plugins.Trim;
 import com.alogic.xscript.plugins.UUid;
 import com.alogic.xscript.plugins.Uppercase;
@@ -141,6 +142,10 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.6.11.57 [20180828 duanyy] <br>
  * - 增加浏览器会话id的传递 <br>
+ * 
+ * @version 1.6.11.58 [20180829 duanyy] <br>
+ * - 增加tree,tree-node,tree-output,tree-traverse指令 <br>
+ * 
  */
 public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 
@@ -249,7 +254,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 	public static final String STMT_MUL = "mul";
 	public static final String STMT_DIVIDE = "div";
 	public static final String STMT_REGEX_MATCHER = "regex-match";
-	
+	public static final String STMT_TREE = "tree";
+	public static final String STMT_TREE_NODE = "tree-node";
+	public static final String STMT_TREE_OUTPUT = "tree-output";
+	public static final String STMT_TREE_TRAVERSE = "tree-traverse";
 	
 	protected static Handler<Fragment> metricsHandler = null;
 	
@@ -322,6 +330,10 @@ public abstract class AbstractLogiclet implements Logiclet,MetricsCollector{
 		staticModules.put(STMT_MUL, Multiply.class);
 		staticModules.put(STMT_DIVIDE, Divide.class);
 		staticModules.put(STMT_REGEX_MATCHER,RegexMatcher.class);
+		staticModules.put(STMT_TREE, Tree.class);
+		staticModules.put(STMT_TREE_NODE, Tree.Node.class);
+		staticModules.put(STMT_TREE_OUTPUT, Tree.Output.class);
+		staticModules.put(STMT_TREE_TRAVERSE, Tree.Traverse.class);
 		
 		metricsHandler = MetricsHandlerFactory.getClientInstance();
 	}	

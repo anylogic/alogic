@@ -28,9 +28,11 @@ import com.anysoft.util.XmlTools;
  * @author yyduan
  * @since 1.6.11.6
  * 
- * @version 1.6.11.29 [20180510 duanyy]
- * - 增加on-load事件处理;
+ * @version 1.6.11.29 [20180510 duanyy] <br>
+ * - 增加on-load事件处理; <br>
  * 
+ * @version 1.6.11.58 [20180829 duanyy] <br>
+ * - 修正on-load之后，所注销对象的变量id <br>
  */
 public class LocalCacheStore extends Store.HashStore<CacheObject>{
 	/**
@@ -103,7 +105,7 @@ public class LocalCacheStore extends Store.HashStore<CacheObject>{
 			}catch (Exception ex){
 				LOG.info("Failed to execute onload script" + ExceptionUtils.getStackTrace(ex));
 			}finally{
-				logicletContext.removeObject("$cache");
+				logicletContext.removeObject(cacheObjectId);
 			}
 		}
 	}	
