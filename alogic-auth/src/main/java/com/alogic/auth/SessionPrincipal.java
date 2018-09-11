@@ -5,8 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Pair;
 import com.anysoft.util.XmlTools;
@@ -19,6 +21,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.11.1 [20171215 duanyy] <br>
  * - 增加获取登录id的方法<br>
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 增加获取appId的接口 <br>
  */
 public class SessionPrincipal implements Principal{	
 	/**
@@ -26,16 +31,33 @@ public class SessionPrincipal implements Principal{
 	 */
 	protected Session session = null;
 	protected String id;
+	
+	/**
+	 * Principal是基于某个应用来生成的
+	 */
+	protected String appId = "default";
+	
 	public SessionPrincipal(String id,Session session){
 		this.id = id;
 		this.session = session;
 	}
+	
+	public SessionPrincipal(String id,Session session,String appId){
+		this.id = id;
+		this.session = session;
+		this.appId = appId;
+	}	
 	
 	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
+	public String getAppId(){
+		return appId;
+	}
+	
 	@Override
 	public long getTimestamp() {
 		return this.session.getTimestamp();

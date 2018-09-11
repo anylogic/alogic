@@ -18,6 +18,9 @@ import com.anysoft.util.JsonSerializer;
  * 
  * @version 1.6.11.13 [20180125 duanyy] <br>
  * - 不再提供基于Principal的Store实现 <br>
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 增加获取appId的接口 <br>
  */
 public interface Principal extends Loadable,Constants,JsonSerializer{
 	
@@ -47,6 +50,12 @@ public interface Principal extends Loadable,Constants,JsonSerializer{
 	 * @return 登录ip，客户端地址
 	 */
 	public String getLoginIp();
+	
+	/**
+	 * 获取所属的AppId
+	 * @return AppId
+	 */
+	public String getAppId();
 	
 	/**
 	 * 设置属性
@@ -118,8 +127,18 @@ public interface Principal extends Loadable,Constants,JsonSerializer{
 		 */
 		protected String id;
 		
+		/**
+		 * Principal是基于某个应用来生成的
+		 */
+		protected String appId;
+		
 		public Abstract(final String id){
 			this.id = id;
+		}
+		
+		public Abstract(final String id,final String appId){
+			this.id = id;
+			this.appId = appId;
 		}
 		
 		@Override
@@ -139,6 +158,10 @@ public interface Principal extends Loadable,Constants,JsonSerializer{
 		@Override
 		public String getId() {
 			return id;
+		}
+		
+		public String getAppId(){
+			return appId;
 		}
 	}
 }

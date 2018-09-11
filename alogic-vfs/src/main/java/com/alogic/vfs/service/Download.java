@@ -36,6 +36,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.11.53 [20180817 duanyy] <br>
  * - 支持前端输入filename和contentType参数，并写出到Response中 <br>
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 将filename参数改成可选参数;
  */
 public class Download extends Servant {
 	protected byte [] buffer = null;
@@ -61,8 +64,8 @@ public class Download extends Servant {
 		
 		String path = getArgument("path","/",ctx);
 		String fsId = getArgument("domain","default",ctx);
-		String filename = getArgument("filename",ctx);
-		String contentType = getArgument("contentType",ctx);
+		String filename = getArgument("filename","",ctx);
+		String contentType = getArgument("contentType","",ctx);
 		
 		VirtualFileSystem fs = FileSystemSource.get().get(fsId);
 		

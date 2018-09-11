@@ -9,7 +9,6 @@ import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.doc.XsObject;
-import com.alogic.xscript.plugins.Segment;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -25,8 +24,11 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.11.9 [20180111] duanyy <br>
  * - 优化缓存相关的xscript插件 <br>
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 增加NS类，从NS上继承;
  */
-public class CacheLocate extends Segment {
+public class CacheLocate extends NS {
 	
 	/**
 	 * 缓存id

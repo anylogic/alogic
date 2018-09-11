@@ -315,3 +315,7 @@ alogic-1.6.11
 - alogic-common:修正on-load事件处理问题;
 - alogic-kvalue:修正on-load事件处理问题
 
+### 1.6.11.59 [20180911 duanyy]
+- alogic-auth:增加AuthenticationHandler的脚本化实现Default.
+
+

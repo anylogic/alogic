@@ -9,7 +9,6 @@ import com.alogic.xscript.ExecuteWatcher;
 import com.alogic.xscript.Logiclet;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.doc.XsObject;
-import com.alogic.xscript.plugins.Segment;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
@@ -31,33 +30,21 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.6.11.43 [20180708 duanyy]  <br>
  * - 增加cache-hgetall插件 <br>
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 增加NS类，从NS上继承;
  */
-public class Cache extends Segment {
+public class Cache extends NS {
 	protected String cacheId;
 	protected String cid = "$cache";
 	
 	public Cache(String tag, Logiclet p) {
 		super(tag, p);
-		
-		registerModule("cache",Cache.class);
-		registerModule("cache-expire",CacheClear.class);
-		registerModule("cache-load",CacheQuery.class);
-		registerModule("cache-locate",CacheLocate.class);
-		registerModule("cache-hget",CacheHashGet.class);
-		registerModule("cache-hgetall",CacheHashGetAll.class);
-		registerModule("cache-hset",CacheHashSet.class);
-		registerModule("cache-hdel",CacheHashDel.class);
-		registerModule("cache-hexist",CacheHashExist.class);
-		registerModule("cache-hsize",CacheHashSize.class);
-		registerModule("cache-smembers",CacheSetMembers.class);
-		registerModule("cache-sexist",CacheSetExist.class);
-		registerModule("cache-sadd",CacheSetAdd.class);
-		registerModule("cache-sdel",CacheSetDel.class);
-		registerModule("cache-ssize",CacheSetSize.class);
 	}
 
 	@Override
 	public void configure(Properties p){
+		super.configure(p);
 		cacheId = PropertiesConstants.getString(p,"cacheId",cacheId,true);
 		cid = PropertiesConstants.getString(p,"cid",cid,true);
 	}

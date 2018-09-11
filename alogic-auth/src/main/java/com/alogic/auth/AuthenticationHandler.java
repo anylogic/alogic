@@ -42,6 +42,9 @@ import com.logicbus.backend.server.http.HttpContext;
  * @version 1.6.11.22 [duanyy 20180314] <br>
  * - 增加isLocalLoginMode(是否本地登录模式)的判断 <br>
  * - 增加common(扩展指令接口) <br>
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 优化权限接口 <br>
  */
 public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	
@@ -104,13 +107,6 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	public Principal login(Context ctx);	
 	
 	/**
-	 * 判断当前用户是否具备指定的权限
-	 * @param privilege 权限id
-	 * @return 如果具备该权限，返回为true,反之为false
-	 */
-	public boolean hasPrivilege(Principal principal,String privilege);
-	
-	/**
 	 * 退出登录
 	 */
 	public void logout(HttpServletRequest request,HttpServletResponse response);	
@@ -127,15 +123,6 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	public void command(Context ctx);
 	
 	/**
-	 * 判断当前用户是否对指定的业务对象具备操作权限
-	 * @param privilege 权限id
-	 * @param objectId 业务对象id
-	 * @param objectType 业务对象的类型
-	 * @return 如果具备该权限，返回为true,反之为false
-	 */
-	public boolean hasPrivilege(Principal principal,String privilege,String objectId,String objectType);
-	
-	/**
 	 * 根据菜单树，逐一检查当前用户是否具备操作权限
 	 * <p>
 	 * 所谓菜单树是一个Json对象，将对Json对象的item节点进行检查，在叶子节点上输出属性enable,如果
@@ -146,20 +133,6 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 	 * @param menu 菜单树
 	 */
 	public void checkPrivilege(Principal principal,Map<String,Object> menu);
-	
-	/**
-	 * 根据菜单树，逐一检查当前用户是否对指定的业务对象具备操作权限
-	 * <p>
-	 * 所谓菜单树是一个Json对象，将对Json对象的每一个节点进行检查，在叶子节点上输出属性enable,如果
-	 * enable为true，则表示该菜单项具备权限。
-	 * <p>
-	 * 每个菜单项需要具备属性privilege，用来标明该菜单项所对应的权限项。
-	 * 
-	 * @param menu 菜单树
-	 * @param objectId 业务对象id
-	 * @param objectType 业务对象的类型
-	 */
-	public void checkPrivilege(Principal principal,Map<String,Object> menu,String objectId,String objectType);
 	
 	/**
 	 * 设置所需的会话管理器
@@ -261,10 +234,11 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 			logout(request,response);			
 		}
 		
-		@Override
-		public boolean hasPrivilege(Principal principal,String privilege,String objectId,String objectType){
-			//缺省不做数据权限控制
-			return hasPrivilege(principal,privilege);
+		public boolean hasPrivilege(Principal principal, String privilege) {
+			if (principal != null){
+				return principal.hasPrivilege(privilege);
+			}
+			return false;
 		}
 		
 		@Override
@@ -287,34 +261,6 @@ public interface AuthenticationHandler extends Configurable,XMLConfigurable{
 							for (Object o:listItem){
 								if (o != null && o instanceof Map){
 									this.checkPrivilege(principal, (Map<String,Object>)o);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		@Override
-		@SuppressWarnings("unchecked")
-		public void checkPrivilege(Principal principal,Map<String,Object> menu,String objectId,String objectType){
-			if (menu != null){
-				//从privilege属性获取到权限项
-				String privilege = JsonTools.getString(menu,"privilege","");
-				if (StringUtils.isNotEmpty(privilege)){
-					JsonTools.setBoolean(menu, "enable", this.hasPrivilege(principal, privilege,objectId,objectType));
-				}
-				
-				Object item = menu.get("item");
-				if (item != null){
-					if (item instanceof Map){
-						this.checkPrivilege(principal, (Map<String,Object>)item);
-					}else{
-						if (item instanceof List){
-							List<Object> listItem = (List<Object>)item;
-							for (Object o:listItem){
-								if (o != null && o instanceof Map){
-									this.checkPrivilege(principal, (Map<String,Object>)o,objectId,objectType);
 								}
 							}
 						}

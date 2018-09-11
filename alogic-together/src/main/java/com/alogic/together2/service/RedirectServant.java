@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-
-import com.alogic.together.service.SevantLogicletContext;
 import com.alogic.together2.TogetherServiceDescription;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.Script;
@@ -24,7 +22,8 @@ import com.logicbus.models.servant.ServiceDescription;
  * 用于做重定向的Servant
  * 
  * @author yyduan
- *
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 使用新的ServantLogicletContext类;
  */
 public class RedirectServant extends AbstractServant {
 	protected Script script = null;
@@ -62,7 +61,7 @@ public class RedirectServant extends AbstractServant {
 		if (script != null){
 			JsonRawMessage msg = (JsonRawMessage) ctx.asMessage(JsonRawMessage.class);
 			
-			LogicletContext logicletContext = new SevantLogicletContext(ctx);
+			LogicletContext logicletContext = new Context.ServantLogicletContext(ctx);
 
 			try {
 				logicletContext.setObject("$context", ctx);

@@ -239,7 +239,9 @@ public interface CacheObject extends HashObject,SetObject,JsonSerializer{
 			Set<String> obj = getSetObject(group,true);
 			if (obj != null){
 				for (String m:members){
-					obj.add(m);
+					if (StringUtils.isNotEmpty(m)){
+						obj.add(m);
+					}
 				}
 			}
 		}
@@ -249,7 +251,9 @@ public interface CacheObject extends HashObject,SetObject,JsonSerializer{
 			Set<String> obj = getSetObject(group,false);
 			if (obj != null){
 				for (String m:members){
-					obj.remove(m);
+					if (StringUtils.isNotEmpty(m)){
+						obj.remove(m);
+					}
 				}
 			}
 		}

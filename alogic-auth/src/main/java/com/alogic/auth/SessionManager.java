@@ -94,7 +94,7 @@ public interface SessionManager extends Configurable,XMLConfigurable{
 	 * @param name Cookies名称
 	 * @param value 取值
 	 */
-	public void setCookie(HttpServletResponse response,String name,String value,String path,int ttl);
+	public void setCookie(HttpServletResponse response,String name,String value,String path,int ttl);	
 	
 	/**
 	 * 虚基类

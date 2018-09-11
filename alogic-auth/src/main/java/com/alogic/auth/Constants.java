@@ -4,9 +4,33 @@ package com.alogic.auth;
  * 常量
  * 
  * @author yyduan
- *
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 增加脚本上下文对象id <br>
  */
 public interface Constants {
+	
+	/**
+	 * Session在上下文对象中的对象id
+	 */
+	public static final String ID_SESSION = "$sess";
+	public static final String ID_SESSION_ID = "$sess-id";	
+	public static final String ID_SESSION_IS_LOGIN = "$sess-isLogin";
+	public static final String ID_SESSION_IS_EXPIRE = "$sess-isExpire";
+	
+	/**
+	 * Principal在上下文对象中的对象id
+	 */
+	public static final String ID_PRINCIPAL = "$prcpl";
+	public static final String ID_PRINCIPAL_ID = "$prcpl-id";
+	public static final String ID_PRINCIPAL_LOGIN_ID = "$prcpl-loginId";
+	public static final String ID_PRINCIPAL_LOGIN_IP = "$prcpl-loginIP";
+	public static final String ID_PRINCIPAL_LOGIN_TIME = "$prcpl-loginTime";
+	public static final String ID_PRINCIPAL_APP = "$prcpl-app";
+	
+	/**
+	 * CookieManager在上下文对象中的对象id
+	 */
+	public static final String ID_COOKIES = "$cookies";
 	
 	/**
 	 * 是否登录标记的Key

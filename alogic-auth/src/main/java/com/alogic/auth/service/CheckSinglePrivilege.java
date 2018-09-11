@@ -18,6 +18,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @author duanyy
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 优化权限接口 <br>
  */
 public class CheckSinglePrivilege extends AbstractServant{
 
@@ -35,7 +38,13 @@ public class CheckSinglePrivilege extends AbstractServant{
 	protected int onJson(Context ctx){
 		JsonMessage msg = (JsonMessage)ctx.asMessage(JsonMessage.class);
 		
-		Map<String,Object> data = new HashMap<String,Object>();
+		@SuppressWarnings("unchecked")
+		Map<String,Object> data = (Map<String,Object>)msg.getRoot().get("data");
+		if (data == null){
+			data = new HashMap<String,Object>();
+			msg.getRoot().put("data", data);
+		}
+		
 		PrincipalManager sm = (PrincipalManager)SessionManagerFactory.getDefault();
 		Session sess = sm.getSession(ctx, false);
 		if (sess == null){
@@ -44,20 +53,12 @@ public class CheckSinglePrivilege extends AbstractServant{
 			Principal principal = sm.getCurrent(ctx);
 			if (principal != null){
 				String privilege = this.getArgument("privilege", "", ctx);
-				String objectId = this.getArgument("objId","",ctx);
-				String objectType = this.getArgument("objType","", ctx);
-				
-				boolean enable = sm.hasPrivilege(principal, privilege, objectId, objectType);
-				
-				JsonTools.setString(data,"privilege",privilege);
-				JsonTools.setBoolean(data,"enable",enable);
-				JsonTools.setString(data,"objId",objectId);
-				JsonTools.setString(data,"objType",objectType);				
+				JsonTools.setString(data,"privilege",privilege);				
+				sm.checkPrivilege(principal, data);
 			}
 			JsonTools.setBoolean(data,"isLoggedIn",sess.isLoggedIn());
 		}
 		
-		msg.getRoot().put("data", data);
 		return 0;
 	}
 }

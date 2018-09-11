@@ -18,6 +18,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * @author duanyy
  *
  * @since 1.6.10.10
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 优化权限接口 <br>
  */
 public class CheckMenuPrivilege extends AbstractServant{
 
@@ -45,10 +48,7 @@ public class CheckMenuPrivilege extends AbstractServant{
 			}else{			
 				Principal principal = sm.getCurrent(ctx);
 				if (principal != null){
-					sm.checkPrivilege(principal,map,
-							this.getArgument("objId","",ctx),
-							this.getArgument("objType","", ctx)
-							);					
+					sm.checkPrivilege(principal,map);					
 				}
 				JsonTools.setBoolean(map,"isLoggedIn",sess.isLoggedIn());
 			}

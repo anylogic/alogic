@@ -1,8 +1,6 @@
 package com.alogic.together2.service;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.alogic.together.service.SevantLogicletContext;
 import com.alogic.together2.TogetherServiceDescription;
 import com.alogic.xscript.LogicletContext;
 import com.alogic.xscript.Script;
@@ -25,6 +23,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * @version 1.6.11.29 [20180510 duanyy] <br>
  * - 增加缓存控制;<br>
  * - 增加下载文件名控制;<br>
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 使用新的ServantLogicletContext类;
  */
 public class DownloadTogetherServant extends AbstractServant {
 	protected Script script = null;
@@ -60,9 +61,8 @@ public class DownloadTogetherServant extends AbstractServant {
 	@Override
 	protected int onJson(Context ctx)  {
 		if (script != null){
-			JsonRawMessage msg = (JsonRawMessage) ctx.asMessage(JsonRawMessage.class);
-			
-			LogicletContext logicletContext = new SevantLogicletContext(ctx);
+			JsonRawMessage msg = (JsonRawMessage) ctx.asMessage(JsonRawMessage.class);			
+			LogicletContext logicletContext = new Context.ServantLogicletContext(ctx);
 
 			try {
 				logicletContext.setObject("$context", ctx);

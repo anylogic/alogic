@@ -38,6 +38,9 @@ import com.logicbus.backend.Context;
  * 
  * @version 1.6.11.30 [20180514 duanyy] <br>
  * - 增加cookies操作接口 <br>
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 优化权限接口 <br>
  */
 public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	
@@ -142,26 +145,11 @@ public class DefaultPrincipalManager extends PrincipalManager.Abstract{
 	@Override
 	public boolean isLocalLoginMode(){
 		return authHandler.isLocalLoginMode();
-	}
-
-	@Override
-	public boolean hasPrivilege(Principal principal, String privilege) {
-		return authHandler.hasPrivilege(principal, privilege);
-	}
-	
-	@Override
-	public boolean hasPrivilege(Principal principal,String privilege,String objectId,String objectType){
-		return authHandler.hasPrivilege(principal,privilege);
-	}
+	}	
 	
 	@Override
 	public void checkPrivilege(Principal principal,Map<String,Object> menu){
 		authHandler.checkPrivilege(principal, menu);
-	}
-	
-	@Override
-	public void checkPrivilege(Principal principal,Map<String,Object> menu,String objectId,String objectType){
-		authHandler.checkPrivilege(principal, menu, objectId, objectType);
 	}
 
 	@Override

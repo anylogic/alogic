@@ -25,6 +25,9 @@ import com.logicbus.models.servant.ServiceDescription;
  * 
  * @version 1.6.11.22 [duanyy 20180314] <br>
  * - 支持按指定jsonpath路径来输出文档 <br>
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 使用新的ServantLogicletContext类;
  */
 public class TogetherServant extends AbstractServant {
 	protected Script script = null;
@@ -62,7 +65,7 @@ public class TogetherServant extends AbstractServant {
 		if (script != null){
 			JsonMessage msg = (JsonMessage) ctx.asMessage(JsonMessage.class);
 			
-			LogicletContext logicletContext = new SevantLogicletContext(ctx);
+			LogicletContext logicletContext = new Context.ServantLogicletContext(ctx);
 			logicletContext.setObject("$context", ctx);
 			logicletContext.SetValue("$service", service);
 			try {

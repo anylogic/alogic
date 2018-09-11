@@ -56,6 +56,9 @@ import com.logicbus.backend.message.JsonMessage;
  * 
  * @version 1.6.11.23 [duanyy 20180320] <br>
  * - logout时增加Session中数据的删除 <br>
+ * 
+ * @version 1.6.11.59 [20180911 duanyy] <br>
+ * - 优化权限接口 <br>
  */
 public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract{
 	
@@ -192,15 +195,6 @@ public class DefaultAuthenticationHandler extends AuthenticationHandler.Abstract
 		}
 	}
 
-	@Override
-	public boolean hasPrivilege(Principal principal, String privilege) {
-		if (principal != null){
-			SessionPrincipal thePrincipal = (SessionPrincipal)principal;
-			return thePrincipal.hasPrivilege(privilege);
-		}
-		return false;
-	}
-	
 	@Override
 	public void setSessionManager(SessionManager sm){
 		this.sessionManager = sm;
