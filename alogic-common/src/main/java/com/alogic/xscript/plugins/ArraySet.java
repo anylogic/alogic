@@ -23,6 +23,9 @@ import java.util.Set;
  * 
  * @version 1.6.11.43 [20180708 duanyy]  <br>
  * - 增加array-set-list插件 <br>
+ * 
+ * @version 1.6.11.60 [20180912 duanyy] <br>
+ * - 增加array-set-save指令,用来将数组保存为字符串，并存储到指定变量 <br>
  */
 public class ArraySet extends Segment {
 	protected String tag = "data";
@@ -36,6 +39,7 @@ public class ArraySet extends Segment {
 		registerModule("array-set-del",ArraySetDel.class);
 		registerModule("array-set-exist",ArraySetExist.class);
 		registerModule("array-set-list",ArraySetList.class);
+		registerModule("array-set-save",ArraySetSave.class);
 	}
 
 	@Override

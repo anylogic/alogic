@@ -29,6 +29,8 @@ import org.xml.sax.*;
  * @version 1.6.5.6 [20160523 duanyy] <br>
  * - node2string不再抛出异常，以便使用 <br>
  * 
+ * @version 1.6.11.60 [20180912 duanyy] <br>
+ * - loadFromContent增加encoding支持 <br>
  */
 public class XmlTools {
 	/**
@@ -332,8 +334,20 @@ public class XmlTools {
 	 * @throws IOException
 	 */
 	public static Document loadFromContent(String _content) throws ParserConfigurationException, SAXException, IOException{
-		return loadFromInputStream(new ByteArrayInputStream(_content.getBytes()));
+		return loadFromInputStream(new ByteArrayInputStream(_content.getBytes(encoding)));
 	}
+	
+	/**
+	 * 从内容装入XML文档
+	 * @param _content
+	 * @return XML文档实例
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	public static Document loadFromContent(String _content,String encoding) throws ParserConfigurationException, SAXException, IOException{
+		return loadFromInputStream(new ByteArrayInputStream(_content.getBytes(encoding)));
+	}	
 	
 	/**
 	 * 写出到输出流

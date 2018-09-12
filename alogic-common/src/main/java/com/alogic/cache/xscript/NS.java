@@ -7,6 +7,9 @@ import com.alogic.xscript.plugins.Segment;
  * Namespace
  * @author yyduan
  * @since 1.6.11.59 [20180911 duanyy]
+ * 
+ * @version 1.6.11.60 [20180912 duanyy] <br>
+ * - 增加cache-new指令,用来新建缓存对象 <br>
  */
 public class NS extends Segment{
 
@@ -17,6 +20,7 @@ public class NS extends Segment{
 		registerModule("cache-expire",CacheClear.class);
 		registerModule("cache-load",CacheQuery.class);
 		registerModule("cache-locate",CacheLocate.class);
+		registerModule("cache-new",CacheNew.class);
 		registerModule("cache-hget",CacheHashGet.class);
 		registerModule("cache-hgetall",CacheHashGetAll.class);
 		registerModule("cache-hset",CacheHashSet.class);

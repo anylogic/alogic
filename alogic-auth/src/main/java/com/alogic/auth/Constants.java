@@ -28,6 +28,11 @@ public interface Constants {
 	public static final String ID_PRINCIPAL_APP = "$prcpl-app";
 	
 	/**
+	 * http错误码:404
+	 */
+	public static final int E404 = 404;
+	
+	/**
 	 * CookieManager在上下文对象中的对象id
 	 */
 	public static final String ID_COOKIES = "$cookies";

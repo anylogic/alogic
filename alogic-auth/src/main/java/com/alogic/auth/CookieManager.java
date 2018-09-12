@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 public interface CookieManager {
 	/**
 	 * 获取指定的Cookies值
-	 * @param req HttpRequest
 	 * @param name Cookies名称
 	 * @param dft 缺省值
 	 * @return Cookies值
@@ -21,7 +20,6 @@ public interface CookieManager {
 	
 	/**
 	 * 设置Cookies
-	 * @param response httpResponse
 	 * @param name Cookies名称
 	 * @param value 取值
 	 */

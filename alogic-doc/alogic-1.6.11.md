@@ -318,4 +318,12 @@ alogic-1.6.11
 ### 1.6.11.59 [20180911 duanyy]
 - alogic-auth:增加AuthenticationHandler的脚本化实现Default.
 
+### 1.6.11.60 [20180912 duanyy]
+- alogic-auth:增加cas单点登录的服务端和客户端实现;
+- alogic-common:增加cache-new指令，用来新增缓存对象;
+- alogic-common:增加array-set-save指令,用来将数组保存为字符串，并存储到指定变量;
+- alogic-common:增加xml-text-append和xml-text-child指令，用来存取xml节点的直接文本子节点
+
+
+
 
