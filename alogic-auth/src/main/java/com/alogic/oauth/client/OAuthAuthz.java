@@ -1,4 +1,4 @@
-package com.alogic.cas.client;
+package com.alogic.oauth.client;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,12 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.alogic.auth.Session;
 import com.alogic.auth.SessionManager;
 import com.alogic.auth.SessionManagerFactory;
-import com.alogic.cas.CasConstants;
-import com.alogic.cas.client.loader.FromInner;
 import com.alogic.load.Loader;
+import com.alogic.oauth.OAuthConstants;
+import com.alogic.oauth.client.loader.FromInner;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Configurable;
 import com.anysoft.util.Factory;
@@ -40,29 +41,21 @@ import com.anysoft.util.resource.ResourceFactory;
 import com.anysoft.webloader.FilterConfigProperties;
 
 /**
- * 处理CAS的过滤器
- * @author yyduan
- * @since 1.6.11.60 [20180912 duanyy]
+ * 处理OAuth的过滤器
  * 
- * @version 1.6.11.61 [20180913 duanyy] <br>
- * - 部分字符串采用常量表达 <br>
+ * @author yyduan
+ * @since 1.6.11.61
  */
-public class CasAuthz implements Filter,CasConstants,XMLConfigurable,Configurable{
-	
+public class OAuthAuthz implements Filter,OAuthConstants,XMLConfigurable,Configurable{
 	/**
 	 * a logger of slf4j
 	 */
-	protected final static Logger LOG = LoggerFactory.getLogger(CasAuthz.class);
+	protected final static Logger LOG = LoggerFactory.getLogger(OAuthAuthz.class);
 	
 	/**
 	 * 缺省配置文件
 	 */
-	protected static final String DEFAULT = "java:///conf/alogic.cas.client.xml#App";
-	
-	/**
-	 * 退出登录的请求参数名
-	 */
-	protected String arguLogout = CasConstants.ARGU_LOGOUT_REQUEST;
+	protected static final String DEFAULT = "java:///conf/alogic.oauth.client.xml#App";
 	
 	/**
 	 * 缺省的服务id
@@ -72,26 +65,26 @@ public class CasAuthz implements Filter,CasConstants,XMLConfigurable,Configurabl
 	/**
 	 * command的前缀
 	 */
-	protected String cmdPrefix = "/casclient";
+	protected String cmdPrefix = "/oauthclient";	
 	
 	/**
 	 * 内部跳转URL的参数
 	 */
-	protected String returnURL = CasConstants.ARGU_RETURNURL;	
+	protected String returnURL = OAuthConstants.ARGU_RETURNURL;		
 	
 	/**
 	 * 缺省的主页URL
 	 */
 	protected String mainPage = "";	
-
-	protected Loader<CasServer> loader = null;
 	
-	protected String sessionGroup = "$cas-client";
+	protected Loader<OAuthServer> loader = null;
+	
+	protected String sessionGroup = "$oauth-client";
 	
 	/**
-	 * 正则表达式从CasServer回调路径中匹配from和sessionId
+	 * 正则表达式从OAuthServer回调路径中匹配from
 	 */
-	protected Pattern pattern = Pattern.compile("/cas/(?<from>[\\w]+)/(?<sessionId>[\\w]+)");
+	protected Pattern pattern = Pattern.compile("/callback/(?<from>[\\w]+)/(?<action>[\\w]+)");	
 	
 	@Override
 	public void configure(Properties props) {
@@ -99,8 +92,7 @@ public class CasAuthz implements Filter,CasConstants,XMLConfigurable,Configurabl
 		cmdPrefix = PropertiesConstants.getString(props, "cmdPrefix",cmdPrefix);
 		returnURL = PropertiesConstants.getString(props,"auth.para.url",returnURL);
 		mainPage = PropertiesConstants.getString(props,"auth.page.main",mainPage);	
-		arguLogout = PropertiesConstants.getString(props, "cas.para.logout",arguLogout);	
-		sessionGroup = PropertiesConstants.getString(props, "cas.client.group",sessionGroup);	
+		sessionGroup = PropertiesConstants.getString(props, "oauth.client.group",sessionGroup);	
 	}
 
 	@Override
@@ -110,7 +102,7 @@ public class CasAuthz implements Filter,CasConstants,XMLConfigurable,Configurabl
 		Element elem = XmlTools.getFirstElementByPath(e, "servers");
 		if (elem != null){
 			try {
-				Factory<Loader<CasServer>> f = new Factory<Loader<CasServer>>();
+				Factory<Loader<OAuthServer>> f = new Factory<Loader<OAuthServer>>();
 				loader = f.newInstance(elem, props, "loader",FromInner.class.getName());
 			}catch (Exception ex){
 				LOG.error("Can not create loader with " + XmlTools.node2String(elem));
@@ -124,8 +116,8 @@ public class CasAuthz implements Filter,CasConstants,XMLConfigurable,Configurabl
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		FilterConfigProperties props = new FilterConfigProperties(filterConfig);
-		String master = PropertiesConstants.getString(props, "cas.client.master", DEFAULT);
-		String secondary = PropertiesConstants.getString(props, "cas.client.secondary", DEFAULT);
+		String master = PropertiesConstants.getString(props, "oauth.client.master", DEFAULT);
+		String secondary = PropertiesConstants.getString(props, "oauth.client.secondary", DEFAULT);
 		ResourceFactory rf = Settings.getResourceFactory();
 
 		InputStream in = null;
@@ -139,7 +131,7 @@ public class CasAuthz implements Filter,CasConstants,XMLConfigurable,Configurabl
 			LOG.error("Can not init gateway with file : " + master);
 		}finally{
 			IOTools.close(in);
-		}		
+		}	
 	}
 
 	@Override
@@ -150,97 +142,98 @@ public class CasAuthz implements Filter,CasConstants,XMLConfigurable,Configurabl
 		Session session = sm.getSession(httpReq,httpResp,true);
 		
 		String cmd = getCommand(httpReq.getRequestURI());
+		LOG.info("cmd = " + cmd);
 		if (StringUtils.isNotEmpty(cmd)){
-			if (cmd.startsWith("/cas")){
-				//由cas服务器回调
+			if (cmd.startsWith("/callback")){
 				Matcher matcher = pattern.matcher(cmd);
 				if (matcher.find()){
 					String serverId = matcher.group("from");
-					CasServer server = this.getCasServer(serverId);
-					if (server != null){
-						String logoutRequest = this.getParameter(httpReq,arguLogout, "");
-						if (StringUtils.isNotEmpty(logoutRequest)){
-							String sessionId = matcher.group("sessionId");
-							try {
-								server.doLogoutCallback(httpReq,httpResp,sm,session,sessionId);
-							}catch (BaseException ex){
-								httpResp.sendError(E404,String.format("%s:%s",ex.getCode(),ex.getMessage()));
-							}							
-						}else{
-							try {
-								server.doValidate(httpReq,httpResp,sm,session);								
-								//验证通过后,重定向到指定的地址
-								String redirect = session.hGet(sessionGroup,returnURL,mainPage);
-								if (StringUtils.isNotEmpty(redirect)){
-									session.hDel(sessionGroup, returnURL);
-									httpResp.sendRedirect(redirect);		
-								}								
-							}catch (BaseException ex){
-								httpResp.sendError(E404,String.format("%s:%s",ex.getCode(),ex.getMessage()));
-							}
-						}
-						return ;
-					}else{
-						httpResp.sendError(E404,"core.e1000:Unsupported cas server,id=" + serverId);
+					OAuthServer server = this.getServer(serverId);
+					if (server == null){
+						httpResp.sendError(E404,"core.e1000:Unsupported oauth server,id=" + serverId);
 						return;
 					}
+					
+					String action = matcher.group("action");
+					if (action.equals("bind")){
+						server.doBindCallback(httpReq, httpResp, sm, session);
+					}else{
+						server.doLoginCallback(httpReq, httpResp, sm, session);
+					}	
+					
+					//验证通过后,重定向到指定的地址
+					String redirect = session.hGet(sessionGroup,returnURL,mainPage);
+					if (StringUtils.isNotEmpty(redirect)){
+						session.hDel(sessionGroup, returnURL);
+						httpResp.sendRedirect(redirect);	
+					}	
+					return ;
 				}else{
 					httpResp.sendError(E404,"core.e1000:Unsupported command:" + cmd);
 					return ;
 				}
-			}
+			}		
 			
 			if (cmd.startsWith("/login")){
 				//由本地地址调用，跳转登录
-				String serverId = getParameter(httpReq, CasConstants.ARGU_FROM, dftServerId);
-				CasServer server = getCasServer(serverId);
+				String serverId = getParameter(httpReq, OAuthConstants.ARGU_FROM, dftServerId);
+				OAuthServer server = this.getServer(serverId);
 				if (server == null){
-					httpResp.sendError(E404,"core.e1000:Unsupported cas server,id=" + serverId);
-					return ;
-				}
+					httpResp.sendError(E404,"core.e1000:Unsupported oauth server,id=" + serverId);
+					return;
+				}	
 		
 				//将请求页面保存在Session中，准备验证之后跳转
 				String redirectURL = getParameter(httpReq, returnURL, "");
 				if (StringUtils.isNotEmpty(redirectURL)){
 					session.hSet(sessionGroup, returnURL, redirectURL, true);					
 				}
-				session.hSet(sessionGroup, CasConstants.ARGU_FROM, serverId, true);
+				session.hSet(sessionGroup, OAuthConstants.ARGU_FROM, serverId, true);
 				
 				try {
-					server.doLogin(httpReq,httpResp,sm,session);
+					server.doLoginRequest(httpReq, httpResp, sm, session);
 				}catch (BaseException ex){
 					httpResp.sendError(E404,String.format("%s:%s",ex.getCode(),ex.getMessage()));
 				}
 				return ;
 			}
 			
-			if (cmd.startsWith("/logout")){
-				//由本地地址调用，跳转登出
-				String serverId = session.hGet(sessionGroup, CasConstants.ARGU_FROM, dftServerId);
-				CasServer server = getCasServer(serverId);
+			if (cmd.startsWith("/bind")){
+				//由本地地址调用，跳转登录
+				String serverId = getParameter(httpReq, OAuthConstants.ARGU_FROM, dftServerId);
+				OAuthServer server = this.getServer(serverId);
 				if (server == null){
-					httpResp.sendError(E404,"core.e1000:Unsupported cas server,id=" + serverId);
-					return ;
+					httpResp.sendError(E404,"core.e1000:Unsupported oauth server,id=" + serverId);
+					return;
 				}	
+		
+				//将请求页面保存在Session中，准备验证之后跳转
+				String redirectURL = getParameter(httpReq, returnURL, "");
+				if (StringUtils.isNotEmpty(redirectURL)){
+					session.hSet(sessionGroup, returnURL, redirectURL, true);					
+				}
+				session.hSet(sessionGroup, OAuthConstants.ARGU_FROM, serverId, true);
+				
 				try {
-					server.doLogout(httpReq,httpResp,sm,session);
+					server.doBindRequest(httpReq, httpResp, sm, session);
 				}catch (BaseException ex){
 					httpResp.sendError(E404,String.format("%s:%s",ex.getCode(),ex.getMessage()));
 				}
 				return ;
-			}
+			}			
 		}
 		if (session.isLoggedIn()){
 			//已经登录
 			chain.doFilter(request, response);
 			return ;
 		}else{
-			String serverId = getParameter(httpReq, CasConstants.ARGU_FROM, dftServerId);
-			CasServer server = getCasServer(serverId);
+			/*
+			String serverId = getParameter(httpReq, OAuthConstants.ARGU_FROM, dftServerId);
+			OAuthServer server = this.getServer(serverId);
 			if (server == null){
-				httpResp.sendError(E404,"core.e1000:Unsupported cas server,id=" + serverId);
-				return ;
-			}
+				httpResp.sendError(E404,"core.e1000:Unsupported oauth server,id=" + serverId);
+				return;
+			}	
 	
 			//将请求页面保存在Session中，准备验证之后跳转
 			String requestUrl = httpReq.getRequestURI();
@@ -250,24 +243,26 @@ public class CasAuthz implements Filter,CasConstants,XMLConfigurable,Configurabl
 			}		
 			
 			session.hSet(sessionGroup, returnURL, requestUrl, true);	
-			session.hSet(sessionGroup, CasConstants.ARGU_FROM, serverId, true);
+			session.hSet(sessionGroup, OAuthConstants.ARGU_FROM, serverId, true);
 			
 			try {
-				server.doLogin(httpReq,httpResp,sm,session);
+				server.doLoginRequest(httpReq,httpResp,sm,session);
 			}catch (BaseException ex){
 				httpResp.sendError(E404,String.format("%s:%s",ex.getCode(),ex.getMessage()));
 			}
 			return ;
+			*/
 		}		
 	}
 
 	@Override
 	public void destroy() {
+		// nothig to do
 	}
 	
-	protected CasServer getCasServer(String id){
+	protected OAuthServer getServer(String id){
 		return loader.load(id, true);
-	}	
+	}
 	
 	/**
 	 * 通过URI计算出当前的command

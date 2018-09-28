@@ -22,6 +22,9 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @author yyduan
  * @since 1.6.11.59 [20180911 duanyy]
+ * 
+ * @version 1.6.11.61 [20180913 duanyy] <br>
+ * - 修正取会话信息时部分信息错误 <br>
  */
 public abstract class SessionOperation extends AbstractLogiclet implements Constants{
 	protected String pid = ID_SESSION;
@@ -55,8 +58,8 @@ public abstract class SessionOperation extends AbstractLogiclet implements Const
 		protected void onExecute(Session session, XsObject root,
 				XsObject current, LogicletContext ctx, ExecuteWatcher watcher) {
 			ctx.SetValue(ID_SESSION_ID, session.getId());
-			ctx.SetValue(ID_SESSION_IS_LOGIN, session.getId());
-			ctx.SetValue(ID_SESSION_ID, session.getId());
+			ctx.SetValue(ID_SESSION_IS_LOGIN, BooleanUtils.toStringTrueFalse(session.isLoggedIn()));
+			ctx.SetValue(ID_SESSION_IS_EXPIRE, BooleanUtils.toStringTrueFalse(session.isExpired()));
 		}		
 	}
 	

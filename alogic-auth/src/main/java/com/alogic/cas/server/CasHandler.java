@@ -50,6 +50,9 @@ import com.logicbus.backend.server.http.HttpContext;
  * 
  * @author yyduan
  * @since 1.6.11.60 [20180912 duanyy]
+ * 
+ * @version 1.6.11.61 [20180913 duanyy] <br>
+ * - 部分字符串采用常量表达 <br>
  */
 public class CasHandler implements ServletHandler,XMLConfigurable,Configurable,CasConstants{
 	/**
@@ -60,22 +63,22 @@ public class CasHandler implements ServletHandler,XMLConfigurable,Configurable,C
 	/**
 	 * 缺省配置文件
 	 */
-	protected static final String DEFAULT = "java:///conf/alogic.cas.asserver.xml#App";
+	protected static final String DEFAULT = "java:///conf/alogic.cas.server.xml#App";
 	
 	/**
 	 * 退出登录的请求参数名
 	 */
-	protected String arguLogout = "logoutRequest";
+	protected String arguLogout = CasConstants.ARGU_LOGOUT_REQUEST;
 	
 	/**
 	 * ticket参数名
 	 */
-	protected String arguTicket = "ticket";
+	protected String arguTicket = CasConstants.ARGU_TICKET;
 	
 	/**
 	 * service参数名
 	 */
-	protected String arguService = "service";
+	protected String arguService = CasConstants.ARGU_SERVICE;
 	
 	/**
 	 * 编码
@@ -90,7 +93,7 @@ public class CasHandler implements ServletHandler,XMLConfigurable,Configurable,C
 	/**
 	 * 内部跳转URL的参数
 	 */
-	protected String returnURL = "returnUrl";	
+	protected String returnURL = CasConstants.ARGU_RETURNURL;	
 	
 	protected String sessionGroup = "$cas-server";	
 	

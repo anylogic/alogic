@@ -1,5 +1,6 @@
 package com.alogic.remote.httpclient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -117,6 +118,14 @@ public class HttpClient extends AbstractClient{
 		
 		encoding = PropertiesConstants.getString(p,"http.encoding",encoding);
 		autoRetryCnt = PropertiesConstants.getInt(p, "rpc.ketty.autoRetryTimes", autoRetryCnt);
+		
+		if (StringUtils.isEmpty(System.getProperty("https.protocols"))){
+			System.setProperty("https.protocols", PropertiesConstants.getString(p,"https.protocols","SSLv3,TLSv1,TLSv1.1,TLSv1.2"));
+		}
+		
+		if (StringUtils.isEmpty(System.getProperty("https.cipherSuites"))){
+			System.setProperty("https.cipherSuites", PropertiesConstants.getString(p,"https.cipherSuites",""));
+		}
 		
 		if (customizer == null){
 			customizer = new Default();

@@ -324,6 +324,11 @@ alogic-1.6.11
 - alogic-common:增加array-set-save指令,用来将数组保存为字符串，并存储到指定变量;
 - alogic-common:增加xml-text-append和xml-text-child指令，用来存取xml节点的直接文本子节点
 
+### 1.6.11.61 [20180913 duanyy]
+- alogic-rpc:增加ssl协议支持的配置;
+- alogic-auth:增加oauth2.0客户端框架;
+
+
 
 
 

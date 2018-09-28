@@ -34,7 +34,10 @@ import com.logicbus.backend.server.http.HttpContext;
  * CasServer的缺省实现
  * 
  * @author yyduan
- * @since 1.6.11.60 [20180912 duanyy]
+ * @since 1.6.11.60 [20180912 duanyy] 
+ * 
+ * @version 1.6.11.61 [20180913 duanyy] <br>
+ * - 增加$service和$clientIp等内置变量 <br>
  */
 public class DefaultCasServer implements CasServer {	
 	/**
@@ -105,6 +108,11 @@ public class DefaultCasServer implements CasServer {
 	protected String sessionGroup = "$cas-client";	
 	
 	/**
+	 * 支持ForwardedHeader
+	 */
+	protected String ForwardedHeader = "X-Forwarded-For";
+	
+	/**
 	 * 获取生存时间(毫秒)
 	 * @return 生存时间
 	 */
@@ -153,12 +161,26 @@ public class DefaultCasServer implements CasServer {
 		arguService = PropertiesConstants.getString(props, "cas.para.service", arguService);
 		encoding = PropertiesConstants.getString(props,"http.encoding",encoding);
 		sessionGroup = PropertiesConstants.getString(props, "cas.client.group",sessionGroup);	
+		ForwardedHeader = PropertiesConstants.getString(props,"http.forwardedheader", ForwardedHeader);
+		
+		if (onValidate == null){
+			String script = PropertiesConstants.getString(props, "onValidate","");
+			if (StringUtils.isNotEmpty(script)){
+				onValidate = Script.createFromContent(script, props);
+			}
+		}
+		
+		if (onLogout == null){
+			String script = PropertiesConstants.getString(props, "onLogout","");
+			if (StringUtils.isNotEmpty(script)){
+				onLogout = Script.createFromContent(script, props);
+			}
+		}		
 	}
 
 	@Override
 	public void configure(Element e, Properties p) {
 		Properties props = new XmlElementProperties(e,p);
-		configure(props);
 		
 		Element elem = XmlTools.getFirstElementByPath(e, "on-validate");
 		if (elem != null){
@@ -169,6 +191,8 @@ public class DefaultCasServer implements CasServer {
 		if (elem != null){
 			onLogout = Script.create(elem, props);
 		}
+		
+		configure(props);
 	}
 
 	@Override
@@ -229,6 +253,8 @@ public class DefaultCasServer implements CasServer {
 				logicletContext.SetValue(ID_CAS_SERVICE, service);
 				logicletContext.SetValue(ID_CAS_VALIDATE_PATH, validateURL);
 				logicletContext.SetValue(ID_CAS_VALIDATE_ENDPOINT, validateEndpoint);
+				logicletContext.SetValue("$service", "/cas/Login");
+				logicletContext.SetValue("$clientIp",getClientIp(httpReq));					
 
 				XsObject doc = new JsonObject("root",new HashMap<String,Object>());
 				onValidate.execute(doc,doc, logicletContext, null);
@@ -250,6 +276,8 @@ public class DefaultCasServer implements CasServer {
 			try {
 				logicletContext.setObject(ID_SESSION, sess);		
 				logicletContext.setObject(ID_COOKIES, cm) ;
+				logicletContext.SetValue("$service", "/cas/Logout");
+				logicletContext.SetValue("$clientIp",getClientIp(httpReq));						
 				XsObject doc = new JsonObject("root",new HashMap<String,Object>());
 				onLogout.execute(doc,doc, logicletContext, null);
 			}finally{
@@ -310,6 +338,26 @@ public class DefaultCasServer implements CasServer {
 		return StringUtils.isEmpty(value)?dftValue:value;
 	}
 
-	
+	/**
+	 * 获取客户端的ip
+	 * @param request HttpServletRequest
+	 * @return 客户端ip
+	 */
+	public String getClientIp(HttpServletRequest request) {
+		/**
+		 * 支持负载均衡器的X-Forwarded-For
+		 */
+		String ip = request.getHeader(ForwardedHeader);
+		if (StringUtils.isNotEmpty(ip)){
+			String [] ips = ip.split(",");
+			if (ips.length > 0){
+				return ips[0];
+			}else{
+				return request.getRemoteHost();
+			}
+		}else{
+			return request.getRemoteHost();
+		}
+	}	
 
 }
