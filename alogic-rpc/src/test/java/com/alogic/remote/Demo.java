@@ -40,7 +40,8 @@ public class Demo {
 		Settings settings = Settings.get();		
 		settings.addSettings(new CommandLine(args));
 		settings.SetValue("remote.master", "java:///conf/remote.xml");
-		runAsJson("java:///xscript/auth.xml",settings);
+		//runAsJson("java:///xscript/auth.xml",settings);
+		runAsJson("java:///xscript/urlbuilder.xml",settings);
 	}
 
 }

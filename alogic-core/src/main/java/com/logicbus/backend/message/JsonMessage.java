@@ -52,6 +52,9 @@ import com.logicbus.backend.message.Message;
  * 
  * @version 1.6.11.22 [duanyy 20180314] <br>
  * - 支持按指定jsonpath路径来输出文档 <br>
+ * 
+ * @version 1.6.11.62 [duanyy 20180928] <br>
+ * - 删除荣誉的代码 <br>
  */
 public class JsonMessage implements Message {
 	protected static final Logger logger = LoggerFactory.getLogger(JsonMessage.class);
@@ -114,7 +117,6 @@ public class JsonMessage implements Message {
 		
 		if (data != null && data.length() > 0){
 			contentLength += data.getBytes().length;
-			JsonProvider provider = JsonProviderFactory.createProvider();
 			Object rootObj = provider.parse(data);
 			if (rootObj instanceof Map){
 				root = (Map<String,Object>)rootObj;

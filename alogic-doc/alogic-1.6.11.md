@@ -328,6 +328,12 @@ alogic-1.6.11
 - alogic-rpc:增加ssl协议支持的配置;
 - alogic-auth:增加oauth2.0客户端框架;
 
+### 1.6.11.62 [20180928 duanyy] 
+- alogic-auth:增加oauth2.0服务端框架;
+- alogic-rpc:修正urlbuilder，支持已有?字符检测;
+- alogic-core:JsonMessage清除冗余代码;
+
+
 
 
 

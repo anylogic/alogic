@@ -28,6 +28,9 @@ import com.anysoft.util.XmlTools;
  * 
  * @version 1.6.10.6 [20171114 duanyy] <br>
  * - 修正无参数时的拼接问题 <br>
+ * 
+ * @version 1.6.11.62 [duanyy 20180928] <br>
+ * - 支持已有?字符检测 <br>
  */
 public class UrlBuilder extends AbstractLogiclet{
 	/**
@@ -87,9 +90,10 @@ public class UrlBuilder extends AbstractLogiclet{
 			StringBuffer buffer = new StringBuffer(ctx.transform(base));
 			
 			if (!paraData.isEmpty()){
-				buffer.append("?");
-				
-				boolean first = true;
+				boolean first = buffer.indexOf("?") < 0;
+				if (first){
+					buffer.append("?");
+				}
 				for (Pair<String,String> p:paraData){
 					String id = p.key();
 					String value = ctx.transform(p.value());

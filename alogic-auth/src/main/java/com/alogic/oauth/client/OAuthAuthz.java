@@ -227,7 +227,6 @@ public class OAuthAuthz implements Filter,OAuthConstants,XMLConfigurable,Configu
 			chain.doFilter(request, response);
 			return ;
 		}else{
-			/*
 			String serverId = getParameter(httpReq, OAuthConstants.ARGU_FROM, dftServerId);
 			OAuthServer server = this.getServer(serverId);
 			if (server == null){
@@ -251,7 +250,6 @@ public class OAuthAuthz implements Filter,OAuthConstants,XMLConfigurable,Configu
 				httpResp.sendError(E404,String.format("%s:%s",ex.getCode(),ex.getMessage()));
 			}
 			return ;
-			*/
 		}		
 	}
 
