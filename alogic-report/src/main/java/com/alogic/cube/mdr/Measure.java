@@ -33,7 +33,6 @@ public interface Measure {
 	/**
 	 * 从数据中提取量度的片段值
 	 * 
-	 * @param data 原始行数据
 	 * @return 量度值
 	 */
 	public long getValue(final Properties provider);

@@ -24,7 +24,6 @@ public interface DataReport {
 	
 	/**
 	 * 输出数据行
-	 * @param columns 列id列表
 	 * @param dataRow 行数据
 	 */
 	public void onRow(DimensionRow dataRow);

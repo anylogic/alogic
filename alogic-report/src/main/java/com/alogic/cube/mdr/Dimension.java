@@ -16,14 +16,13 @@ import com.anysoft.util.XmlElementProperties;
 public interface Dimension {
 	/**
 	 * 获取维度id
-	 * @return
+	 * @return 维度id
 	 */
 	public String getId();
 	
 	/**
 	 * 从数据中提取维度值
 	 * 
-	 * @param data 原始行数据
 	 * @return 维度值
 	 */
 	public String getValue(final Properties provider);

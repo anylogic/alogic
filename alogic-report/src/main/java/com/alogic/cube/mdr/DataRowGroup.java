@@ -75,7 +75,7 @@ public class DataRowGroup implements DimensionRow{
 	
 	/**
 	 * 获取列的id列表
-	 * @return
+	 * @return id列表
 	 */
 	public String[] getColumnList(){
 		return total.getColumnList();

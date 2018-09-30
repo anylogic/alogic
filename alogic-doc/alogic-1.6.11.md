@@ -333,7 +333,8 @@ alogic-1.6.11
 - alogic-rpc:修正urlbuilder，支持已有?字符检测;
 - alogic-core:JsonMessage清除冗余代码;
 
-
+### 1.6.11
+- 发布1.6.11版本
 
 
 

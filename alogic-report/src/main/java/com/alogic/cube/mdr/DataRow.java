@@ -80,7 +80,7 @@ public class DataRow  implements DimensionRow{
 	
 	/**
 	 * 获取列的id列表
-	 * @return
+	 * @return id列表
 	 */
 	public String[] getColumnList(){
 		return columns.keySet().toArray(new String[0]);
