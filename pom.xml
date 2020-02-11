@@ -62,7 +62,7 @@
 		<snapshotRepository>
 			<id>snapshots</id>
 			<name>Internal Snapshots</name>
-			<url>http://10.142.90.52:8002/content/repositories/snapshots</url>
+			<url>https://10.142.90.52:8002/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<site>
 			<id>localhost</id>
